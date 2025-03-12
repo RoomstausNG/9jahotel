@@ -1,0 +1,60 @@
+.available,
+.Available {
+    color: #ddd;
+    /* white */
+}
+
+.pending,
+.Pending,
+.unpaid,
+.Unpaid {
+    color: #ffcc00;
+    /* yellow */
+}
+
+.booked,
+.Booked,
+.paid,
+.Paid {
+    color: #008000;
+    /* green */
+}
+
+.occupied,
+.Occupied {
+    color: #FF0000;
+    /* red */
+}
+
+.late,
+.Late {
+    color: #FFA500;
+    /* orange */
+}
+
+.late.Late {
+    color: #aa3300;
+    /* dark orange */
+}
+
+.dirty,
+.Dirty {
+    color: #A52A2A;
+    /* brown */
+}
+
+.repair,
+.Repair {
+    color: #000000;
+    /* black */
+}
+
+.income {
+    color: #05cc0a;
+    /* green */
+}
+
+.expenditure {
+    color: #ee0016;
+    /* red */
+}

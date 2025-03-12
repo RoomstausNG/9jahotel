@@ -1,0 +1,49 @@
+services:
+    wakalor:
+        image: wakalor
+        build:
+            context: .
+            dockerfile: Dockerfile
+        deploy:
+            replicas: 2
+            update_config:
+                parallelism: 1
+                delay: 10s
+            restart_policy:
+                condition: on-failure
+        ports:
+            - "8002:8002"
+        volumes:
+            - .:/app
+        environment:
+            XDG_CONFIG_HOME:  /var/www/html/config
+            XDG_DATA_HOME:  /var/www/html/data
+        networks:
+            - wakalor
+    redis:
+        image: redis:alpine
+        deploy:
+            replicas: 1
+        ports:
+            - "16379:6379"
+        networks:
+            - wakalor
+        volumes:
+            - redis-data:/data
+    queue:
+        image: wakalor
+        build: .
+        command: ["php", "artisan", "queue:work"]
+        depends_on:
+            - redis
+
+networks:
+    wakalor:
+        driver: overlay
+
+volumes:
+    redis-data:
+        driver: local
+
+
+
