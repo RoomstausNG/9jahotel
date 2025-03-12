@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\HotelScope;
 use App\Traits\BelongToHotel;
 use App\Traits\IsCreatingHotel;
+use App\Models\Scopes\HotelScope;
+use Illuminate\Database\Eloquent\Model;
 use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 // #[ScopedBy([HotelScope::class])]
 class Amenity extends Model
@@ -22,4 +23,9 @@ class Amenity extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    public function amenity(): BelongsTo
+    {
+        return $this->belongTo(GeneralAmenity::class, 'general_amenity_id');
+    }
 }

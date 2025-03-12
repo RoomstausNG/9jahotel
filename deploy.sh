@@ -1,41 +1,83 @@
-#!/bin/sh
+#!/bin/bash
 set -e
-echo "Deploying application"
 
-#Enter maintenance mode
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
 
-(php artisan down --message='The website is been quickly updated. Please tey again in minutes.') || true
-  #update codebase
+# Print with colors
+echo_success() {
+    echo -e "${GREEN}$1${NC}"
+}
+echo_error() {
+    echo -e "${RED}$1${NC}"
+}
+echo_warning() {
+  echo -e "${YELLOW}$1${NC}"
+}
 
-    # git pull origin v1
-    git fetch origin apis
-    git reset --hard origin/apis
+# Check if Docker is installed
+if ! command -v docker &> /dev/null; then
+    echo_error "Docker is not installed. Please install Docker first."
+    exit 1
+fi
 
-    composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
-    composer dump-autoload
+# Check if running in Swarm mode
+if ! docker info | grep -q "Swarm: active"; then
+  echo_warning "Docker is not in Swarm mode. Initializing Swarm..."
+    docker swarm init --advertise-addr $(hostname -I | awk '{print $1}') || {
+        echo_error "Failed to initialize Docker Swarm."
+        exit 1
+    }
+    echo_success "Docker Swarm initialized successfully."
+fi
 
-    php artisan migrate --force
+# Check if .env file exists, create if not
+if [ ! -f .env ]; then
+    echo "Creating .env file with default values..."
+    cat > .env << EOF
+DB_DATABASE=wakalordb
+DB_USERNAME=wakalor
+DB_PASSWORD=wakalorpassword
+MYSQL_ROOT_PASSWORD=rootpassword
+EOF
+    echo_success ".env file created successfully."
+else
+    echo_success ".env file already exists."
+fi
 
-    npm install
-    npm run build
+# Load environment variables
+export $(grep -v '^#' .env | xargs)
 
-     # Clear cache
-    # php artisan view:clear
-    # php artisan event:clear
-    # php artisan cache:clear
-    # php artisan route:clear
-    # php artisan config:clear
+# Build the Docker image
+echo "Building Docker image..."
+docker build -t wakalor . || {
+  echo_error "Failed to build Docker image."
+    exit 1
+}
+echo_success "Docker image built successfully."
 
-    php artisan config:cache
-    php artisan route:cache
-    php artisan view:cache
-    php artisan event:cache
-    php artisan optimize
+# Deploy the stack
+echo "Deploying stack to Swarm..."
+docker stack deploy -c docker-compose.yml wakalor || {
+  echo_error "Failed to deploy stack."
+  exit 1
+}
+echo_success "Stack deployed successfully."
 
-    # script permissions
-    chown -R 777 deploy.sh
-    chmod 777 deploy.sh
-#exit maintainance mode
-php artisan up
+# Show services status
+echo "Checking service status..."
+docker service ls --filter name=wakalor
+echo_success "Deployment completed successfully!"
 
-echo "Website deployed"
+# Show access instructions
+echo ""
+echo "-------------------------------------------------------------"
+echo "Your application is now deployed."
+echo "To view logs, run: docker service logs wakalor_wakalor"
+echo "To scale a service, run: docker service scale wakalor_wakalor=N"
+echo "To update, simply run this script again."
+echo "To stop all services, run: docker stack rm wakalor"
+echo "-------------------------------------------------------------"

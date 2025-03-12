@@ -16,10 +16,19 @@ services:
         volumes:
             - .:/app
         environment:
-            XDG_CONFIG_HOME:  /var/www/html/config
-            XDG_DATA_HOME:  /var/www/html/data
+            XDG_CONFIG_HOME: /var/www/html/config
+            XDG_DATA_HOME: /var/www/html/data
+            DB_HOST: mysql
+            DB_PORT: 3306
+            DB_DATABASE: ${DB_DATABASE:-wakalordb}
+            DB_USERNAME: ${DB_USERNAME:-wakalor}
+            DB_PASSWORD: ${DB_PASSWORD:-wakalorpass}
         networks:
-            - wakalor
+            - baota_net
+        depends_on:
+            - mysql
+            - redis
+
     redis:
         image: redis:alpine
         deploy:
@@ -27,23 +36,56 @@ services:
         ports:
             - "16379:6379"
         networks:
-            - wakalor
+            - baota_net
         volumes:
             - redis-data:/data
+
     queue:
         image: wakalor
         build: .
         command: ["php", "artisan", "queue:work"]
         depends_on:
             - redis
+            - mysql
+        networks:
+            - baota_net
+
+    mysql:
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+            MYSQL_DATABASE: ${DB_DATABASE:-wakalordb}
+            MYSQL_USER: ${DB_USERNAME:-wakalor}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-wakalorpass}
+        ports:
+            - "13306:3306"
+        volumes:
+            - mysql-data:/var/lib/mysql
+        networks:
+            - baota_net
+        deploy:
+            restart_policy:
+                condition: on-failure
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 13306
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+        ports:
+            - "8080:80"
+        depends_on:
+            - mysql
+        networks:
+            - baota_net
 
 networks:
-    wakalor:
+    baota_net:
         driver: overlay
 
 volumes:
     redis-data:
         driver: local
-
-
-
+    mysql-data:
+        driver: local

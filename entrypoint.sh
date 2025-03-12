@@ -14,7 +14,7 @@ echo "Deploying application"
     composer install --optimize-autoloader -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
     composer dump-autoload
 
-    # php artisan migrate --force
+    php artisan migrate --force
 
     npm install
     npm run build
