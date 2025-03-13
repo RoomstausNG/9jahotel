@@ -229,6 +229,67 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <x-livewire-alert::scripts />
     @stack('scripts')
+
+    {{-- <script>
+        const words = [
+            "Amazing"
+            "Fantastic",
+            "Great",
+            "Secret",
+            "Excellent",
+            "Unbelievable",
+            "Last Minute",
+            "Discounted",
+            "Special"
+        ];
+
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let text = '';
+
+        const typeSpeed = 100; // typing speed in milliseconds
+        const eraseSpeed = 50; // erasing speed in milliseconds
+        const pauseDelay = 1000; // delay after word is fully typed
+
+        function typeWriter() {
+            const currentWord = words[wordIndex];
+
+            // Determine the current text based on whether we're typing or deleting
+            if (isDeleting) {
+                // Remove a character
+                text = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                // Add a character
+                text = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            // Update the HTML element
+            document.getElementById("type").textContent = text;
+
+            // Set the typing speed
+            let typeDelay = isDeleting ? eraseSpeed : typeSpeed;
+
+            // Check if word is complete
+            if (!isDeleting && charIndex === currentWord.length) {
+                // Pause at the end of typing a complete word
+                typeDelay = pauseDelay;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                // Move to next word after deletion is complete
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length; // Loop back to first word after last word
+            }
+
+            // Call the function again after the delay
+            setTimeout(typeWriter, typeDelay);
+        }
+
+        // Start the typing effect when the page loads
+        window.onload = typeWriter;
+    </script> --}}
 </body>
 
 </html>

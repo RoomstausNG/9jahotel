@@ -3,11 +3,56 @@
     <div class="w-full flex items-center justify-center bg-cover bg-center px-4 py-4 min-h-[500px] md:min-h-[720px] max-h-[920px]"
         style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(90% 100% at 50% 0%);">
         <div x-data="{ tab: 'room' }" class="w-full max-w-screen-lg mx-auto px-4">
-            <div class="text-center py-16 text-white">
+            <div x-data="typeWriter()" x-init="start()" class="text-center py-16 text-white">
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium md:font-bold">
-                    <span class="font-black italic">Amazing</span>
+                    <span class="font-black italic text-red-600" x-text="text"></span>
                     <span>Hotels Deals just for You!</span>
                 </h1>
+
+                <script>
+                    function typeWriter() {
+                        return {
+                            words: ["Amazing", "Fantastic", "Great", "Secret", "Excellent", "Unbelievable", "Last Minute", "Discounted",
+                                "Special"
+                            ],
+                            wordIndex: 0,
+                            charIndex: 0,
+                            isDeleting: false,
+                            text: '',
+                            typeSpeed: 100,
+                            eraseSpeed: 50,
+                            pauseDelay: 2000,
+
+                            start() {
+                                this.processTypewriter();
+                            },
+
+                            processTypewriter() {
+                                const currentWord = this.words[this.wordIndex];
+
+                                if (this.isDeleting) {
+                                    this.text = currentWord.substring(0, this.charIndex - 1);
+                                    this.charIndex--;
+                                } else {
+                                    this.text = currentWord.substring(0, this.charIndex + 1);
+                                    this.charIndex++;
+                                }
+
+                                let typeDelay = this.isDeleting ? this.eraseSpeed : this.typeSpeed;
+
+                                if (!this.isDeleting && this.charIndex === currentWord.length) {
+                                    typeDelay = this.pauseDelay;
+                                    this.isDeleting = true;
+                                } else if (this.isDeleting && this.charIndex === 0) {
+                                    this.isDeleting = false;
+                                    this.wordIndex = (this.wordIndex + 1) % this.words.length;
+                                }
+
+                                setTimeout(() => this.processTypewriter(), typeDelay);
+                            }
+                        }
+                    }
+                </script>
             </div>
             <div class="flex max-w-max bg-white">
                 <button :class="[tab == 'room' ? 'bg-primary-500 text-white font-medium' : 'bg-white ']"
@@ -131,4 +176,67 @@
             <img src="" alt="" class="w-full lg:w-1/2">
         </section>
     </div>
+
 </x-layouts.frontend>
+@push('scripts')
+    <script>
+        const words = [
+            "Amazing"
+            "Fantastic",
+            "Great",
+            "Secret",
+            "Excellent",
+            "Unbelievable",
+            "Last Minute",
+            "Discounted",
+            "Special"
+        ];
+
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let text = '';
+
+        const typeSpeed = 100; // typing speed in milliseconds
+        const eraseSpeed = 50; // erasing speed in milliseconds
+        const pauseDelay = 1000; // delay after word is fully typed
+
+        function typeWriter() {
+            const currentWord = words[wordIndex];
+
+            // Determine the current text based on whether we're typing or deleting
+            if (isDeleting) {
+                // Remove a character
+                text = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                // Add a character
+                text = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            // Update the HTML element
+            document.getElementById("typeWriter").textContent = text;
+            console.log(text);
+            // Set the typing speed
+            let typeDelay = isDeleting ? eraseSpeed : typeSpeed;
+
+            // Check if word is complete
+            if (!isDeleting && charIndex === currentWord.length) {
+                // Pause at the end of typing a complete word
+                typeDelay = pauseDelay;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                // Move to next word after deletion is complete
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length; // Loop back to first word after last word
+            }
+
+            // Call the function again after the delay
+            setTimeout(typeWriter, typeDelay);
+        }
+
+        // Start the typing effect when the page loads
+        window.onload = typeWriter;
+    </script>
+@endpush
