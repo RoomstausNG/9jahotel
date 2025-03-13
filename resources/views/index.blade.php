@@ -1,8 +1,8 @@
 <x-layouts.frontend>
     {{-- linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), --}}
-    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 py-4 min-h-[500px] md:min-h-[720px] max-h-[920px]"
-        style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(90% 100% at 50% 0%);">
-        <div x-data="{ tab: 'room' }" class="w-full max-w-screen-lg mx-auto px-4">
+    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 min-h-[500px] md:min-h-[720px] max-h-[920px]"
+        style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(95% 100% at 50% 0%);">
+        <div x-data="{ tab: 'room' }" class="w-full max-w-screen-lg mx-auto px-4 mb-12">
             <div x-data="typeWriter()" x-init="start()" class="text-center py-16 text-white">
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium md:font-bold">
                     <span class="font-black italic text-red-600" x-text="text"></span>
@@ -54,13 +54,13 @@
                     }
                 </script>
             </div>
-            <div class="flex max-w-max bg-white">
+            <div class="flex flex-col md:flex-row w-full mb-8 sm:mb-0 sm:max-w-max bg-white">
                 <button :class="[tab == 'room' ? 'bg-primary-500 text-white font-medium' : 'bg-white ']"
                     @click="tab = 'room'" class="px-8 md:px-12 py-3 inline-block hover:bg-primary">Room</button>
                 <button @click="tab = 'hall'" class="px-8 md:px-12 py-3 inline-block border-x hover:bg-primary"
                     :class="[tab == 'hall' ? 'bg-primary-500 text-white font-medium' : 'bg-white ']">Event
                     Halls</button>
-                <a href="group-booking" class="px-8  md:px-12 py-3 inline-block hover:bg-primary">Group
+                <a href="group-booking" class="px-8 text-center  md:px-12 py-3 inline-block hover:bg-primary">Group
                     Bookings</a>
             </div>
             <div x-show="tab == 'room'" class="w-full max-w-5xl">
