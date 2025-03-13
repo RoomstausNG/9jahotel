@@ -15,7 +15,6 @@ use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\State;
 use Filament\Resources\Resource;
 use Nnjeim\World\Models\Country;
-use Nnjeim\World\Models\Currency;
 use Illuminate\Support\Collection;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;

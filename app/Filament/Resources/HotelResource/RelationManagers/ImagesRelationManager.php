@@ -21,11 +21,16 @@ class ImagesRelationManager extends RelationManager
             ->schema([
                 Forms\Components\FileUpload::make('url')
                     ->required()
-                    ->disk('cloudinary')->visibility('private')
+                    ->disk('cloudinary')
+                    ->visibility('private')
                     ->image()
                     ->imageEditor()
-                    ->imageCropAspectRatio(16 / 9)
-                    ->directory('hotels'),
+                    ->imageCropAspectRatio('16:9')
+                    ->directory('hotels')
+                    ->afterStateUpdated(function ($state) {
+                        // Add logging here if needed
+                        \Log::info('Image upload state:', ['state' => $state]);
+                    }),
             ]);
     }
 
@@ -37,7 +42,7 @@ class ImagesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('url')
                     ->label('Hotel Image')
-                    ->disk('cloudinary')->visibility('private'),
+                    ->disk('cloudinary'),
             ])
             ->filters([
                 //
@@ -48,7 +53,7 @@ class ImagesRelationManager extends RelationManager
                         $data['imageable_type'] = 'App\Models\Hotel';
                         return $data;
                     })
-                    ->hidden(fn() => $this->ownerRecord->images()->count() >= 5)
+                    // ->hidden(fn() => $this->ownerRecord->images()->count() >= 5)
                     ->successNotificationTitle('Image created successfully.'),
             ])
             ->actions([
