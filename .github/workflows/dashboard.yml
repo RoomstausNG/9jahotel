@@ -1,50 +1,105 @@
-name: Wakalor
+# name: Wakalor
 
+# on:
+#   push:
+#     branches: ["dashboard"]
+
+# jobs:
+#   laravel-tests:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: "8.2"
+#       - uses: actions/checkout@v4
+#       - name: Copy .env
+#         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+#       - name: Install Dependencies
+#         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+#       - name: Directory Permissions
+#         run: chmod -R 755 storage bootstrap/cache ./deploy.sh
+
+#       - name: Make deploy script executable
+#         run: chmod +x deploy.sh
+
+#       - name: Clear Config
+#         run: php artisan config:clear
+
+#       - name: autoload
+#         run: composer dump-autoload
+
+#       - name: Clear route
+#         run: php artisan route:clear
+
+#       - name: Clear Cache
+#         run: php artisan cache:clear
+
+#       - name: Shut Down serve
+#         run: php artisan down
+
+#       - name: executing remote ssh commands to deploy
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.USERNAME }}
+#           port: "22"
+#           key: ${{ secrets.PRIVATE_KEY }}
+#           script: "cd /www/wwwroot/dashboard.wakalor.com && git fetch && git checkout -f origin/dashboard -- ':!public/.user.ini' && ./deploy.sh"
+
+name: Deploy to Production
 on:
   push:
     branches: ["dashboard"]
-
 jobs:
-  laravel-tests:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
       - uses: actions/checkout@v4
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install composer dependencies
+        run: composer install --no-dev --optimize-autoloader
 
-      - name: Directory Permissions
-        run: chmod -R 755 storage bootstrap/cache ./deploy.sh
+      - name: Prepare deployment package
+        run: |
+          tar -czf deploy.tar.gz --exclude='.git' --exclude='node_modules' --exclude='.github' --exclude='.env' .
 
-      - name: Make deploy script executable
-        run: chmod +x deploy.sh
+      - name: Upload package to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: 22
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "deploy.tar.gz"
+          target: "/tmp"
 
-      - name: Clear Config
-        run: php artisan config:clear
-
-      - name: autoload
-        run: composer dump-autoload
-
-      - name: Clear route
-        run: php artisan route:clear
-
-      - name: Clear Cache
-        run: php artisan cache:clear
-
-      - name: Shut Down serve
-        run: php artisan down
-
-      - name: executing remote ssh commands to deploy
+      - name: Deploy on server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.USERNAME }}
-          port: "22"
+          port: 22
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd /www/wwwroot/dashboard.wakalor.com && git fetch && git checkout -f origin/dashboard -- ':!public/.user.ini' && ./deploy.sh"
+          script: |
+            # Create a temporary extraction directory
+            mkdir -p /tmp/extract_temp
+
+            # Extract the uploaded archive to the temp directory
+            tar -xzf /tmp/deploy.tar.gz -C /tmp/extract_temp
+
+            # Copy files to production directory, preserving .user.ini
+            rsync -av --exclude='.git/' --exclude='public/.user.ini' /tmp/extract_temp/ /www/wwwroot/dashboard.wakalor.com/
+
+            # Run post-deployment commands
+            cd /www/wwwroot/dashboard.wakalor.com
+            php artisan cache:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:clear
+
+            # Clean up
+            rm -rf /tmp/extract_temp
+            rm /tmp/deploy.tar.gz
