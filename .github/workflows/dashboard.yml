@@ -3,8 +3,6 @@ name: Wakalor
 on:
   push:
     branches: ["dashboard"]
-  pull_request:
-    branches: ["dashboard"]
 
 jobs:
   laravel-tests:
