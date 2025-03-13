@@ -1,4 +1,4 @@
-<section class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white rounded-lg shadow-lg">
+<section class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white shadow-lg">
     <form wire:submit='searchHotel'
         class="flex flex-col justify-between w-full max-w-screen-xl gap-8 mx-auto lg:items-end lg:flex-row">
         <div class="items-center flex-1">

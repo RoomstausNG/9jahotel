@@ -1,9 +1,16 @@
 <x-layouts.frontend>
     {{-- linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), --}}
-    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 py-4 min-h-[500px]"
+    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 py-4 min-h-[300px] max-h-[480px]"
         style="width: 100%; height: 100vh; background:  url('/img/background.jpeg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center;">
-        <div class="w-full max-w-screen-xl px-4 mx-auto">
-            @livewire('search-city')
+        <div x-data="{ tab: 'room' }" class="w-full max-w-screen-xl px-4 mx-auto">
+            <div class="flex max-w-max bg-white">
+                <button class="px-8 md:px-12 py-3 inline-block hover:text-primary">Room</button>
+                <button class="px-8 md:px-12 py-3 inline-block border-x hover:text-primary">Hall</button>
+                <a href="group-booking" class="px-8 md:px-12 py-3 inline-block hover:text-primary">Group Booking</a>
+            </div>
+            <div class="w-full">
+                @livewire('search-city')
+            </div>
         </div>
     </div>
     <div class="w-full max-w-screen-xl p-4 mx-auto space-y-12 md:space-y-16">
