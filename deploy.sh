@@ -17,20 +17,6 @@ else
   exit 1
 fi
 
-# Checkout the dashboard branch
-echo ">> Checking out dashboard branch..."
-git checkout -B dashboard origin/dashboard
-if [ $? -eq 0 ]; then
-  echo "✓ SUCCESS: Git checkout dashboard branch"
-else
-  echo "✗ ERROR: Git checkout dashboard branch failed"
-  exit 1
-fi
-
-# Fix permissions on problematic files before pulling
-echo ">> Adjusting file permissions..."
-chmod -f 664 public/.user.ini || true
-
 # Pull the latest changes with a strategy to handle permission issues
 echo ">> Force pulling latest changes..."
 git pull --rebase --strategy-option=theirs
