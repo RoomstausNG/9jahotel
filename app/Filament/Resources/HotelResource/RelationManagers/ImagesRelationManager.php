@@ -27,11 +27,7 @@ class ImagesRelationManager extends RelationManager
                     ->imageEditor()
                     ->imageCropAspectRatio('16:9')
                     ->directory('hotels')
-                    ->optimize('webp')
-                    ->afterStateUpdated(function ($state) {
-                        // Add logging here if needed
-                        \Log::info('Image upload state:', ['state' => $state]);
-                    }),
+                    ->optimize('webp'),
             ]);
     }
 
@@ -54,7 +50,7 @@ class ImagesRelationManager extends RelationManager
                         $data['imageable_type'] = 'App\Models\Hotel';
                         return $data;
                     })
-                    ->hidden(fn() => $this->ownerRecord->images()->count() >= 5)
+                    ->hidden(fn() => $this->ownerRecord->images()->count() >= 10)
                     ->successNotificationTitle('Image created successfully.'),
             ])
             ->actions([
