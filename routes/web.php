@@ -26,7 +26,7 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 
 
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
-Route::get('/', [PageController::class, 'homepage']);
+Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
 
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
@@ -35,7 +35,7 @@ Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');
 Route::get('/hotel/rooms/{category}', BookRoom::class)->name('bookroom');
 Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
-Route::get("/signin", LoginPage::class);
+Route::get("/signin", LoginPage::class)->middleware('page-cache');
 
 Route::get('/session-debug', function () {
     return response()->json([
