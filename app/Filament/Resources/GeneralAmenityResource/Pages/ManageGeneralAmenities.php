@@ -4,9 +4,9 @@ namespace App\Filament\Resources\GeneralAmenityResource\Pages;
 
 use App\Filament\Resources\GeneralAmenityResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListGeneralAmenities extends ListRecords
+class ManageGeneralAmenities extends ManageRecords
 {
     protected static string $resource = GeneralAmenityResource::class;
 

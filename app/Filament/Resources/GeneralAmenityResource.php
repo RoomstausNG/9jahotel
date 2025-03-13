@@ -30,7 +30,7 @@ class GeneralAmenityResource extends Resource
                 Forms\Components\Textarea::make('icon')
                     ->required()
                     ->startsWith('<svg')
-                    ->helperText(new HtmlString('Click <a href="https://icones.js.org/collection/all" class="underline text-primary" target="_blank">here</a> To get an icon SVG code, search for your desired icon on any icon library website (like FontAwesome or Material Icons), click on the icon to select it, then look for and click an option labeled *SVG* or *Copy SVG* to view or copy the code, and finally paste the complete SVG code (from <svg> to </svg>) here.'))
+                    ->helperText(new HtmlString('Click <a href="https://icones.js.org/collection/all" class="underline text-primary" target="_blank">here</a> To get an icon SVG code, search for your desired icon on any icon library website (like FontAwesome or Material Icons), click on the icon to select it, then look for and click an option labeled *SVG* or *Copy SVG* to view or copy the code, and finally paste the complete SVG code here.'))
                     ->columnSpanFull(),
             ]);
     }
@@ -41,6 +41,13 @@ class GeneralAmenityResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('icon')
+                    ->formatStateUsing(fn(string $state): HtmlString => new HtmlString($state)),
+                // ->html(),
+                Tables\Columns\TextColumn::make('amenities_count')
+                    ->counts('amenities')
+                    ->label('Usage')
+                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -55,6 +62,7 @@ class GeneralAmenityResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -63,19 +71,10 @@ class GeneralAmenityResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGeneralAmenities::route('/'),
-            'create' => Pages\CreateGeneralAmenity::route('/create'),
-            'edit' => Pages\EditGeneralAmenity::route('/{record}/edit'),
+            'index' => Pages\ManageGeneralAmenities::route('/'),
         ];
     }
 }

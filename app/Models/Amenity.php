@@ -24,8 +24,8 @@ class Amenity extends Model
         'deleted_at' => 'datetime',
     ];
 
-    public function amenity(): BelongsTo
+    public function generalAmenity(): BelongsTo
     {
-        return $this->belongTo(GeneralAmenity::class, 'general_amenity_id');
+        return $this->belongsTo(GeneralAmenity::class, 'general_amenity_id');
     }
 }
