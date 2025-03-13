@@ -46,4 +46,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd //www/wwwroot/awaroom.fedums.com && ./deploy.sh"
+          script: "cd //www/wwwroot/dashboard.wakalor.com && ./deploy.sh"
