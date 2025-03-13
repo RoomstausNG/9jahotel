@@ -1,87 +1,71 @@
 #!/bin/bash
+set -e
 
-# Define colors for better readability
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+echo ">> Deploying application..."
 
-# Print header
-echo -e "${BLUE}==================================================${NC}"
-echo -e "${GREEN}Starting Laravel Dashboard Update and Optimization${NC}"
-echo -e "${BLUE}==================================================${NC}"
+# Store the current state
+echo ">> Saving current state..."
+git stash
 
-# Function to check command execution status
-check_status() {
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✓ SUCCESS: $1${NC}"
-    else
-        echo -e "${RED}✗ ERROR: $1 failed${NC}"
-        echo -e "${RED}Stopping script execution${NC}"
-        exit 1
-    fi
-}
+# Fetch the latest changes
+echo ">> Fetching latest changes..."
+git fetch
+if [ $? -eq 0 ]; then
+  echo "✓ SUCCESS: Git fetch"
+else
+  echo "✗ ERROR: Git fetch failed"
+  exit 1
+fi
 
-# Set correct permissions
-sudo chmod -R 755 storage bootstrap/cache
-sudo chmod -R 777 storage/framework storage/logs bootstrap/cache
+# Checkout the dashboard branch
+echo ">> Checking out dashboard branch..."
+git checkout -B dashboard origin/dashboard
+if [ $? -eq 0 ]; then
+  echo "✓ SUCCESS: Git checkout dashboard branch"
+else
+  echo "✗ ERROR: Git checkout dashboard branch failed"
+  exit 1
+fi
 
-# Navigate to project directory - uncomment and modify if needed
-# cd /path/to/your/laravel/project
-# check_status "Changed directory to project folder"
+# Fix permissions on problematic files before pulling
+echo ">> Adjusting file permissions..."
+chmod -f 664 public/.user.ini || true
 
-echo -e "\n${BLUE}>> Fetching latest changes...${NC}"
-git fetch origin
-check_status "Git fetch"
+# Pull the latest changes with a strategy to handle permission issues
+echo ">> Force pulling latest changes..."
+git pull --rebase --strategy-option=theirs
+if [ $? -eq 0 ]; then
+  echo "✓ SUCCESS: Git pull from dashboard branch"
+else
+  echo "✗ ERROR: Git pull from dashboard branch failed"
+  # Try alternative approach if standard pull fails
+  git reset --hard origin/dashboard
+  if [ $? -eq 0 ]; then
+    echo "✓ SUCCESS: Git reset to dashboard branch"
+  else
+    echo "✗ ERROR: Git force pull from dashboard branch failed"
+    echo "Stopping script execution"
+    exit 1
+  fi
+fi
 
-echo -e "\n${BLUE}>> Checking out dashboard branch...${NC}"
-git checkout dashboard
-check_status "Git checkout dashboard branch"
-
-echo -e "\n${BLUE}>> Force pulling latest changes...${NC}"
-git reset --hard origin/dashboard
-check_status "Git force pull from dashboard branch"
-
-echo -e "\n${BLUE}>> Installing/updating Composer dependencies...${NC}"
-composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-check_status "Composer dependencies installation"
-
-echo -e "\n${BLUE}>> Clearing and rebuilding cache...${NC}"
-php artisan optimize:clear
-check_status "Cache clearing"
-
-echo -e "\n${BLUE}>> Running database migrations...${NC}"
+# Run remaining deployment steps
+echo ">> Installing dependencies..."
+composer install --no-dev --optimize-autoloader
+echo ">> Running migrations..."
 php artisan migrate --force
-check_status "Database migrations"
+echo ">> Clearing cache..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
-echo -e "\n${BLUE}>> Optimizing Laravel...${NC}"
-php artisan optimize
-check_status "Laravel optimization"
+# Fix storage permissions
+echo ">> Setting permissions..."
+chmod -R 775 storage bootstrap/cache
 
-echo -e "\n${BLUE}>> Caching routes...${NC}"
-php artisan route:cache
-check_status "Route caching"
+# Bring the application back online
+echo ">> Bringing application online..."
+php artisan up
 
-echo -e "\n${BLUE}>> Caching configurations...${NC}"
-php artisan config:cache
-check_status "Config caching"
-
-echo -e "\n${BLUE}>> Caching views...${NC}"
-php artisan view:cache
-check_status "View caching"
-
-
-# If using npm/yarn for frontend, uncomment these lines
-# echo -e "\n${BLUE}>> Installing NPM dependencies...${NC}"
-# npm ci
-# check_status "NPM dependencies installation"
-
-# echo -e "\n${BLUE}>> Building frontend assets...${NC}"
-# npm run build
-# check_status "Frontend assets build"
-
-echo -e "\n${GREEN}==========================================${NC}"
-echo -e "${GREEN}✓ Update and optimization completed successfully!${NC}"
-echo -e "${GREEN}==========================================${NC}"
-
-exit 0
+echo "✓ SUCCESS: Deployment completed successfully!"
