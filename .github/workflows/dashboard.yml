@@ -86,4 +86,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd /www/wwwroot/dashboard.wakalor.com && chmod -f 664 public/.user.ini || true && ./deploy.sh"
+          script: "cd /www/wwwroot/dashboard.wakalor.com && git fetch && git reset --hard origin/dashboard && ./deploy.sh"
