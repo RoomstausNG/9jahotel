@@ -17,7 +17,7 @@ class GeneralAmenityResource extends Resource
 {
     protected static ?string $model = GeneralAmenity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'gift-top';
 
     public static function form(Form $form): Form
     {
