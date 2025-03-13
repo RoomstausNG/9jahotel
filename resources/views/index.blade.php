@@ -5,7 +5,7 @@
         <div x-data="{ tab: 'room' }" class="w-full max-w-screen-xl px-4 mx-auto">
             <div class="flex max-w-max bg-white">
                 <button class="px-8 md:px-12 py-3 inline-block hover:text-primary">Room</button>
-                <button class="px-8 md:px-12 py-3 inline-block border-x hover:text-primary">Hall</button>
+                <button class="px-8 md:px-12 py-3 inline-block border-x hover:text-primary">Events Hall</button>
                 <a href="group-booking" class="px-8 md:px-12 py-3 inline-block hover:text-primary">Group Booking</a>
             </div>
             <div class="w-full">
