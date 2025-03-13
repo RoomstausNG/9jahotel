@@ -8,7 +8,6 @@
                     <span class="font-black italic text-red-600" x-text="text"></span>
                     <span>Hotels Deals just for You!</span>
                 </h1>
-
                 <script>
                     function typeWriter() {
                         return {
