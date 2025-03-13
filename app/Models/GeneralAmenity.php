@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class GeneralAmenity extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $guarded = [];
 
     protected $casts = [

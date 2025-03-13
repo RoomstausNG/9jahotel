@@ -2,22 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\GeneralAmenityResource\Pages;
-use App\Filament\Resources\GeneralAmenityResource\RelationManagers;
-use App\Models\GeneralAmenity;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\GeneralAmenity;
+use Filament\Resources\Resource;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\GeneralAmenityResource\Pages;
+use App\Filament\Resources\GeneralAmenityResource\RelationManagers;
 
 class GeneralAmenityResource extends Resource
 {
     protected static ?string $model = GeneralAmenity::class;
 
-    protected static ?string $navigationIcon = 'gift-top';
+    protected static ?string $navigationIcon = 'heroicon-o-gift-top';
 
     public static function form(Form $form): Form
     {
@@ -27,6 +28,9 @@ class GeneralAmenityResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('icon')
+                    ->required()
+                    ->startsWith('<svg')
+                    ->helperText(new HtmlString('Click <a href="https://icones.js.org/collection/all" class="underline text-primary" target="_blank">here</a> To get an icon SVG code, search for your desired icon on any icon library website (like FontAwesome or Material Icons), click on the icon to select it, then look for and click an option labeled *SVG* or *Copy SVG* to view or copy the code, and finally paste the complete SVG code (from <svg> to </svg>) here.'))
                     ->columnSpanFull(),
             ]);
     }
