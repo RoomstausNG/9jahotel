@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Nnjeim\World\Models\State;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
+// use ImageOptimizer;
 
 function getFirstLetters($inputString): string
 {
@@ -38,6 +40,11 @@ function currentUser()
 function profilePicture(object $user): string
 {
     return $user->signature ? asset('storage/' . $user->signature) : asset('img/avatar.png');
+}
+
+function optimizeImage(string $pathToImage)
+{
+    return ImageOptimizer::optimize($pathToImage);
 }
 
 function getColorCode($status)

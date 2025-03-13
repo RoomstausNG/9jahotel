@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'customer' => CustomerMiddleware::class,
         'hotel' => HotelMiddleware::class,
         'back-office' => BackOfficeMiddleware::class,
+        'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];
 }

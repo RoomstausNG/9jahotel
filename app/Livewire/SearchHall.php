@@ -18,6 +18,7 @@ class SearchHall extends Component implements HasForms
     public $city;
     public $checkin;
     public $checkout;
+    public $capacity;
 
 
     public function form(Form $form): Form
@@ -25,13 +26,18 @@ class SearchHall extends Component implements HasForms
         return $form
             ->schema([
                 Components\Select::make('city')
-                    ->label('Where are you going?')
+                    ->label('Where City?')
                     ->options(CityCopy::where('country_id', 160)->pluck('name', 'id'))
                     ->required()
                     ->searchable()
                     ->preload()
                     ->default(Session::get('city'))
                     ->native(false),
+                Components\TextInput::make('capacity')
+                    ->label('Required Capacity')
+                    ->integer()
+                    ->default(Session::get('capacity'))
+                    ->required(),
                 Components\DatePicker::make('checkin')
                     ->label('Check-In')
                     ->default(Session::get('checkin'))
@@ -39,12 +45,13 @@ class SearchHall extends Component implements HasForms
                 Components\DatePicker::make('checkout')
                     ->label('Check-Out')
                     ->default(Session::get('checkout'))
-                    ->required()
+                    ->required(),
+
                 // ->submitAction(new HtmlString('<button type="submit"
                 //     class="px-6 py-2 mx-auto my-3 font-medium text-white rounded bg-primary hover:bg-secondary hover:text-black max-w-max">Submit</button>'))
                 // ->columnSpanFull(),
 
-            ])->columns(3);
+            ])->columns(4);
         // ->statePath('data');
     }
 
