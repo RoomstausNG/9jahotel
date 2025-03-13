@@ -151,12 +151,12 @@
                     Bookings</a>
             </div>
             <div x-show="tab == 'room'" class="w-full max-w-5xl">
-                <section wire:snapshot="{&quot;data&quot;:{&quot;tools&quot;:null,&quot;city&quot;:null,&quot;checkin&quot;:null,&quot;checkout&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;9D1CT0qjWxg2Uzzgeen8&quot;,&quot;name&quot;:&quot;search-city&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;dfd09919520fd4860a0bceb5cdff1a895f92f9d7e6a51fba4b3415a5b515a134&quot;}" wire:effects="[]" wire:id="9D1CT0qjWxg2Uzzgeen8" class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white shadow-lg">
+                <section wire:snapshot="{&quot;data&quot;:{&quot;tools&quot;:null,&quot;city&quot;:null,&quot;checkin&quot;:null,&quot;checkout&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;e31lb4bFNJsNTCM0CUVM&quot;,&quot;name&quot;:&quot;search-city&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;9ba8f728feea33f9ef3b09b950b5930eb32d6293514eca6bb75c0281b18584e6&quot;}" wire:effects="[]" wire:id="e31lb4bFNJsNTCM0CUVM" class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white shadow-lg">
     <form wire:submit='searchHotel'
         class="flex flex-col justify-between w-full max-w-screen-xl gap-8 mx-auto lg:items-end lg:flex-row">
         <div class="items-center flex-1">
             <div
-    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(3, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;9D1CT0qjWxg2Uzzgeen8&#039;) {
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(3, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;e31lb4bFNJsNTCM0CUVM&#039;) {
                 return
             }
 
@@ -188,7 +188,7 @@
 >
     <!--[if BLOCK]><![endif]-->        
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="9D1CT0qjWxg2Uzzgeen8.city.Filament\Forms\Components\Select"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="e31lb4bFNJsNTCM0CUVM.city.Filament\Forms\Components\Select"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -267,7 +267,7 @@
                             isAutofocused: false,
                             isMultiple: false,
                             isSearchable: true,
-                            livewireId: '9D1CT0qjWxg2Uzzgeen8',
+                            livewireId: 'e31lb4bFNJsNTCM0CUVM',
                             hasDynamicOptions: false,
                             hasDynamicSearchResults: false,
                             loadingMessage: 'Loading...',
@@ -313,7 +313,7 @@
 </div>
             
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="9D1CT0qjWxg2Uzzgeen8.checkin.Filament\Forms\Components\DatePicker"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="e31lb4bFNJsNTCM0CUVM.checkin.Filament\Forms\Components\DatePicker"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -389,7 +389,7 @@
             >
                 <input x-ref="maxDate" type="hidden" value="" />
 
-                <input x-ref="minDate" type="hidden" value="2025-03-13 16:34:45" />
+                <input x-ref="minDate" type="hidden" value="2025-03-13 00:00:00" />
 
                 <input
                     x-ref="disabledDates"
@@ -420,7 +420,7 @@
                     <input
                                                 readonly
                         placeholder=""
-                        wire:key="9D1CT0qjWxg2Uzzgeen8.checkin.Filament\Forms\Components\DatePicker.display-text"
+                        wire:key="e31lb4bFNJsNTCM0CUVM.checkin.Filament\Forms\Components\DatePicker.display-text"
                         x-model="displayText"
                          id="checkin"                         class="fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6"
                     />
@@ -431,7 +431,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="9D1CT0qjWxg2Uzzgeen8.checkin.Filament\Forms\Components\DatePicker.panel"
+                    wire:key="e31lb4bFNJsNTCM0CUVM.checkin.Filament\Forms\Components\DatePicker.panel"
                     class="fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                 >
                     <div class="grid gap-y-3">
@@ -538,7 +538,7 @@
 </div>
             
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="9D1CT0qjWxg2Uzzgeen8.checkout.Filament\Forms\Components\DatePicker"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="e31lb4bFNJsNTCM0CUVM.checkout.Filament\Forms\Components\DatePicker"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -645,7 +645,7 @@
                     <input
                                                 readonly
                         placeholder=""
-                        wire:key="9D1CT0qjWxg2Uzzgeen8.checkout.Filament\Forms\Components\DatePicker.display-text"
+                        wire:key="e31lb4bFNJsNTCM0CUVM.checkout.Filament\Forms\Components\DatePicker.display-text"
                         x-model="displayText"
                          id="checkout"                         class="fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6"
                     />
@@ -656,7 +656,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="9D1CT0qjWxg2Uzzgeen8.checkout.Filament\Forms\Components\DatePicker.panel"
+                    wire:key="e31lb4bFNJsNTCM0CUVM.checkout.Filament\Forms\Components\DatePicker.panel"
                     class="fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                 >
                     <div class="grid gap-y-3">
@@ -773,12 +773,12 @@
 </section>
             </div>
             <div x-show="tab == 'hall'" class="w-full max-w-5xl">
-                <section wire:snapshot="{&quot;data&quot;:{&quot;tools&quot;:null,&quot;city&quot;:null,&quot;checkin&quot;:null,&quot;checkout&quot;:null,&quot;capacity&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;uZmIxKeqFETFbU4sQ2FO&quot;,&quot;name&quot;:&quot;search-hall&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;65c446e857b0d95a14f74c4283c15289357872d092621175df7da7a0f3ae15d3&quot;}" wire:effects="[]" wire:id="uZmIxKeqFETFbU4sQ2FO" class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white shadow-lg">
+                <section wire:snapshot="{&quot;data&quot;:{&quot;tools&quot;:null,&quot;city&quot;:null,&quot;checkin&quot;:null,&quot;checkout&quot;:null,&quot;capacity&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;YQgUAjKeC1VMVHBKQC84&quot;,&quot;name&quot;:&quot;search-hall&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;3829377137a13dbd22c5da4e039ae45657cf2e5a93721c281145a2222b614586&quot;}" wire:effects="[]" wire:id="YQgUAjKeC1VMVHBKQC84" class="w-full px-4 py-4 mx-auto space-y-8 text-white bg-white shadow-lg">
     <form wire:submit='searchHotel'
         class="flex flex-col justify-between w-full max-w-screen-xl gap-8 mx-auto lg:items-end lg:flex-row">
         <div class="items-center flex-1">
             <div
-    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(4, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;uZmIxKeqFETFbU4sQ2FO&#039;) {
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(4, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;YQgUAjKeC1VMVHBKQC84&#039;) {
                 return
             }
 
@@ -810,7 +810,7 @@
 >
     <!--[if BLOCK]><![endif]-->        
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="uZmIxKeqFETFbU4sQ2FO.city.Filament\Forms\Components\Select"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="YQgUAjKeC1VMVHBKQC84.city.Filament\Forms\Components\Select"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -889,7 +889,7 @@
                             isAutofocused: false,
                             isMultiple: false,
                             isSearchable: true,
-                            livewireId: 'uZmIxKeqFETFbU4sQ2FO',
+                            livewireId: 'YQgUAjKeC1VMVHBKQC84',
                             hasDynamicOptions: false,
                             hasDynamicSearchResults: false,
                             loadingMessage: 'Loading...',
@@ -935,7 +935,7 @@
 </div>
             
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="uZmIxKeqFETFbU4sQ2FO.capacity.Filament\Forms\Components\TextInput"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="YQgUAjKeC1VMVHBKQC84.capacity.Filament\Forms\Components\TextInput"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -1001,7 +1001,7 @@
 </div>
             
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="uZmIxKeqFETFbU4sQ2FO.checkin.Filament\Forms\Components\DatePicker"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="YQgUAjKeC1VMVHBKQC84.checkin.Filament\Forms\Components\DatePicker"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -1077,7 +1077,7 @@
             >
                 <input x-ref="maxDate" type="hidden" value="" />
 
-                <input x-ref="minDate" type="hidden" value="2025-03-13 16:34:45" />
+                <input x-ref="minDate" type="hidden" value="2025-03-13 00:00:00" />
 
                 <input
                     x-ref="disabledDates"
@@ -1108,7 +1108,7 @@
                     <input
                                                 readonly
                         placeholder=""
-                        wire:key="uZmIxKeqFETFbU4sQ2FO.checkin.Filament\Forms\Components\DatePicker.display-text"
+                        wire:key="YQgUAjKeC1VMVHBKQC84.checkin.Filament\Forms\Components\DatePicker.display-text"
                         x-model="displayText"
                          id="checkin"                         class="fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6"
                     />
@@ -1119,7 +1119,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="uZmIxKeqFETFbU4sQ2FO.checkin.Filament\Forms\Components\DatePicker.panel"
+                    wire:key="YQgUAjKeC1VMVHBKQC84.checkin.Filament\Forms\Components\DatePicker.panel"
                     class="fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                 >
                     <div class="grid gap-y-3">
@@ -1226,7 +1226,7 @@
 </div>
             
         <div
-    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="uZmIxKeqFETFbU4sQ2FO.checkout.Filament\Forms\Components\DatePicker"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="YQgUAjKeC1VMVHBKQC84.checkout.Filament\Forms\Components\DatePicker"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper
@@ -1333,7 +1333,7 @@
                     <input
                                                 readonly
                         placeholder=""
-                        wire:key="uZmIxKeqFETFbU4sQ2FO.checkout.Filament\Forms\Components\DatePicker.display-text"
+                        wire:key="YQgUAjKeC1VMVHBKQC84.checkout.Filament\Forms\Components\DatePicker.display-text"
                         x-model="displayText"
                          id="checkout"                         class="fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6"
                     />
@@ -1344,7 +1344,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="uZmIxKeqFETFbU4sQ2FO.checkout.Filament\Forms\Components\DatePicker.panel"
+                    wire:key="YQgUAjKeC1VMVHBKQC84.checkout.Filament\Forms\Components\DatePicker.panel"
                     class="fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                 >
                     <div class="grid gap-y-3">
@@ -1640,7 +1640,7 @@
         
         <section
             class="flex flex-col items-center w-full gap-8 p-4 md:p-6 lg:p-8 rounded-2xl lg:justify-between md:flex-row">
-            <div wire:snapshot="{&quot;data&quot;:{&quot;paginators&quot;:[{&quot;page&quot;:1},{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;B4g6W4OotUPqkmobOm9s&quot;,&quot;name&quot;:&quot;hotel-cities&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;9e3d26fa190fade1912de41af7e4ea0bef7c85904e651b7a5737a22a6f18d0e4&quot;}" wire:effects="{&quot;url&quot;:{&quot;paginators.page&quot;:{&quot;as&quot;:&quot;page&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:null}}}" wire:id="B4g6W4OotUPqkmobOm9s" class="w-full mx-auto space-y-8 lg:p-0">
+            <div wire:snapshot="{&quot;data&quot;:{&quot;paginators&quot;:[{&quot;page&quot;:1},{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;M7wed0Ix1hpCGgRSmsB7&quot;,&quot;name&quot;:&quot;hotel-cities&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;e2df9743ed54f99cdde21426a4ee5c74c7a667c6331836b625ecba07f98617c2&quot;}" wire:effects="{&quot;url&quot;:{&quot;paginators.page&quot;:{&quot;as&quot;:&quot;page&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:null}}}" wire:id="M7wed0Ix1hpCGgRSmsB7" class="w-full mx-auto space-y-8 lg:p-0">
     <div class="px-4 text-center lg:px-0">
         <h1 class="text-2xl font-semibold md:text-3xl">
             Select a city to book a hotel.
@@ -1928,7 +1928,7 @@
         </section>
     </div>
 
-    <section wire:snapshot="{&quot;data&quot;:{&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;M89rT2U7l88UYSBorVT3&quot;,&quot;name&quot;:&quot;subscribe&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;5bedc3b13de197c03f0c69f46ff9e485878119e4ca018f2905e23b66ab835407&quot;}" wire:effects="[]" wire:id="M89rT2U7l88UYSBorVT3" class="flex flex-col items-center justify-center w-full py-16 space-y-8 bg-slate-100">
+    <section wire:snapshot="{&quot;data&quot;:{&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;b3bTtNC4n2NWZrXurKoA&quot;,&quot;name&quot;:&quot;subscribe&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;fc448e49bda7152a62279b3948fb2c0875065a3d612b63dae56bb31b06c77e8f&quot;}" wire:effects="[]" wire:id="b3bTtNC4n2NWZrXurKoA" class="flex flex-col items-center justify-center w-full py-16 space-y-8 bg-slate-100">
     <div class="text-center">
         <h1 class="text-2xl font-semibold">Exclusive Hotel Deals and Offers</h1>
         <p>Sign up with your email address to receive exclusive hotel deals and special offers.</p>
@@ -1937,7 +1937,7 @@
         <form wire:submit='create' class="flex items-end gap-3">
             <div class="flex-1">
                 <div
-    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;M89rT2U7l88UYSBorVT3&#039;) {
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;b3bTtNC4n2NWZrXurKoA&#039;) {
                 return
             }
 
@@ -1969,7 +1969,7 @@
 >
     <!--[if BLOCK]><![endif]-->        
         <div
-    style="--col-span-default: 1 / -1;" class="col-[--col-span-default]" wire:key="M89rT2U7l88UYSBorVT3.data.email.Filament\Forms\Components\TextInput"
+    style="--col-span-default: 1 / -1;" class="col-[--col-span-default]" wire:key="b3bTtNC4n2NWZrXurKoA.data.email.Filament\Forms\Components\TextInput"
 >
     <!--[if BLOCK]><![endif]-->                <div
     data-field-wrapper

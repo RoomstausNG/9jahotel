@@ -41,7 +41,7 @@ class SearchHall extends Component implements HasForms
                 Components\DatePicker::make('checkin')
                     ->label('Proposed Use date start')
                     ->default(Session::get('checkin'))
-                    ->minDate(now())
+                    ->minDate(today())
                     ->displayFormat('d F Y')
                     ->prefixIcon('heroicon-m-calendar-days')
                     ->native(false)

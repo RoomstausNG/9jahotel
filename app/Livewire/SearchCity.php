@@ -37,7 +37,7 @@ class SearchCity extends Component implements HasForms
                     ->label('Check-In')
                     ->default(Session::get('checkin'))
                     ->displayFormat('d F Y')->prefixIcon('heroicon-m-calendar-days')
-                    ->minDate(now())
+                    ->minDate(today())
                     ->native(false)
                     ->required(),
                 Components\DatePicker::make('checkout')
