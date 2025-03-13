@@ -15,7 +15,7 @@ class BackOfficeMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()->hasRole(["super-admin", "back-office"])) {
+        if (!$request->user()->hasRole(["super-admin", "back-office", "marketer"])) {
             return redirect("/hotel");
         }
 
