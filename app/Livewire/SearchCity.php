@@ -26,7 +26,7 @@ class SearchCity extends Component implements HasForms
         return $form
             ->schema([
                 Components\Select::make('city')
-                    ->label('Where To?')
+                    ->label('Where are you going?')
                     ->options(CityCopy::where('country_id', 160)->pluck('name', 'id'))
                     ->required()
                     ->searchable()
@@ -34,11 +34,11 @@ class SearchCity extends Component implements HasForms
                     ->default(Session::get('city'))
                     ->native(false),
                 Components\DatePicker::make('checkin')
-                    ->label('Check in')
+                    ->label('Check-In')
                     ->default(Session::get('checkin'))
                     ->required(),
                 Components\DatePicker::make('checkout')
-                    ->label('Check Out')
+                    ->label('Check-Out')
                     ->default(Session::get('checkout'))
                     ->required()
                 // ->submitAction(new HtmlString('<button type="submit"
@@ -67,9 +67,7 @@ class SearchCity extends Component implements HasForms
         return redirect()->route('hotels.result', $data['city']);
     }
 
-    public function mount()
-    {
-    }
+    public function mount() {}
 
     public function render()
     {

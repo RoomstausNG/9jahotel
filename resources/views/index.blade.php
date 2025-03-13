@@ -4,9 +4,13 @@
         style="width: 100%; height: 100vh; background:  url('/img/background.jpeg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center;">
         <div x-data="{ tab: 'room' }" class="w-full max-w-screen-xl px-4 mx-auto">
             <div class="flex max-w-max bg-white">
-                <button class="px-8 md:px-12 py-3 inline-block hover:text-primary">Room</button>
-                <button class="px-8 md:px-12 py-3 inline-block border-x hover:text-primary">Event Hall</button>
-                <a href="group-booking" class="px-8 md:px-12 py-3 inline-block hover:text-primary">Group Bookings</a>
+                <button :class="[tab == 'room' ? 'bg-primary-500 text-white font-medium' : 'bg-white ']"
+                    @click="tab = 'room'" class="px-8 md:px-12 py-3 inline-block hover:bg-primary">Room</button>
+                <button @click="tab = 'hall'" class="px-8 md:px-12 py-3 inline-block border-x hover:bg-primary"
+                    :class="[tab == 'hall' ? 'bg-primary-500 text-white font-medium' : 'bg-white ']">Event
+                    Halls</button>
+                <a href="group-booking" class="px-8  md:px-12 py-3 inline-block hover:bg-primary">Group
+                    Bookings</a>
             </div>
             <div class="w-full">
                 @livewire('search-city')
