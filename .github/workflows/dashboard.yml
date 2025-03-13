@@ -22,7 +22,7 @@ jobs:
         run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache && chmod -R 777 deploy.sh
+        run: chmod -R 777 storage bootstrap/cache deploy.sh && chown -R 777 storage bootstrap/cache deploy.sh
 
       - name: Clear Config
         run: php artisan config:clear
