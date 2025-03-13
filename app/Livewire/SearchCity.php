@@ -36,10 +36,15 @@ class SearchCity extends Component implements HasForms
                 Components\DatePicker::make('checkin')
                     ->label('Check-In')
                     ->default(Session::get('checkin'))
+                    ->displayFormat('d F Y')->prefixIcon('heroicon-m-calendar-days')
+                    ->default(today())
+                    ->minDate(now())
+                    ->native(false)
                     ->required(),
                 Components\DatePicker::make('checkout')
                     ->label('Check-Out')
                     ->default(Session::get('checkout'))
+                    ->native(false)
                     ->required()
                 // ->submitAction(new HtmlString('<button type="submit"
                 //     class="px-6 py-2 mx-auto my-3 font-medium text-white rounded bg-primary hover:bg-secondary hover:text-black max-w-max">Submit</button>'))
