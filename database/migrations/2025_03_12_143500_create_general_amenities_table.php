@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('general_amenities', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string("icon")->nullable();
+            $table->text("icon")->nullable();
             $table->timestamps();
         });
 

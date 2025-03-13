@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <title>9jahotels | Roomstatus</title>
+    <link
+            href="http://wakalor.test/css/filament/forms/forms.css?v=3.2.140.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+                <link
+            href="http://wakalor.test/css/filament/support/support.css?v=3.2.140.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+                <link
+            href="http://wakalor.test/css/husam-tariq/filament-timepicker/husam-tariq/filament-timepicker3.0.1.0.css?v=3.0.1.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+                <link
+            href="http://wakalor.test/css/mokhosh/filament-rating/filament-rating-styles.css?v=1.4.1.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+                <link
+            href="http://wakalor.test/css/app/db.css?v=3.2.140.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+    
+<style>
+    :root {
+         --danger-50:255, 242, 242;  --danger-100:255, 230, 230;  --danger-200:255, 191, 191;  --danger-300:255, 153, 153;  --danger-400:255, 77, 77;  --danger-500:255, 0, 0;  --danger-600:230, 0, 0;  --danger-700:191, 0, 0;  --danger-800:153, 0, 0;  --danger-900:125, 0, 0;  --danger-950:77, 0, 0;  --gray-50:250, 250, 250;  --gray-100:244, 244, 245;  --gray-200:228, 228, 231;  --gray-300:212, 212, 216;  --gray-400:161, 161, 170;  --gray-500:113, 113, 122;  --gray-600:82, 82, 91;  --gray-700:63, 63, 70;  --gray-800:39, 39, 42;  --gray-900:24, 24, 27;  --gray-950:9, 9, 11;  --info-50:239, 246, 255;  --info-100:219, 234, 254;  --info-200:191, 219, 254;  --info-300:147, 197, 253;  --info-400:96, 165, 250;  --info-500:59, 130, 246;  --info-600:37, 99, 235;  --info-700:29, 78, 216;  --info-800:30, 64, 175;  --info-900:30, 58, 138;  --info-950:23, 37, 84;  --primary-50:255, 251, 235;  --primary-100:254, 243, 199;  --primary-200:253, 230, 138;  --primary-300:252, 211, 77;  --primary-400:251, 191, 36;  --primary-500:245, 158, 11;  --primary-600:217, 119, 6;  --primary-700:180, 83, 9;  --primary-800:146, 64, 14;  --primary-900:120, 53, 15;  --primary-950:69, 26, 3;  --success-50:240, 253, 244;  --success-100:220, 252, 231;  --success-200:187, 247, 208;  --success-300:134, 239, 172;  --success-400:74, 222, 128;  --success-500:34, 197, 94;  --success-600:22, 163, 74;  --success-700:21, 128, 61;  --success-800:22, 101, 52;  --success-900:20, 83, 45;  --success-950:5, 46, 22;  --warning-50:255, 251, 235;  --warning-100:254, 243, 199;  --warning-200:253, 230, 138;  --warning-300:252, 211, 77;  --warning-400:251, 191, 36;  --warning-500:245, 158, 11;  --warning-600:217, 119, 6;  --warning-700:180, 83, 9;  --warning-800:146, 64, 14;  --warning-900:120, 53, 15;  --warning-950:69, 26, 3;  --available-50:253, 253, 253;  --available-100:252, 252, 252;  --available-200:247, 247, 247;  --available-300:241, 241, 241;  --available-400:231, 231, 231;  --available-500:221, 221, 221;  --available-600:199, 199, 199;  --available-700:166, 166, 166;  --available-800:133, 133, 133;  --available-900:108, 108, 108;  --available-950:66, 66, 66;  --pending-50:255, 252, 242;  --pending-100:255, 250, 230;  --pending-200:255, 242, 191;  --pending-300:255, 235, 153;  --pending-400:255, 219, 77;  --pending-500:255, 204, 0;  --pending-600:230, 184, 0;  --pending-700:191, 153, 0;  --pending-800:153, 122, 0;  --pending-900:125, 100, 0;  --pending-950:77, 61, 0;  --unpaid-50:255, 252, 242;  --unpaid-100:255, 250, 230;  --unpaid-200:255, 242, 191;  --unpaid-300:255, 235, 153;  --unpaid-400:255, 219, 77;  --unpaid-500:255, 204, 0;  --unpaid-600:230, 184, 0;  --unpaid-700:191, 153, 0;  --unpaid-800:153, 122, 0;  --unpaid-900:125, 100, 0;  --unpaid-950:77, 61, 0;  --booked-50:242, 249, 242;  --booked-100:230, 242, 230;  --booked-200:191, 223, 191;  --booked-300:153, 204, 153;  --booked-400:77, 166, 77;  --booked-500:0, 128, 0;  --booked-600:0, 115, 0;  --booked-700:0, 96, 0;  --booked-800:0, 77, 0;  --booked-900:0, 63, 0;  --booked-950:0, 38, 0;  --paid-50:242, 249, 242;  --paid-100:230, 242, 230;  --paid-200:191, 223, 191;  --paid-300:153, 204, 153;  --paid-400:77, 166, 77;  --paid-500:0, 128, 0;  --paid-600:0, 115, 0;  --paid-700:0, 96, 0;  --paid-800:0, 77, 0;  --paid-900:0, 63, 0;  --paid-950:0, 38, 0;  --occupied-50:255, 242, 242;  --occupied-100:255, 230, 230;  --occupied-200:255, 191, 191;  --occupied-300:255, 153, 153;  --occupied-400:255, 77, 77;  --occupied-500:255, 0, 0;  --occupied-600:230, 0, 0;  --occupied-700:191, 0, 0;  --occupied-800:153, 0, 0;  --occupied-900:125, 0, 0;  --occupied-950:77, 0, 0;  --late-50:255, 251, 242;  --late-100:255, 246, 230;  --late-200:255, 233, 191;  --late-300:255, 219, 153;  --late-400:255, 192, 77;  --late-500:255, 165, 0;  --late-600:230, 149, 0;  --late-700:191, 124, 0;  --late-800:153, 99, 0;  --late-900:125, 81, 0;  --late-950:77, 50, 0;  --dirty-50:251, 244, 244;  --dirty-100:246, 234, 234;  --dirty-200:233, 202, 202;  --dirty-300:219, 170, 170;  --dirty-400:192, 106, 106;  --dirty-500:165, 42, 42;  --dirty-600:149, 38, 38;  --dirty-700:124, 32, 32;  --dirty-800:99, 25, 25;  --dirty-900:81, 21, 21;  --dirty-950:50, 13, 13;  --repair-50:242, 242, 242;  --repair-100:230, 230, 230;  --repair-200:191, 191, 191;  --repair-300:153, 153, 153;  --repair-400:77, 77, 77;  --repair-500:0, 0, 0;  --repair-600:0, 0, 0;  --repair-700:0, 0, 0;  --repair-800:0, 0, 0;  --repair-900:0, 0, 0;  --repair-950:0, 0, 0;  --Available-50:253, 253, 253;  --Available-100:252, 252, 252;  --Available-200:247, 247, 247;  --Available-300:241, 241, 241;  --Available-400:231, 231, 231;  --Available-500:221, 221, 221;  --Available-600:199, 199, 199;  --Available-700:166, 166, 166;  --Available-800:133, 133, 133;  --Available-900:108, 108, 108;  --Available-950:66, 66, 66;  --Pending-50:255, 252, 242;  --Pending-100:255, 250, 230;  --Pending-200:255, 242, 191;  --Pending-300:255, 235, 153;  --Pending-400:255, 219, 77;  --Pending-500:255, 204, 0;  --Pending-600:230, 184, 0;  --Pending-700:191, 153, 0;  --Pending-800:153, 122, 0;  --Pending-900:125, 100, 0;  --Pending-950:77, 61, 0;  --Unpaid-50:255, 252, 242;  --Unpaid-100:255, 250, 230;  --Unpaid-200:255, 242, 191;  --Unpaid-300:255, 235, 153;  --Unpaid-400:255, 219, 77;  --Unpaid-500:255, 204, 0;  --Unpaid-600:230, 184, 0;  --Unpaid-700:191, 153, 0;  --Unpaid-800:153, 122, 0;  --Unpaid-900:125, 100, 0;  --Unpaid-950:77, 61, 0;  --Paid-50:242, 249, 242;  --Paid-100:230, 242, 230;  --Paid-200:191, 223, 191;  --Paid-300:153, 204, 153;  --Paid-400:77, 166, 77;  --Paid-500:0, 128, 0;  --Paid-600:0, 115, 0;  --Paid-700:0, 96, 0;  --Paid-800:0, 77, 0;  --Paid-900:0, 63, 0;  --Paid-950:0, 38, 0;  --Occupied-50:255, 242, 242;  --Occupied-100:255, 230, 230;  --Occupied-200:255, 191, 191;  --Occupied-300:255, 153, 153;  --Occupied-400:255, 77, 77;  --Occupied-500:255, 0, 0;  --Occupied-600:230, 0, 0;  --Occupied-700:191, 0, 0;  --Occupied-800:153, 0, 0;  --Occupied-900:125, 0, 0;  --Occupied-950:77, 0, 0;  --Late-50:251, 245, 242;  --Late-100:247, 235, 230;  --Late-200:234, 204, 191;  --Late-300:221, 173, 153;  --Late-400:196, 112, 77;  --Late-500:170, 51, 0;  --Late-600:153, 46, 0;  --Late-700:128, 38, 0;  --Late-800:102, 31, 0;  --Late-900:83, 25, 0;  --Late-950:51, 15, 0;  --Dirty-50:251, 244, 244;  --Dirty-100:246, 234, 234;  --Dirty-200:233, 202, 202;  --Dirty-300:219, 170, 170;  --Dirty-400:192, 106, 106;  --Dirty-500:165, 42, 42;  --Dirty-600:149, 38, 38;  --Dirty-700:124, 32, 32;  --Dirty-800:99, 25, 25;  --Dirty-900:81, 21, 21;  --Dirty-950:50, 13, 13;  --Repair-50:242, 242, 242;  --Repair-100:230, 230, 230;  --Repair-200:191, 191, 191;  --Repair-300:153, 153, 153;  --Repair-400:77, 77, 77;  --Repair-500:0, 0, 0;  --Repair-600:0, 0, 0;  --Repair-700:0, 0, 0;  --Repair-800:0, 0, 0;  --Repair-900:0, 0, 0;  --Repair-950:0, 0, 0;  --income-50:243, 252, 243;  --income-100:230, 250, 231;  --income-200:193, 242, 194;  --income-300:155, 235, 157;  --income-400:80, 219, 84;  --income-500:5, 204, 10;  --income-600:5, 184, 9;  --income-700:4, 153, 8;  --income-800:3, 122, 6;  --income-900:2, 100, 5;  --income-950:2, 61, 3;  --expenditure-50:254, 242, 243;  --expenditure-100:253, 230, 232;  --expenditure-200:251, 191, 197;  --expenditure-300:248, 153, 162;  --expenditure-400:243, 77, 92;  --expenditure-500:238, 0, 22;  --expenditure-600:214, 0, 20;  --expenditure-700:179, 0, 17;  --expenditure-800:143, 0, 13;  --expenditure-900:117, 0, 11;  --expenditure-950:71, 0, 7;     }
+</style>
+    <script type="module" src="http://[::1]:5173/@vite/client" data-navigate-track="reload"></script><link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css" data-navigate-track="reload" /><link rel="stylesheet" href="http://[::1]:5173/resources/sass/main.scss" data-navigate-track="reload" /></head>
+
+<body class="antialiased">
+
+
+    <nav class="bg-white border-b border-gray-200 ">
+        <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 py-2 mx-auto">
+            <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <img src="http://wakalor.test/img/9jahotel_logo.png" class="w-auto h-12 md:h-16"
+                    alt="wakalor" />
+            </a>
+            <button data-collapse-toggle="navbar-dropdown" type="button"
+                class="inline-flex items-center justify-center w-10 h-10 p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                aria-controls="navbar-dropdown" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 1h15M1 7h15M1 13h15" />
+                </svg>
+            </button>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-dropdown">
+                <ul
+                    class="flex flex-col items-center px-4 py-2 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    
+                    
+                    
+                    <li>
+                        <a href="/hotels"
+                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Hotels</a>
+                    </li>
+                    <li>
+                        <a href="/hotel/login"
+                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Sign
+                            in</a>
+                    </li>
+                    <li class="">
+                        <a href="http://wakalor.test/signup/hotel"
+                            class="block px-3 py-2 text-white rounded bg-primary hover:bg-primary-700">Register
+                            your Hotel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div wire:snapshot="{&quot;data&quot;:{&quot;city&quot;:[null,{&quot;class&quot;:&quot;App\\Models\\CityCopy&quot;,&quot;key&quot;:79282,&quot;s&quot;:&quot;mdl&quot;}],&quot;name&quot;:null,&quot;low&quot;:null,&quot;high&quot;:null,&quot;perPage&quot;:12},&quot;memo&quot;:{&quot;id&quot;:&quot;YCTtZuoUzMuIXvxI9J1I&quot;,&quot;name&quot;:&quot;search-result&quot;,&quot;path&quot;:&quot;hotels\/79282&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;74c145b434482612e363c30a3d1a910bf5581cd22924da88bf80ad5ac0e8002d&quot;}" wire:effects="[]" wire:id="YCTtZuoUzMuIXvxI9J1I" class="w-full mx-auto">
+    <div class="w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
+        
+        <div class="w-full">
+            <h1 class="text-2xl font-semibold text-center">Search Hotel result</h1>
+        </div>
+        <div class="grid gap-8">
+            
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 w-grid">
+                <div class="hidden w-full pr-4 space-y-8 lg:block">
+                    <div class="space-y-2">
+                        <p class="text-lg font-medium">Search hotel by name</p>
+                        <input wire:model.live='name' type="text"
+                            class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                    </div>
+                    <p class="text-xl font-medium">Filter By</p>
+                    <div class="space-y-2">
+                        <p class="font-medium">Price per night</p>
+                        <div class="flex space-x-4">
+                            <input wire:model.live='low' type="text" placeholder="min price"
+                                class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                            <input wire:model.live='high' type="text" placeholder="max price"
+                                class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                        </div>
+                        <input type="range" class="w-full focus:text-primary focus:bg-primary">
+                    </div>
+                </div>
+                <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[768px] xl:max-w-[800px]">
+                    <div class="flex flex-col justify-between w-full md:flex-row">
+                        
+                        <div class="flex items-center justify-between w-full space-y-2">
+                            <label for="" class="text-xl font-medium">Sort results by</label>
+                            <select wire:model.live='sortBy'
+                                class="w-full border-gray-400 max-w-[180px] text-sm rounded-lg shadow py-2 focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                                <option>Recomended</option>
+                                <option value="low">Price: Low to High</option>
+                                <option value="high">Price: High to Low</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!--[if BLOCK]><![endif]-->                        <div
+                            class="flex flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border gap-x-2">
+                            <div class="w-full h-full md:w-1/3">
+                                <img src="https://res.cloudinary.com/dcm83lp3b/image/upload/v1741853501/hotel_background/01JP78Y7Y71YP0YB52BKBM6ZPT.jpg"
+                                    class="block object-cover object-center w-full min-h-[250px] md:max-h-[280px] md:min-h-[200px] h-full"
+                                    alt="Zenith City Hotel &amp; Suites">
+                            </div>
+
+                            <div class="flex flex-col justify-between flex-1 p-4 md:pb-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <p class="text-xl font-medium capitalize">Zenith City Hotel &amp; Suites</p>
+                                        <p class="text-sm capitalize" style="line-height: 16px">
+                                            6 Ibadan Road, Ijebu-Ode</p>
+                                    </div>
+                                    <p class="flex flex-wrap w-full gap-2">
+                                        <!--[if BLOCK]><![endif]-->                                            <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Swimming Pool</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Wi Fi</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Free Car Parkings</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Gym</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Weight</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">Radio</span>
+                                                                                    <span style="white-space:nowrap"
+                                                class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">pool</span>
+                                        <!--[if ENDBLOCK]><![endif]-->
+                                    </p>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="p-0">
+                                        <div class="flex items-center justify-end p-0 space-x-3">
+                                                                                        <p class="text-sm font-medium">Walk-in Price</p>
+                                            <p class="text-lg font-medium text-gray-500 line-through ">
+                                                ₦8,000.00
+                                            </p>
+
+                                        </div>
+                                        <div class="flex items-center justify-between p-0">
+
+                                            <p class="text-lg">Price from:</p>
+                                            <p class="text-xl font-semibold">
+                                                ₦7,600.00
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div class="">
+                                            <!--[if BLOCK]><![endif]-->                                                <p
+                                                    class="bg-gray-200 px-2 py-1 shadow max-w-max text-sm font-medium rounded">
+                                                    No reviews
+                                                    yet
+                                                </p>
+                                            <!--[if ENDBLOCK]><![endif]-->
+                                        </div>
+                                        <p>
+                                            <a href="http://wakalor.test/hotel/ZCHS241"
+                                                class="px-4 py-2 font-medium text-white bg-green-600 rounded-md">Book
+                                                Hotel</a>
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]-->
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <section wire:snapshot="{&quot;data&quot;:{&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;CSbr6VxA054Xl1eTGnkU&quot;,&quot;name&quot;:&quot;subscribe&quot;,&quot;path&quot;:&quot;hotels\/79282&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;3d19b1c80411fd855fee41f26c407eea3d4e30063a28fc9b7b39037c06a43eea&quot;}" wire:effects="[]" wire:id="CSbr6VxA054Xl1eTGnkU" class="flex flex-col items-center justify-center w-full py-16 space-y-8 bg-slate-100">
+    <div class="text-center">
+        <h1 class="text-2xl font-semibold">Exclusive Hotel Deals and Offers</h1>
+        <p>Sign up with your email address to receive exclusive hotel deals and special offers.</p>
+    </div>
+    <div class="w-full px-8 mx-auto max-w-[600px]">
+        <form wire:submit='create' class="flex items-end gap-3">
+            <div class="flex-1">
+                <div
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;CSbr6VxA054Xl1eTGnkU&#039;) {
+                return
+            }
+
+            $nextTick(() =&gt; {
+                let error = $el.querySelector(&#039;[data-validation-error]&#039;)
+
+                if (! error) {
+                    return
+                }
+
+                let elementToExpand = error
+
+                while (elementToExpand) {
+                    elementToExpand.dispatchEvent(new CustomEvent(&#039;expand&#039;))
+
+                    elementToExpand = elementToExpand.parentNode
+                }
+
+                setTimeout(
+                    () =&gt;
+                        error.closest(&#039;[data-field-wrapper]&#039;).scrollIntoView({
+                            behavior: &#039;smooth&#039;,
+                            block: &#039;start&#039;,
+                            inline: &#039;start&#039;,
+                        }),
+                    200,
+                )
+        })"
+>
+    <!--[if BLOCK]><![endif]-->        
+        <div
+    style="--col-span-default: 1 / -1;" class="col-[--col-span-default]" wire:key="CSbr6VxA054Xl1eTGnkU.data.email.Filament\Forms\Components\TextInput"
+>
+    <!--[if BLOCK]><![endif]-->                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->                    <label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.email"
+>
+    
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Email Address<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+</label>
+                <!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+        class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-text-input overflow-hidden"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+                class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <input
+    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3" id="data.email" placeholder="Your email address here" required="required" type="email" wire:model="data.email"
+/>
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+            <!--[if ENDBLOCK]><![endif]-->
+</div>
+    <!--[if ENDBLOCK]><![endif]-->
+</div>
+
+            </div>
+
+            
+            <button type="submit"
+                class="px-6 py-[6px] mx-auto font-medium text-white rounded bg-primary hover:bg-secondary hover:text-black max-w-max">Submit</button>
+        </form>
+    </div>
+
+</section>
+    <footer class="w-full p-4 text-white bg-primary-DARK ">
+        <div class="w-full max-w-screen-xl p-4 py-6 mx-auto lg:py-8">
+            <div class="flex flex-wrap justify-between w-full gap-y-8">
+
+                
+
+                <div class="man-w-[150px] text-left space-y-4">
+                    <h1 class="text-xl font-medium">Policies</h1>
+                    <ul>
+
+                        <li class="hover:underline">
+                            <a href="" class=""> Terms & Conditions</a>
+                        </li>
+                        <li class="hover:underline">
+                            <a href="" class=""> Privacy</a>
+                        </li>
+                        <li class="hover:underline">
+                            <a href="" class="">Cookies</a>
+                        </li>
+                        <li class="hover:underline">
+                            <a href="" class="">Content guidelines and
+                                reporting content</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="max-w-[350px] text-left space-y-4">
+                    <h1 class="text-xl font-medium">For suppliers affilates and Marketers</h1>
+                    <ul>
+
+                        <li class="hover:underline">
+                            <a href="" class="">Become a marketer</a>
+                        </li>
+                        <li class="hover:underline">
+                            <a href="" class="">Promote with us</a>
+                        </li>
+                        <li class="hover:underline">
+                            <a href="" class="">Become our hotels suppliers</a>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+                <div class="man-w-[100px] text-left space-y-4">
+                    <h1 class="text-xl font-medium">Support and Faqs</h1>
+                </div>
+
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto lg:my-8" />
+            <div class="text-white sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center">© 2014 - 2025 <a href="/"
+                        class="hover:underline">9jahotel™</a>. All Rights Reserved.
+                </span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-gray-900">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                            viewBox="0 0 8 19">
+                            <path fill-rule="evenodd"
+                                d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="sr-only">Facebook page</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 21 16">
+                            <path
+                                d="M16.942 1.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.585 11.585 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3A17.392 17.392 0 0 0 .182 13.218a15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.63 10.63 0 0 1-1.706-.83c.143-.106.283-.217.418-.33a11.664 11.664 0 0 0 10.118 0c.137.113.277.224.418.33-.544.328-1.116.606-1.71.832a12.52 12.52 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59ZM6.678 10.813a1.941 1.941 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.919 1.919 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Zm6.644 0a1.94 1.94 0 0 1-1.8-2.045 1.93 1.93 0 0 1 1.8-2.047 1.918 1.918 0 0 1 1.8 2.047 1.93 1.93 0 0 1-1.8 2.045Z" />
+                        </svg>
+                        <span class="sr-only">Discord community</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 17">
+                            <path fill-rule="evenodd"
+                                d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="sr-only">Twitter page</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="sr-only">GitHub account</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 0a10 10 0 1 0 10 10A10.009 10.009 0 0 0 10 0Zm6.613 4.614a8.523 8.523 0 0 1 1.93 5.32 20.094 20.094 0 0 0-5.949-.274c-.059-.149-.122-.292-.184-.441a23.879 23.879 0 0 0-.566-1.239 11.41 11.41 0 0 0 4.769-3.366ZM8 1.707a8.821 8.821 0 0 1 2-.238 8.5 8.5 0 0 1 5.664 2.152 9.608 9.608 0 0 1-4.476 3.087A45.758 45.758 0 0 0 8 1.707ZM1.642 8.262a8.57 8.57 0 0 1 4.73-5.981A53.998 53.998 0 0 1 9.54 7.222a32.078 32.078 0 0 1-7.9 1.04h.002Zm2.01 7.46a8.51 8.51 0 0 1-2.2-5.707v-.262a31.64 31.64 0 0 0 8.777-1.219c.243.477.477.964.692 1.449-.114.032-.227.067-.336.1a13.569 13.569 0 0 0-6.942 5.636l.009.003ZM10 18.556a8.508 8.508 0 0 1-5.243-1.8 11.717 11.717 0 0 1 6.7-5.332.509.509 0 0 1 .055-.02 35.65 35.65 0 0 1 1.819 6.476 8.476 8.476 0 0 1-3.331.676Zm4.772-1.462A37.232 37.232 0 0 0 13.113 11a12.513 12.513 0 0 1 5.321.364 8.56 8.56 0 0 1-3.66 5.73h-.002Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="sr-only">Dribbble account</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.filamentData = []    </script>
+
+            
+            <script
+                src="http://wakalor.test/js/filament/notifications/notifications.js?v=3.2.140.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+                
+            <script
+                src="http://wakalor.test/js/filament/support/support.js?v=3.2.140.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+                
+            <script
+                src="http://wakalor.test/js/husam-tariq/filament-timepicker/husam-tariq/filament-timepicker3.0.1.0.js?v=3.0.1.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+                
+            <script
+                src="http://wakalor.test/js/mokhosh/filament-rating/filament-rating-scripts.js?v=1.4.1.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+    
+<style>
+    :root {
+            }
+</style>
+    <script type="module" src="http://[::1]:5173/@vite/client" data-navigate-track="reload"></script><script type="module" src="http://[::1]:5173/resources/js/app.js" data-navigate-track="reload"></script>
+    <p class="bg-[#00FF00]"></p>
+    <p class="bg-[#ADFF2F]"></p>
+    <p class="bg-[#FFFF00]"></p>
+    <p class="bg-[#FFA500]"></p>
+    <p class="bg-[#FF0000]"></p>
+    <p class="bg-[#808080]"></p>
+    <p class="bg-[#A5FF00]"></p>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    /**** Livewire Alert Scripts ****/
+    (()=>{var __webpack_modules__={757:(e,t,r)=>{e.exports=r(666)},666:e=>{var t=function(e){"use strict";var t,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",c=o.toStringTag||"@@toStringTag";function s(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{s({},"")}catch(e){s=function(e,t,r){return e[t]=r}}function l(e,t,r,n){var o=t&&t.prototype instanceof y?t:y,i=Object.create(o.prototype),a=new x(n||[]);return i._invoke=function(e,t,r){var n=f;return function(o,i){if(n===_)throw new Error("Generator is already running");if(n===d){if("throw"===o)throw i;return S()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var c=L(a,r);if(c){if(c===h)continue;return c}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=d,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=_;var s=u(e,t,r);if("normal"===s.type){if(n=r.done?d:p,s.arg===h)continue;return{value:s.arg,done:r.done}}"throw"===s.type&&(n=d,r.method="throw",r.arg=s.arg)}}}(e,r,a),i}function u(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=l;var f="suspendedStart",p="suspendedYield",_="executing",d="completed",h={};function y(){}function v(){}function b(){}var m={};s(m,i,(function(){return this}));var w=Object.getPrototypeOf,g=w&&w(w(D([])));g&&g!==r&&n.call(g,i)&&(m=g);var O=b.prototype=y.prototype=Object.create(m);function E(e){["next","throw","return"].forEach((function(t){s(e,t,(function(e){return this._invoke(t,e)}))}))}function k(e,t){function r(o,i,a,c){var s=u(e[o],e,i);if("throw"!==s.type){var l=s.arg,f=l.value;return f&&"object"==typeof f&&n.call(f,"__await")?t.resolve(f.__await).then((function(e){r("next",e,a,c)}),(function(e){r("throw",e,a,c)})):t.resolve(f).then((function(e){l.value=e,a(l)}),(function(e){return r("throw",e,a,c)}))}c(s.arg)}var o;this._invoke=function(e,n){function i(){return new t((function(t,o){r(e,n,t,o)}))}return o=o?o.then(i,i):i()}}function L(e,r){var n=e.iterator[r.method];if(n===t){if(r.delegate=null,"throw"===r.method){if(e.iterator.return&&(r.method="return",r.arg=t,L(e,r),"throw"===r.method))return h;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return h}var o=u(n,e.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,h;var i=o.arg;return i?i.done?(r[e.resultName]=i.value,r.next=e.nextLoc,"return"!==r.method&&(r.method="next",r.arg=t),r.delegate=null,h):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,h)}function j(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function P(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function x(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(j,this),this.reset(!0)}function D(e){if(e){var r=e[i];if(r)return r.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var o=-1,a=function r(){for(;++o<e.length;)if(n.call(e,o))return r.value=e[o],r.done=!1,r;return r.value=t,r.done=!0,r};return a.next=a}}return{next:S}}function S(){return{value:t,done:!0}}return v.prototype=b,s(O,"constructor",b),s(b,"constructor",v),v.displayName=s(b,c,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===v||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,b):(e.__proto__=b,s(e,c,"GeneratorFunction")),e.prototype=Object.create(O),e},e.awrap=function(e){return{__await:e}},E(k.prototype),s(k.prototype,a,(function(){return this})),e.AsyncIterator=k,e.async=function(t,r,n,o,i){void 0===i&&(i=Promise);var a=new k(l(t,r,n,o),i);return e.isGeneratorFunction(r)?a:a.next().then((function(e){return e.done?e.value:a.next()}))},E(O),s(O,c,"Generator"),s(O,i,(function(){return this})),s(O,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=D,x.prototype={constructor:x,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=t,this.done=!1,this.delegate=null,this.method="next",this.arg=t,this.tryEntries.forEach(P),!e)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=t)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var r=this;function o(n,o){return c.type="throw",c.arg=e,r.next=n,o&&(r.method="next",r.arg=t),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],c=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var s=n.call(a,"catchLoc"),l=n.call(a,"finallyLoc");if(s&&l){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!l)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(e,t){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===e||"continue"===e)&&i.tryLoc<=t&&t<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=e,a.arg=t,i?(this.method="next",this.next=i.finallyLoc,h):this.complete(a)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),h},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),P(r),h}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var o=n.arg;P(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,r,n){return this.delegate={iterator:D(e),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=t),h}},e}(e.exports);try{regeneratorRuntime=t}catch(e){"object"==typeof globalThis?globalThis.regeneratorRuntime=t:Function("r","regeneratorRuntime = r")(t)}}},__webpack_module_cache__={};function __webpack_require__(e){var t=__webpack_module_cache__[e];if(void 0!==t)return t.exports;var r=__webpack_module_cache__[e]={exports:{}};return __webpack_modules__[e](r,r.exports,__webpack_require__),r.exports}__webpack_require__.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return __webpack_require__.d(t,{a:t}),t},__webpack_require__.d=(e,t)=>{for(var r in t)__webpack_require__.o(t,r)&&!__webpack_require__.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},__webpack_require__.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var __webpack_exports__={};(()=>{"use strict";var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__=__webpack_require__(757),_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default=__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);function ownKeys(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function _objectSpread(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?ownKeys(Object(r),!0).forEach((function(t){_defineProperty(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):ownKeys(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function _defineProperty(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function asyncGeneratorStep(e,t,r,n,o,i,a){try{var c=e[i](a),s=c.value}catch(e){return void r(e)}c.done?t(s):Promise.resolve(s).then(n,o)}function _asyncToGenerator(e){return function(){var t=this,r=arguments;return new Promise((function(n,o){var i=e.apply(t,r);function a(e){asyncGeneratorStep(i,n,o,a,c,"next",e)}function c(e){asyncGeneratorStep(i,n,o,a,c,"throw",e)}a(void 0)}))}}function evalCallbacksOptions(options){for(var callbacksKeysAllowed=["allowOutsideClick","allowEscapeKey","allowEnterKey","loaderHtml","inputOptions","inputValidator","preConfirm","preDeny","didClose","didDestroy","didOpen","didRender","willClose","willOpen"],_i=0,_callbacksKeysAllowed=callbacksKeysAllowed;_i<_callbacksKeysAllowed.length;_i++){var callbackKey=_callbacksKeysAllowed[_i];options.hasOwnProperty(callbackKey)&&("string"==typeof options[callbackKey]||options[callbackKey]instanceof String)&&options[callbackKey]&&""!=options[callbackKey].trim()&&(options[callbackKey]=eval(options[callbackKey]))}}function afterAlertInteraction(e){if(e.confirmed)return"self"===e.onConfirmed.component?void Livewire.find(e.onConfirmed.id).dispatchSelf(e.onConfirmed.listener,e.result):void Livewire.dispatchTo(e.onConfirmed.component,e.onConfirmed.listener,e.result);if(e.isDenied)return"self"===e.onDenied.component?void Livewire.find(e.onDenied.id).dispatchSelf(e.onDenied.listener,e.result):void Livewire.dispatchTo(e.onDenied.component,e.onDenied.listener,e.result);if(e.onProgressFinished&&e.dismiss===Swal.DismissReason.timer)return"self"===e.onProgressFinished.component?void Livewire.find(e.onProgressFinished.id).dispatchSelf(e.onProgressFinished.listener,e.result):void Livewire.dispatchTo(e.onProgressFinished.component,e.onProgressFinished.listener,e.result);if(e.onDismissed){if("self"===e.onDismissed.component)return void Livewire.find(e.onDismissed.id).dispatch(e.onDismissed.listener,e.result);Livewire.dispatchTo(e.onDismissed.component,e.onDismissed.listener,e.result)}}window.addEventListener("alert",function(){var e=_asyncToGenerator(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark((function e(t){var r,n,o,i,a,c,s,l;return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return o=t.detail.message,i=null!==(r=t.detail.type)&&void 0!==r?r:null,a=t.detail.data,c=t.detail.events,evalCallbacksOptions(s=t.detail.options),e.next=8,Swal.fire(_objectSpread({title:o,icon:i},s));case 8:afterAlertInteraction(_objectSpread(_objectSpread(_objectSpread({confirmed:(l=e.sent).isConfirmed,denied:l.isDenied,dismiss:l.dismiss,result:_objectSpread(_objectSpread({},l),{},{data:_objectSpread(_objectSpread({},a),{},{inputAttributes:null!==(n=s.inputAttributes)&&void 0!==n?n:null})})},c),l),s));case 10:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}()),window.flashAlert=function(){var e=_asyncToGenerator(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark((function e(t){var r,n,o,i,a,c,s;return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return i=t.events,a=t.events.data,evalCallbacksOptions(c=t.options),e.next=6,Swal.fire(_objectSpread({title:null!==(r=t.message)&&void 0!==r?r:"",icon:null!==(n=t.type)&&void 0!==n?n:null},c));case 6:afterAlertInteraction(_objectSpread(_objectSpread({confirmed:(s=e.sent).isConfirmed,denied:s.isDenied,dismiss:s.dismiss,result:_objectSpread(_objectSpread({},s),{},{data:_objectSpread(_objectSpread({},a),{},{inputAttributes:null!==(o=c.inputAttributes)&&void 0!==o?o:null})})},i),t.options));case 8:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}()})()})();
+</script>
+
+    
+    
+</body>
+
+</html>
