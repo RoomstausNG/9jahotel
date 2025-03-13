@@ -34,20 +34,6 @@ if ! docker info | grep -q "Swarm: active"; then
     echo_success "Docker Swarm initialized successfully."
 fi
 
-# Check if .env file exists, create if not
-if [ ! -f .env ]; then
-    echo "Creating .env file with default values..."
-    cat > .env << EOF
-DB_DATABASE=wakalordb
-DB_USERNAME=wakalor
-DB_PASSWORD=wakalorpassword
-MYSQL_ROOT_PASSWORD=rootpassword
-EOF
-    echo_success ".env file created successfully."
-else
-    echo_success ".env file already exists."
-fi
-
 # Load environment variables
 export $(grep -v '^#' .env | xargs)
 
