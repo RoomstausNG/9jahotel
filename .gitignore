@@ -4,6 +4,7 @@
 /public/build
 /public/storage
 /storage/*.key
+/public/page-cache
 /vendor
 /storage/debugbar
 /docker
