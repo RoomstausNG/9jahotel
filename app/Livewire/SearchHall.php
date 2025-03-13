@@ -42,14 +42,15 @@ class SearchHall extends Component implements HasForms
                     ->label('Proposed Use date start')
                     ->default(Session::get('checkin'))
                     ->minDate(now())
-                    ->default(today())
-                    ->displayFormat('d F Y')->prefixIcon('heroicon-m-calendar-days')
+                    ->displayFormat('d F Y')
+                    ->prefixIcon('heroicon-m-calendar-days')
                     ->native(false)
                     ->required(),
                 Components\DatePicker::make('checkout')
                     ->label('Proposed Use date End')
                     ->default(Session::get('checkout'))
-                    ->displayFormat('d F Y')->prefixIcon('heroicon-m-calendar-days')
+                    ->displayFormat('d F Y')
+                    ->prefixIcon('heroicon-m-calendar-days')
                     ->native(false)
                     ->required(),
 
