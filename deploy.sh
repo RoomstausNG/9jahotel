@@ -22,6 +22,10 @@ check_status() {
     fi
 }
 
+# Set correct permissions
+sudo chmod -R 755 storage bootstrap/cache
+sudo chmod -R 777 storage/framework storage/logs bootstrap/cache
+
 # Navigate to project directory - uncomment and modify if needed
 # cd /path/to/your/laravel/project
 # check_status "Changed directory to project folder"
