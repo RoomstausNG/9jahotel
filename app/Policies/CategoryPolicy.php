@@ -13,10 +13,6 @@ class CategoryPolicy
         return $user->can('read Category') || $user->hasRole('super-admin') || $user->hasRole('back-office');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-
     public function view(User $user, Category $category): bool
     {
         return $user->hasRole('super-admin') || $user->hasRole('back-office');
