@@ -127,7 +127,12 @@ class PermissionSeeder extends Seeder
                 "sales" => ['c', 'r',  'u', 'd'],
                 "reservation" => ['r'],
             ],
-
+            "marketer" => [
+                "hotel" => ['c', 'r', 'u'],
+                "department" => ['c', 'r', 'u', 'd'],
+                // "user" => ['c', 'r', 'u', 'd'],
+                "item" => ['c', 'r',  'u', 'd'],
+            ],
         ];
 
         // assign permision to superadmin role
@@ -170,6 +175,13 @@ class PermissionSeeder extends Seeder
             foreach ($ops as $op) {
                 $permission = Permission::firstOrCreate(['name' => $this->getOperation($op, $perm)]);
                 $permission->assignRole("back-office"); //assign role of admin o each permission
+            }
+        }
+
+        foreach ($permissions["marketer"] as $perm => $ops) {
+            foreach ($ops as $op) {
+                $permission = Permission::firstOrCreate(['name' => $this->getOperation($op, $perm)]);
+                $permission->assignRole("marketer"); //assign role of admin o each permission
             }
         }
 
