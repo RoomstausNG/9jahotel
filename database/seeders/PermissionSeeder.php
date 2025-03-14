@@ -129,7 +129,6 @@ class PermissionSeeder extends Seeder
             ],
             "marketer" => [
                 "hotel" => ['c', 'r', 'u'],
-                "department" => ['c', 'r', 'u', 'd'],
                 // "user" => ['c', 'r', 'u', 'd'],
                 "item" => ['c', 'r',  'u', 'd'],
             ],
