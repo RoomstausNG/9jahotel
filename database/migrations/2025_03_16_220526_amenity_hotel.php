@@ -18,6 +18,7 @@ return new class extends Migration
         // 1. Try to drop the foreign key and column with error handling
         try {
             Schema::table("amenities", function (Blueprint $table) {
+                $table->text('icon')->nullable()->change();
                 $table->dropForeign('amenities_hotel_id_foreign');
                 $table->dropColumn("hotel_id");
             });
