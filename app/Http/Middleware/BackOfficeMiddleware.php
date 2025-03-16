@@ -18,7 +18,6 @@ class BackOfficeMiddleware
         if (!$request->user()->hasRole(["super-admin", "back-office"])) {
             return redirect("/hotel");
         }
-
         return $next($request);
     }
 }
