@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Amenity extends Model
 {
     use HasFactory;
-    protected $table = 'general_amenities';
+    // protected $table = 'general_amenities';
 
     protected $guarded = [];
 
