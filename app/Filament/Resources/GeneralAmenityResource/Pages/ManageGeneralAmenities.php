@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\GeneralAmenityResource\Pages;
+namespace App\Filament\Resources\AmenityResource\Pages;
 
-use App\Filament\Resources\GeneralAmenityResource;
+use App\Filament\Resources\AmenityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageGeneralAmenities extends ManageRecords
 {
-    protected static string $resource = GeneralAmenityResource::class;
+    protected static string $resource = AmenityResource::class;
 
     protected function getHeaderActions(): array
     {

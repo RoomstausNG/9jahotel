@@ -6,17 +6,17 @@ use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\GeneralAmenity;
+use App\Models\Amenity;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\GeneralAmenityResource\Pages;
-use App\Filament\Resources\GeneralAmenityResource\RelationManagers;
+use App\Filament\Resources\AmenityResource\Pages;
+use App\Filament\Resources\AmenityResource\RelationManagers;
 
-class GeneralAmenityResource extends Resource
+class AmenityResource extends Resource
 {
-    protected static ?string $model = GeneralAmenity::class;
+    protected static ?string $model = Amenity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-gift-top';
 
@@ -44,9 +44,9 @@ class GeneralAmenityResource extends Resource
                 Tables\Columns\TextColumn::make('icon')
                     ->formatStateUsing(fn(string $state): HtmlString => new HtmlString($state)),
                 // ->html(),
-                Tables\Columns\TextColumn::make('amenities_count')
-                    ->counts('amenities')
-                    ->label('Usage')
+                Tables\Columns\TextColumn::make('hotels_count')
+                    ->counts('hotels')
+                    ->label('Hotel Usage')
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
