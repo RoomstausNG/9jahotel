@@ -93,18 +93,6 @@ class HotelResource extends Resource
                         $set('state_id', null);
                         $set('city_id', null);
                     }),
-                // Forms\Components\Select::make('state_id')
-                //     ->label('State')
-                //     ->options(fn(Get $get): Collection
-                //     => State::query()
-                //         ->where('country_id', $get('country_id'))
-                //         ->pluck('name', 'id'))
-                //     ->searchable(['name'])
-                //     ->nullable()
-                //     ->preload()
-                //     ->native(false)
-                //     ->live()
-                //     ->afterStateUpdated(fn(Set $set) => $set('city_id', null)),
                 Forms\Components\Select::make('state_id')
                     ->label('State')
                     ->options(fn(Get $get): Collection
@@ -116,8 +104,20 @@ class HotelResource extends Resource
                     ->preload()
                     ->native(false)
                     ->live()
-                    // ->default(fn($record) => $record ? $record->state_id : null)
                     ->afterStateUpdated(fn(Set $set) => $set('city_id', null)),
+                // Forms\Components\Select::make('state_id')
+                //     ->label('State')
+                //     ->options(fn(Get $get): Collection
+                //     => State::query()
+                //         ->where('country_id', $get('country_id'))
+                //         ->pluck('name', 'id'))
+                //     ->searchable(['name'])
+                //     ->nullable()
+                //     ->preload()
+                //     ->native(false)
+                //     ->live()
+                //     // ->default(fn($record) => $record ? $record->state_id : null)
+                //     ->afterStateUpdated(fn(Set $set) => $set('city_id', null)),
 
                 Forms\Components\Select::make('city_id')
                     ->label('City/Town')
@@ -202,6 +202,7 @@ class HotelResource extends Resource
                     ->label('Amenities')
                     ->relationship('amenities', 'name')
                     ->preload()
+                    ->extraAttributes(['class' => 'capitalize'])
                     ->native(false)
                     ->searchable()
                     ->nullable()

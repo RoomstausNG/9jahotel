@@ -23,7 +23,7 @@ class Hotel extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, Notifiable, InteractsWithMedia, HasManyImage, HasManyRating;
 
-    protected $guarded = ['country_id', 'state_id'];
+    protected $guarded = [];
     protected $casts = [
         'checked_out' => 'datetime',
         'renew' => 'date'
@@ -64,7 +64,7 @@ class Hotel extends Model implements HasMedia
         return $this->belongsToMany(Amenity::class);
     }
 
-    function bookingInvoices(): HasMany
+    public function bookingInvoices(): HasMany
     {
         return $this->hasMany(BookingInvoice::class);
     }
