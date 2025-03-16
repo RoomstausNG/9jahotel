@@ -197,6 +197,15 @@ class HotelResource extends Resource
                     ->searchable()
                     ->nullable(),
                 Rating::make('star_rating')->color('success'),
+                Forms\Components\Select::make('amenities')
+                    ->multiple()
+                    ->label('Amenities')
+                    ->relationship('amenities', 'name')
+                    ->preload()
+                    ->native(false)
+                    ->searchable()
+                    ->nullable()
+                    ->columnSpan(['lg' => 3])
             ])->columns(4);
     }
 

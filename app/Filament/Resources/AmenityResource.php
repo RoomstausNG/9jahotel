@@ -18,6 +18,7 @@ class AmenityResource extends Resource
 {
     protected static ?string $model = Amenity::class;
 
+    protected static ?string $navigationLabel = 'General Amenities';
     protected static ?string $navigationIcon = 'heroicon-o-gift-top';
 
     public static function form(Form $form): Form
@@ -40,6 +41,7 @@ class AmenityResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->extraAttributes(['class' => 'capitalize'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('icon')
                     ->formatStateUsing(fn(string $state): HtmlString => new HtmlString($state)),
