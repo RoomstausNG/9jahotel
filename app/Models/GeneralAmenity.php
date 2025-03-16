@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class GeneralAmenity extends Model
 {
@@ -18,8 +19,8 @@ class GeneralAmenity extends Model
         'deleted_at' => 'datetime',
     ];
 
-    public function amenities(): HasMany
+    public function hotels(): BelongsToMany
     {
-        return $this->hasMany(Amenity::class, 'general_amenity_id');
+        return $this->belongsToMany(Hotel::class, 'amenity_hotel');
     }
 }

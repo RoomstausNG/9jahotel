@@ -116,7 +116,7 @@ class HotelResource extends Resource
                     ->preload()
                     ->native(false)
                     ->live()
-                    ->default(fn($record) => $record ? $record->state_id : null)
+                    // ->default(fn($record) => $record ? $record->state_id : null)
                     ->afterStateUpdated(fn(Set $set) => $set('city_id', null)),
 
                 Forms\Components\Select::make('city_id')
@@ -289,7 +289,7 @@ class HotelResource extends Resource
             RelationManagers\RoomCategoryRelationManager::class,
             RelationManagers\RevenuesRelationManager::class,
             RelationManagers\ItemsRelationManager::class,
-            RelationManagers\AmenitiesRelationManager::class,
+            // RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
         ];
     }
