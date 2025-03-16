@@ -9,6 +9,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+
+        Schema::create("amenity_hotel", function (Blueprint $table) {
+            $table->foreignId('amenity_id')->nullable()->constrained('amenities')->cascadeOnDelete();
+            $table->foreignId('hotel_id')->nullable()->constrained('hotels')->cascadeOnDelete();
+        });
+
         // 1. Try to drop the foreign key and column with error handling
         try {
             Schema::table("amenities", function (Blueprint $table) {

@@ -6,7 +6,7 @@ use App\Filament\Resources\AmenityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
-class ManageGeneralAmenities extends ManageRecords
+class ManageAmenities extends ManageRecords
 {
     protected static string $resource = AmenityResource::class;
 

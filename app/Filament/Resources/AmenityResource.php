@@ -74,7 +74,7 @@ class AmenityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageGeneralAmenities::route('/'),
+            'index' => Pages\ManageAmenities::route('/'),
         ];
     }
 }
