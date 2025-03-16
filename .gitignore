@@ -3,6 +3,7 @@
 /public/hot
 /public/build
 /public/storage
+/public/page-cache
 /storage/*.key
 /vendor
 /storage/debugbar
