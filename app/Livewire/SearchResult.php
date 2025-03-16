@@ -10,7 +10,7 @@ use Livewire\Component;
 class SearchResult extends Component
 {
     public CityCopy $city;
-    public $name, $low, $high;
+    public $name, $low, $high, $amenities;
     public $perPage = 12;
 
 
@@ -35,12 +35,14 @@ class SearchResult extends Component
     #[Layout('components.layouts.frontend')]
     public function render()
     {
+        $amenities = [];
         $term = trim("%" . $this->name . "%");
         $hotels = Hotel::with('city')->where('name', 'LIKE', $term)->where('city_id', $this->city->id)->paginate($this->perPage);
 
         if (session('city')) {
             $hotels = Hotel::with('city')->where('name', 'LIKE', $term)->where('city_id', session('city'))->paginate($this->perPage);
         }
+
         return view('livewire.search-result', compact(['hotels']));
     }
 }
