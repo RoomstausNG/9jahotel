@@ -206,7 +206,9 @@ class HotelResource extends Resource
                     ->native(false)
                     ->searchable()
                     ->nullable()
-                    ->columnSpan(['lg' => 3])
+                    ->columnSpan(['lg' => 3]),
+                Forms\Components\RichEditor::make('description')
+                    ->columnSpanFull(),
             ])->columns(4);
     }
 
