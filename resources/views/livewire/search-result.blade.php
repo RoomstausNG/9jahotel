@@ -8,6 +8,18 @@
             {{-- results --}}
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 w-grid">
                 <div class="hidden w-full pr-4 space-y-8 lg:block">
+                    <div class="w-full">
+                        @if ($mapUrl)
+                            <div class="rounded-lg shadow-lg overflow-hidden">
+                                <img src="{{ $mapUrl }}" alt="Map of {{ $city->name }}"
+                                    class="w-full h-64 object-cover" loading="lazy">
+                            </div>
+                        @else
+                            <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                <p class="text-gray-500">Map unavailable at this time</p>
+                            </div>
+                        @endif
+                    </div>
                     <div class="space-y-2">
                         <p class="text-lg font-medium">Search hotel by name</p>
                         <input wire:model.live='name' type="text"
@@ -44,6 +56,7 @@
 
                 <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[768px] xl:max-w-[800px]">
                     <div class="flex flex-col justify-between w-full md:flex-row">
+
                         {{-- <div class="space-y-2">
                             <label for="">No to show</label> <br>
                             <select wire:model.live='perPage'
@@ -84,7 +97,7 @@
                                     <p class="flex flex-wrap w-full gap-2">
                                         @foreach ($hotel->amenities as $amenity)
                                             <span style="white-space:nowrap"
-                                                class="py-1 size-xs px-4 font-medium text-gray-500 border rounded shadow-sm">{!! $amenity->icon !!}</span>
+                                                class="py-1 text-xs size-xs px-4 font-medium text-gray-500 border rounded shadow-sm">{!! $amenity->icon !!}</span>
                                         @endforeach
                                     </p>
                                 </div>
@@ -111,15 +124,16 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div class="">
-                                            @if ($hotel->ratings()->exists())
-                                                @php
-                                                    $rate = round($hotel->ratings()->avg('number'), 1);
-                                                @endphp
+                                            @php
+                                                $rate = $hotel->star_rating;
+                                                // $rate = round($hotel->ratings()->avg('number'), 1);
+                                            @endphp
 
+                                            @if ($hotel->ratings()->exists())
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
-                                                    {{ $rate }}</p> <span
-                                                    class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                                    {{ $rate }}</p>
+                                                <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                                 <br>
                                             @else
                                                 <p

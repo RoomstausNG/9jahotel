@@ -6,7 +6,9 @@ use App\Models\Hotel;
 use App\Models\Amenity;
 use Livewire\Component;
 use App\Models\CityCopy;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Http;
 
 class SearchResult extends Component
 {
@@ -22,6 +24,39 @@ class SearchResult extends Component
         'high' => ['except' => null],
         'filterAmenities' => ['except' => []],
     ];
+
+    public function getStaticMapUrl($cityName, $zoom = 1, $width = 600, $height = 300)
+    {
+        try {
+            // First, get coordinates using Nominatim with proper headers
+            $encodedCity = urlencode(Str::replace('-', '', $cityName));
+
+            $response = Http::withHeaders([
+                'User-Agent' => 'YourAppName/1.0 (your@email.com)',  // Replace with your app name and contact email
+            ])->get("https://nominatim.openstreetmap.org/search", [
+                'format' => 'json',
+                'q' => $cityName
+            ]);
+
+            $data = $response->json();
+
+            if (empty($data)) {
+                return "https://via.placeholder.com/{$width}x{$height}?text=Map+not+found";
+            }
+
+            $lat = $data[0]['lat'];
+            $lon = $data[0]['lon'];
+
+            // Use static OSM service
+            return "https://staticmap.openstreetmap.de/staticmap.php?center={$lat},{$lon}&zoom={$zoom}&size={$width}x{$height}&maptype=mapnik";
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Map error: ' . $e->getMessage());
+
+            // Return a placeholder
+            return "https://via.placeholder.com/{$width}x{$height}?text=Map+unavailable";
+        }
+    }
 
     // Reset all filters
     public function resetFilters()
@@ -78,9 +113,12 @@ class SearchResult extends Component
             $query->whereKey($hotelIds);
         })->get();
 
+        $mapUrl = $this->getStaticMapUrl($this->city->name);
+
         return view('livewire.search-result', [
             'hotels' => $hotels,
-            'amenities' => $amenities
+            'amenities' => $amenities,
+            'mapUrl' => $this->getStaticMapUrl($this->city->name),
         ]);
     }
 }

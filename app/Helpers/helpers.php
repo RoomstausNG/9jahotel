@@ -381,6 +381,8 @@ function getRatingColor(float $rating): string
     } #00FF00
 }
 
+
+
 function getRatingDescription(float $rating): string
 {
     if ($rating >= 9) {
