@@ -44,10 +44,7 @@ class Hotel extends Model implements HasMedia
         return $this->belongsToMany(User::class)->withTimestamps();
     }
 
-    public function amenities(): HasMany
-    {
-        return $this->hasMany(Amenity::class);
-    }
+
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
@@ -135,6 +132,11 @@ class Hotel extends Model implements HasMedia
     public function primaryCurrency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'primary_currency');
+    }
+
+    public function amenities(): BelongsToMany
+    {
+        return $this->belongsToMany(Amenity::class, 'amenity_hotel');
     }
 
     public function secondaryCurrency(): BelongsTo

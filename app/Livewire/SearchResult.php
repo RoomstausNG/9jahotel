@@ -15,20 +15,13 @@ class SearchResult extends Component
     public $low = null;
     public $high = null;
     public $filterAmenities = []; // Array to store selected amenity IDs
-    public $perPage = 12;
 
-    // Mount function to initialize component
-    public function mount()
-    {
-        // Initialize filterAmenities as empty array
-        $this->filterAmenities = [];
-    }
-
-    // Function to load more hotels
-    public function increasePage()
-    {
-        $this->perPage += 12;
-    }
+    protected $queryString = [
+        'name' => ['except' => ''],
+        'low' => ['except' => null],
+        'high' => ['except' => null],
+        'filterAmenities' => ['except' => []],
+    ];
 
     // Reset all filters
     public function resetFilters()
@@ -37,29 +30,6 @@ class SearchResult extends Component
         $this->low = null;
         $this->high = null;
         $this->filterAmenities = [];
-    }
-
-    // This will run when any filter is updated
-    public function updatedFilterAmenities()
-    {
-        // Reset pagination when filters change
-        $this->perPage = 12;
-    }
-
-    // Update price filters
-    public function updatedLow()
-    {
-        $this->perPage = 12;
-    }
-
-    public function updatedHigh()
-    {
-        $this->perPage = 12;
-    }
-
-    public function updatedName()
-    {
-        $this->perPage = 12;
     }
 
     #[Layout('components.layouts.frontend')]
@@ -89,6 +59,7 @@ class SearchResult extends Component
 
         // Apply amenity filters if any are selected
         if (!empty($this->filterAmenities)) {
+            // This ensures hotels have ALL the selected amenities
             foreach ($this->filterAmenities as $amenityId) {
                 $query->whereHas('amenities', function ($q) use ($amenityId) {
                     $q->where('amenities.id', $amenityId);
@@ -96,15 +67,20 @@ class SearchResult extends Component
             }
         }
 
-        // Get the filtered hotels
-        $hotels = $query->paginate($this->perPage);
+        // Get all hotels (without pagination)
+        $hotels = $query->get();
 
-        // Get all amenities related to the current city's hotels for the filter sidebar
-        // This correctly handles the many-to-many relationship
-        $amenities = Amenity::whereHas('hotels', function ($query) use ($cityId) {
-            $query->where('city_id', $cityId);
+
+
+        // Alternative method if the above doesn't work
+        $hotelIds = Hotel::where('city_id', $cityId)->pluck('id');
+        $amenities = Amenity::whereHas('hotels', function ($query) use ($hotelIds) {
+            $query->whereKey($hotelIds);
         })->get();
 
-        return view('livewire.search-result', compact(['hotels', 'amenities']));
+        return view('livewire.search-result', [
+            'hotels' => $hotels,
+            'amenities' => $amenities
+        ]);
     }
 }

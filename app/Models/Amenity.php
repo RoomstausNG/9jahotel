@@ -10,12 +10,12 @@ use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-// #[ScopedBy([HotelScope::class])]
+
 class Amenity extends Model
 {
     use HasFactory;
-    use BelongToHotel;
     protected $guarded = [];
 
     protected $casts = [
@@ -24,8 +24,8 @@ class Amenity extends Model
         'deleted_at' => 'datetime',
     ];
 
-    public function amenity(): BelongsTo
+    public function hotels(): BelongsToMany
     {
-        return $this->belongTo(GeneralAmenity::class, 'general_amenity_id');
+        return $this->belongsToMany(Hotel::class);
     }
 }
