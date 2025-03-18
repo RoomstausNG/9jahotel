@@ -81,8 +81,23 @@
                             class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Support</a>
                     </li> --}}
                     <li>
-                        <a href="/hotels"
-                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Hotels</a>
+                        <a href="#" target="_blank"
+                            class="flex items-center gap-2 px-3 py-2 text-sm text-primary rounded-full border-primary hover:bg-primary-100 border">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+
+                            </span>
+                            <span> Download
+                                App</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Support</a>
                     </li>
                     <li>
                         <a href="/hotel/login"
@@ -91,8 +106,8 @@
                     </li>
                     <li class="">
                         <a href="{{ route('hotel.create') }}"
-                            class="block px-3 py-2 text-white rounded bg-primary hover:bg-primary-700">Register
-                            your Hotel</a>
+                            class="block px-3 py-2 text-white rounded bg-primary hover:bg-primary-700">List your
+                            property</a>
                     </li>
                 </ul>
             </div>
@@ -167,8 +182,8 @@
                 </span>
                 <div class="flex mt-4 sm:justify-center sm:mt-0">
                     <a href="#" class="text-gray-500 hover:text-gray-900">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 8 19">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 8 19">
                             <path fill-rule="evenodd"
                                 d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z"
                                 clip-rule="evenodd" />
