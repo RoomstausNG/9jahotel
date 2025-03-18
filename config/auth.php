@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'customers',
     ],
 
     /*
@@ -42,6 +42,10 @@ return [
         ],
         'customer' => [
             'driver' => 'sanctum',
+            'provider' => 'customers',
+        ],
+        'api' => [
+            'driver' => 'token',
             'provider' => 'customers',
         ],
         'team' => [
