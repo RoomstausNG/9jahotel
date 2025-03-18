@@ -144,6 +144,11 @@ class Hotel extends Model implements HasMedia
         return $this->belongsTo(Currency::class, 'secondary_currency');
     }
 
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(Faq::class);
+    }
+
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class)->withTimestamps();
