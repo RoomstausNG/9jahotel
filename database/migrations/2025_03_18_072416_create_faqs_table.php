@@ -1,5 +1,7 @@
 <?php
+
 use App\Models\Hotel;
+use App\Models\Question;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('faqs', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignIdFor(Hotel::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->longText("answer");
+            $table->foreignIdFor(Hotel::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Question::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
