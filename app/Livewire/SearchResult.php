@@ -19,7 +19,7 @@ class SearchResult extends Component
     public $filterAmenities = []; // Array to store selected amenity IDs
     public $sortBy = ''; // Property for sorting options
     public $page = 1; // Current page for pagination
-    public $perPage = 24; // Items per page
+    public $perPage = 12; // Items per page
 
     protected $queryString = [
         'name' => ['except' => ''],
