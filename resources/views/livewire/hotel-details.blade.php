@@ -75,6 +75,13 @@
                         class="pb-2 " @click="activeTab = 'amenities'">Amenities</a>
                 @endif
 
+                @if ($faqs?->count() > 0)
+                    <a href="#faqs"
+                        :class="activeTab == 'faqs' ? 'border-b-2 border-primary text-primary font-semibold' :
+                            'font-medium'"
+                        class="pb-2 " @click="activeTab = 'faqs'">Faq</a>
+                @endif
+
                 <a href="#price"
                     :class="activeTab == 'price' ? 'border-b-2 border-primary text-primary font-semibold' : 'font-medium'"
                     class="pb-2 font-medium" @click="activeTab = 'price'">Price</a>
@@ -125,20 +132,41 @@
         @endif
 
         @if ($faqs->count() > 0)
-            <div class="gap-6 space-y-4" id="amenities">
+            <div class="gap-6 space-y-4" id="faqs">
                 <h1 class="text-2xl font-semibold">
-                    Amenities
+                    Frequently Asked Questions
                 </h1>
-                <div class="flex gap-6">
-                    @foreach ($amenities as $amenity)
-                        <div :key="{{ $amenity->id }}"
-                            class="flex border items-center flex-col py-2 px-4 shadow-sm rounded-md transition-all duration-200">
-                            <span class="text-primary">{!! $amenity->icon !!}</span>
-                            <span class="capitalize font-medium"> {{ $amenity->name }}</span>
+                <div x-data="{ open: false }" :key="{{ $faq->id }}"
+                    class="border rounded-md shadow-sm transition-all duration-200 overflow-hidden">
+                    <!-- Question header - clickable to toggle -->
+                    <div @click="open = !open"
+                        class="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50">
+                        <div class="flex items-center gap-3">
+                            <span class="text-primary">{!! $faq->question->icon ?? '<i class="fas fa-question-circle"></i>' !!}</span>
+                            <span class="font-medium">{{ $faq->question->text }}</span>
                         </div>
-                    @endforeach
+                        <!-- Toggle icon that rotates -->
+                        <span class="text-gray-500 transform transition-transform duration-200"
+                            :class="{ 'rotate-180': open }">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <!-- Answer section that slides down/up -->
+                    <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 transform -translate-y-4"
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform -translate-y-4"
+                        class="px-4 pb-4 pt-0 text-gray-600 border-t">
+                        {{ $faq->answer }}
+                    </div>
                 </div>
-            </div>
         @endif
 
         <div class="w-full">
