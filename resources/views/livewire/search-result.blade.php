@@ -55,6 +55,21 @@
                 </div>
 
                 <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[768px] xl:max-w-[800px]">
+                    <div class="flex items-center justify-between bg-[#111936] text-white p-4 rounded-full w-full">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-purple-100 p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="2" stroke="currentColor" class="w-6 h-6 text-purple-600">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <span class="text-lg">Get a reward night when you stay for 10 nights</span>
+                        </div>
+                        <div class="flex gap-4 items-center">
+                            <a href="/login" class="bg-blue-600 text-white px-6 py-1.5 rounded-full">Sign in</a>
+                            <a href="/register" class="text-white underline">Learn more</a>
+                        </div>
+                    </div>
                     <div class="flex flex-col justify-between w-full md:flex-row">
 
                         {{-- <div class="space-y-2">
