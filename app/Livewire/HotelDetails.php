@@ -2,9 +2,10 @@
 
 namespace App\Livewire;
 
-use App\Models\Hotel;
 use App\Models\Type;
+use App\Models\Hotel;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
 class HotelDetails extends Component
 {
@@ -21,6 +22,7 @@ class HotelDetails extends Component
         $this->modal = true;
     }
 
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         return view('livewire.hotel-details');

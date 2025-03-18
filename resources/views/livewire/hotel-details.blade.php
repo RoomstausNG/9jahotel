@@ -67,7 +67,7 @@
                 <a href="#overview"
                     :class="activeTab == 'overview' ? 'border-b-2 border-primary text-primary font-semibold' : 'font-medium'"
                     class="pb-2 " @click="activeTab = 'overview'">Overview</a>
-                @if ($amenities?->count() > 0)
+                @if ($hotel->amenities->count() > 0)
                     <a href="#amenities"
                         :class="activeTab == 'amenities' ? 'border-b-2 border-primary text-primary font-semibold' :
                             'font-medium'"
