@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Faq;
 use App\Models\Hotel;
+use App\Models\Question;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -33,8 +34,7 @@ class FaqSeeder extends Seeder
         // For each hotel, create 5-8 random FAQs
         foreach ($hotels as $hotel) {
             // Randomly select 5-8 questions for this hotel
-            $hotelQuestions = $hotel->questions;
-
+            $hotelQuestions = Question::all();
             foreach ($hotelQuestions as $index => $question) {
                 Faq::create([
                     'hotel_id' => $hotel->id,
