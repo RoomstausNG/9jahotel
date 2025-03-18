@@ -17,12 +17,16 @@ class SearchResult extends Component
     public $low = null;
     public $high = null;
     public $filterAmenities = []; // Array to store selected amenity IDs
+    public $sortBy = ''; // Property for sorting options
+    public $page = 1; // Current page for pagination
+    public $perPage = 24; // Items per page
 
     protected $queryString = [
         'name' => ['except' => ''],
         'low' => ['except' => null],
         'high' => ['except' => null],
         'filterAmenities' => ['except' => []],
+        'sortBy' => ['except' => ''],
     ];
 
     public function getStaticMapUrl($cityName, $zoom = 1, $width = 600, $height = 300)
@@ -65,6 +69,14 @@ class SearchResult extends Component
         $this->low = null;
         $this->high = null;
         $this->filterAmenities = [];
+        $this->sortBy = '';
+        $this->page = 1;
+    }
+
+    // Increase page for "Load More" functionality
+    public function increasePage()
+    {
+        $this->page++;
     }
 
     #[Layout('components.layouts.frontend')]
@@ -74,7 +86,7 @@ class SearchResult extends Component
         $cityId = $this->city->id ?? session('city');
 
         // Build the base query
-        $query = Hotel::with(['city', 'amenities'])
+        $query = Hotel::with(['city', 'amenities', 'ratings'])
             ->where('city_id', $cityId);
 
         // Apply name filter if provided
@@ -84,12 +96,20 @@ class SearchResult extends Component
         }
 
         // Apply price range filters if provided
-        if (!is_null($this->low) && is_numeric($this->low)) {
-            $query->where('price', '>=', $this->low);
-        }
+        if ((!is_null($this->low) && is_numeric($this->low)) || (!is_null($this->high) && is_numeric($this->high))) {
+            $query->whereExists(function ($subQuery) {
+                $subQuery->select(\DB::raw(1))
+                    ->from('types')
+                    ->whereRaw('types.hotel_id = hotels.id');
 
-        if (!is_null($this->high) && is_numeric($this->high)) {
-            $query->where('price', '<=', $this->high);
+                if (!is_null($this->low) && is_numeric($this->low)) {
+                    $subQuery->havingRaw('MIN(types.price1) >= ?', [$this->low]);
+                }
+
+                if (!is_null($this->high) && is_numeric($this->high)) {
+                    $subQuery->havingRaw('MIN(types.price1) <= ?', [$this->high]);
+                }
+            });
         }
 
         // Apply amenity filters if any are selected
@@ -102,23 +122,66 @@ class SearchResult extends Component
             }
         }
 
-        // Get all hotels (without pagination)
-        $hotels = $query->get();
+        // Define sorting options as an associative array
+        $sortOptions = [
+            'class_high' => ['column' => 'property_class', 'direction' => 'desc'],
+            'class_low' => ['column' => 'property_class', 'direction' => 'asc'],
+        ];
 
+        // Apply sorting based on selected option
+        if (isset($sortOptions[$this->sortBy])) {
+            $sort = $sortOptions[$this->sortBy];
+            $query->orderBy($sort['column'], $sort['direction']);
+        } elseif ($this->sortBy === 'price_low' || $this->sortBy === 'price_high') {
+            // Handle price sorting using the types relationship
+            $direction = $this->sortBy === 'price_low' ? 'asc' : 'desc';
 
+            // Use a subquery to get the minimum price for each hotel
+            $query->select('hotels.*')
+                ->leftJoin('types', 'hotels.id', '=', 'types.hotel_id')
+                ->groupBy('hotels.id')
+                ->orderBy(\DB::raw('MIN(types.price1)'), $direction);
+        } elseif ($this->sortBy === 'rating_high' || $this->sortBy === 'rating_low') {
+            // Handle rating sorting using the ratings relationship
+            $direction = $this->sortBy === 'rating_high' ? 'desc' : 'asc';
+
+            // Use a subquery to get the average rating for each hotel
+            $query->select('hotels.*')
+                ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+                ->groupBy('hotels.id')
+                ->orderBy(\DB::raw('AVG(ratings.number)'), $direction);
+        } else {
+            // Default sorting (recommended)
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Get hotels with pagination
+        $limit = $this->perPage * $this->page;
+        $hotels = $query->limit($limit)->get();
 
         // Alternative method if the above doesn't work
         $hotelIds = Hotel::where('city_id', $cityId)->pluck('id');
-        $amenities = Amenity::whereHas('hotels', function ($query) use ($hotelIds) {
-            $query->whereKey($hotelIds);
-        })->get();
+        $amenities = Amenity::select('amenities.*')
+            ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+            ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+            ->where('hotels.city_id', $cityId)
+            ->distinct()
+            ->get();
 
         $mapUrl = $this->getStaticMapUrl($this->city->name);
+
+        // Get the total count of filtered hotels
+        $totalFilteredCount = $query->count();
+
+        // Get hotels with pagination
+        $limit = $this->perPage * $this->page;
+        $hotels = $query->limit($limit)->get();
 
         return view('livewire.search-result', [
             'hotels' => $hotels,
             'amenities' => $amenities,
-            'mapUrl' => $this->getStaticMapUrl($this->city->name),
+            'mapUrl' => $mapUrl,
+            'totalFilteredCount' => $totalFilteredCount,
         ]);
     }
 }

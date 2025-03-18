@@ -29,12 +29,15 @@
                     <div class="space-y-2">
                         <p class="font-medium">Price per night</p>
                         <div class="flex space-x-4">
-                            <input wire:model.live='low' type="text" placeholder="min price"
+                            <input wire:model.lazy='low' type="text" placeholder="min price"
                                 class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
-                            <input wire:model.live='high' type="text" placeholder="max price"
+                            <input wire:model.lazy='high' type="text" placeholder="max price"
                                 class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                         </div>
-                        <input type="range" class="w-full focus:text-primary focus:bg-primary">
+                        <button type="submit"
+                            class="w-full py-2 px-4 bg-primary hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200 focus:outline-none">
+                            Save
+                        </button>
                     </div>
 
                     <div class="w-full space-y-3">
@@ -57,13 +60,15 @@
                 <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[768px] xl:max-w-[800px]">
                     <div class="flex items-center justify-between bg-[#111936] text-white p-4 rounded-full w-full">
                         <div class="flex items-center gap-3">
-                            <div class="bg-purple-100 p-2 rounded-full">
+                            <div class="text-purple-500 bg-purple-50 p-2 rounded-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="2" stroke="currentColor" class="w-6 h-6 text-purple-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
                                 </svg>
                             </div>
-                            <span class="text-lg">Get a reward night when you stay for 10 nights</span>
+                            <span class="">Get a reward night when you stay for 10 nights</span>
                         </div>
                         <div class="flex gap-4 items-center">
                             <a href="/login" class="bg-blue-600 text-white px-6 py-1.5 rounded-full">Sign in</a>
@@ -87,9 +92,13 @@
                             <label for="" class="text-xl font-medium">Sort results by</label>
                             <select wire:model.live='sortBy'
                                 class="w-full border-gray-400 max-w-[180px] text-sm rounded-lg shadow py-2 focus:ring-0 focus:border-2 ring-0 focus:border-primary">
-                                <option>Recomended</option>
-                                <option value="low">Price: Low to High</option>
-                                <option value="high">Price: High to Low</option>
+                                <option value="">Recommended</option>
+                                <option value="price_low">Price: Low to High</option>
+                                <option value="price_high">Price: High to Low</option>
+                                <option value="rating_high">Rating: High to Low</option>
+                                {{-- <option value="rating_low">Rating: Low to High</option> --}}
+                                <option value="class_high">Property Class (Star Rating)</option>
+                                {{-- <option value="class_low">Property Class: Low to High</option> --}}
                             </select>
                         </div>
                     </div>
@@ -109,12 +118,18 @@
                                         <p class="text-sm capitalize" style="line-height: 16px">
                                             {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                     </div>
-                                    <p class="flex flex-wrap w-full gap-2">
+                                    <div class="flex flex-wrap w-full gap-2">
                                         @foreach ($hotel->amenities as $amenity)
-                                            <span style="white-space:nowrap"
-                                                class="py-1 text-xs size-xs px-4 font-medium text-gray-500 border rounded shadow-sm">{!! $amenity->icon !!}</span>
+                                            <p
+                                                class="py-1 flex text-gray-500 border rounded shadow-sm items-center text-xs px-2 font-medium capitalize">
+                                                <span
+                                                    style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;">
+                                                    {!! preg_replace('/<svg/', '<svg height="16" width="auto" style="height: 16px; width: auto;"', $amenity->icon) !!}
+                                                </span>
+                                                <span>{{ $amenity->name }}</span>
+                                            </p>
                                         @endforeach
-                                    </p>
+                                    </div>
                                 </div>
                                 <div class="space-y-3">
                                     <div class="p-0">
@@ -148,7 +163,8 @@
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                     {{ $rate }}</p>
-                                                <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                                <span
+                                                    class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                                 <br>
                                             @else
                                                 <p
@@ -173,10 +189,11 @@
                             <p class="py">No hotels for search inputs</p>
                         </div>
                     @endforelse
-                    @if ($hotels->count() < $city->hotels->count())
+                    @if ($hotels->count() < $totalFilteredCount)
                         <button wire:click='increasePage'
-                            class="block px-8 py-2 mx-auto font-medium text-white transition duration-300 rounded-lg hover:bg-primary-800 bg-primary">Load
-                            More</button>
+                            class="block px-8 py-2 mx-auto font-medium text-white transition duration-300 rounded-lg hover:bg-primary-800 bg-primary">
+                            Load More
+                        </button>
                     @endif
                 </div>
             </div>
