@@ -46,11 +46,11 @@
                             @foreach ($amenities as $amenity)
                                 <label for="{{ $amenity->id }}"
                                     class="flex cursor-pointer border items-center flex-col py-2 px-4 shadow-sm rounded-md transition-all duration-200
-                                   {{ in_array($amenity->id, $filterAmenities) ? 'border-2 border-primary bg-primary-100' : 'border-2 border-transparent hover:border-gray-200' }}">
+                                   {{ in_array($amenity->id, $filterAmenities) ? ' border-primary bg-primary-100' : ' border-gray-200 hover:border-gray-200' }}">
                                     <input wire:model.live='filterAmenities' class="hidden" type="checkbox"
                                         value="{{ $amenity->id }}" id="{{ $amenity->id }}">
                                     <span>{!! $amenity->icon !!}</span>
-                                    <span class="capitalize font-semibold"> {{ $amenity->name }}</span>
+                                    <span class="capitalize font-medium"> {{ $amenity->name }}</span>
                                 </label>
                             @endforeach
                         </div>
@@ -104,14 +104,14 @@
                     </div>
                     @forelse ($hotels as $hotel)
                         <div
-                            class="flex flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border gap-x-2">
-                            <div class="w-full h-full md:w-1/3">
+                            class="flex flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border">
+                            <div class="w-full h-full md:w-2/5">
                                 <img src="{{ getCloudinaryImage($hotel->background_image) }}"
                                     class="block object-cover object-center w-full min-h-[250px] md:max-h-[280px] md:min-h-[200px] h-full"
                                     alt="{{ $hotel->name }}">
                             </div>
 
-                            <div class="flex flex-col justify-between flex-1 p-4 md:pb-6">
+                            <div class="flex flex-col justify-between flex-1 p-4 md:pb-6 border-l border-gray-100">
                                 <div class="space-y-4">
                                     <div>
                                         <p class="text-xl font-medium capitalize">{{ $hotel->name }}</p>

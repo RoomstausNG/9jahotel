@@ -136,7 +136,7 @@ function getCloudinaryImage($public_id)
         // Return the Cloudinary URL for the cleaned public_id
         return Cloudinary::getUrl($cleanPublicId);
     }
-    return null;
+    return asset('img/9jahotel.png');
 }
 
 
@@ -380,7 +380,6 @@ function getRatingColor(float $rating): string
         return '#FF0000'; // Gray for ratings below 5
     } #00FF00
 }
-
 
 
 function getRatingDescription(float $rating): string

@@ -9,6 +9,7 @@ use App\Models\CityCopy;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class SearchResult extends Component
 {
@@ -31,35 +32,38 @@ class SearchResult extends Component
 
     public function getStaticMapUrl($cityName, $zoom = 1, $width = 600, $height = 300)
     {
-        try {
-            // First, get coordinates using Nominatim with proper headers
-            $encodedCity = urlencode(Str::replace('-', '', $cityName));
+        // Cache the map URL for 24 hours to avoid repeated API calls
+        return Cache::remember("map_url_{$cityName}_{$zoom}_{$width}_{$height}", 60 * 60 * 24, function () use ($cityName, $zoom, $width, $height) {
+            try {
+                // First, get coordinates using Nominatim with proper headers
+                $encodedCity = urlencode(Str::replace('-', '', $cityName));
 
-            $response = Http::withHeaders([
-                'User-Agent' => 'YourAppName/1.0 (your@email.com)',  // Replace with your app name and contact email
-            ])->get("https://nominatim.openstreetmap.org/search", [
-                'format' => 'json',
-                'q' => $cityName
-            ]);
+                $response = Http::withHeaders([
+                    'User-Agent' => 'YourAppName/1.0 (your@email.com)',  // Replace with your app name and contact email
+                ])->get("https://nominatim.openstreetmap.org/search", [
+                    'format' => 'json',
+                    'q' => $cityName
+                ]);
 
-            $data = $response->json();
+                $data = $response->json();
 
-            if (empty($data)) {
-                return "https://via.placeholder.com/{$width}x{$height}?text=Map+not+found";
+                if (empty($data)) {
+                    return "https://via.placeholder.com/{$width}x{$height}?text=Map+not+found";
+                }
+
+                $lat = $data[0]['lat'];
+                $lon = $data[0]['lon'];
+
+                // Use static OSM service
+                return "https://staticmap.openstreetmap.de/staticmap.php?center={$lat},{$lon}&zoom={$zoom}&size={$width}x{$height}&maptype=mapnik";
+            } catch (\Exception $e) {
+                // Log the error
+                \Log::error('Map error: ' . $e->getMessage());
+
+                // Return a placeholder
+                return "https://via.placeholder.com/{$width}x{$height}?text=Map+unavailable";
             }
-
-            $lat = $data[0]['lat'];
-            $lon = $data[0]['lon'];
-
-            // Use static OSM service
-            return "https://staticmap.openstreetmap.de/staticmap.php?center={$lat},{$lon}&zoom={$zoom}&size={$width}x{$height}&maptype=mapnik";
-        } catch (\Exception $e) {
-            // Log the error
-            \Log::error('Map error: ' . $e->getMessage());
-
-            // Return a placeholder
-            return "https://via.placeholder.com/{$width}x{$height}?text=Map+unavailable";
-        }
+        });
     }
 
     // Reset all filters
@@ -155,27 +159,25 @@ class SearchResult extends Component
             $query->orderBy('created_at', 'desc');
         }
 
-        // Get hotels with pagination
-        $limit = $this->perPage * $this->page;
-        $hotels = $query->limit($limit)->get();
-
-        // Alternative method if the above doesn't work
-        $hotelIds = Hotel::where('city_id', $cityId)->pluck('id');
-        $amenities = Amenity::select('amenities.*')
-            ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
-            ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
-            ->where('hotels.city_id', $cityId)
-            ->distinct()
-            ->get();
-
-        $mapUrl = $this->getStaticMapUrl($this->city->name);
-
         // Get the total count of filtered hotels
         $totalFilteredCount = $query->count();
 
         // Get hotels with pagination
         $limit = $this->perPage * $this->page;
         $hotels = $query->limit($limit)->get();
+
+        // Get amenities for the city (cached to avoid repeated queries)
+        $amenities = Cache::remember("city_amenities_{$cityId}", 60 * 5, function () use ($cityId) {
+            return Amenity::select('amenities.*')
+                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+                ->where('hotels.city_id', $cityId)
+                ->distinct()
+                ->get();
+        });
+
+        // Get map URL (already cached in the method)
+        $mapUrl = $this->getStaticMapUrl($this->city->name);
 
         return view('livewire.search-result', [
             'hotels' => $hotels,
