@@ -314,6 +314,7 @@ class HotelResource extends Resource
             RelationManagers\ItemsRelationManager::class,
             // RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
+            RelationManagers\FaqsRelationManager::class,
         ];
     }
 

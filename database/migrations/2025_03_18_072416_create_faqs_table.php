@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('faqs', function (Blueprint $table) {
             $table->id();
-            $table->longText("answer");
+            $table->longText("answer")->nullable();
             $table->foreignIdFor(Hotel::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Question::class)->constrained()->cascadeOnDelete();
             $table->timestamps();

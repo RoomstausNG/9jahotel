@@ -18,6 +18,12 @@ class FaqsRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('question_id')
+                    ->relationship(name: 'question', titleAttribute: 'text')
+                    ->extraAttributes(['class' => 'capitalize'])
+                    ->searchable()
+                    ->native(false)
+                    ->preload(),
                 Forms\Components\TextInput::make('answer')
                     ->required()
                     ->maxLength(255),

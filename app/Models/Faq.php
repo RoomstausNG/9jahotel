@@ -18,8 +18,8 @@ class Faq extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-    public function faqs(): BelongsTo
+    public function question(): BelongsTo
     {
-        return $this->belogsTo(Question::class);
+        return $this->belongsTo(Question::class);
     }
 }

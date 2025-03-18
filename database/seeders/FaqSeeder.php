@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Hotel;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class FaqSeeder extends Seeder
 {
@@ -12,6 +13,9 @@ class FaqSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $hotels = Hotel::all();
+
+        foreach ($hotels as $hotel) {
+        }
     }
 }
