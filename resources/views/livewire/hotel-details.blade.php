@@ -1,6 +1,7 @@
 <div class="relative w-full p-0 mx-auto" x-data="{ review: false, modal: @entangle('modal').live }">
     @php
         $amenities = $hotel->amenities;
+        $faqs = $hotel->faqs;
     @endphp
     <div class="grid w-full max-w-screen-lg px-4 py-4 mx-auto space-y-8 rounded-lg">
         {{-- back button --}}
@@ -115,7 +116,23 @@
                     @foreach ($amenities as $amenity)
                         <div :key="{{ $amenity->id }}"
                             class="flex border items-center flex-col py-2 px-4 shadow-sm rounded-md transition-all duration-200">
+                            <span class="text-primary">{!! $amenity->icon !!}</span>
+                            <span class="capitalize font-medium"> {{ $amenity->name }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
+        @if ($faqs->count() > 0)
+            <div class="gap-6 space-y-4" id="amenities">
+                <h1 class="text-2xl font-semibold">
+                    Amenities
+                </h1>
+                <div class="flex gap-6">
+                    @foreach ($amenities as $amenity)
+                        <div :key="{{ $amenity->id }}"
+                            class="flex border items-center flex-col py-2 px-4 shadow-sm rounded-md transition-all duration-200">
                             <span class="text-primary">{!! $amenity->icon !!}</span>
                             <span class="capitalize font-medium"> {{ $amenity->name }}</span>
                         </div>

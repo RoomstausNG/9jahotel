@@ -119,6 +119,12 @@ class Hotel extends Model implements HasMedia
         return $this->hasMany(Booking::class);
     }
 
+
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(Faq::class);
+    }
+
     public function roomWithLowestPrice()
     {
         return $this->roomCategory()->orderBy('price1')->first();
