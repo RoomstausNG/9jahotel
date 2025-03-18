@@ -33,7 +33,6 @@ class FaqSeeder extends Seeder
 
         // For each hotel, create 5-8 random FAQs
         foreach ($hotels as $hotel) {
-            // Randomly select 5-8 questions for this hotel
             $hotelQuestions = Question::all();
             foreach ($hotelQuestions as $index => $question) {
                 Faq::create([
