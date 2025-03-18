@@ -16,6 +16,7 @@ use Nnjeim\World\Models\State;
 use Filament\Resources\Resource;
 use Nnjeim\World\Models\Country;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -206,7 +207,17 @@ class HotelResource extends Resource
                     ->native(false)
                     ->searchable()
                     ->nullable()
-                    ->columnSpan(['lg' => 3]),
+                    ->columnSpan(['lg' => 3])
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('icon')
+                            ->required()
+                            ->startsWith('<svg')
+                            ->helperText(new HtmlString('Click <a href="https://icones.js.org/collection/all" class="underline text-primary" target="_blank">here</a> To get an icon SVG code, search for your desired icon on any icon library website (like FontAwesome or Material Icons), click on the icon to select it, then look for and click an option labeled *SVG* or *Copy SVG* to view or copy the code, and finally paste the complete SVG code here.'))
+                            ->columnSpanFull(),
+                    ]),
                 Forms\Components\RichEditor::make('description')
                     ->columnSpanFull(),
             ])->columns(4);
