@@ -56,7 +56,7 @@ class GeneralItemResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     // ->directory('items')
                     ->disk('cloudinary')
-                    ->default(fn($state)=> )
+                    ->default(fn($state) => getCloudinaryUrl($state->image))
                     ->visibility('private'),
                 Tables\Columns\TextColumn::make('name')
                     ->copyable()
