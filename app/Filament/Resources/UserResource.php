@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\Hotel;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use App\Models\Hotel;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -154,7 +155,8 @@ class UserResource extends Resource
             // ->query(fn(Builder $query) => $query->where('current_role',  'back-office'))
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
-                    ->disk('cloudinary')->visibility('private')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->logo)))
+                    ->disk('cloudinary')
                     ->size(64)
                     ->circular(),
                 Tables\Columns\TextColumn::make('firstname')

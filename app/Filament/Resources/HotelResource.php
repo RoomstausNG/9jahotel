@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Nnjeim\World\Models\Country;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -229,7 +230,8 @@ class HotelResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('logo')
                     ->size(48)
-                    ->disk('cloudinary')->visibility('private')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->logo)))
+                    ->disk('cloudinary')
                     ->defaultImageUrl(url('img/9jahotel.png'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')

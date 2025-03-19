@@ -143,7 +143,8 @@ class UserRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->size(64)
-                    ->disk('cloudinary')->visibility('private')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->avatar)))
+                    ->disk('cloudinary')
                     ->defaultImageUrl(url('img/avatar.png'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('firstname')

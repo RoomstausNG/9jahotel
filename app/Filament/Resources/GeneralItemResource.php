@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\GeneralItemResource\Pages;
-use App\Filament\Resources\GeneralItemResource\RelationManagers;
-use App\Models\GeneralItem;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\GeneralItem;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\GeneralItemResource\Pages;
+use App\Filament\Resources\GeneralItemResource\RelationManagers;
 
 class GeneralItemResource extends Resource
 {
@@ -54,6 +55,7 @@ class GeneralItemResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->image)))
                     // ->directory('items')
                     ->disk('cloudinary')
                     // ->visibility('private')

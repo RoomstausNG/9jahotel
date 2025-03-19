@@ -39,6 +39,7 @@ class ImagesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('url')
                     ->label('Hotel Image')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->url)))
                     ->disk('cloudinary'),
             ])
             ->filters([
