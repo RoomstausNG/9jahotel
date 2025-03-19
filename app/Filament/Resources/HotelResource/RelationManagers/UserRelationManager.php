@@ -143,9 +143,9 @@ class UserRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     ->size(64)
-                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->avatar)))
+                    ->state(fn(Model $record) => $record->avatar ? url(getCloudinaryUrl($record->avatar)) : url('img/avatar.png'))
                     ->disk('cloudinary')
-                    ->defaultImageUrl(url('img/avatar.png'))
+                    // ->defaultImageUrl(url('img/avatar.png'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('firstname')
                     ->extraAttributes(['class' => 'capitalize'])

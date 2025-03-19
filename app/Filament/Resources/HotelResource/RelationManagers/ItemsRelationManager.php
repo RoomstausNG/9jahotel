@@ -106,6 +106,7 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\ImageColumn::make('generalItem.image')
                     ->label('image')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->generalItem->image)))
                     ->disk('cloudinary'),
                 Tables\Columns\TextColumn::make('generalItem.name')
                     ->state(fn(Model $record) => $record->generalItem?->name ?? $record->name)

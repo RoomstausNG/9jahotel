@@ -230,9 +230,9 @@ class HotelResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('logo')
                     ->size(48)
-                    // ->state(fn(Model $record) => $record->logo ? getCloudinaryUrl($record->logo) : url('img/9jahotel.png'))
+                    ->state(fn(Model $record) => $record->logo ? url(getCloudinaryUrl($record->logo)) : url('img/9jahotel.png'))
                     ->disk('cloudinary')
-                    ->defaultImageUrl(fn($state) => $state ? getCloudinaryUrl($state) : url('img/9jahotel.png'))
+                    // ->defaultImageUrl(fn($state) => $state ? getCloudinaryUrl($state) : url('img/9jahotel.png'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->weight(FontWeight::MEDIUM)
