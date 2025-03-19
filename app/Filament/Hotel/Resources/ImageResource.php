@@ -2,16 +2,17 @@
 
 namespace App\Filament\Hotel\Resources;
 
-use App\Filament\Hotel\Resources\ImageResource\Pages;
-use App\Filament\Hotel\Resources\ImageResource\RelationManagers;
-use App\Models\Image;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Image;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Hotel\Resources\ImageResource\Pages;
+use App\Filament\Hotel\Resources\ImageResource\RelationManagers;
 
 class ImageResource extends Resource
 {
@@ -60,7 +61,8 @@ class ImageResource extends Resource
                 // Tables\Columns\TextColumn::make('imageable_type')
                 //     ->searchable(),
                 Tables\Columns\ImageColumn::make('url')
-                    ->disk('cloudinary')->visibility('private')
+                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->url)))
+                    ->disk('cloudinary')
                     ->height(300),
 
                 Tables\Columns\TextColumn::make('created_at')

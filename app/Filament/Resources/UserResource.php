@@ -155,9 +155,10 @@ class UserResource extends Resource
             // ->query(fn(Builder $query) => $query->where('current_role',  'back-office'))
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
-                    ->state(fn(Model $record) => url(getCloudinaryUrl($record->logo)))
-                    ->disk('cloudinary')
+                    // ->disk('cloudinary')->visibility('private')
+                    ->defaultImageUrl(fn(Model $record) => $record->avatar ? url(getCloudinaryUrl($record->avatar)) : url('/img/avatar.png'))
                     ->size(64)
+                    ->disk('cloudinary')
                     ->circular(),
                 Tables\Columns\TextColumn::make('firstname')
                     ->extraAttributes(['class' => 'capitalize'])
