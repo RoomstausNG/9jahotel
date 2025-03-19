@@ -43,7 +43,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar;
+        return $this->avatar ? getCloudinaryUrl($this->avatar) : null;
     }
 
 
