@@ -71,7 +71,7 @@ class UserResource extends Resource
                     ->required(),
 
                 Forms\Components\Select::make('current_role')
-                    ->required()
+                    ->required(fn(string $operation) => $operation === 'create')
                     ->default('back-office')
                     ->options([
                         'marketer' => 'Marketer',
@@ -156,7 +156,7 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('avatar')
                     // ->disk('cloudinary')->visibility('private')
-                    ->defaultImageUrl(fn(Model $record) => $record->avatar ? url(getCloudinaryUrl($record->avatar)) : url('/img/avatar.png'))
+                    ->state(fn(Model $record) => $record->avatar ? url(getCloudinaryUrl($record->avatar)) : url('img/avatar.png'))
                     ->size(64)
                     ->disk('cloudinary')
                     ->circular(),

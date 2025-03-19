@@ -8,19 +8,20 @@ use Filament\Panel;
 use Illuminate\Support\Str;
 use App\Traits\BelongToHotel;
 use App\Models\Scopes\HotelScope;
-use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use Filament\Models\Contracts\HasName;
 use Spatie\Permission\Traits\HasRoles;
-
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Support\Facades\Storage;
+use Filament\Models\Contracts\HasAvatar;
 
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Models\Contracts\FilamentUser;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
+use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
@@ -30,7 +31,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 // #[ScopedBy(HotelScope::class)]
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable, BelongToHotel;
     /**
@@ -39,6 +40,11 @@ class User extends Authenticatable implements FilamentUser, HasName
      * @var array<int, string>
      *
      */
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar;
+    }
 
 
     public function canAccessPanel(Panel $panel): bool
