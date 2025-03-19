@@ -10,6 +10,7 @@ use App\Models\CityCopy;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Nnjeim\World\Models\State;
+use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 function getFirstLetters($inputString): string
@@ -33,6 +34,17 @@ function getFirstLetters($inputString): string
 function currentUser()
 {
     return auth()->user();
+}
+
+function getCloudinaryUrl($publicId, $extension = "webp")
+{
+    $cloudName = env('CLOUDINARY_CLOUD_NAME');
+    return $publicId ? "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}" : null;
+}
+
+function getCloudinaryUrlViaStorage($publicId, $extension = "webp")
+{
+    $publicId ? Storage::disk('cloudinary')->url($publicId) : null;
 }
 
 function profilePicture(object $user): string
