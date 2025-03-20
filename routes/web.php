@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
 use App\Livewire\CreateHotel;
+use App\Livewire\GroupBooking;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 /*
@@ -44,6 +45,8 @@ Route::get('/session-debug', function () {
         'checkout' => Session::get('checkout'),
     ]);
 })->name('session.debug');
+
+Route::get('/group-booking', GroupBooking::class)->name('group.booking');
 
 Route::get('/test', function () {
 
