@@ -80,6 +80,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
      *
      * @var array<int, string>
      */
+
     protected $hidden = [
         'password',
         'remember_token',

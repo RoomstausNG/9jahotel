@@ -13,21 +13,21 @@ use Nnjeim\World\Models\State;
 use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
-function getFirstLetters($inputString): string
+function getFirstLetters(string $inputString): string
 {
-    // Split the input string into an array of words
+    // Split the input string into words
     $words = explode(' ', $inputString);
 
-    // Extract the first letter of each word
-    $firstLetters = array_map(function ($word) {
-        // Use substr to get the first letter of each word
-        return substr($word, 0, 1);
-    }, $words);
+    // Extract the first letter of each valid word
+    $firstLetters = array_filter(array_map(function ($word) {
+        return ctype_alpha($word) ? strtoupper(substr($word, 0, 1)) : ''; 
+    }, $words));
 
-    // Join the first letters into a string
+    // Convert array to string
     $result = implode('', $firstLetters);
 
-    return strlen(strtoupper($result)) < 2 ? Str::random(2) . strtoupper($result) : strtoupper($result);
+    // Ensure at least two characters are returned
+    return strlen($result) < 2 ? strtoupper(Str::random(2)) . $result : $result;
 }
 
 
