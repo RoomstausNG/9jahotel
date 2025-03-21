@@ -18,26 +18,38 @@
              lg:hidden">
                     </div>
 
-                    <div v-for="step in steps" :key="step.id"
-                        class="flex flex-col lg:flex-row  justify-center gap-4 lg:justify-normal  items-center lg:space-x-4 cursor-pointer"
-                        @click="currentStep = step.id">
-                        <div class="w-8 h-8 z-20 flex items-center justify-center rounded-full border-2 transition-all"
-                            :class="{
-                                'border-white bg-white text-primary-700': currentStep === step.id,
-                                'border-cool-300 bg-primary text-cool-300': currentStep !== step.id
-                            }">
-                            <UIcon :name="step.icon" :is="step.icon" v-if="step.icon"
-                                class="w-4 h-4  mx-auto block"
-                                :class="{ 'text-primary-700': currentStep === step.id }" />
-                            <span v-else class=" block">{{ step . id }}</span>
+                    <div x-data="{
+                        currentStep: 1,
+                        steps: [
+                            { id: 1, label: 'Room Information', icon: 'teenyicons:home-outline' },
+                            { id: 2, label: 'Hall Information' },
+                            { id: 3, label: 'Meal Information' },
+                            { id: 4, label: 'Hotel Information' }
+                        ]
+                    }">
+                        <div
+                            class="flex flex-col lg:flex-row justify-center gap-4 lg:justify-normal items-center lg:space-x-4">
+                            <div x-for="(step, index) in steps" :key="index" class="cursor-pointer"
+                                @click="currentStep = step.id">
+                                <div class="w-8 h-8 z-20 flex items-center justify-center rounded-full border-2 transition-all"
+                                    :class="{
+                                        'border-white bg-white text-primary-700': currentStep === step.id,
+                                        'border-cool-300 bg-primary text-cool-300': currentStep !== step.id
+                                    }">
+                                    <i x-if="step.icon" :class="step.icon" class="w-4 h-4 mx-auto block"
+                                        :class="{ 'text-primary-700': currentStep === step.id }"></i>
+                                    <span x-if="!step.icon" class="block" x-text="step.id"></span>
+                                </div>
+                                <span class="transition-all text-center block lg:text-left mx-auto"
+                                    :class="{
+                                        'text-white font-semibold': currentStep === step.id,
+                                        'text-cool-300': currentStep !== step.id
+                                    }"
+                                    x-text="step.label">
+
+                                </span>
+                            </div>
                         </div>
-                        <span class="transition-all text-center block lg:text-left mx-auto"
-                            :class="{
-                                'text-white font-semibold': currentStep === step.id,
-                                'text-cool-300': currentStep !== step.id
-                            }">
-                            {{ step . label }}
-                        </span>
                     </div>
                 </div>
             </div>
