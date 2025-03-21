@@ -143,14 +143,33 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
                 }
             }
         });
+
+        self::updating(function ($user) {
+            // Get the old and new values for the specific column
+            $oldRole = $user->getOriginal('current_role');
+            $newRole = $user->current_role;
+
+            // Only proceed if the value has changed
+            if ($oldRole !== $newRole) {
+                // Update the role and permissions
+                $user->assignRole($newRole);
+
+                $permissions = $user->getPermissionsViaRoles();
+                if (count($permissions) > 0) {
+                    foreach ($permissions as $permission) {
+                        $user->givePermissionTo($permission->name);
+                    }
+                }
+            }
+        });
     }
 
-    function department(): BelongsTo
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-    function bookings(): HasMany
+    public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'agent_id');
     }
