@@ -73,9 +73,13 @@ class UserResource extends Resource
                 Forms\Components\Select::make('current_role')
                     ->required(fn(string $operation) => $operation === 'create')
                     ->default('back-office')
-                    ->options([
+                    ->options(auth()->user()->hasRole('super-admin') ? [
+                        'admin' => 'Admin',
+                        'back-office' => 'Back Office',
                         'marketer' => 'Marketer',
-                        'back-office' => 'Back office'
+                    ] : [
+                        'back-office' => 'Back Office',
+                        'marketer' => 'Marketer'
                     ]),
                 // Forms\Components\TextInput::make('gender')
                 //     ->maxLength(255),
