@@ -118,7 +118,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         return $this->belongsToMany(Hotel::class);
     }
 
-    static function boot()
+    protected static function boot()
     {
         parent::boot();
 
