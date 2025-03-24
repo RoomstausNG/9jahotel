@@ -9,6 +9,7 @@ use App\Models\Hotel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
@@ -267,6 +268,7 @@ class UserResource extends Resource
                     ->successNotificationTitle('User Updated'),
                 Tables\Actions\DeleteAction::make()
                     ->successNotificationTitle('User Deleted'),
+                Action::make('activities')->url(fn($record) => UserResource::getUrl('activities', ['record' => $record]))->visible(fn() => auth()->user()->hasRole(['admin', 'super-admin']))->label('Activities')->icon('heroicon-o-annotation'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -279,6 +281,7 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ManageUsers::route('/'),
+            'activities' => Pages\ListUserActivities::route('/{record}/activities'),
         ];
     }
 
