@@ -195,6 +195,7 @@ class HotelResource extends Resource
                     // ->relationship('team', 'name')
                     ->options(Team::all()->mapWithKeys(fn($team) => [$team->id => ucfirst($team->name . " - " . $team->code)]))
                     ->preload()
+                    ->visibleOn('create')
                     ->native(false)
                     ->searchable()
                     ->nullable(),
