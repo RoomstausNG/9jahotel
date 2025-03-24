@@ -10,16 +10,18 @@ use App\Traits\BelongToHotel;
 use App\Models\Scopes\HotelScope;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\LogOptions;
 use Filament\Models\Contracts\HasName;
 use Spatie\Permission\Traits\HasRoles;
+
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Support\Facades\Storage;
-use Filament\Models\Contracts\HasAvatar;
 
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Models\Contracts\FilamentUser;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -34,12 +36,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable, BelongToHotel;
+    use LogsActivity;
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      *
      */
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+        // ->logOnly(['name', 'text']);
+        // Chain fluent methods for configuration options
+    }
 
     public function getFilamentAvatarUrl(): ?string
     {

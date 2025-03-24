@@ -268,7 +268,7 @@ class UserResource extends Resource
                     ->successNotificationTitle('User Updated'),
                 Tables\Actions\DeleteAction::make()
                     ->successNotificationTitle('User Deleted'),
-                Action::make('activities')->url(fn($record) => UserResource::getUrl('activities', ['record' => $record]))->visible(fn() => auth()->user()->hasRole(['admin', 'super-admin']))->label('Activities')->icon('heroicon-o-annotation'),
+                Action::make('activities')->url(fn($record) => UserResource::getUrl('activities', ['record' => $record]))->visible(fn() => auth()->user()->hasRole(['admin', 'super-admin']))->label('Staff Activities'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
