@@ -149,6 +149,11 @@ class Hotel extends Model implements HasMedia
         return $this->hasMany(Faq::class);
     }
 
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class)->withTimestamps();
