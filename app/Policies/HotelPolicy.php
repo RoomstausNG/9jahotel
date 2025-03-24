@@ -37,7 +37,7 @@ class HotelPolicy
      */
     public function update(User $user, Hotel $hotel): bool
     {
-        return $user->can('update hotel') || $user->can('edit hotel') || $user->hasRole('super-admin') || $user->hasRole('back-office');
+        return $user->can('update hotel') || $user->can('edit hotel') || $user->hasRole('super-admin') || $user->hasRole('back-office') || $user->id == $hotel->created_by;
     }
 
     /**
