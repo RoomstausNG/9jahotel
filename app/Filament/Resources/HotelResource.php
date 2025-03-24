@@ -273,6 +273,13 @@ class HotelResource extends Resource
                     ->weight(FontWeight::BOLD)
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->extraAttributes(['class' => 'text-red-500'])
+                    ->state(fn(Model $record) => ucfirst("{$record->firstname}   {$record->lastname}"))
+                    ->weight(FontWeight::MEDIUM)
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->extraAttributes(['class' => 'capitalize'])
