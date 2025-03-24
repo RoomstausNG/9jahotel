@@ -275,7 +275,7 @@ class HotelResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('createdBy.name')
                     ->extraAttributes(['class' => 'text-red-500'])
-                    ->state(fn(Model $record) => ucfirst("{$record->firstname}   {$record->lastname}"))
+                    ->state(fn(Model $record) => ucfirst("{$record->createdBy?->firstname}   {$record->createdBy?->lastname}"))
                     ->weight(FontWeight::MEDIUM)
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)

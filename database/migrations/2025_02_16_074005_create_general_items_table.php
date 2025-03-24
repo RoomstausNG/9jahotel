@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('code')->nullable()->unique();
             $table->string('image')->nullable();
+            $table->string('image_url')->nullable()->after('image');
             $table->bigInteger('price')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
