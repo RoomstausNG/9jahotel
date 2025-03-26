@@ -55,61 +55,12 @@
             </div>
             <UForm :schema="schema" :state="state"
                 class="lg:col-span-3 bg-white p-12 text-cool-900 lg:max-w-max">
-                <div v-if="currentStep === 1" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <UFormGroup label="Name">
-                        <UInput v-model="state.name" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="Phone Number">
-                        <UInput v-model="state.phone" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="Email Address">
-                        <UInput v-model="state.email" type="email" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="Organisation">
-                        <UInput v-model="state.organization" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="No of Expected Guests">
-                        <UInput v-model="state.guest" type="number" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="No of rooms to be booked">
-                        <UInput v-model="state.room" type="number" variant="outline" color="primary" size="xl" />
-                    </UFormGroup>
-                    <UFormGroup label="Room Category">
-                        <USelectMenu option-attribute="name" value-attribute="id" v-model="state.roomCategory"
-                            variant="outline" color="primary" size="xl" :options="roomCategories"
-                            placeholder="Select Room category" />
-                    </UFormGroup>
-                    <UFormGroup class="w-full" label="For how many days" name="dateRange">
-                        <UPopover :popper="{ placement: 'top-start' }">
-                            <UButton class="w-full" size="lg" icon="i-heroicons-calendar-days-20-solid">
-                                {{ format(dateRange . checked_in, 'd MMM, yyy') }} -
-                                {{ format(dateRange . checked_out, 'd MMM, yyy') }}
-                            </UButton>
+                <div x-if="currentStep === 1" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                            <template #panel="{ close }">
-                                <div class="flex items-center divide-cool-200 sm:divide-x dark:divide-cool-800">
-                                    <div class="flex-col hidden py-4 sm:flex">
-                                        <UButton v-for="(range, index) in ranges" :key="index"
-                                            :label="range.label" color="primary" variant="ghost"
-                                            class="px-6 rounded-none"
-                                            :class="[isRangeSelected(range.duration) ? 'bg-cool-100 dark:bg-cool-800' :
-                                                'hover:bg-cool-50 dark:hover:bg-cool-800/50'
-                                            ]"
-                                            truncate @click="selectRange(range.duration)" />
-                                    </div>
-
-                                    <DatePicker size="lg" v-model="dateRange" @close="close" />
-                                </div>
-                            </template>
-                        </UPopover>
-                    </UFormGroup>
-                    <UFormGroup label="State budget for each room type desired per night" class="lg:col-span-2">
-                        <UInput variant="outline" color="primary" v-model="state.budget" size="xl" />
-                    </UFormGroup>
                     <div class="w-full lg:col-span-2">
-                        <UButton @click="currentStep = 2" type="button" color="primary" size="xl"
+                        <Button @click="currentStep = 2" type="button"
                             class="w-full rounded-none block text-center">Save and
-                            Continue</UButton>
+                            Continue</Button>
                     </div>
                 </div>
 
@@ -125,46 +76,12 @@
                                 :value="method" :label="method" class="capitalize cursor-pointer" />
                         </div>
                         <div class="col:col-span-2 grid grid-cols-2 gap-6 pt-4" v-if="state.hall == 'yes'">
-                            <UFormGroup :label="`Hall Capacity`">
-                                <USelectMenu option-attribute="name" value-attribute="id"
-                                    v-model="state.roomCategory" variant="outline" color="primary" size="xl"
-                                    :options="roomCategories" placeholder="Select Room category" />
-                            </UFormGroup>
-                            <UFormGroup class="w-full" label="For how many days" name="dateRange">
-                                <UPopover :popper="{ placement: 'top-start' }">
-                                    <UButton class="w-full" size="lg" icon="i-heroicons-calendar-days-20-solid">
-                                        {{ format(dateRange . checked_in, 'd MMM, yyy') }} -
-                                        {{ format(dateRange . checked_out, 'd MMM, yyy') }}
-                                    </UButton>
-
-                                    <template #panel="{ close }">
-                                        <div
-                                            class="flex items-center divide-cool-200 sm:divide-x dark:divide-cool-800">
-                                            <div class="flex-col hidden py-4 sm:flex">
-                                                <UButton v-for="(range, index) in ranges" :key="index"
-                                                    :label="range.label" color="primary" variant="ghost"
-                                                    class="px-6 rounded-none"
-                                                    :class="[isRangeSelected(range.duration) ? 'bg-cool-100 dark:bg-cool-800' :
-                                                        'hover:bg-cool-50 dark:hover:bg-cool-800/50'
-                                                    ]"
-                                                    truncate @click="selectRange(range.duration)" />
-                                            </div>
-
-                                            <DatePicker size="lg" v-model="dateRange" @close="close" />
-                                        </div>
-                                    </template>
-                                </UPopover>
-                            </UFormGroup>
-                            <UFormGroup label="State budget for each room type desired per night"
-                                class="lg:col-span-2">
-                                <UInput variant="outline" color="primary" v-model="state.budget" size="xl" />
-                            </UFormGroup>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-8">
-                            <UButton label="Go Back" variant="outline" color="primary" size="xl"
-                                class="w-full rounded-none block text-center" @click="currentStep = 1" />
-                            <UButton label="Save and Continue" color="primary" size="xl"
-                                class="w-full rounded-none block text-center" @click="currentStep = 3" />
+                            <Button class="w-full rounded-none block text-center" @click="currentStep = 1">
+                                Go Back</Button>
+                            <Button class="w-full rounded-none block text-center" @click="currentStep = 3">Save and
+                                Continue</Button>
                         </div>
                     </div>
                 </div>
@@ -181,50 +98,15 @@
                         </div>
                         <div class="col:col-span-2 grid grid-cols-2 gap-6 pt-4" v-if="state.meal == 'yes'">
                             <div class="flex space-x-4 col-span-2">
-                                <UButton v-for="meal in mealTimeOptions" :key="meal"
-                                    @click="state.mealOptions.push(meal)" :label="meal"
-                                    icon="material-symbols:add" color="primary" variant="outline" size="lg"
-                                    class="rounded-none capitalize" />
+                                <Button @click="state.mealOptions.push(meal)" size="lg"
+                                    class="rounded-none capitalize"></Button>
                             </div>
-                            <UFormGroup label="For how many people" class="">
-                                <UInput variant="outline" color="primary" v-model="state.mealPeople"
-                                    size="xl" />
-                            </UFormGroup>
-                            <UFormGroup class=" w-full" label="For how many days" name="dateRange">
-                                <UPopover :popper="{ placement: 'top-start' }">
-                                    <UButton class="w-full" size="lg" icon="i-heroicons-calendar-days-20-solid">
-                                        {{ format(dateRange . checked_in, 'd MMM, yyy') }} -
-                                        {{ format(dateRange . checked_out, 'd MMM, yyy') }}
-                                    </UButton>
 
-                                    <template #panel="{ close }">
-                                        <div
-                                            class="flex items-center divide-cool-200 sm:divide-x dark:divide-cool-800">
-                                            <div class="flex-col hidden py-4 sm:flex">
-                                                <UButton v-for="(range, index) in ranges" :key="index"
-                                                    :label="range.label" color="primary" variant="ghost"
-                                                    class="px-6 rounded-none"
-                                                    :class="[isRangeSelected(range.duration) ? 'bg-cool-100 dark:bg-cool-800' :
-                                                        'hover:bg-cool-50 dark:hover:bg-cool-800/50'
-                                                    ]"
-                                                    truncate @click="selectRange(range.duration)" />
-                                            </div>
-
-                                            <DatePicker size="lg" v-model="dateRange" @close="close" />
-                                        </div>
-                                    </template>
-                                </UPopover>
-                            </UFormGroup>
-                            <UFormGroup label="State budget for meals per day" class="lg:col-span-2">
-                                <UInput variant="outline" color="primary" v-model="state.mealBudget"
-                                    size="xl" />
-                            </UFormGroup>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-8">
-                            <UButton label="Go Back" variant="outline" color="primary" size="xl"
-                                class="w-full rounded-none block text-center" @click="currentStep = 2" />
-                            <UButton label="Save and Continue" color="primary" size="xl"
-                                class="w-full rounded-none block text-center" @click="currentStep = 4" />
+                            <Button label="" class="w-full rounded-none block text-center"
+                                @click="currentStep = 2">Go Back</Button>
+                            <Button class="w-full rounded-none block text-center" @click="currentStep = 4"></Button>
                         </div>
                     </div>
                 </div>
@@ -234,13 +116,11 @@
                     <div class="space-y-4">
                         <h1 class="text-lg font-medium">Select atleast 3 hotels</h1>
                         <USelectMenu option-attribute="name" value-attribute="id" v-model="state.roomCategory"
-                            variant="outline" color="primary" size="xl" :options="roomCategories"
-                            placeholder="Search hotels" />
+                            :options="roomCategories" placeholder="Search hotels" />
                         <div class="col:col-span-2">
                             <div v-if="state.mealOptions.length" class="flex space-x-4 col-span-2">
-                                <UButton v-for="meal in state.hotelOptions" :key="meal"
-                                    @click="state.mealOptions.push(meal)" :label="meal"
-                                    icon="material-symbols:add" color="primary" variant="outline" size="lg"
+                                <Button v-for="meal in state.hotelOptions" :key="meal"
+                                    @click="state.mealOptions.push(meal)" :label="meal" size="lg"
                                     class="rounded-none capitalize" />
                             </div>
                         </div>
@@ -253,14 +133,13 @@
                             </div>
                             <div class="pt-3 flex gap-4">
                                 <URadio v-for="method in bidOptions" :key="method" v-model="state.hotel"
-                                    :value="method" :label="method"
-                                    class="capitalize cursor-pointer" />
+                                    :value="method" :label="method" class="capitalize cursor-pointer" />
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-8">
-                            <UButton label="Go Back" variant="outline" color="primary" size="xl"
-                                class="w-full rounded-none block text-center" @click="currentStep = 3" />
-                            <UButton type="submit" label="Save and Continue" color="primary" size="xl"
+                            <Button label="Go Back" class="w-full rounded-none block text-center"
+                                @click="currentStep = 3" />
+                            <Button type="submit" label="Save and Continue"
                                 class="w-full rounded-none block text-center" />
                         </div>
                     </div>
