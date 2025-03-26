@@ -24,4 +24,15 @@ class GeneralItem extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+    static function booted()
+    {
+        parent::booted();
+
+        self::created(function (self $item) {
+            $imageUrl = getCloudinaryImage($item->image);
+            $item->image_url = $imageUrl;
+            $item->save();
+        });
+    }
 }
