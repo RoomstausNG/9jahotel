@@ -15,19 +15,14 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 function getFirstLetters(string $inputString): string
 {
-    // Split the input string into words
     $words = explode(' ', $inputString);
-
-    // Extract the first letter of each valid word
     $firstLetters = array_filter(array_map(function ($word) {
-        return ctype_alpha($word) ? strtoupper(substr($word, 0, 1)) : ''; 
+        return ctype_alpha($word) ? strtoupper(substr($word, 0, 1)) : '';
     }, $words));
-
-    // Convert array to string
     $result = implode('', $firstLetters);
 
-    // Ensure at least two characters are returned
-    return strlen($result) < 2 ? strtoupper(Str::random(2)) . $result : $result;
+    // Add more random characters and ensure uniqueness
+    return strtoupper(Str::random(4)) . $result . time();
 }
 
 
