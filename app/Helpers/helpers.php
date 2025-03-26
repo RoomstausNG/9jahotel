@@ -22,7 +22,7 @@ function getFirstLetters(string $inputString): string
     $result = implode('', $firstLetters);
 
     // Add more random characters and ensure uniqueness
-    return strtoupper(Str::random(4)) . $result . time();
+    return strtoupper(Str::random(3)) . $result . time();
 }
 
 
