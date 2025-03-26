@@ -104,7 +104,7 @@ class ItemsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\ImageColumn::make('generalItem.image')
+                Tables\Columns\ImageColumn::make('generalItem.image_url')
                     ->label('image')
                     ->state(fn(Model $record) => $record->generalItem?->image_url ? url($record->generalItem->image_url) : url('img/9jahotel.png'))
                     ->disk('cloudinary'),
