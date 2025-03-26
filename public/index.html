@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white flex flex-col items-center justify-center h-screen text-center">
+    <div class="absolute top-5 left-5 flex items-center space-x-2">
+        <div class="bg-red-500 w-6 h-6 rounded-full"></div>
+        <span class="text-lg font-bold">Logo</span>
+    </div>
+
+    <h1 class="text-6xl font-bold">We Are</h1>
+    <h1 class="text-6xl font-bold">Coming Soon</h1>
+
+    <div class="flex space-x-4 text-3xl font-mono mt-6">
+        <div id="days">00</div><span>:</span>
+        <div id="hours">00</div><span>:</span>
+        <div id="minutes">00</div><span>:</span>
+        <div id="seconds">00</div>
+    </div>
+
+    <p class="mt-6 w-2/3">We're strong believers that the best solutions come from gathering new insights and pushing
+        conventional boundaries.</p>
+
+    <p class="absolute top-5 right-5">Say hello! <a href="mailto:info@yourwebsite.com"
+            class="underline">info@yourwebsite.com</a></p>
+
+    <script>
+        function startCountdown(targetDate) {
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    document.getElementById("days").textContent = "00";
+                    document.getElementById("hours").textContent = "00";
+                    document.getElementById("minutes").textContent = "00";
+                    document.getElementById("seconds").textContent = "00";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").textContent = String(days).padStart(2, '0');
+                document.getElementById("hours").textContent = String(hours).padStart(2, '0');
+                document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
+                document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        const launchDate = new Date("2025-05-15T00:00:00").getTime();
+        startCountdown(launchDate);
+    </script>
+</body>
+
+</html>
