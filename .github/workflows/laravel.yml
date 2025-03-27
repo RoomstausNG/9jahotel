@@ -2,9 +2,9 @@ name: Laravel
 
 on:
   push:
-    branches: ["apis"]
+    branches: ["test"]
   pull_request:
-    branches: ["master"]
+    branches: ["test"]
 
 jobs:
   laravel-tests:
@@ -46,4 +46,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd //www/wwwroot/awaroom.fedums.com && ./deploy.sh"
+          script: "cd /www/wwwroot/test.9jahotel.com && ./deploy.sh"
