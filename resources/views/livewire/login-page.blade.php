@@ -1,5 +1,9 @@
- <div class="w-full space-y-6 text-white max-w-xl mx-auto">
-     <div class="py-12">
+ <div class="w-full space-y-6 max-w-xl mx-auto">
+     <div class="py-12 space-y-8">
+         <div class="text-center">
+             <h1 class="text-2xl font-medium">Welcome Back!</h1>
+             <p>Log in your 9jahotel account to continue</p>
+         </div>
          <form action="" class="w-full px-2 space-y-6 text-white" method="post">
              @csrf
              <div class="space-y-1 text-left">

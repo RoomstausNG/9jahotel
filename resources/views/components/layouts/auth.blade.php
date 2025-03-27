@@ -101,8 +101,8 @@
                     </li>
 
                     <li class="">
-                        <a href="{{ Request::routeIs('/login') ? route('register') : route('login') }}"
-                            class="block px-3 py-2 text-white rounded bg-primary hover:bg-primary-700">{{ Request::routeIs('/login') ? __('Create an Account') : __('Login') }}</a>
+                        <a href="{{ Request::routeIs('login') ? route('register') : route('login') }}"
+                            class="block px-3 py-2 text-white rounded bg-primary hover:bg-primary-700">{{ Request::routeIs('login') ? __('Create an Account') : __('Login') }}</a>
                     </li>
                 </ul>
             </div>
