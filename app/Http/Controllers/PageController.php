@@ -10,7 +10,7 @@ use Nnjeim\World\Models\State;
 
 class PageController extends Controller
 {
-    function homepage()
+    public  function homepage()
     {
         $states = State::where('country_id', 160)->get();
         return view('index', compact(['states']));

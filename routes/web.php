@@ -3,15 +3,16 @@
 use App\Models\User;
 
 use App\Livewire\BookRoom;
+use App\Livewire\Register;
 use App\Livewire\LoginPage;
+use App\Livewire\CreateHotel;
+use App\Livewire\GroupBooking;
 use App\Livewire\HotelDetails;
 use App\Livewire\SearchResult;
 use App\Models\BookingInvoice;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
-use App\Livewire\CreateHotel;
-use App\Livewire\GroupBooking;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 /*
@@ -36,7 +37,8 @@ Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');
 Route::get('/hotel/rooms/{category}', BookRoom::class)->name('bookroom');
 Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
-Route::get("/signin", LoginPage::class)->middleware('page-cache');
+Route::get("/login", LoginPage::class)->name('login')->middleware('page-cache');
+Route::get("/register", Register::class)->name('register')->middleware('page-cache');
 
 Route::get('/session-debug', function () {
     return response()->json([
