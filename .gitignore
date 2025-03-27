@@ -3,6 +3,9 @@
 /public/hot
 /public/build
 /public/storage
+/public/index.html
+/img
+index.html
 /storage/*.key
 /public/page-cache
 /vendor
