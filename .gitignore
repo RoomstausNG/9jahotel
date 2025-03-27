@@ -8,6 +8,8 @@
 index.html
 /storage/*.key
 /public/page-cache
+/public/page-cache/*
+/public/page-cache/**/*
 /vendor
 /storage/debugbar
 /docker
