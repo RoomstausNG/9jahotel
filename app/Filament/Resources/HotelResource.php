@@ -281,6 +281,12 @@ class HotelResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->extraAttributes(['class' => 'text-green-600'])
+                    ->weight(FontWeight::MEDIUM)
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->extraAttributes(['class' => 'capitalize'])
@@ -296,7 +302,7 @@ class HotelResource extends Resource
                     ->searchable() // If you want a searchable dropdown
                     ->placeholder('Select City'),
                 SelectFilter::make('team_id')
-                    ->relationship('team', 'id')
+                    ->relationship('team', 'name')
                     // ->options(fn() => CityCopy::with('hotels')->has('hotels')->get()->pluck('name', 'id')->toArray())
                     ->label('Team')
                     ->preload()
