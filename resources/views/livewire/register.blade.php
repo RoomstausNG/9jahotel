@@ -1,8 +1,8 @@
 <div class="w-full space-y-6 max-w-xl mx-auto">
     <div class="py-20 md:py-28 lg:py-32 space-y-8">
         <div class="text-center">
-            <h1 class="text-2xl font-medium">Create an Account</h1>
-            <p>Sign up for your 9jahotel account to get started</p>
+            <h1 class="text-2xl font-medium">Become a 9jahotel customer</h1>
+            <p>Let’s get you onboard. It’s easy</p>
         </div>
         <div class="">
             <a href="" class="bg-primary-50 border-primary py-3 gap-2 font-medium border w-full text-center block">

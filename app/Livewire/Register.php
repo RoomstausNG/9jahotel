@@ -13,7 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Concerns\InteractsWithForms;
 
-class RegisterPage extends Component implements HasForms
+class Register extends Component implements HasForms
 {
     use InteractsWithForms;
 
