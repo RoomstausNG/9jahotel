@@ -12,6 +12,7 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     <title>9jahotels | Roomstatus</title>
+
     @filamentStyles
     @vite(['resources/css/app.css', 'resources/sass/main.scss'])
 </head>
@@ -229,6 +230,8 @@
             </div>
         </div>
     </footer>
+
+    @livewire('notifications')
 
     @filamentScripts
     @vite(['resources/js/app.js'])
