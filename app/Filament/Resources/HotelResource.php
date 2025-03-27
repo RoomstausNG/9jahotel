@@ -263,6 +263,13 @@ class HotelResource extends Resource
                     ->getOptionLabelFromRecordUsing(fn($record) => ucfirst("{$record->name} ({$record->hotels->count()})"))
                     ->searchable() // If you want a searchable dropdown
                     ->placeholder('Select City'),
+                SelectFilter::make('team_id')
+                    ->relationship('team', 'id')
+                    // ->options(fn() => CityCopy::with('hotels')->has('hotels')->get()->pluck('name', 'id')->toArray())
+                    ->label('Team')
+                    ->preload()
+                    ->searchable() // If you want a searchable dropdown
+                    ->placeholder('Select Team'),
             ])
             ->actions([
                 ActionGroup::make([
