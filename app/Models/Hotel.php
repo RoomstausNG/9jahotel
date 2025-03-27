@@ -28,6 +28,11 @@ class Hotel extends Model implements HasMedia
         'renew' => 'date'
     ];
 
+    public function power(): BelongsTo
+    {
+        return $this->belongsTo(Power::class);
+    }
+
     public function getCurrentTenantLabel(): string
     {
         return 'Current Hotel';
