@@ -6,23 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>9jahotel | Coming Soon</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a4731 0%, #065f46 50%, #064e3b 100%);
+        }
+    </style>
 </head>
 
-<body class="bg-green-900 text-white p-6">
+<body class="gradient-bg text-white p-6">
     <div class="w-full max-w-7xl mx-auto">
         <div class="flex md:justify-between items-center">
-            <div class=" top-5 left-5 flex items-center space-x-2">
+            <div class="top-5 left-5 flex items-center space-x-2">
                 <img src="./img/logo.jpeg" class="max-w-64 bg-white" alt="">
             </div>
-            <!-- <p class=" top-5 right-5">Say hello! <a href="mailto:info@9jahotel.com"
+            <!-- <p class="top-5 right-5">Say hello! <a href="mailto:info@9jahotel.com"
                     class="underline">info@9jahotel.com</a>
             </p> -->
         </div>
 
         <div
-            class="flex flex-col items-start md:flex-row w-full  justify-center md:justify-between h-screen gap-20 p-6 lg:p-0">
+            class="flex flex-col items-start md:flex-row w-full justify-center md:justify-between h-screen gap-20 p-6 lg:p-0">
             <div class="space-y-8 md:space-y-12 lg:space-y-20 w-full md:w-2/3">
-                <div class="">
+                <div class="pt-12 sm:pt-16 md:pt-20">
                     <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold">We Are</h1>
                     <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold">Coming Soon</h1>
                 </div>
@@ -49,10 +54,16 @@
                     </div>
                 </div>
             </div>
-            <div class=" lg:w-1/2 relative w-full flex flex-col justify-between">
-                <div class="relative">
-                    <img src="./img/coming_soon.jpeg" alt="9jahotel | Coming Soon"
-                        class="max-h-[500px] object-cover object-top w-full max-w-[400px] rounded-lg h-auto">
+            <div class="lg:w-1/2 md:-mt-20 lg:-mt-24 space-y-12 relative w-full flex flex-col justify-between">
+                <div class="relative max-w-max overflow-hidden rounded-lg">
+                    <!-- Image container with overlay -->
+                    <div class="relative">
+                        <img src="./img/coming_soon.jpeg" alt="9jahotel | Coming Soon"
+                            class="max-h-[500px] object-cover object-top w-full min-w-[400px] rounded-lg h-auto">
+                        <!-- Tailwind overlay with gradient -->
+                        <div class="absolute inset-0 bg-gradient-to-b from-green-900/90 to-green-900/50 rounded-lg">
+                        </div>
+                    </div>
                 </div>
                 <div class="">
                     <p class="mt-6 font-mono max-w-[450px] text-lg">We're strong believers that the best solutions come
