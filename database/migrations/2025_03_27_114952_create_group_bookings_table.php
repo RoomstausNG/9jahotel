@@ -35,7 +35,7 @@ return new class extends Migration
             $table->date("hall_to")->nullable();
             $table->date("meal_from")->nullable();
             $table->date("meal_to")->nullable();
-            $table->json('hotels');
+            $table->json('hotels')->nullable();
             $table->boolean('allow_external_bids');
             $table->timestamps();
         });
