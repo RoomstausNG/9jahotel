@@ -3,7 +3,7 @@
         <h1 class="text-2xl font-semibold md:text-3xl">
             Select a city to book a hotel.
         </h1>
-        <p class="text-lg"> We offer {{ number_format(hotels()->count(), 0, '.', ',') }}
+        <p class="text-lg"> We offer {{ number_format(totalHotel(), 0, '.', ',') }}
             hotels
             across
             {{ number_format($cities->count(), 0, '.', ',') }}
@@ -16,10 +16,10 @@
         @forelse ($cities as $city)
             <a class="block p-2 space-y-1 transition duration-300 transform hover:shadow-2xl" href="">
                 <h1 class="text-lg font-semibold capitalize text-primary">{{ 'Hotels in ' . $city->name }}</h1>
-                <p class="text-sm">There are {{ $city->hotels->count() }} hotels in {{ $city->name }}, featuring over
-                    {{ $city->ratings->count() }}
+                <p class="text-sm">There are {{ $city->hotels_count }} hotels in {{ $city->name }}, featuring over
+                    {{ $city->ratings_count }}
                     verified reviews and
-                    {{ $city->bookings->count() }} bookings.</p>
+                    {{ $city->bookings_count }} bookings.</p>
             </a>
         @empty
             <div>
@@ -27,7 +27,7 @@
             </div>
         @endforelse
     </div>
-    <div class="max-w-4xl mx-auto">
+    {{-- <div class="max-w-4xl mx-auto">
         {{ $cities->links() }}
-    </div>
+    </div> --}}
 </div>

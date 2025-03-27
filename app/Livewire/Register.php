@@ -26,14 +26,12 @@ class Register extends Component implements HasForms
                 TextInput::make('firstname')
                     ->label('First Name')
                     ->required()
-                    ->prefixIcon('heroicon-o-user')
-                    ->columnSpan('full'),
+                    ->prefixIcon('heroicon-o-user'),
 
                 TextInput::make('lastname')
                     ->label('Last Name')
                     ->required()
-                    ->prefixIcon('heroicon-o-user')
-                    ->columnSpan('full'),
+                    ->prefixIcon('heroicon-o-user'),
 
                 TextInput::make('email')
                     ->label('Email')
@@ -69,7 +67,7 @@ class Register extends Component implements HasForms
                     ->autocomplete('new-password')
                     ->columnSpan('full'),
             ])
-            ->columns(1)
+            ->columns(2)
             ->statePath('data');
     }
 

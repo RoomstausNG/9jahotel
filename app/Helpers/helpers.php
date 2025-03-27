@@ -317,6 +317,11 @@ function hotels()
     return Hotel::all();
 }
 
+function totalHotel(): int
+{
+    return Hotel::count();
+}
+
 
 function calculateRemainingAmount($originalNumber, $percentage)
 {

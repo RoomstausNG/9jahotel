@@ -11,7 +11,7 @@ class HotelCities extends Component
     use WithPagination;
     public function render()
     {
-        $cities = CityCopy::has('hotels')->paginate(48);
+        $cities = CityCopy::withCount(['hotels', 'ratings', 'bookings'])->has('hotels')->get();
         return view('livewire.hotel-cities', compact(['cities']));
     }
 }

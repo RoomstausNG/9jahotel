@@ -31,6 +31,8 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
+Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
+Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
 
 Route::get('/home', Dashboard::class)->name('dashboard');
 

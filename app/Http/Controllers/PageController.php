@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Page;
 use App\Models\Hotel;
 use Illuminate\Http\Request;
 use Nnjeim\World\Models\City;
@@ -24,6 +25,14 @@ class PageController extends Controller
             return view('success', compact(['invoice']));
         }
     }
+
+    public function term()
+    {
+        $term = Page::where('key', 'term')->first();
+        return view('term', compact(['term']));
+    }
+
+
 
     public function hotelByState(State $state)
     {

@@ -148,9 +148,9 @@
         {{-- app decotations --}}
 
     </div>
-    <div class="w-full pt-16 bg-primary-50">
+    <div class="w-full pt-24 md:pt-32 lg:pt-40  bg-primary-50 overflow-hidden">
         <section
-            class="flex flex-col justify-center w-full max-w-screen-md gap-8 mx-auto lg:flex-row-reverse rounded-2xl lg:justify-between">
+            class="flex py-8 flex-col justify-center w-full max-w-screen-xl gap-8 mx-auto lg:flex-row-reverse rounded-2xl lg:justify-between">
 
             <div class="flex flex-col items-start justify-center w-full py-4 space-y-3 lg:justify-start lg:pl-12">
                 <h1 class="text-4xl font-bold md:text-5xl lg:text-7xl md:font-extrabold text-primary">Get the <br>
@@ -165,14 +165,15 @@
                 <div class="flex items-center gap-4">
                     <a href="" class="">
                         <img src="{{ asset('img/android.jpeg') }}" alt="9jahotel android app"
-                            class="w-auto h-10 lg:h-14">
+                            class="w-auto h-10 lg:h-12">
                     </a>
                     <a href="" class="">
-                        <img src="{{ asset('img/apple.jpeg') }}" alt="9jahotel io app" class="w-auto h-10 lg:h-14">
+                        <img src="{{ asset('img/apple.jpeg') }}" alt="9jahotel io app" class="w-auto h-10 lg:h-12">
                     </a>
                 </div>
             </div>
-            <img src="" alt="" class="w-full lg:w-1/2">
+            <img src="{{ asset('img/download.png') }}" alt=""
+                class="w-full md:scale-125 lg:scale-150 md:-mb-24 lg:-mb-48 block lg:w-1/2 object-cover">
         </section>
     </div>
 
