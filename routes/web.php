@@ -4,6 +4,7 @@ use App\Models\User;
 
 use App\Livewire\BookRoom;
 use App\Livewire\Register;
+use App\Livewire\Dashboard;
 use App\Livewire\LoginPage;
 use App\Livewire\CreateHotel;
 use App\Livewire\GroupBooking;
@@ -30,6 +31,8 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
+
+Route::get('/home', Dashboard::class)->name('dashboard');
 
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
 Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');

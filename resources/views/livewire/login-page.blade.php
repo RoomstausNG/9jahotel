@@ -4,35 +4,22 @@
              <h1 class="text-2xl font-medium">Welcome Back!</h1>
              <p>Log in your 9jahotel account to continue</p>
          </div>
-         <form action="" class="w-full px-2 space-y-6 text-white" method="post">
-             @csrf
-             <div class="space-y-1 text-left">
-                 <label for="code" class="inline-block text-left text-white">Hotel Code</label>
-                 <input type="text" name="code" value="{{ old('code') }}"
-                     class="w-full px-4 py-2 text-sm text-gray-600 rounded shadow-sm focus:ring-0 focus:border-primary">
-                 @error('code')
-                     <span class="text-sm font-medium text-red-600 bg-transparent">{{ $message }}</span>
-                 @enderror
+         <form wire:submit="login" class="space-y-6">
+             {{ $this->form }}
+
+             <div class="flex items-center justify-end">
+                 <div class="text-sm text-right">
+                     <a href="{{ route('password.request') }}" class="font-semibold text-green-600 hover:text-green-500">
+                         Forgot password?
+                     </a>
+                 </div>
              </div>
-             <div class="space-y-1 text-left">
-                 <label for="username" class="inline-block text-left text-white">Username</label>
-                 <input type="text" name="username" value="{{ old('username') }}"
-                     class="w-full px-4 py-2 text-sm text-gray-600 rounded shadow-sm focus:ring-0 focus:border-primary">
-                 @error('username')
-                     <span class="text-sm font-medium text-red-600 bg-transparent">{{ $message }}</span>
-                 @enderror
-             </div>
-             <div class="space-y-1 text-left">
-                 <label for="password" class="inline-block text-left text-white">Password</label>
-                 <input type="password" name="password"
-                     class="w-full px-4 py-2 text-sm text-gray-600 rounded shadow-sm focus:ring-0 focus:border-primary">
-                 @error('password')
-                     <span class="text-sm font-medium text-red-600 bg-transparent">{{ $message }}</span>
-                 @enderror
-             </div>
-             <div class="space-y-1 text-left">
-                 <button
-                     class="inline-block w-full py-2 text-center text-white rounded-md bg-primary hover:bg-primary-700 tt">Sign-in</button>
+
+             <div>
+                 <button type="submit"
+                     class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                     Sign in
+                 </button>
              </div>
          </form>
      </div>
