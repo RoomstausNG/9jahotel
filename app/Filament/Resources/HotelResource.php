@@ -162,9 +162,9 @@ class HotelResource extends Resource
                 //     ->required(),
                 Forms\Components\TimePicker::make('checked_out')
                     ->label('Checkout Time')
-                    ->seconds(false)
-                    ->okLabel("Confirm")
-                    ->cancelLabel("Cancel"),
+                    ->seconds(false),
+                // ->okLabel("Confirm")
+                // ->cancelLabel("Cancel"),
 
                 Forms\Components\Select::make('status')
                     ->options(['active' => 'Active', 'inactive' => 'Inactive'])
