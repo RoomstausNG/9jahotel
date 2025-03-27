@@ -26,7 +26,6 @@ use App\Filament\Resources\HotelResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cloudinary\Transformation\Argument\Text\FontWeight;
 use App\Filament\Resources\HotelResource\RelationManagers;
-use HusamTariq\FilamentTimePicker\Forms\Components\TimePickerField;
 
 
 class HotelResource extends Resource
@@ -163,6 +162,7 @@ class HotelResource extends Resource
                 //     ->required(),
                 Forms\Components\TimePicker::make('checked_out')
                     ->label('Checkout Time')
+                    ->seconds(false)
                     ->okLabel("Confirm")
                     ->cancelLabel("Cancel"),
 
