@@ -46,4 +46,16 @@ class GroupBooking extends Model
     {
         return $this->belongsToMany(Hotel::class, 'group_booking_hotel');
     }
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        // attach with hotels
+        self::created(function ($booking) {
+            foreach ($booking->hotels as $hotel) {
+                $hotel->group_bookings()->attach($booking->id);
+            };
+        });
+    }
 }
