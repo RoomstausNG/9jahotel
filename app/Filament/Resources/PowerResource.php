@@ -43,6 +43,7 @@ class PowerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->extraAttributes(['class' => 'capitalize'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('number')
                     ->alignCenter()
@@ -69,7 +70,7 @@ class PowerResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->hidden(fn(Power $power) => $power->hotels()->exists()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

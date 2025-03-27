@@ -146,12 +146,12 @@ class HotelResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('zip_code')
-                    ->maxLength(255),
+                // Forms\Components\TextInput::make('zip_code')
+                //     ->maxLength(255),
                 Forms\Components\TextInput::make('service_charge')
                     ->hiddenOn("create")
                     ->numeric(),
-                Forms\Components\Toggle::make('vat'),
+
                 Forms\Components\TextInput::make('surcharge')
                     ->hiddenOn("create")
                     ->numeric(),
@@ -161,7 +161,7 @@ class HotelResource extends Resource
                 //     ->required(),
                 // Forms\Components\ColorPicker::make('secondary_color')
                 //     ->required(),
-                TimePickerField::make('checked_out')
+                Forms\Components\TimePicker::make('checked_out')
                     ->label('Checkout Time')
                     ->okLabel("Confirm")
                     ->cancelLabel("Cancel"),
@@ -171,8 +171,8 @@ class HotelResource extends Resource
                     ->hiddenOn('create')
                     ->default('active'),
                 Forms\Components\Select::make('type')
-                    ->options(['both' => 'Both', '9jahotel' => '9jaHotel'])
-                    ->default('active'),
+                    ->options(['9jahotel' => '9jaHotel', 'both' => 'Both'])
+                    ->default('9jahotel'),
                 Forms\Components\DatePicker::make('renew')
                     ->hiddenOn('create'),
                 // ->readonly(),
@@ -199,7 +199,15 @@ class HotelResource extends Resource
                     ->native(false)
                     ->searchable()
                     ->nullable(),
+                Forms\Components\Select::make('power_id')
+                    ->label('Electricity')
+                    ->relationship('power', 'name')
+                    ->preload()
+                    ->native(true)
+                    ->searchable()
+                    ->nullable(),
                 Rating::make('star_rating')->color('success'),
+                Forms\Components\Toggle::make('vat'),
                 Forms\Components\Select::make('amenities')
                     ->multiple()
                     ->label('Amenities')
