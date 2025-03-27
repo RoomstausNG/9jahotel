@@ -49,8 +49,11 @@ class LoginPage extends Component implements HasForms
     public function login()
     {
         $this->validate([
-            'data.email' => 'required|email',
+            'data.email' => ['required', 'email', 'exists:customers,email'],
             'data.password' => 'required',
+        ], [
+            'data.email.exists' => 'No customer with the email address provided',
+            'data.email.email' => 'The email address provided is invalid',
         ]);
 
         $credentials = [
@@ -76,6 +79,8 @@ class LoginPage extends Component implements HasForms
             $this->dispatch('swal:success', details: sweetAlert(...$details));
 
             return redirect()->intended(route('dashboard'));
+        } else {
+            $this->addError('data.password', 'Incorrect password');
         }
 
         Notification::make()
@@ -84,7 +89,7 @@ class LoginPage extends Component implements HasForms
             ->danger()
             ->send();
 
-        $this->addError('data.email', 'These credentials do not match our records.');
+        // $this->addError('data.email', 'No customer with the email address provider');
     }
 
     public function mount(): void
