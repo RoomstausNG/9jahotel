@@ -122,20 +122,21 @@
             <h1 class="text-2xl font-medium text-primary-DARK">Top Rated Hotels</h1>
             <section
                 class="flex w-full gap-8 py-4 space-x-2 overflow-x-auto text-white md:py-6 rounded-2xl lg:justify-between">
-                @for ($i = 0; $i < 10; $i++)
-                    <div
-                        class="overflow-hidden relative h-[300px] shadow rounded-lg min-w-[60%] md:min-w-[30%] lg:min-w-[17%] md:max-w-[250px]">
-                        <img src="{{ asset('img/bg-one.jpg') }}" alt="{{ env('APP_NAME') }}"
-                            class="block object-cover w-auto h-full">
+                @foreach (\App\Models\Hotel::with(['city'])->orderByDesc('star_rating')->take(12)->get() as $hotel)
+                    <a href="{{ route('hotels.show', $hotel->code) }}"
+                        class="overflow-hidden block relative h-[300px] cursor-pointer shadow rounded-lg min-w-[60%] md:min-w-[30%] lg:min-w-[25%] md:max-w-[250px]">
+                        <img src="{{ getCloudinaryUrl($hotel->background_image) }}"
+                            alt="{{ env('APP_NAME') . $hotel->name }}"
+                            class="block transition-all transform hover:scale-110 duration-500 object-cover w-full h-full">
                         <div
-                            class="absolute bottom-0 left-0 right-0 w-full px-4 pt-4 pb-2 text-white bg-opacity-50 bg-primary-DARK">
-                            <p class="p-0 m-0 font-medium text-primary-50 " style="line-height: 4px">Alubarika hotel
-                                4.0+
+                            class="absolute bottom-0 left-0 right-0 w-full px-4 py-2 text-white bg-opacity-50 bg-primary-900">
+                            <p class="p-0 m-0 font-medium text-white capitalize text-lg" style="line-height: 16px">
+                                {{ $hotel->name }}
                             </p>
-                            <small class="text-sm">Lagos</small>
+                            <small class="text-sm font-medium">{{ $hotel->city?->name ?? 'No City' }}</small>
                         </div>
-                    </div>
-                @endfor
+                    </a>
+                @endforeach
             </section>
         </div>
 
