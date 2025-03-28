@@ -128,7 +128,10 @@
                                             {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                     </div>
                                     <div class="flex flex-wrap w-full gap-2">
-                                        @foreach ($hotel->amenities->take(5) as $amenity)
+                                        @php
+                                            $hotelCount = $hotel->amenities->count();
+                                        @endphp
+                                        @foreach ($hotel->amenities->take(min(5, $hotelCount)) as $amenity)
                                             <p
                                                 class="py-1 flex text-gray-500 border rounded shadow-sm items-center text-xs px-2 font-medium capitalize">
                                                 <span
@@ -138,6 +141,13 @@
                                                 <span>{{ $amenity->name }}</span>
                                             </p>
                                         @endforeach
+                                        @if ($hotelCount > 5)
+                                            <div
+                                                class="flex border text-sm items-center gap-2 p-2 shadow-sm rounded-md transition-all duration-200">
+                                                <span class="capitalize font-medium">+{{ $hotelCount - 5 }}
+                                                    more</span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="space-y-3">
