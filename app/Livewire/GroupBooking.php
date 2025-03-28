@@ -88,6 +88,7 @@ class GroupBooking extends Component implements HasForms
 
                             TextInput::make('email')
                                 ->email()
+                                ->required()
                                 ->label('Email Address')
                                 ->placeholder('Enter your email address'),
 
@@ -100,7 +101,7 @@ class GroupBooking extends Component implements HasForms
                                 ->required()
                                 ->label('Expected Number of Guests')
                                 ->placeholder('Enter the total number of expected guests'),
-                        ]),
+                        ])->columns(2),
 
                     Step::make('Room Requirements')
                         ->schema([
@@ -130,24 +131,9 @@ class GroupBooking extends Component implements HasForms
                             TextInput::make('room_budget')
                                 ->numeric()
                                 ->label('Budget per Room (per night)')
-                                ->prefix('$')
+                                ->prefix('₦')
                                 ->placeholder('Enter your budget per room'),
-
-                            Repeater::make('hotels')
-                                ->schema([
-                                    TextInput::make('hotel_name')
-                                        ->required()
-                                        ->label('Hotel Name'),
-
-                                    TextInput::make('preference')
-                                        ->numeric()
-                                        ->label('Preference Order')
-                                        ->helperText('1 for most preferred, 2 for second choice, etc.'),
-                                ])
-                                ->label('Preferred Hotels (Optional)')
-                                ->collapsed()
-                                ->itemLabel(fn(array $state): ?string => $state['hotel_name'] ?? null),
-                        ]),
+                        ])->columns(2),
 
                     Step::make('Additional Services')
                         ->schema([
@@ -164,7 +150,7 @@ class GroupBooking extends Component implements HasForms
                             TextInput::make('hall_budget')
                                 ->numeric()
                                 ->label('Hall Budget')
-                                ->prefix('$')
+                                ->prefix('₦')
                                 ->placeholder('Enter your budget for the hall')
                                 ->visible(fn(callable $get) => $get('need_hall')),
 
@@ -189,7 +175,7 @@ class GroupBooking extends Component implements HasForms
                             TextInput::make('meal_budget')
                                 ->numeric()
                                 ->label('Meal Budget (per person)')
-                                ->prefix('$')
+                                ->prefix('₦')
                                 ->placeholder('Enter your budget per person for meals')
                                 ->visible(fn(callable $get) => $get('need_meal')),
 
@@ -211,7 +197,7 @@ class GroupBooking extends Component implements HasForms
                             DatePicker::make('meal_to')
                                 ->label('Meals Required To')
                                 ->visible(fn(callable $get) => $get('need_meal')),
-                        ]),
+                        ])->columns(2),
 
                     Step::make('Review & Confirm')
                         ->schema([
