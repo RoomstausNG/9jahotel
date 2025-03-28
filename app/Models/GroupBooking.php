@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Traits\BelongToHotel;
+use Nnjeim\World\Models\City;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -40,6 +42,11 @@ class GroupBooking extends Model
     public function hotels(): BelongsToMany
     {
         return $this->belongsToMany(Hotel::class);
+    }
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function selectedHotels()
