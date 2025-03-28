@@ -128,8 +128,8 @@ class SearchResult extends Component
 
         // Define sorting options as an associative array
         $sortOptions = [
-            'class_high' => ['column' => 'property_class', 'direction' => 'desc'],
-            'class_low' => ['column' => 'property_class', 'direction' => 'asc'],
+            'class_high' => ['column' => 'star_rating', 'direction' => 'desc'],
+            'class_low' => ['column' => 'star_rating', 'direction' => 'asc'],
         ];
 
         // Apply sorting based on selected option

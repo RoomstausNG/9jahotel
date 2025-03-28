@@ -8,7 +8,7 @@
             {{-- results --}}
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 w-grid">
                 <div class="hidden w-full pr-4 space-y-8 lg:block">
-                    <div class="w-full">
+                    {{-- <div class="w-full">
                         @if ($mapUrl)
                             <div class="rounded-lg shadow-lg overflow-hidden">
                                 <img src="{{ $mapUrl }}" alt="Map of {{ $city->name }}"
@@ -19,7 +19,7 @@
                                 <p class="text-gray-500">Map unavailable at this time</p>
                             </div>
                         @endif
-                    </div>
+                    </div> --}}
                     <div class="space-y-2">
                         <p class="text-lg font-medium">Search hotel by name</p>
                         <input wire:model.live='name' type="text"
@@ -42,15 +42,18 @@
 
                     <div class="w-full space-y-3">
                         <h1 class="text-xl font-medium">Amenities</h1>
-                        <div class="flex gap-4 flex-wrap items-start">
+                        <div class="flex gap-4 flex-wrap items-start max-h-[500px] shadow-sm">
                             @foreach ($amenities as $amenity)
                                 <label for="{{ $amenity->id }}"
-                                    class="flex cursor-pointer border items-center flex-col py-2 px-4 shadow-sm rounded-md transition-all duration-200
+                                    class="flex cursor-pointer border items-center gap-2 py-2 px-4 shadow-sm rounded-md transition-all duration-200
                                    {{ in_array($amenity->id, $filterAmenities) ? ' border-primary bg-primary-100' : ' border-gray-200 hover:border-gray-200' }}">
                                     <input wire:model.live='filterAmenities' class="hidden" type="checkbox"
                                         value="{{ $amenity->id }}" id="{{ $amenity->id }}">
-                                    <span>{!! $amenity->icon !!}</span>
-                                    <span class="capitalize font-medium"> {{ $amenity->name }}</span>
+                                    <span
+                                        style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;">
+                                        {!! preg_replace('/<svg/', '<svg height="20" width="auto" style="height: 20px; width: auto;"', $amenity->icon) !!}
+                                    </span>
+                                    <span class="capitalize font-medium text-sm"> {{ $amenity->name }}</span>
                                 </label>
                             @endforeach
                         </div>
@@ -76,18 +79,6 @@
                         </div>
                     </div>
                     <div class="flex flex-col justify-between w-full md:flex-row">
-
-                        {{-- <div class="space-y-2">
-                            <label for="">No to show</label> <br>
-                            <select wire:model.live='perPage'
-                                class="w-full border-gray-400 max-w-[150px] text-sm rounded-lg shadow py-2 focus:ring-0 focus:border-2 ring-0 focus:border-primary">
-                                <option value=24>24</option>
-                                <option value=5>5</option>
-                                <option value=10>10</option>
-                                <option value=20>20</option>
-                                <option value=50>50</option>
-                            </select>
-                        </div> --}}
                         <div class="flex items-center justify-between w-full space-y-2">
                             <label for="" class="text-xl font-medium">Sort results by</label>
                             <select wire:model.live='sortBy'
@@ -119,7 +110,7 @@
                                             {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                     </div>
                                     <div class="flex flex-wrap w-full gap-2">
-                                        @foreach ($hotel->amenities as $amenity)
+                                        @foreach ($hotel->amenities->take(5) as $amenity)
                                             <p
                                                 class="py-1 flex text-gray-500 border rounded shadow-sm items-center text-xs px-2 font-medium capitalize">
                                                 <span
@@ -163,8 +154,7 @@
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                     {{ $rate }}</p>
-                                                <span
-                                                    class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                                <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                                 <br>
                                             @else
                                                 <p
