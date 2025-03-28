@@ -43,7 +43,9 @@
                     <div class="w-full space-y-3">
                         <h1 class="text-lg font-semibold text-gray-900">Power Availability</h1>
                         <div class="">
-                            <select name="" id="" class="capitalize">
+                            <select wire:model.live="power_id" name="" id=""
+                                class="capitalize w-full rounded-lg focus:ring-primary cursor-pointer focus:border-primary font-medium text-gray-500 shadow-sm">
+                                <option null>Select Power Availability</option>
                                 @foreach (\App\Models\Power::all() as $power)
                                     <option class="capitalize" value="{{ $power->id }}">{{ $power->name }}">
                                     </option>

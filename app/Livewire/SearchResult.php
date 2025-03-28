@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 class SearchResult extends Component
 {
     public CityCopy $city;
+    public $power_id;
     public $name = '';
     public $low = null;
     public $high = null;
