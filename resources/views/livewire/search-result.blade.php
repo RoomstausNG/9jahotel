@@ -131,7 +131,7 @@
                                         @php
                                             $hotelCount = $hotel->amenities->count();
                                         @endphp
-                                        @foreach ($hotel->amenities->take(min(5, $hotelCount)) as $amenity)
+                                        @foreach ($hotel->amenities->take(min(4, $hotelCount)) as $amenity)
                                             <p
                                                 class="py-1 flex text-gray-500 border rounded shadow-sm items-center text-xs px-2 font-medium capitalize">
                                                 <span
@@ -141,10 +141,10 @@
                                                 <span>{{ $amenity->name }}</span>
                                             </p>
                                         @endforeach
-                                        @if ($hotelCount > 5)
+                                        @if ($hotelCount > 4)
                                             <div
-                                                class="flex border text-sm items-center gap-2 p-2 shadow-sm rounded-md transition-all duration-200">
-                                                <span class="capitalize font-medium">+{{ $hotelCount - 5 }}
+                                                class="flex border text-xs font-medium items-center gap-2 p-2 shadow-sm rounded-md transition-all duration-200">
+                                                <span class="capitalize font-medium">+{{ $hotelCount - 4 }}
                                                     more</span>
                                             </div>
                                         @endif

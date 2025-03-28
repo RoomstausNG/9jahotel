@@ -14,7 +14,7 @@
                 class="px-6 py-2 text-white bg-gray-600 rounded">Back</a>
         </div>
 
-        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+        {{-- <div id="default-carousel" class="relative w-full" data-carousel="slide">
             <!-- Carousel wrapper -->
             <div class="relative h-56 overflow-hidden rounded-lg md:h-96 lg:h-[450px]">
                 <img src="{{ getCloudinaryImage($hotel->background_image) }}"
@@ -61,7 +61,8 @@
                     <span class="sr-only">Next</span>
                 </span>
             </button>
-        </div>
+        </div> --}}
+        @livewire('image-carousel', ['hotelId' => $hotel->id ?? null])
 
         <div id="overview" class="w-full gap-4">
             <div class="flex space-x-6 border-b" x-data="{ activeTab: 'overview' }">

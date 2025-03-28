@@ -119,7 +119,7 @@
         </section>
 
         <div class="">
-            <h1 class="text-2xl font-medium text-primary-DARK">Top Rated Hotels</h1>
+            <h1 class="text-2xl font-medium text-primary-DARK">Top Star Hotels</h1>
             <section
                 class="flex w-full gap-8 py-4 space-x-2 overflow-x-auto text-white md:py-6 rounded-2xl lg:justify-between">
                 @foreach (\App\Models\Hotel::with(['city'])->orderByDesc('star_rating')->take(12)->get() as $hotel)
