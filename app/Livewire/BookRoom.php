@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Redirect;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Livewire\Attributes\Layout;
 
 class BookRoom extends Component implements HasForms
 {
@@ -142,7 +143,7 @@ class BookRoom extends Component implements HasForms
         );
     }
 
-    function createBooking($room, $data, $customer): Booking
+    public function createBooking($room, $data, $customer): Booking
     {
         return Booking::create([
             'bookable_id' => $room->id,
@@ -227,7 +228,7 @@ class BookRoom extends Component implements HasForms
         }
     }
 
-    function associateCustomer($id)
+    public function associateCustomer($id)
     {
         $customer = Customer::find($id);
 
@@ -236,6 +237,7 @@ class BookRoom extends Component implements HasForms
         }
     }
 
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         return view('livewire.book-room');

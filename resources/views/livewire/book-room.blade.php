@@ -9,7 +9,7 @@
                     $firstImage = $category->rooms()->whereNotNull('image')->first()?->image;
                 @endphp
                 <div class="p-2 space-y-2 bg-gray-100 border full">
-                    <img src="{{ getCloudinaryImage($category->hotel->background_image) }}"
+                    <img src="{{ getCloudinaryUrl($category->hotel->background_image) }}"
                         class="block object-cover object-center w-full h-auto min-h-[150px] rounded-sm"
                         alt="{{ $category->hotel->name }}">
 
@@ -91,27 +91,17 @@
                                             class="absolute z-40 flex items-center justify-center w-8 h-8 text-center rounded-full cursor-pointer text-primary focus:bg-primary focus:border-none focus:ring-0 border-primary top-3 right-2" />
                                         <!-- Carousel wrapper -->
 
-                                        <div class="absolute z-30 w-full bottom-3">
+                                        <div class="absolute z-30 w-full bottom-2">
                                             <span
-                                                class="block w-[90%] p-2 mx-auto bg-black bg-opacity-50 text-white font-semibold uppercase text-center rounded-lg">
+                                                class="block w-[90%] p-2 mx-auto bg-black bg-opacity-70 text-white font-semibold uppercase text-center rounded-lg">
                                                 Room
                                                 {{ $room->number }}</span>
                                         </div>
-                                        <!-- Item 1 -->
-                                        @if ($room->image)
-                                            <div class="duration-700">
-                                                <img src="{{ getCloudinaryImage($room->image) }}"
-                                                    class="absolute block object-cover w-full h-full"
-                                                    alt="{{ $room->hotel->name . ' 9jahotel' }}">
-                                            </div>
-                                        @else
-                                            <div class="duration-700">
-                                                <img src="{{ asset('img/bg-one.jpg') }}"
-                                                    class="absolute block object-cover w-full h-full"
-                                                    alt="{{ $room->hotel->name . ' 9jahotel' }}">
-                                            </div>
-                                        @endif
-
+                                        <div class="duration-700">
+                                            <img src="{{ getCloudinaryUrl($room->image ?? $room->hotel->background_image) }}"
+                                                class="absolute block object-cover w-full h-full"
+                                                alt="{{ $room->hotel->name . ' 9jahotel' }}">
+                                        </div>
                                     </div>
                                 </div>
                             </label>

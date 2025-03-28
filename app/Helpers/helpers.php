@@ -35,7 +35,7 @@ function getFirstLetters($inputString): string
 function getCloudinaryUrl($publicId, $extension = "webp")
 {
     $cloudName = env('CLOUDINARY_CLOUD_NAME');
-    return $publicId ? "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}" : null;
+    return $publicId ? "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}" : url('img/9jahotel.png');
 }
 
 function getCloudinaryUrlViaStorage($publicId, $extension = "webp")
