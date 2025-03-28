@@ -2,11 +2,15 @@
 
 namespace App\Livewire;
 
-use Livewire\Attributes\Layout;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Filament\Forms\Contracts\HasForms;
 
-class GroupBooking extends Component
+class GroupBooking extends Component implements HasForms
 {
+    use InteractsWithForms;
+
 
     public $steps = [];
 
