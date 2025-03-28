@@ -10,6 +10,7 @@ use App\Models\CityCopy;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Nnjeim\World\Models\State;
+use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 // use ImageOptimizer;
@@ -31,6 +32,16 @@ function getFirstLetters($inputString): string
     return strlen(strtoupper($result)) < 2 ? Str::random(2) . strtoupper($result) : strtoupper($result);
 }
 
+function getCloudinaryUrl($publicId, $extension = "webp")
+{
+    $cloudName = env('CLOUDINARY_CLOUD_NAME');
+    return $publicId ? "https://res.cloudinary.com/{$cloudName}/image/upload/{$publicId}" : null;
+}
+
+function getCloudinaryUrlViaStorage($publicId, $extension = "webp")
+{
+    $publicId ? Storage::disk('cloudinary')->url($publicId) : null;
+}
 
 function currentUser()
 {
