@@ -201,6 +201,14 @@ class GroupBooking extends Component implements HasForms
 
                     Step::make('Review & Confirm')
                         ->schema([
+                            Select::make('hotels')
+                                ->multiple()
+                                ->relationship('selectedHotels', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->native(false)
+                                ->label('Preferred Hotels')
+                                ->placeholder('Select your preferred hotels'),
                             Toggle::make('allow_external_bids')
                                 ->label('Allow external hotels to bid for this booking?')
                                 ->helperText('If enabled, hotels outside your preferred list can also offer their services'),

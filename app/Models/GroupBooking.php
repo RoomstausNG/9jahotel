@@ -39,7 +39,7 @@ class GroupBooking extends Model
 
     public function hotels(): BelongsToMany
     {
-        return $this->belongsToMany(Hotel::class);
+        return $this->belongsToMany(Hotel::class, 'group_booking_hotel');
     }
 
     public function selectedHotels()
