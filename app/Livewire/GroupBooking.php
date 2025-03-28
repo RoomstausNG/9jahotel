@@ -2,21 +2,21 @@
 
 namespace App\Livewire;
 
+use App\Models\Hotel;
+use Filament\Forms\Get;
 use Livewire\Component;
 use Filament\Forms\Form;
-use App\Models\GroupBooking as ModelBooking;
+use Nnjeim\World\Models\City;
 use Livewire\Attributes\Layout;
-use App\Models\GroupBookingRequest;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Components\CheckboxList;
+use App\Models\GroupBooking as ModelBooking;
 use Filament\Forms\Concerns\InteractsWithForms;
 
 class GroupBooking extends Component implements HasForms
@@ -101,6 +101,13 @@ class GroupBooking extends Component implements HasForms
                                 ->required()
                                 ->label('Expected Number of Guests')
                                 ->placeholder('Enter the total number of expected guests'),
+                            Select::make('city_id')
+                                ->options(fn() => City::where('country_id', 160)->get()->pluck('name', 'id')->toArray())
+                                ->searchable()
+                                ->required()
+                                ->label('City/Town')
+                                ->placeholder('Select a city')
+                                ->live(),
                         ])->columns(2),
 
                     Step::make('Room Requirements')
@@ -203,12 +210,16 @@ class GroupBooking extends Component implements HasForms
                         ->schema([
                             Select::make('hotels')
                                 ->multiple()
-                                ->relationship('selectedHotels', 'name')
+                                ->options(fn(Get $get) => Hotel::where('city_id', $get('city_id'))
+                                    ->get()
+                                    ->pluck('name', 'id')
+                                    ->toArray())
                                 ->searchable()
-                                ->preload()
                                 ->native(false)
+                                ->preload()
                                 ->label('Preferred Hotels')
-                                ->placeholder('Select your preferred hotels'),
+                                ->placeholder('Select your preferred hotels')
+                                ->helperText('Hotels available in the selected city'),
                             Toggle::make('allow_external_bids')
                                 ->label('Allow external hotels to bid for this booking?')
                                 ->helperText('If enabled, hotels outside your preferred list can also offer their services'),

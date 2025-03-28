@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\BelongToHotel;
+use Nnjeim\World\Models\City;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,6 +46,11 @@ class GroupBooking extends Model
     public function selectedHotels()
     {
         return $this->belongsToMany(Hotel::class, 'group_booking_hotel');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 
     protected static function booted()
