@@ -6,7 +6,7 @@
         </div>
         <div class="grid gap-8">
             {{-- results --}}
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 w-grid">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4 w-grid">
                 <div class="hidden w-full pr-4 space-y-8 lg:block">
                     {{-- <div class="w-full">
                         @if ($mapUrl)
@@ -25,7 +25,7 @@
                         <input wire:model.live='name' type="text"
                             class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                     </div>
-                    <p class="text-xl font-medium">Filter By</p>
+                    <p class="text-lg font-semibold text-gray-900">Filter By</p>
                     <div class="space-y-2">
                         <p class="font-medium">Price per night</p>
                         <div class="flex space-x-4">
@@ -41,9 +41,24 @@
                     </div>
 
                     <div class="w-full space-y-3">
-                        <h1 class="text-xl font-medium">Amenities</h1>
-                        <div class="flex gap-4 flex-wrap items-start max-h-[500px] shadow-sm">
+                        <h1 class="text-lg font-semibold text-gray-900">Power Availability</h1>
+                        <div class="">
+                            <select name="" id="" class="capitalize">
+                                @foreach (\App\Models\Power::all() as $power)
+                                    <option class="capitalize" value="{{ $power->id }}">{{ $power->name }}">
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="w-full space-y-3">
+                        <h1 class="text-lg font-semibold text-gray-900">Amenities</h1>
+                        <div
+                            class="flex gap-4 flex-wrap items-start max-h-[500px] p-2 shadow-sm border rounded-md overflow-y-auto">
                             @foreach ($amenities as $amenity)
+                                @if (!$amenity->icon)
+                                    @continue
+                                @endif
                                 <label for="{{ $amenity->id }}"
                                     class="flex cursor-pointer border items-center gap-2 py-2 px-4 shadow-sm rounded-md transition-all duration-200
                                    {{ in_array($amenity->id, $filterAmenities) ? ' border-primary bg-primary-100' : ' border-gray-200 hover:border-gray-200' }}">
@@ -60,7 +75,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[768px] xl:max-w-[800px]">
+                <div class="flex flex-col gap-4 md:col-span-3 max-w-[600px] lg:max-w-[800px] xl:max-w-[900px]">
                     <div class="flex items-center justify-between bg-[#111936] text-white p-4 rounded-full w-full">
                         <div class="flex items-center gap-3">
                             <div class="text-purple-500 bg-purple-50 p-2 rounded-full">
@@ -80,7 +95,7 @@
                     </div>
                     <div class="flex flex-col justify-between w-full md:flex-row">
                         <div class="flex items-center justify-between w-full space-y-2">
-                            <label for="" class="text-xl font-medium">Sort results by</label>
+                            <label for="" class="text-lg font-semibold text-gray-900">Sort results by</label>
                             <select wire:model.live='sortBy'
                                 class="w-full border-gray-400 max-w-[180px] text-sm rounded-lg shadow py-2 focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                                 <option value="">Recommended</option>
@@ -95,17 +110,18 @@
                     </div>
                     @forelse ($hotels as $hotel)
                         <div
-                            class="flex flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border">
+                            class="flex duration-300 transition-all transform hover:shadow-lg flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border">
                             <div class="w-full h-full md:w-2/5">
-                                <img src="{{ getCloudinaryImage($hotel->background_image) }}"
-                                    class="block object-cover object-center w-full min-h-[250px] md:max-h-[280px] md:min-h-[200px] h-full"
+                                <img src="{{ getCloudinaryUrl($hotel->background_image) }}"
+                                    class="block object-cover object-center w-full min-h-[250px] md:max-h-[320px] lg:min-h-[280px] lg:max-h-[320px] h-full"
                                     alt="{{ $hotel->name }}">
                             </div>
 
                             <div class="flex flex-col justify-between flex-1 p-4 md:pb-6 border-l border-gray-100">
                                 <div class="space-y-4">
                                     <div>
-                                        <p class="text-xl font-medium capitalize">{{ $hotel->name }}</p>
+                                        <p class="text-lg font-semibold text-gray-900 capitalize">{{ $hotel->name }}
+                                        </p>
                                         <p class="text-sm capitalize" style="line-height: 16px">
                                             {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                     </div>
@@ -115,7 +131,7 @@
                                                 class="py-1 flex text-gray-500 border rounded shadow-sm items-center text-xs px-2 font-medium capitalize">
                                                 <span
                                                     style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;">
-                                                    {!! preg_replace('/<svg/', '<svg height="16" width="auto" style="height: 16px; width: auto;"', $amenity->icon) !!}
+                                                    {!! preg_replace('/<svg/', '<svg height="16" width="auto" style="height: 16px; width: 100%;"', $amenity->icon) !!}
                                                 </span>
                                                 <span>{{ $amenity->name }}</span>
                                             </p>
@@ -154,7 +170,8 @@
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                     {{ $rate }}</p>
-                                                <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                                <span
+                                                    class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                                 <br>
                                             @else
                                                 <p

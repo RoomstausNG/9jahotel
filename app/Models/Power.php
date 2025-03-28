@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Power extends Model
 {
-    use HasFactory, SoftDeletes, BelongToHotel;
+    use HasFactory, BelongToHotel;
     protected $guarded = [];
 
     protected $casts = [
