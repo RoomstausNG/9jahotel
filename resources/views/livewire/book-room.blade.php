@@ -1,31 +1,31 @@
 <div class="relative w-full p-0 mx-auto" x-data="{ review: false, modal: @entangle('modal').live }">
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
-        <h1 class="text-xl font-bold">{{ $category->hotel->name }}</h1>
-
+        <h1 class="text-xl font-bold">{{ $hotel->name }}</h1>
+        <h1 class="text-xl font-medium">Select Room</h1>
         <div class="flex flex-col justify-between gap-6 lg:flex-row-reverse ">
             <div class="w-full p-2 border rounded-sm lg:w-1/3 xl:w-1/4 max-h-min">
                 @php
                     // $firstImage = $category->rooms()->where('image', '!=', null)->first();
                     $firstImage = $category->rooms()->whereNotNull('image')->first()?->image;
                 @endphp
-                <div class="p-2 space-y-2 bg-gray-100 border full">
-                    <img src="{{ getCloudinaryUrl($category->hotel->background_image) }}"
+                <div class="p-2  space-y-4 bg-gray-100 border full">
+                    <img src="{{ getCloudinaryUrl($hotel->background_image) }}"
                         class="block object-cover object-center w-full h-auto min-h-[150px] rounded-sm"
-                        alt="{{ $category->hotel->name }}">
+                        alt="{{ $hotel->name }}">
 
-                    <div class="space-y-4">
+                    <div class="space-y-6">
                         <div>
-                            <p class="text-xl font-medium capitalize">{{ $category->hotel->name }}</p>
+                            <p class="text-xl font-medium capitalize">{{ $hotel->name }}</p>
                             <p class="font-medium uppercase ">{{ formatAsNaira($category->price1) }}</p>
                         </div>
                         <p class="capitalize" style="line-height: 16px">
-                            {{ $category->hotel->address . ', ' . $category->hotel->city->name }}</p>
-                        <p class="flex flex-wrap w-full gap-2">
-                            @foreach ($category->hotel->amenities as $amenity)
+                            {{ $hotel->address . ', ' . $hotel->city->name }}</p>
+                        {{-- <p class="flex flex-wrap w-full gap-2">
+                            @foreach ($hotel->amenities as $amenity)
                                 <span style="white-space:nowrap"
                                     class="px-2 py-[2px] text-sm bg-white border rounded shadow-sm">{{ $amenity->name }}</span>
                             @endforeach
-                        </p>
+                        </p> --}}
                     </div>
                     <div class="p-3 space-y-3 bg-white border rounded">
                         <p class="flex items-center justify-between">
@@ -62,15 +62,15 @@
                         <p class="flex items-center justify-between text-sm">
                             <span>Total Price</span>
                             <span
-                                class="text-lg font-bold">{{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $category->hotel->online_price)) }}</span>
+                                class="text-lg font-bold">{{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $hotel->online_price)) }}</span>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full space-y-8 overflow-hidden border rounded-sm lg:flex-1">
-                <div class="gap-4 p-4 space-y-4 md:grid-cols-2 lglg:grid-cols-4">
-                    <h1 class="text-xl font-medium">Select Room</h1>
+            <div class="w-full space-y-8 overflow-hidden rounded-sm lg:flex-1">
+                <div class="gap-4 p-4 md:p-0 space-y-4 md:grid-cols-2 lg:grid-cols-4">
+
                     <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                         @foreach ($category->rooms as $room)
                             @if (
@@ -133,10 +133,10 @@
                         <button wire:click="addBooking('non-refundable')"
                             class="relative block w-full p-3 text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
                             an
-                            additional {{ $category->hotel->non_refundable_price }}% on this
+                            additional {{ $hotel->non_refundable_price }}% on this
                             booking. Click here to pay NON-REFUNDABLE
                             <span class="text-xl font-bold">
-                                {{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($this->checked), $category->hotel->non_refundable_price)) }}</span>
+                                {{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($this->checked), $hotel->non_refundable_price)) }}</span>
                             <span
                                 class="absolute w-4 h-4 rounded-full bg-primary-500 top-2 right-2 animate-ping"></span>
                         </button>

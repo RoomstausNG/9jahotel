@@ -72,7 +72,7 @@
                 <h1 class="text-2xl font-semibold">
                     Amenities
                 </h1>
-                <div class="flex flex-wrap gap-6">
+                <div class="flex flex-wrap gap-3">
                     @php
                         $displayCount = min(5, $amenities->count());
                         $remainingCount = $amenities->count() - $displayCount;
@@ -80,13 +80,13 @@
 
                     @foreach ($amenities as $amenity)
                         <div
-                            class="flex border items-center gap-2 p-2 shadow-sm rounded-md transition-all duration-200">
+                            class="flex border items-center gap-2 py-1.5 px-2 shadow-sm rounded-md transition-all duration-200">
                             <span
                                 style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;"
                                 class="text-primary">
-                                {!! preg_replace('/<svg/', '<svg height="24" width="auto" style="height: 24px; width: auto;"', $amenity->icon) !!}
+                                {!! preg_replace('/<svg/', '<svg height="20" width="auto" style="height: 20px; width: auto;"', $amenity->icon) !!}
                             </span>
-                            <span class="capitalize font-medium"> {{ $amenity->name }}</span>
+                            <span class="capitalize text-sm font-medium"> {{ $amenity->name }}</span>
                         </div>
                     @endforeach
 

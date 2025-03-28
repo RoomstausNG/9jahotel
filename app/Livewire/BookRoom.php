@@ -26,6 +26,8 @@ class BookRoom extends Component implements HasForms
     use InteractsWithForms;
     public Type $category;
 
+    public $hotel;
+
     public $due;
 
     public $firstname, $lastname, $email, $phone;
@@ -235,6 +237,12 @@ class BookRoom extends Component implements HasForms
         if (!$customer->hotels()->find($this->category->hotel_id)) {
             $customer->hotels()->attach($this->category->hotel_id);
         }
+    }
+
+    public  function mount()
+    {
+        $this->category->load('rooms');
+        $this->hotel = $this->category->hotel;
     }
 
     #[Layout('components.layouts.frontend')]
