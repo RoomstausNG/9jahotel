@@ -88,7 +88,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
                                 </svg>
                             </div>
-                            <span class="">Get a reward night when you stay for 10 nights</span>
+                            <span class="italic">Get a <strong class="font-bold capitalize">free reward
+                                    night</strong> when you
+                                <strong class="font-bold capitalize"> stay
+                                    10 nights </strong> or Collect 10
+                                9jaPoints</span>
                         </div>
                         <div class="flex gap-4 items-center">
                             <a href="/login" class="bg-blue-600 text-white px-6 py-1.5 rounded-full">Sign in</a>
@@ -96,8 +100,8 @@
                         </div>
                     </div>
                     <div class="flex flex-col justify-between w-full md:flex-row">
-                        <div class="flex items-center justify-between w-full space-y-2">
-                            <label for="" class="text-lg font-semibold text-gray-900">Sort results by</label>
+                        <div class="flex items-center justify-end w-full gap-4 space-y-2">
+                            <label for="" class="font-semibold text-gray-900">Sort results by:</label>
                             <select wire:model.live='sortBy'
                                 class="w-full border-gray-400 max-w-[180px] text-sm rounded-lg shadow py-2 focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                                 <option value="">Recommended</option>

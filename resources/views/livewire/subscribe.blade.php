@@ -4,7 +4,7 @@
         <p>Sign up with your email address to receive exclusive hotel deals and special offers.</p>
     </div>
     <div class="w-full px-8 mx-auto max-w-[600px]">
-        <form wire:submit='create' class="flex items-end gap-3">
+        <form wire:submit='subscribe' class="flex items-end gap-3">
             <div class="flex-1">
                 {{ $this->form }}
             </div>

@@ -8,10 +8,13 @@ use Illuminate\Support\HtmlString;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Notifications\Notification;
 
 class Subscribe extends Component  implements HasForms
 {
+    public ?array $data = [];
 
+    use InteractsWithForms;
     public function form(Form $form): Form
     {
         return $form
@@ -31,7 +34,20 @@ class Subscribe extends Component  implements HasForms
             ->statePath('data');
     }
 
-    use InteractsWithForms;
+    public function subscribe()
+    {
+        $data = $this->form->getState();
+        $this->form->fill();
+
+        Notification::make()
+            ->title('Saved successfully ' . $data['email'])
+            ->body('You have successully subscribe to our newsletter')
+            ->success()
+            ->duration(7000)
+            ->send();
+    }
+
+
     public function render()
     {
         return view('livewire.subscribe');
