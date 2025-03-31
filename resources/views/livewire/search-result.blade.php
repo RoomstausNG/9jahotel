@@ -1,9 +1,9 @@
 <div class="w-full mx-auto">
     <div class="w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
         {{-- @livewire('search-city') --}}
-        <div class="w-full">
+        {{-- <div class="w-full">
             <h1 class="text-2xl font-semibold text-center">Search Hotel result</h1>
-        </div>
+        </div> --}}
         <div class="grid gap-8">
             {{-- results --}}
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4 w-grid">
