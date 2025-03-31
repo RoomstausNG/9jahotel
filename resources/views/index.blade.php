@@ -73,7 +73,7 @@
     <div class="w-full max-w-screen-xl p-4 mx-auto space-y-20 md:space-y-28 md:mt-24 lg:mt-48">
 
         <section
-            class="flex flex-col items-center w-full gap-8 p-4 text-white bg-primary-500 md:p-6 lg:p-8 rounded-2xl lg:justify-between md:flex-row">
+            class="flex flex-col text-center items-center w-full gap-8 p-4 text-white bg-primary-500 md:p-6 lg:p-8 rounded-2xl lg:justify-between md:flex-row">
             <div>
                 <h1 class="text-xl font-medium md:text-2xl lg:text-3xl md:font-semibold max-w-[300px]">Reserve your
                     specific
@@ -91,7 +91,8 @@
                                 d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z" />
                         </svg>
                     </span>
-                    <p>Gain points for each night you stay.</p>
+                    <p>Free Hotel Night! Gain Points for
+                        each night you stay towards a FREE HOTEL NIGHT OR CASH!.</p>
                 </div>
                 <div
                     class="w-3/5 min-w-[250px] space-x-4 lg:max-w-[320px] h-[140px] bg-primary-800 rounded-xl px-4 items-center flex justify-between">
@@ -102,8 +103,8 @@
                                 d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c10 0 18.8-4.9 24.2-12.5l-99.2-99.2c-14.9-14.9-23.3-35.1-23.3-56.1v-33c-15.9-4.7-32.8-7.2-50.3-7.2H178.3zM384 224c-17.7 0-32 14.3-32 32v82.7c0 17 6.7 33.3 18.7 45.3L478.1 491.3c18.7 18.7 49.1 18.7 67.9 0l73.4-73.4c18.7-18.7 18.7-49.1 0-67.9L512 242.7c-12-12-28.3-18.7-45.3-18.7H384zm24 80a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z" />
                         </svg>
                     </span>
-                    <p>Save upto
-                        25% when you use <span class="font-bold text-red-600">Book-Me-Now</span> option</p>
+                    <p>Same Room,
+                        Lower Prices! Get Instant-Pay Discount when you pay online</p>
                 </div>
                 <div
                     class="w-3/5 min-w-[250px] space-x-4 lg:max-w-[320px] h-[140px] bg-primary-800 rounded-xl px-4 items-center flex justify-between">
@@ -114,14 +115,15 @@
                                 d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z" />
                         </svg>
                     </span>
-                    <p>Flexible cancellation options in case your plans alter..</p>
+                    <p>Flexible
+                        cancellation options in case your plan changes..</p>
                 </div>
         </section>
 
         <div class="">
-            <h1 class="text-2xl font-medium text-primary-DARK">Top Star Hotels</h1>
+            <h1 class="text-2xl italic md:text-3xl font-medium text-primary-DARK">Our Rated Hotels</h1>
             <section
-                class="flex w-full gap-8 py-4 space-x-2 overflow-x-auto text-white md:py-6 rounded-2xl lg:justify-between">
+                class="flex w-full gap-8 py-4  space-x-2 overflow-x-auto text-white md:py-6 rounded-2xl lg:justify-between">
                 @foreach (\App\Models\Hotel::with(['city'])->orderByDesc('star_rating')->take(12)->get() as $hotel)
                     <a href="{{ route('hotels.show', $hotel->code) }}"
                         class="overflow-hidden block relative h-[300px] cursor-pointer shadow rounded-lg min-w-[60%] md:min-w-[30%] lg:min-w-[25%] md:max-w-[250px]">
