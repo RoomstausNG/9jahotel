@@ -1,6 +1,6 @@
 <x-layouts.frontend>
     {{-- linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), --}}
-    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 min-h-[500px] md:min-h-[720px] max-h-[920px]"
+    <div class="w-full flex items-center justify-center bg-cover bg-center px-4 min-h-[620px] md:min-h-[850px] max-h-[1024px]"
         style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(95% 100% at 50% 0%);">
         <div x-data="{ tab: 'room' }" class="w-full max-w-screen-lg mx-auto px-4 mb-12">
             <div x-data="typeWriter()" x-init="start()" class="text-center py-16 text-white">
