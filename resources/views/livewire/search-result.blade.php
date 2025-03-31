@@ -40,7 +40,7 @@
                         </button>
                     </div>
 
-                    <div class="w-full space-y-3">
+                    {{-- <div class="w-full space-y-3">
                         <h1 class="text-lg font-semibold text-gray-900">Power Availability</h1>
                         <div class="">
                             <select wire:model.live="power_id" name="" id=""
@@ -52,7 +52,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="w-full space-y-3">
                         <h1 class="text-lg font-semibold text-gray-900">Amenities</h1>
                         <div
@@ -182,8 +182,7 @@
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                     {{ $rate }}</p>
-                                                <span
-                                                    class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                                <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                                 <br>
                                             @else
                                                 <p

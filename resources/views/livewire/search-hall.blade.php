@@ -8,7 +8,6 @@
                 class="px-6 py-2 mx-auto my-3 font-medium text-white rounded bg-primary hover:bg-secondary hover:text-black max-w-max">Submit</button>
          --}}
         <button type="submit"
-            class="px-8 py-2 mx-auto font-medium text-white bg-primary hover:bg-primary-700 max-w-max">Search
-            Hotel</button>
+            class="px-8 py-2 mx-auto font-medium text-white bg-primary hover:bg-primary-700 max-w-max">Search</button>
     </form>
 </section>
