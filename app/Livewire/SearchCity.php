@@ -27,7 +27,20 @@ class SearchCity extends Component implements HasForms
             ->schema([
                 Components\Select::make('city')
                     ->label('Where are you going? Select City')
-                    ->options(CityCopy::where('country_id', 160)->pluck('name', 'id'))
+                    ->options(function () {
+                        // Get cities with hotels and count of hotels using withCount
+                        $citiesWithHotels = CityCopy::where('country_id', 160)
+                            ->withCount('hotels')
+                            ->having('hotels_count', '>', 0)
+                            ->orderBy('name')
+                            ->get()
+                            ->mapWithKeys(
+                                fn($city) =>
+                                [$city->id => $city->name . ' (' . $city->hotels_count . ' hotels)']
+                            );
+
+                        return $citiesWithHotels;
+                    })
                     ->required()
                     ->searchable()
                     ->preload()
