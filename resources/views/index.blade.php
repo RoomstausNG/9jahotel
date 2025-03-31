@@ -70,8 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="w-full max-w-screen-xl p-4 mx-auto space-y-20 md:space-y-28 md:mt-24 lg:mt-48">
-
+    <div class="w-full max-w-screen-xl p-4 mx-auto space-y-20 md:space-y-28 md:mt-24">
         <section
             class="flex flex-col text-center items-center w-full gap-8 p-4 text-white bg-primary-500 md:p-6 lg:p-8 rounded-2xl lg:justify-between md:flex-row">
             <div>

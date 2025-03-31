@@ -26,8 +26,21 @@ class SearchHall extends Component implements HasForms
         return $form
             ->schema([
                 Components\Select::make('city')
-                    ->label('Where City?')
-                    ->options(CityCopy::where('country_id', 160)->pluck('name', 'id'))
+                    ->label('Which City?')
+                    ->options(function () {
+                        // Get cities with hotels and count of hotels using withCount
+                        $citiesWithHotels = CityCopy::where('country_id', 160)
+                            ->withCount('hotels')
+                            ->having('hotels_count', '>', 0)
+                            ->orderBy('name')
+                            ->get()
+                            ->mapWithKeys(
+                                fn($city) =>
+                                [$city->id => "{$city->name} ({$city->hotels_count} hotels)"]
+                            );
+
+                        return $citiesWithHotels;
+                    })
                     ->required()
                     ->searchable()
                     ->preload()
@@ -38,16 +51,18 @@ class SearchHall extends Component implements HasForms
                     ->integer()
                     ->default(Session::get('capacity'))
                     ->required(),
+
                 Components\DatePicker::make('checkin')
-                    ->label('Proposed Use date start')
+                    ->label('Needed On')
                     ->default(Session::get('checkin'))
                     ->minDate(today())
                     ->displayFormat('d F Y')
                     ->prefixIcon('heroicon-m-calendar-days')
                     ->native(false)
                     ->required(),
+
                 Components\DatePicker::make('checkout')
-                    ->label('Proposed Use date End')
+                    ->label('Until')
                     ->default(Session::get('checkout'))
                     ->displayFormat('d F Y')
                     ->prefixIcon('heroicon-m-calendar-days')
