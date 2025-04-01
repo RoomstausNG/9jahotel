@@ -108,7 +108,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="w-full space-y-4">
+                <div class="w-full space-y-0">
                     <h1 class="w-full px-4 py-3 font-medium bg-gray-100 border-b md:text-xl tex-lg">Your Details</h1>
                     @if (auth()->guard('customers')->check())
                         <div class="w-full">
@@ -129,9 +129,9 @@
                             </div>
                         </div>
                     @endif
-                    <div class="flex items-center justify-center">
+                    <div class="flex items-center justify-center -pt-8 p-0">
                         <button wire:click="addBooking('non-refundable')"
-                            class="relative block font-bold w-full p-3 max-w-max text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
+                            class="relative block font-bold w-full p-3 px-6 max-w-max text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
                             More! Pay NON REFUNDABLE
                             <span class="text-xl font-bold">
                                 {{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($this->checked), $hotel->non_refundable_price)) }}</span>
