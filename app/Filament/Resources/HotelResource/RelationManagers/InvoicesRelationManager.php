@@ -46,11 +46,11 @@ class InvoicesRelationManager extends RelationManager
                     ->extraAttributes(['class' => 'cursor-not-allowed bg-gray-300'])
                     ->readonly()
                     ->live(),
-                Forms\Components\Datepicker::make('from')
+                Forms\Components\DatePicker::make('from')
                     ->label('Valid From')
                     ->required()
                     ->default(today()),
-                Forms\Components\Datepicker::make('to')
+                Forms\Components\DatePicker::make('to')
                     ->label('Valid To')
                     ->required()
                     ->live()
