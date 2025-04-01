@@ -110,7 +110,7 @@
                 </div>
                 <div class="w-full space-y-4">
                     <h1 class="w-full px-4 py-3 font-medium bg-gray-100 border-b md:text-xl tex-lg">Your Details</h1>
-                    @if (auth()->check())
+                    @if (auth()->guard('customers')->check())
                         <div class="w-full">
 
                         </div>

@@ -113,8 +113,10 @@ class BookRoom extends Component implements HasForms
 
         if ($type == 'payAtTheHotel') {
             $details = [
-                'text' => 'Room booked successfully.',
-                'title' => 'Booking Added'
+                'text' => 'Please check your email for confirmation
+Kindly note that UNPAID Bookings are subject to
+cancellation with or without notice by the Hotel.',
+                'title' => 'Your Booking is Received!'
             ];
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
         } else {
