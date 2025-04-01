@@ -9,9 +9,9 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Forms\Components\Datepicker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Cloudinary\Transformation\Argument\Text\FontWeight;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -42,6 +42,7 @@ class InvoicesRelationManager extends RelationManager
                 Forms\Components\TextInput::make('amount')
                     ->prefix('NGN')
                     ->required()
+                    ->default(99995)
                     ->readonly()
                     ->live(),
                 Forms\Components\Datepicker::make('from')
