@@ -40,7 +40,7 @@ class SearchResult extends Component
             return Notification::make()
                 ->title('You need to login to add hotel to favorite')
                 ->duration(7000)
-                ->error()
+                ->warning()
                 ->send();
         }
 
