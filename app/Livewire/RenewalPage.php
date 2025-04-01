@@ -55,7 +55,7 @@ class RenewalPage extends Component
             return redirect()->route('dashboard');
         }
 
-        $this->invoice = $this->hotel->invoices()->where('status', 'unpaid')->orderByDesc('id')->first();
+        $this->invoice = $this->hotel->invoices()->where('status', 'unpaid')->latest()->first();
         $this->amount = $this->invoice->amount;
     }
 
