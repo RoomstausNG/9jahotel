@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Filament\Notifications\Notification;
 
 class SearchResult extends Component
 {
@@ -30,6 +31,37 @@ class SearchResult extends Component
         'filterAmenities' => ['except' => []],
         'sortBy' => ['except' => ''],
     ];
+
+    public function addToFavorite($hotelId)
+    {
+        $customer = auth()->guard('customers')->user();
+
+        if (!$customer) {
+            return Notification::make()
+                ->title('You need to login to add hotel to favorite')
+                ->duration(7000)
+                ->error()
+                ->send();
+        }
+
+        // Check if the hotel is already a favorite
+        if ($customer->favorites()->where('hotel_id', $hotelId)->exists()) {
+            return Notification::make()
+                ->title('Hotel is already in your favorites')
+                ->duration(7000)
+                ->info()
+                ->send();
+        }
+
+        // Add to favorites
+        $customer->favorites()->create(['hotel_id' => $hotelId]);
+
+        return Notification::make()
+            ->title('Hotel added to favorite successfully')
+            ->duration(7000)
+            ->success()
+            ->send();
+    }
 
     public function getStaticMapUrl($cityName, $zoom = 1, $width = 600, $height = 300)
     {

@@ -117,10 +117,15 @@
                     @forelse ($hotels as $hotel)
                         <div
                             class="flex duration-300 transition-all transform hover:shadow-lg flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border">
-                            <div class="w-full h-full md:w-2/5">
+                            <div class="w-full h-full md:w-2/5 relative">
                                 <img src="{{ getCloudinaryUrl($hotel->background_image) }}"
                                     class="block object-cover object-center w-full min-h-[250px] md:max-h-[320px] lg:min-h-[280px] lg:max-h-[320px] h-full"
                                     alt="{{ $hotel->name }}">
+
+                                <span wire:click="addToFavorite({{ $hotel->id }})"
+                                    class="absolute cursor-pointer top-0 right-0 m-3">
+
+                                </span>
                             </div>
 
                             <div class="flex flex-col justify-between flex-1 p-4 md:pb-6 border-l border-gray-100">
