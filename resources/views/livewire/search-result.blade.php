@@ -191,7 +191,7 @@
                                                 // $rate = round($hotel->ratings()->avg('number'), 1);
                                             @endphp
 
-                                            @if ($hotel->ratings()->exists())
+                                            {{-- @if ($hotel->ratings()->exists())
                                                 <p
                                                     class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                     {{ $rate }}</p>
@@ -204,7 +204,11 @@
                                                     No reviews
                                                     yet
                                                 </p>
-                                            @endif
+                                            @endif --}}
+                                            <p
+                                                class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
+                                                {{ $rate }}</p>
+                                            <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
                                         </div>
                                         <p>
                                             <a href="{{ route('hotels.show', $hotel->code) }}"
