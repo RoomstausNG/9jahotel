@@ -47,7 +47,7 @@
             </tr>
         </table>
     </div>
-    @if ($this->invoice)
+    @if ($invoice)
         <form wire:submit='pay' class="space-y-1">
             <h1 class="text-lg font-medium">Select Renewal Plan</h1>
             @error('amount')
@@ -58,8 +58,8 @@
                 id="">
                 <option selected value="{{ $invoice->amount }}">Default ({{ formatAsNaira($invoice->amount) }})
                 </option>
-                <option value="10000">Monthly {{ formatAsNaira(10000) }}</option>
-                <option value="10000">Yearly {{ formatAsNaira(99995) }}</option>
+                <option value="10000" disabled>Monthly {{ formatAsNaira(10000) }}</option>
+                <option value="99995" disabled>Yearly {{ formatAsNaira(99995) }}</option>
             </select>
             <button class="block px-6 py-2 mx-auto text-white rounded-lg bg-primary">Pay Now</button>
             {{-- <p class="text-lg"> Welcome back! Renew your subscription to continue enjoying our services.</p> --}}
