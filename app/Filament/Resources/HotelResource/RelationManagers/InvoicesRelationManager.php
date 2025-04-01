@@ -44,11 +44,11 @@ class InvoicesRelationManager extends RelationManager
                     ->required()
                     ->readonly()
                     ->live(),
-                Forms\Components\Datepicker::make('from')
+                Forms\Components\DatePicker::make('from')
                     ->label('Valid From')
                     ->required()
                     ->default(now()),
-                Forms\Components\Datepicker::make('to')
+                Forms\Components\DatePicker::make('to')
                     ->label('Valid To')
                     ->required()
                     ->live()
