@@ -129,16 +129,13 @@
                             </div>
                         </div>
                     @endif
-                    <div class="p-4">
+                    <div class="flex items-center justify-center">
                         <button wire:click="addBooking('non-refundable')"
-                            class="relative block w-full p-3 text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
-                            an
-                            additional {{ $hotel->non_refundable_price }}% on this
-                            booking. Click here to pay NON-REFUNDABLE
+                            class="relative block font-bold w-full p-3 max-w-max text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
+                            More! Pay NON REFUNDABLE
                             <span class="text-xl font-bold">
                                 {{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($this->checked), $hotel->non_refundable_price)) }}</span>
-                            <span
-                                class="absolute w-4 h-4 rounded-full bg-primary-500 top-2 right-2 animate-ping"></span>
+                            Now!
                         </button>
                     </div>
                 </div>
