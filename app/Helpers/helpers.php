@@ -380,20 +380,18 @@ function flushSearch()
     session()->forget('checkout');
 }
 
-function getRatingColor(float $rating): string
+function getRatingColor(?float $rating = 0): string
 {
-    if ($rating >= 9) {
+    if ($rating >= 5) {
         return '#00FF00'; // Green for Excellent
-    } elseif ($rating >= 8) {
+    } elseif ($rating >= 4) {
         return '#00FF00'; // LightGreen for Very Good
-    } elseif ($rating >= 7) {
+    } elseif ($rating >= 3) {
         return '#ADFF2F'; // Yellow for Good
-    } elseif ($rating >= 6) {
+    } elseif ($rating >= 2) {
         return '#A5FF00'; // Orange for Fair
-    } elseif ($rating >= 5) {
-        return  '#808080'; // Red for Poor
     } else {
-        return '#FF0000'; // Gray for ratings below 5
+        return  '#808080'; // Red for Poor
     } #00FF00
 }
 

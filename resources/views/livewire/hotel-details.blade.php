@@ -146,7 +146,7 @@
                 <div class="flex flex-col justify-center text-center max-w-max">
                     <span><i class="fa-regular fa-clock fa-2x text-primary"></i></span>
                     <p class="text-lg font-medium">Checkin Time</p>
-                    <p class="font-medium ">Anytime</p>
+                    <p class="font-medium ">12 Noon</p>
                 </div>
                 <div class="flex flex-col justify-center text-center max-w-max">
                     <span><i class="fa-solid fa-stopwatch-20 fa-2x text-primary"></i></i></span>

@@ -208,7 +208,7 @@
                                             <p
                                                 class="{{ 'bg-[' . getRatingColor($rate) . ']' }} px-2 py-1 inline-block shadow max-w-max font-medium text-sm rounded">
                                                 {{ $rate }}</p>
-                                            <span class="pl-2 font-medium">{{ getRatingDescription($rate) }}</span>
+                                            <span class="text-sm">Star</span>
                                         </div>
                                         <p>
                                             <a href="{{ route('hotels.show', $hotel->code) }}"
