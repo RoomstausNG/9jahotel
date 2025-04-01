@@ -118,11 +118,13 @@
                         <div class="w-full p-4 space-y-4">
                             {{ $this->form }}
                             <div class="flex items-center justify-center gap-8 py-3 mx-auto max-w-max">
-                                <button wire:click="addBooking('online')" type="button"
+                                <button data-tooltip-placement="top" data-tooltip-target="guarantee"
+                                    wire:click="addBooking('online')" type="button"
                                     class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-full bg-primary border-primary hover:text-black max-w-max">Reserve
                                     &
                                     Pay Now</button>
-                                <button wire:click="addBooking('payAtTheHotel')" type="button"
+                                <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
+                                    wire:click="addBooking('payAtTheHotel')" type="button"
                                     class="px-6 py-2 mx-auto font-medium bg-white border-2 rounded-full text-primary border-primary hover:bg-secondary hover:text-black max-w-max">Reserve
                                     & Pay at Hotel
                                 </button>
@@ -138,6 +140,9 @@
                             Now!
                         </button>
                     </div>
+
+                    <x-tooltip id="guarantee" content="Booking is GUARANTEED " />
+                    <x-tooltip id="not-guarantee" content="Booking is subject to Cancellation" />
                 </div>
 
             </div>
