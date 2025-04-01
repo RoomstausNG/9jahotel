@@ -56,7 +56,7 @@ class RenewalPage extends Component
         }
 
         $this->invoice = $this->hotel->invoices()->where('status', 'unpaid')->latest()->first();
-        $this->amount = $this->invoice->amount;
+        $this->amount = $this->invoice?->amount;
     }
 
     #[Layout('layouts.auth')]

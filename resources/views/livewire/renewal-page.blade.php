@@ -47,22 +47,29 @@
             </tr>
         </table>
     </div>
-    <form wire:submit='pay' class="space-y-1">
-        <h1 class="text-lg font-medium">Select Renewal Plan</h1>
-        @error('amount')
-            <span class="text-center text-red-600">{{ $message }}</span> <br>
-        @enderror
-        <select name="amount" wire:model='amount'
-            class="py-2 mb-2 @error('amount') 'border-red-600' @enderror text-sm font-medium rounded focus:border-primary focus:ring-0 border-primary"
-            id="">
-            <option selected value="{{ $invoice->amount }}">Default ({{ formatAsNaira($invoice->amount) }})
-            </option>
-            <option value="10000">Monthly {{ formatAsNaira(10000) }}</option>
-            <option value="10000">Yearly {{ formatAsNaira(99995) }}</option>
-        </select>
-        <button class="block px-6 py-2 mx-auto text-white rounded-lg bg-primary">Pay Now</button>
-        {{-- <p class="text-lg"> Welcome back! Renew your subscription to continue enjoying our services.</p> --}}
-    </form>
+    @if ($this->invoice)
+        <form wire:submit='pay' class="space-y-1">
+            <h1 class="text-lg font-medium">Select Renewal Plan</h1>
+            @error('amount')
+                <span class="text-center text-red-600">{{ $message }}</span> <br>
+            @enderror
+            <select name="amount" wire:model='amount'
+                class="py-2 mb-2 @error('amount') 'border-red-600' @enderror text-sm font-medium rounded focus:border-primary focus:ring-0 border-primary"
+                id="">
+                <option selected value="{{ $invoice->amount }}">Default ({{ formatAsNaira($invoice->amount) }})
+                </option>
+                <option value="10000">Monthly {{ formatAsNaira(10000) }}</option>
+                <option value="10000">Yearly {{ formatAsNaira(99995) }}</option>
+            </select>
+            <button class="block px-6 py-2 mx-auto text-white rounded-lg bg-primary">Pay Now</button>
+            {{-- <p class="text-lg"> Welcome back! Renew your subscription to continue enjoying our services.</p> --}}
+        </form>
+    @else
+        <div class="flex text-center">
+            <h1 class="text-red-600 text-3xl font-bold">Account is temporary Blocked</h1>
+        </div>
+    @endif
+
     <div class="border-t border-black border-dashed">
         <span class="text-lg font-medium">{{ env('APP_NAME') }}</span>
         Call: <a href="tel:+2348134121123">08134121123</a> / <a href="tel:+234701196873">0701196873</a>
