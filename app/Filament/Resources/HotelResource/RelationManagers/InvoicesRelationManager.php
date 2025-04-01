@@ -43,12 +43,13 @@ class InvoicesRelationManager extends RelationManager
                     ->prefix('NGN')
                     ->required()
                     ->default(99995)
+                    ->extraAttributes(['class' => 'cursor-not-allowed bg-gray-300'])
                     ->readonly()
                     ->live(),
                 Forms\Components\Datepicker::make('from')
                     ->label('Valid From')
                     ->required()
-                    ->default(now()),
+                    ->default(today()),
                 Forms\Components\Datepicker::make('to')
                     ->label('Valid To')
                     ->required()
