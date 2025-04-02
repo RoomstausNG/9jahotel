@@ -157,7 +157,7 @@
                     <h1 class="text-xl font-medium">For Suppliers Affiliates and Marketers</h1>
                     <ul>
                         <li class="hover:underline">
-                            <a href="" class="">Become a marketer</a>
+                            <a href="/affiliate" class="">Become a marketer</a>
                         </li>
                         <li class="hover:underline">
                             <a href="" class="">Promote with us</a>

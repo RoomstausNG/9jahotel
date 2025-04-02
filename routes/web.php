@@ -70,6 +70,13 @@ Route::get('/test', function () {
 // pages
 
 Route::view("/faqs", 'faq');
+Route::view("/cookies", 'cookies');
+Route::view("/affiliate", 'affiliate');
+Route::view("/privacy", 'privacy');
+Route::view("/privacy-statement", 'privacy-statement');
+Route::view("/content", 'content');
+Route::view("/terms-and-condition", 'terms');
+
 
 Route::get('/payment/callback', function () {
     $paymentDetails = Paystack::getPaymentData();
