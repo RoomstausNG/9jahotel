@@ -1,9 +1,4 @@
 <x-layouts.frontend>
-    I apologize for the incomplete responses. Let me provide you with the fully styled Privacy Statement using Tailwind
-    CSS classes:
-
-    # Privacy Statement
-
     <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
         <header class="mb-6">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Privacy Statement</h1>
