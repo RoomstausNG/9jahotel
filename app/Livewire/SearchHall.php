@@ -46,8 +46,15 @@ class SearchHall extends Component implements HasForms
                     ->preload()
                     ->default(Session::get('city'))
                     ->native(false),
-                Components\TextInput::make('capacity')
+                Components\Select::make('capacity')
                     ->label('Required Capacity')
+                    ->options([
+                        50 => '',
+                        100 => "",
+                        200 => "",
+                        500 => "",
+                        1000 => ""
+                    ])
                     ->integer()
                     ->default(Session::get('capacity'))
                     ->required(),
