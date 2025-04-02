@@ -67,7 +67,9 @@ Route::get('/test', function () {
     return ["user Image" => "milla"];
 });
 
+// pages
 
+Route::view("/faqs", 'faq');
 
 Route::get('/payment/callback', function () {
     $paymentDetails = Paystack::getPaymentData();
