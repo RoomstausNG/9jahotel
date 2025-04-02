@@ -142,7 +142,7 @@
                             <a href="/terms-and-condition" class=""> Terms & Conditions</a>
                         </li>
                         <li class="hover:underline">
-                            <a href="/privacy" class=""> Privacy</a>
+                            <a href="{{ route('privacy') }}" class=""> Privacy</a>
                         </li>
                         <li class="hover:underline">
                             <a href="/cookies" class="">Cookies</a>
