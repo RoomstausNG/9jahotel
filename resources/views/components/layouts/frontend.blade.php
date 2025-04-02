@@ -149,7 +149,7 @@
                         </li>
                         <li class="hover:underline">
                             <a href="/content" class="">Content guidelines and
-                                reporting content</a>
+                                reporting</a>
                         </li>
                     </ul>
                 </div>
@@ -157,11 +157,11 @@
                     <h1 class="text-xl font-medium">For Suppliers Affiliates and Marketers</h1>
                     <ul>
                         <li class="hover:underline">
-                            <a href="/affiliate" class="">Become a marketer</a>
+                            <a href="/affiliate" class="">Affiliate</a>
                         </li>
-                        <li class="hover:underline">
+                        {{-- <li class="hover:underline">
                             <a href="" class="">Promote with us</a>
-                        </li>
+                        </li> --}}
                         <li class="hover:underline">
                             <a href="" class="">Become our hotels suppliers</a>
                         </li>

@@ -257,9 +257,5 @@
                 </div>
             </div>
         </section>
-
-        <footer class="text-center text-gray-500 text-sm pt-4 mt-8 border-t border-gray-200">
-            &copy; 2023 9jahotel.com Ltd. All rights reserved.
-        </footer>
     </div>
 </x-layouts.frontend>

@@ -1,54 +1,331 @@
 <x-layouts.frontend>
-    <div class="max-w-4xl mx-auto p-6 py-20 bg-white shadow-lg rounded-lg">
-        <h1 class="text-3xl font-bold mb-4">Cookie Statement</h1>
+    <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Cookie Statement</h1>
+            <div class="h-1 w-20 bg-blue-500 mb-6"></div>
+        </header>
 
-        <h2 class="text-2xl font-semibold mt-6">Types of cookies and similar technologies</h2>
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Types of cookies and similar technologies</h2>
 
-        <h3 class="text-xl font-semibold mt-4">Cookies</h3>
-        <p class="mt-2">Cookies are small pieces of text sent as files to your computer or mobile device when you visit
-            most websites...</p>
+            <div class="bg-gray-50 p-5 rounded-lg mb-6">
+                <h3 class="text-xl font-medium text-gray-700 mb-3">Cookies</h3>
+                <p class="text-gray-600 mb-4 leading-relaxed">
+                    Cookies are small pieces of text sent as files to your computer or mobile device when you visit most
+                    websites. Cookies may be delivered by us
+                    (first party cookies) or delivered by a third-party partner or supplier (third-party cookies).
+                    Cookies are either session cookies or persistent
+                    cookies. Session cookies enable sites to recognize and link the actions of a user during a browsing
+                    session and expire at the end of each
+                    session. Persistent cookies help us recognize you as an existing user and these cookies are stored
+                    on your system or device until they expire,
+                    although you can delete them before the expiration date.
+                </p>
+            </div>
 
-        <h3 class="text-xl font-semibold mt-4">Other similar technologies</h3>
-        <ul class="list-disc pl-6 mt-2">
-            <li><strong>Web beacons:</strong> Tiny graphics that track engagement.</li>
-            <li><strong>Proximity beacons:</strong> Used for mobile app notifications.</li>
-            <li><strong>Pixels:</strong> Used for delivering cookies.</li>
-            <li><strong>Tags:</strong> HTML code for ad content.</li>
-            <li><strong>Scripts:</strong> JavaScript for advertisement tracking.</li>
-            <li><strong>Local Storage Objects:</strong> Used for storing content.</li>
-        </ul>
+            <div class="mb-6">
+                <h3 class="text-xl font-medium text-gray-700 mb-3">Other similar technologies</h3>
 
-        <h2 class="text-2xl font-semibold mt-6">HotelNao Group’s Use of Cookies</h2>
-        <p class="mt-2">We use cookies to improve your experience, fulfill transactions, provide relevant ads, analyze
-            traffic, and more.</p>
+                <div class="space-y-4 pl-4 border-l-4 border-blue-100">
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Web beacons, gifs, and clear gifs</span> are tiny
+                            graphics, each with a unique identifier that are embedded invisibly on sites and in emails.
+                            Web beacons allow us to know if a certain page was visited or if ad banners on our sites and
+                            other sites are effective. We also use
+                            web beacons in our HTML-based emails to let us know whether our emails have been opened by
+                            recipients, which helps us to gauge
+                            the effectiveness of certain communications, promotions, and marketing campaigns.
+                        </p>
+                    </div>
 
-        <h2 class="text-2xl font-semibold mt-6">Types of Information Collected</h2>
-        <ul class="list-disc pl-6 mt-2">
-            <li>IP address</li>
-            <li>Device ID</li>
-            <li>Browser type</li>
-            <li>Operating system</li>
-            <li>Internet Service Provider</li>
-        </ul>
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Proximity based beacons</span> send one-way signals
+                            over very short distances, to communicate with associated mobile apps installed on
+                            your phone. They can notify you, for example, about experiences related to your trip and can
+                            alert you to related deals or promotions.
+                            Beacons communicate with your device only when you are in close proximity and only if you
+                            have given consent within the relevant
+                            mobile application.
+                        </p>
+                    </div>
 
-        <h2 class="text-2xl font-semibold mt-6">Types and Functions of Cookies</h2>
-        <h3 class="text-xl font-semibold mt-4">Essential Cookies</h3>
-        <p class="mt-2">Required for site functionality and security.</p>
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Pixels</span> are small objects embedded into a web
+                            page that are not visible to the user. We use pixels to deliver cookies to your computer,
+                            facilitate the log-in process, monitor the activity on our sites, and deliver online
+                            advertising.
+                        </p>
+                    </div>
 
-        <h3 class="text-xl font-semibold mt-4">Other Types of Cookies</h3>
-        <ul class="list-disc pl-6 mt-2">
-            <li><strong>Functional Cookies:</strong> Store preferences and settings.</li>
-            <li><strong>Performance Cookies:</strong> Track site analytics and performance.</li>
-            <li><strong>Targeting Cookies:</strong> Used for relevant advertisements.</li>
-        </ul>
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Tags</span> are small pieces of HTML code that tell
+                            your browser to request certain content generated by an ad server. We use tags to show
+                            you relevant advertising and promotions.
+                        </p>
+                    </div>
 
-        <h2 class="text-2xl font-semibold mt-6">Managing Your Cookies</h2>
-        <p class="mt-2">You can adjust browser settings to accept or refuse cookies.</p>
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Scripts</span> are pieces of JavaScript code that
+                            launch automatically when certain webpages load, to determine whether users view
+                            associated advertisements.
+                        </p>
+                    </div>
 
-        <h2 class="text-2xl font-semibold mt-6">Contact Us</h2>
-        <p class="mt-2">For any questions regarding personal data handling, visit our Customer Services Portal.</p>
+                    <div>
+                        <p class="text-gray-600 leading-relaxed">
+                            <span class="font-medium text-blue-600">Local Storage Objects</span>, such as HTML 5, are
+                            used to store content and preferences. Third-parties with whom we partner to provide
+                            certain features on our site to display advertising based upon your web browsing activity
+                            use Local Storage Objects to collect and
+                            store information.
+                        </p>
+                    </div>
+                </div>
 
-        <h2 class="text-2xl font-semibold mt-6">Updates to This Statement</h2>
-        <p class="mt-2">We may update this statement to reflect changes in laws and business practices.</p>
+                <p class="text-gray-600 mt-4 italic">
+                    All of the technologies described above will be collectively referred to in this Cookie Statement as
+                    "cookies".
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">HotelNao Group's use of cookies</h2>
+
+            <p class="text-gray-600 mb-3">At HotelNao Group, we use cookies for a number of reasons, including to:</p>
+
+            <ul class="list-disc pl-6 mb-6 space-y-2 text-gray-600">
+                <li>Help us improve your experience when visiting our sites</li>
+                <li>Fulfill transactions and ensure our sites perform as intended</li>
+                <li>Remember your preferences, such as language, region, or currency</li>
+                <li>Provide you with relevant advertising and analyze performance of the ads</li>
+                <li>Enable you to return to previous travel searches</li>
+                <li>Identify errors on our sites</li>
+                <li>Help with data protection and potentially detect and investigate malicious of fraudulent activity
+                </li>
+                <li>Help us understand traﬃc to our site, including time and date of the visit, time and date of the
+                    last visit, and other information</li>
+                <li>Analyze how well our sites are performing</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Types of information collected by cookies</h2>
+
+            <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                <p class="text-gray-700 mb-2">The types of information that we collect through cookies include:</p>
+                <ul class="list-disc pl-6 space-y-1 text-gray-600">
+                    <li>IP address</li>
+                    <li>Device ID</li>
+                    <li>Viewed pages</li>
+                    <li>Browser type</li>
+                    <li>Browsing information</li>
+                    <li>Operating system</li>
+                    <li>Internet Service Provider</li>
+                    <li>Whether you have responded to, or interacted with, an advertisement</li>
+                    <li>Referring or referred links or URLs</li>
+                    <li>Features used and activities engaged in on our sites and in our apps</li>
+                </ul>
+            </div>
+
+            <p class="text-gray-600 text-sm italic">
+                See the Categories of Personal Information We Collect section in our Privacy Statement for more
+                information on what types of information are
+                collected automatically.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Types and functions of cookies</h2>
+
+            <div class="mb-6">
+                <h3 class="text-xl font-medium text-gray-700 mb-3 flex items-center">
+                    <span
+                        class="h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center mr-2">1</span>
+                    Essential Cookies
+                </h3>
+                <div class="pl-10">
+                    <p class="text-gray-600 leading-relaxed">
+                        Certain cookies are required or "essential" for our sites to function as intended. Essential
+                        cookies are necessary for you to navigate our site and
+                        use certain features like logging in to your account and managing your bookings. These cookies
+                        are also used to remember security settings
+                        that allow access to particular content. Lastly, we use essential cookies to collect information
+                        on which web pages visitors go to most, so we
+                        can improve our online services. <span class="font-medium">You are not able to opt out of
+                            essential cookies.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="text-xl font-medium text-gray-700 mb-3">Other Types of Cookies</h3>
+                <p class="text-gray-600 mb-4">
+                    We also use other types of cookies to make our site engaging and useful to you:
+                </p>
+
+                <div class="space-y-6 pl-4 border-l-4 border-gray-200">
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                            <span
+                                class="h-6 w-6 rounded-full bg-green-500 text-white flex items-center justify-center mr-2 text-sm">2</span>
+                            Functional Cookies
+                        </h4>
+                        <p class="text-gray-600 pl-8 leading-relaxed">
+                            We want to make sure when you visit our site, your preferences (such as your preferred
+                            language), settings, and
+                            previous searches are remembered. Functional cookies enhance your experience on any HotelNao
+                            Group company's site.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                            <span
+                                class="h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center mr-2 text-sm">3</span>
+                            Performance Cookies
+                        </h4>
+                        <div class="pl-8">
+                            <p class="text-gray-600 mb-3">We use performance cookies to:</p>
+                            <ul class="list-disc pl-6 space-y-2 text-gray-600">
+                                <li>Understand our site's performance and how it is used, including the number of
+                                    visitors, how long you stay on the site, and which parts
+                                    of the site you visit</li>
+                                <li>Test different designs and features for our site</li>
+                                <li>Monitor how our visitors reach our sites</li>
+                                <li>Determine effectiveness of our advertising</li>
+                                <li>Improve our services, including your experience on our site</li>
+                            </ul>
+
+                            <div class="bg-gray-50 p-3 rounded-md mt-4 text-gray-500 text-sm">
+                                <p class="mb-2">
+                                    For analytics, our third-party service providers may use cookies to perform their
+                                    services and may combine the information that they collect
+                                    about you on our sites with other information that they have collected. For example,
+                                    we use Google Analytics cookies to monitor the
+                                    performance of our sites. Our ability to use and share information collected by
+                                    Google Analytics about your visit to our sites is restricted by the
+                                    Google Analytics Terms of Use and the Google Privacy Policy.
+                                </p>
+                                <p>
+                                    This Cookie Statement does not cover such third-parties' use of your information.
+                                </p>
+                            </div>
+
+                            <p class="text-gray-600 mt-3">
+                                Some analytics cookies can perform tasks essential and/or functional to online services
+                                like enabling site improvements and testing changes
+                                on a site.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-700 mb-2 flex items-center">
+                            <span
+                                class="h-6 w-6 rounded-full bg-yellow-500 text-white flex items-center justify-center mr-2 text-sm">4</span>
+                            Targeting Cookies
+                        </h4>
+                        <p class="text-gray-600 pl-8 leading-relaxed">
+                            HotelNao Group and our third-party advertising partners may use advertising cookies to show
+                            you advertisements
+                            both on and off our sites that are based on your interests. We may allow third-parties to
+                            collect information about your online
+                            activities through cookies to perform their services and may combine the information that
+                            they collect about you on our sites with
+                            other information that they have collected. These third-parties include business partners
+                            who collect information when you view or
+                            interact with one of (1) their advertisements on our sites or (2) our advertising or booking
+                            information on their sites and advertising
+                            networks, which collect information about your interests when you view or interact with one
+                            of the advertisements or tracking
+                            mechanisms they place on many different sites on the Internet. Our partners may make
+                            assumptions about your interests,
+                            characteristics, or preferences and add you to groups based on those assumptions in order to
+                            show you tailored advertisements.
+                            HotelNao Group does not have access to the cookies these third-parties may use to collect
+                            information about your interests, and the
+                            information practices of these third-parties are not covered by this Cookie Statement, or
+                            our Privacy Statement. Some of these
+                            companies are members of the Network Advertising Initiative, which offers a single location
+                            to opt out of ad targeting from member
+                            companies.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your information choices</h2>
+
+            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500 mb-6">
+                <p class="text-gray-700">
+                    You can choose not to receive tailored online advertising on this site and other sites.
+                </p>
+                <p class="text-gray-500 text-sm italic mt-2">
+                    Note that if you choose not to receive tailored ads, you will still see online advertisements, but
+                    they will be general and less relevant to you.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">How can you manage your cookies?</h2>
+
+            <p class="text-gray-600 mb-6">
+                You can set or amend your web browser controls to accept or refuse cookies whenever you like, but please
+                remember if you do choose to reject
+                cookies, your access to some of the functionality and areas of our site may be restricted.
+            </p>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Do-Not-Track Signals and Similar Mechanisms</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Some web browsers may transmit "do-not-track" signals to sites with which the browser communicates.
+                    Because of differences in how web
+                    browsers incorporate and activate this feature, it is not always clear whether users intend for
+                    these signals to be transmitted, or whether users
+                    are even aware of them. Participants in the leading Internet standards-setting organization that is
+                    addressing this issue are in the process of
+                    determining what, if anything, sites should do when they receive such signals. We currently do not
+                    take action in response to these signals. If
+                    and when a final standard is established and accepted, we will reassess our sites' responses to
+                    these signals and make appropriate updates to
+                    this Cookie Statement.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Contact Us</h2>
+
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <p class="text-gray-700">
+                    If you have any questions or concerns about our use of your personal information, or wish to inquire
+                    about our personal information handling
+                    practices, and exercise your rights to access, correct or inquire about deletion of personal
+                    information, please contact us via the Privacy
+                    Section on our <a href="#" class="text-blue-600 hover:underline">Customer Services Portal</a>.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Updates to Statement</h2>
+
+            <p class="text-gray-600">
+                We may update this Statement in response to changing laws or technical or business developments. If we
+                propose to make any material
+                changes, we will notify you by means of a notice on this page. You can see when this Cookie Statement
+                was last updated by checking the "last
+                updated" date displayed at the top of this Statement.
+            </p>
+        </section>
     </div>
 </x-layouts.frontend>
