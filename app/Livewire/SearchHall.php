@@ -55,7 +55,6 @@ class SearchHall extends Component implements HasForms
                         500 => "",
                         1000 => ""
                     ])
-                    ->integer()
                     ->default(Session::get('capacity'))
                     ->required(),
 

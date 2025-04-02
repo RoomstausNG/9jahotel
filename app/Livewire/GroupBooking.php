@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Hotel;
 use Filament\Forms\Get;
 use Livewire\Component;
+use App\Models\CityCopy;
 use Filament\Forms\Form;
 use Nnjeim\World\Models\City;
 use Livewire\Attributes\Layout;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Components\CheckboxList;
@@ -102,7 +104,20 @@ class GroupBooking extends Component implements HasForms
                                 ->label('Expected Number of Guests')
                                 ->placeholder('Enter the total number of expected guests'),
                             Select::make('city_id')
-                                ->options(fn() => City::where('country_id', 160)->get()->pluck('name', 'id')->toArray())
+                                ->options(function () {
+                                    // Get cities with hotels and count of hotels using withCount
+                                    $citiesWithHotels = CityCopy::where('country_id', 160)
+                                        ->withCount('hotels')
+                                        ->having('hotels_count', '>', 0)
+                                        ->orderBy('name')
+                                        ->get()
+                                        ->mapWithKeys(
+                                            fn($city) =>
+                                            [$city->id => "{$city->name} ({$city->hotels_count} hotels)"]
+                                        );
+
+                                    return $citiesWithHotels;
+                                })
                                 ->searchable()
                                 ->required()
                                 ->label('City/Town')
@@ -226,8 +241,8 @@ class GroupBooking extends Component implements HasForms
                         ]),
                 ])
                     ->skippable(false)
-                    ->persistStepInQueryString(),
-                // ->submitAction(view('livewire.group-booking.submit-button')),
+                    ->persistStepInQueryString()
+                    ->submitAction(view('components.submit-button')),
             ])
             ->statePath('data');
     }
@@ -268,7 +283,14 @@ class GroupBooking extends Component implements HasForms
         // Redirect or show success message
         session()->flash('success', 'Your group booking request has been submitted successfully!');
 
-        return redirect()->route('booking.confirmation', ['id' => $booking->id]);
+        Notification::make()
+            ->title("Request submitted successfully")
+            ->body("")
+            ->success()
+            ->duration(10000)
+            ->send();
+
+        $this->form->fill();
     }
 
     #[Layout("components.layouts.frontend")]
