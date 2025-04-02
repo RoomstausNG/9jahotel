@@ -49,11 +49,11 @@ class SearchHall extends Component implements HasForms
                 Components\Select::make('capacity')
                     ->label('Required Capacity')
                     ->options([
-                        50 => '',
-                        100 => "",
-                        200 => "",
-                        500 => "",
-                        1000 => ""
+                        50 => '1 - 50 Participant',
+                        100 => "Upto 100 Participant",
+                        200 => "Upto 200 Participant",
+                        500 => "Upto 500 Participant",
+                        1000 => "Upto 1000 Participant"
                     ])
                     ->default(Session::get('capacity'))
                     ->required(),
