@@ -139,16 +139,16 @@
                     <ul>
 
                         <li class="hover:underline">
-                            <a href="" class=""> Terms & Conditions</a>
+                            <a href="/terms-and-condition" class=""> Terms & Conditions</a>
                         </li>
                         <li class="hover:underline">
-                            <a href="" class=""> Privacy</a>
+                            <a href="/privacy" class=""> Privacy</a>
                         </li>
                         <li class="hover:underline">
-                            <a href="" class="">Cookies</a>
+                            <a href="/cookies" class="">Cookies</a>
                         </li>
                         <li class="hover:underline">
-                            <a href="" class="">Content guidelines and
+                            <a href="/content" class="">Content guidelines and
                                 reporting content</a>
                         </li>
                     </ul>

@@ -1,6 +1,6 @@
 <x-layouts.frontend>
-    <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-        <h1 class="text-3xl font-bold text-center text-blue-600">Make More Money from Your Traffic and Audience!</h1>
+    <div class="max-w-4xl mx-auto p-6 py-20 bg-white shadow-lg rounded-lg mt-10">
+        <h1 class="text-3xl font-bold text-center text-primary">Make More Money from Your Traffic and Audience!</h1>
 
         <h2 class="text-2xl font-semibold text-center mt-4">Join the 9jahotel.com Affiliate Program!</h2>
 
@@ -13,7 +13,7 @@
             accommodation by visiting 9jahotel.com through your affiliate link, you get cash for the referral.</p>
 
         <h3 class="text-xl font-semibold mt-6">Affiliate Program Information</h3>
-        <ul class="list-disc list-inside mt-2 text-gray-700">
+        <ul class="list-disc list-outside pl-6 mt-2 text-gray-700">
             <li><strong>Competitive commission</strong> – Earn competitive payouts on all paid hotel reservations.</li>
             <li><strong>Easy implementation</strong> – Get access to deep links, text links, widgets, and banners
                 embedded with your unique affiliate ID.</li>
@@ -27,6 +27,7 @@
         <p class="mt-2 text-gray-700">Joining the 9jahotel.com Affiliate Program is easy and free. Send a mail to us at
             <a href="mailto:affiliate@9jahotel.com" class="text-blue-500 underline">affiliate@9jahotel.com</a> and get
             access to a variety of text links and banner ads embedded with your unique affiliate ID. Our affiliate
-            marketing team is dedicated to ensuring you have the tools you need to be successful.</p>
+            marketing team is dedicated to ensuring you have the tools you need to be successful.
+        </p>
     </div>
 </x-layouts.frontend>
