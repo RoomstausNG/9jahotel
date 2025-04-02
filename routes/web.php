@@ -26,7 +26,7 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 
 
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
-Route::get('/', [PageController::class, 'homepage']);
+Route::redirect('/', "/hotel/login");
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
 
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
