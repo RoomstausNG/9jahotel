@@ -180,8 +180,9 @@
             </div>
             <hr class="my-6 border-gray-200 sm:mx-auto lg:my-8" />
             <div class="text-white sm:flex sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 sm:text-center">© 2014 - {{ date('Y') }} <a href="/"
-                        class="hover:underline">9jahotel™</a>. All Rights Reserved.
+                <span class="text-sm text-gray-500 sm:text-center">© 2014 - {{ date('Y') }} <a target="_blank"
+                        href="{{ env('POWER_BY', 'https://bowofade.com') }}" class="hover:underline">9jahotel™</a>.
+                    All Rights Reserved.
                 </span>
                 <div class="flex mt-4 sm:justify-center sm:mt-0">
                     <a href="#" class="text-gray-500 hover:text-gray-900">
