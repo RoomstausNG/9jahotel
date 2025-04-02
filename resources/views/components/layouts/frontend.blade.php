@@ -168,8 +168,6 @@
 
                     </ul>
                 </div>
-
-
                 <div class="man-w-[100px] text-left space-y-4">
                     <h1 class="text-xl font-medium">Support and Faqs</h1>
                 </div>
