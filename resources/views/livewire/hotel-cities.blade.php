@@ -14,7 +14,7 @@
     </div>
     <div class="grid grid-cols-1 gap-4 sm:col-span-2 md:grid-cols-3 lg:grid-cols-4">
         @forelse ($cities as $city)
-            <a class="block p-3 space-y-1 transition duration-300 transform hover:shadow-2xl" href="">
+            <a class="block p-3 space-y-1 border transition duration-300 transform hover:shadow-2xl" href="">
                 <h1 class="text-lg font-semibold capitalize text-primary">
                     {{ 'Hotels in ' . $city->name . ', ' . $city->state->name }}</h1>
                 <p class="text">There are {{ $city->hotels_count }} hotels in {{ $city->name }}, featuring over
