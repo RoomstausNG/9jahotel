@@ -12,11 +12,12 @@
         </p>
         <hr class="text-center w-[100px] bg-primary mx-auto mt-2 p-[1.5px] border-0">
     </div>
-    <div class="grid grid-cols-1 gap-6 sm:col-span-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+    <div class="grid grid-cols-1 gap-4 sm:col-span-2 md:grid-cols-3 lg:grid-cols-4">
         @forelse ($cities as $city)
-            <a class="block p-2 space-y-1 transition duration-300 transform hover:shadow-2xl" href="">
-                <h1 class="text-lg font-semibold capitalize text-primary">{{ 'Hotels in ' . $city->name }}</h1>
-                <p class="text-sm">There are {{ $city->hotels_count }} hotels in {{ $city->name }}, featuring over
+            <a class="block p-3 space-y-1 transition duration-300 transform hover:shadow-2xl" href="">
+                <h1 class="text-lg font-semibold capitalize text-primary">
+                    {{ 'Hotels in ' . $city->name . ', ' . $city->state->name }}</h1>
+                <p class="text">There are {{ $city->hotels_count }} hotels in {{ $city->name }}, featuring over
                     {{ $city->ratings_count }}
                     verified reviews and
                     {{ $city->bookings_count }} bookings.</p>
