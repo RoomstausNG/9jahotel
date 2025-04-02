@@ -1,4 +1,4 @@
-<div class="w-full mx-auto space-y-8 lg:p-0">
+<div id="city" class="w-full mx-auto space-y-8 lg:p-0">
     <div class="px-4 text-center lg:px-0">
         <h1 class="text-2xl font-semibold md:text-3xl">
             Select a city to book a hotel.
@@ -27,7 +27,7 @@
             </div>
         @endforelse
     </div>
-    {{-- <div class="max-w-4xl mx-auto">
-        {{ $cities->links() }}
-    </div> --}}
+    <div class="max-w-4xl mx-auto">
+        {{ $cities->links(data: ['scrollTo' => '#city']) }}
+    </div>
 </div>
