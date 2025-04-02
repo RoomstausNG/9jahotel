@@ -156,7 +156,6 @@
                 <div class="max-w-[350px] text-left space-y-4">
                     <h1 class="text-xl font-medium">For Suppliers Affiliates and Marketers</h1>
                     <ul>
-
                         <li class="hover:underline">
                             <a href="" class="">Become a marketer</a>
                         </li>
