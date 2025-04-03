@@ -98,9 +98,9 @@ class HotelResource extends Resource
                 Forms\Components\Select::make('state_id')
                     ->label('State')
                     ->options(fn(Get $get): Collection
-                    => State::query()
-                        ->where('country_id', $get('country_id'))
-                        ->pluck('name', 'id'))
+                        => State::query()
+                            ->where('country_id', $get('country_id'))
+                            ->pluck('name', 'id'))
                     ->searchable(['name'])
                     ->nullable()
                     ->preload()
@@ -125,10 +125,10 @@ class HotelResource extends Resource
                     ->label('City/Town')
                     ->relationship(name: 'city', titleAttribute: 'name')
                     ->options(fn(Get $get): Collection
-                    => City::query()
-                        // ->where('country_id', $get('country_id'))
-                        ->where('state_id', $get('state_id'))
-                        ->pluck('name', 'id'))
+                        => City::query()
+                            // ->where('country_id', $get('country_id'))
+                            ->where('state_id', $get('state_id'))
+                            ->pluck('name', 'id'))
                     ->searchable(['name'])
                     ->nullable()
                     ->helperText("if you can'\t find your town/city, select the nearest city. Also contact us via email,phone and chat")
@@ -232,6 +232,17 @@ class HotelResource extends Resource
                     ]),
                 Forms\Components\RichEditor::make('description')
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('latitude')
+                    ->hiddenLabel()
+                    ->hidden(),
+
+                Forms\Components\TextInput::make('longitude')
+                    ->hiddenLabel()
+                    ->hidden(),
+                Map::make('location')
+                    ->liveLocation(true, true, 10000)  // Updates live location every 10 seconds
+                    ->showMarker()
+                    ->draggable()
             ])->columns(4);
     }
 
@@ -318,79 +329,6 @@ class HotelResource extends Resource
                     ->preload()
                     ->searchable() // If you want a searchable dropdown
                     ->placeholder('Select Team'),
-                Map::make('location')
-                    ->label('Location')
-                    ->columnSpanFull()
-                    // Basic Configuration
-                    ->defaultLocation(latitude: 8.9475178, longitude: 7.3079936)
-                    ->draggable(true)
-                    ->clickable(true) // click to move marker
-                    ->zoom(15)
-                    ->minZoom(0)
-                    ->maxZoom(28)
-                    ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                    ->detectRetina(true)
-
-                    // Marker Configuration
-                    ->showMarker(true)
-                    ->markerColor("#3b82f6")
-                    ->markerHtml('<div class="custom-marker">...</div>')
-                    // ->markerIconUrl('/path/to/marker.png')
-                    ->markerIconSize([36, 36])
-                    ->markerIconClassName('my-marker-class')
-                    ->markerIconAnchor([18, 36])
-
-                    // Controls
-                    ->showFullscreenControl(true)
-                    ->showZoomControl(true)
-
-                    // Location Features
-                    ->liveLocation(true, true, 5000)
-                    ->showMyLocationButton(true)
-                    ->boundaries(true, 49.5, -11, 61, 2) // Example for British Isles
-                    ->rangeSelectField('distance')
-
-                    // GeoMan Integration
-                    ->geoMan(true)
-                    ->geoManEditable(true)
-                    ->geoManPosition('topleft')
-                    ->drawCircleMarker(true)
-                    ->rotateMode(true)
-                    ->drawMarker(true)
-                    ->drawPolygon(true)
-                    ->drawPolyline(true)
-                    ->drawCircle(true)
-                    ->drawRectangle(true)
-                    ->drawText(true)
-                    ->dragMode(true)
-                    ->cutPolygon(true)
-                    ->editPolygon(true)
-                    ->deleteLayer(true)
-                    ->setColor('#3388ff')
-                    ->setFilledColor('#cad9ec')
-                    ->snappable(true, 20)
-
-                    // Extra Customization
-                    ->extraStyles([
-                        'min-height: 150vh',
-                        'border-radius: 50px'
-                    ])
-                    ->extraControl(['customControl' => true])
-                    ->extraTileControl(['customTileOption' => 'value'])
-
-                    // State Management
-                    ->afterStateUpdated(function (Set $set, ?array $state): void {
-                        $set('latitude', $state['lat']);
-                        $set('longitude', $state['lng']);
-                        $set('geojson', json_encode($state['geojson']));
-                    })
-                    ->afterStateHydrated(function ($state, $record, Set $set): void {
-                        $set('location', [
-                            'lat' => $record->latitude,
-                            'lng' => $record->longitude,
-                            'geojson' => json_decode(strip_tags($record->description))
-                        ]);
-                    }),
             ])
             ->actions([
                 ActionGroup::make([
@@ -417,7 +355,7 @@ class HotelResource extends Resource
             RelationManagers\RoomCategoryRelationManager::class,
             RelationManagers\RevenuesRelationManager::class,
             RelationManagers\ItemsRelationManager::class,
-            // RelationManagers\AmenitiesRelationManager::class,
+                // RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
             RelationManagers\FaqsRelationManager::class,
         ];
