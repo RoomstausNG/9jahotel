@@ -240,9 +240,31 @@ class HotelResource extends Resource
                     ->hiddenLabel()
                     ->hidden(),
                 Map::make('location')
-                    ->liveLocation(true, true, 10000)  // Updates live location every 10 seconds
+                    ->columnSpanFull()
+                    ->liveLocation(true, true, 5000)  // Updates live location every 10 seconds
                     ->showMarker()
                     ->draggable()
+                    ->clickable(true)
+                    ->showMyLocationButton(true)
+                    ->zoom(15)
+                    ->showFullscreenControl(true)
+                    ->showZoomControl(true)
+                    ->minZoom(0)
+                    ->maxZoom(28)
+                    ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                    ->detectRetina(true)
+                    ->afterStateUpdated(function (Set $set, ?array $state): void {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                        $set('geojson', json_encode($state['geojson']));
+                    })
+                    ->afterStateHydrated(function ($state, $record, Set $set): void {
+                        $set('location', [
+                            'lat' => $record->latitude,
+                            'lng' => $record->longitude,
+                            'geojson' => json_decode(strip_tags($record->description))
+                        ]);
+                    })
             ])->columns(4);
     }
 
