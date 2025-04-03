@@ -375,11 +375,13 @@ class HotelResource extends Resource
             RelationManagers\InvoicesRelationManager::class,
             RelationManagers\UserRelationManager::class,
             RelationManagers\RoomCategoryRelationManager::class,
+            RelationManagers\HallsRelationManager::class,
             RelationManagers\RevenuesRelationManager::class,
             RelationManagers\ItemsRelationManager::class,
                 // RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
             RelationManagers\FaqsRelationManager::class,
+
         ];
     }
 
