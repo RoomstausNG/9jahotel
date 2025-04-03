@@ -45,7 +45,9 @@ Route::get('/session-debug', function () {
     ]);
 })->name('session.debug');
 
-Route::get('/test', function () {
+Route::get(
+    '/test',
+    fn() =>
 
     // $permissions = $user->getPermissionsViaRoles();
     // if (count($permissions) > 0) {
@@ -53,9 +55,8 @@ Route::get('/test', function () {
     //         $user->givePermissionTo($permission->name);
     //     }
     // }
-
-    return ["user Image" => "milla"];
-});
+    ["user Image" => "milla"]
+);
 
 
 
