@@ -15,6 +15,7 @@ use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\State;
 use Filament\Resources\Resource;
 use Nnjeim\World\Models\Country;
+use Dotswan\MapPicker\Fields\Map;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
@@ -208,6 +209,7 @@ class HotelResource extends Resource
                     ->nullable(),
                 Rating::make('star_rating')->color('success'),
                 Forms\Components\Toggle::make('vat'),
+
                 Forms\Components\Select::make('amenities')
                     ->multiple()
                     ->label('Amenities')
@@ -316,6 +318,79 @@ class HotelResource extends Resource
                     ->preload()
                     ->searchable() // If you want a searchable dropdown
                     ->placeholder('Select Team'),
+                Map::make('location')
+                    ->label('Location')
+                    ->columnSpanFull()
+                    // Basic Configuration
+                    ->defaultLocation(latitude: 8.9475178, longitude: 7.3079936)
+                    ->draggable(true)
+                    ->clickable(true) // click to move marker
+                    ->zoom(15)
+                    ->minZoom(0)
+                    ->maxZoom(28)
+                    ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                    ->detectRetina(true)
+
+                    // Marker Configuration
+                    ->showMarker(true)
+                    ->markerColor("#3b82f6")
+                    ->markerHtml('<div class="custom-marker">...</div>')
+                    // ->markerIconUrl('/path/to/marker.png')
+                    ->markerIconSize([36, 36])
+                    ->markerIconClassName('my-marker-class')
+                    ->markerIconAnchor([18, 36])
+
+                    // Controls
+                    ->showFullscreenControl(true)
+                    ->showZoomControl(true)
+
+                    // Location Features
+                    ->liveLocation(true, true, 5000)
+                    ->showMyLocationButton(true)
+                    ->boundaries(true, 49.5, -11, 61, 2) // Example for British Isles
+                    ->rangeSelectField('distance')
+
+                    // GeoMan Integration
+                    ->geoMan(true)
+                    ->geoManEditable(true)
+                    ->geoManPosition('topleft')
+                    ->drawCircleMarker(true)
+                    ->rotateMode(true)
+                    ->drawMarker(true)
+                    ->drawPolygon(true)
+                    ->drawPolyline(true)
+                    ->drawCircle(true)
+                    ->drawRectangle(true)
+                    ->drawText(true)
+                    ->dragMode(true)
+                    ->cutPolygon(true)
+                    ->editPolygon(true)
+                    ->deleteLayer(true)
+                    ->setColor('#3388ff')
+                    ->setFilledColor('#cad9ec')
+                    ->snappable(true, 20)
+
+                    // Extra Customization
+                    ->extraStyles([
+                        'min-height: 150vh',
+                        'border-radius: 50px'
+                    ])
+                    ->extraControl(['customControl' => true])
+                    ->extraTileControl(['customTileOption' => 'value'])
+
+                    // State Management
+                    ->afterStateUpdated(function (Set $set, ?array $state): void {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                        $set('geojson', json_encode($state['geojson']));
+                    })
+                    ->afterStateHydrated(function ($state, $record, Set $set): void {
+                        $set('location', [
+                            'lat' => $record->latitude,
+                            'lng' => $record->longitude,
+                            'geojson' => json_decode(strip_tags($record->description))
+                        ]);
+                    }),
             ])
             ->actions([
                 ActionGroup::make([
