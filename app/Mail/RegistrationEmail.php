@@ -17,7 +17,7 @@ class RegistrationEmail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user,)
+    public function __construct(public User $user, )
     {
     }
 
@@ -27,7 +27,7 @@ class RegistrationEmail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Account Creation',
+            subject: 'Account Creation at 9jahotel | Roomstatus',
         );
     }
 

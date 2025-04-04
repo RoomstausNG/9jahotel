@@ -7,16 +7,18 @@ namespace App\Models;
 use Filament\Panel;
 use Illuminate\Support\Str;
 use App\Traits\BelongToHotel;
+use App\Mail\RegistrationEmail;
 use App\Models\Scopes\HotelScope;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\Mail;
+
 use Filament\Models\Contracts\HasName;
 use Spatie\Permission\Traits\HasRoles;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasTenants;
@@ -139,9 +141,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         // create profile for every user created
         self::created(function ($user) {
             $user->profile()->create();
-            // $user->username = $user->update([
-            //     'username' =>  IdGenerator::generate(['table' => 'users', 'field' => 'username', 'length' => 8, 'reset_on_prefix_change' => true, 'prefix' => substr($user->hotel->code, 0, 3) . date('y')])
-            // ]);
 
             // attach role when created
             $user->assignRole($user->current_role);
@@ -152,6 +151,10 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
                     $user->givePermissionTo($permission->name);
                 }
             }
+
+            // sending login details
+            Mail::to($user)->later(now()->addSeconds(2), new RegistrationEmail($user));
+
         });
 
         self::updating(function ($user) {
