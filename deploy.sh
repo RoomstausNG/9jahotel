@@ -46,9 +46,16 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Fix storage permissions
-echo ">> Setting permissions..."
-chmod -R 775 storage bootstrap/cache
+# Fix storage permissions - Changed to 777 for full access
+echo ">> Setting permissions to 777..."
+chmod -R 777 storage bootstrap/cache
+
+# Ensure cache directories exist with proper permissions
+echo ">> Ensuring cache directories exist..."
+mkdir -p storage/framework/cache/data
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
+chmod -R 777 storage/framework
 
 # Bring the application back online
 echo ">> Bringing application online..."

@@ -61,39 +61,4 @@ jobs:
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            cd /www/wwwroot/dashboard.wakalor.com
-            # Fix permissions for problematic files
-            [ -f public/.user.ini ] && chmod 644 public/.user.ini || true
-            
-            # Fix storage permissions before deployment
-            echo ">> Setting storage permissions..."
-            find storage -type d -exec chmod 775 {} \; 2>/dev/null || true
-            find storage -type f -exec chmod 664 {} \; 2>/dev/null || true
-            find bootstrap/cache -type d -exec chmod 775 {} \; 2>/dev/null || true
-            find bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || true
-            
-            # Run deployment script with error handling
-            ./deploy.sh || {
-              echo "Deployment script failed, trying alternative approach..."
-              git fetch
-              git reset --hard origin/dashboard
-              composer install --no-dev --optimize-autoloader
-              php artisan migrate --force
-              php artisan cache:clear
-              php artisan config:clear
-              php artisan route:clear
-              php artisan view:clear
-              
-              # More thorough permission fixing
-              echo ">> Setting detailed permissions..."
-              find storage -type d -exec chmod 775 {} \; 2>/dev/null || true
-              find storage -type f -exec chmod 664 {} \; 2>/dev/null || true
-              find bootstrap/cache -type d -exec chmod 775 {} \; 2>/dev/null || true
-              find bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || true
-              
-              # Create storage link if needed
-              [ ! -L public/storage ] && php artisan storage:link || true
-              
-              php artisan up
-              echo "Alternative deployment completed"
-            }
+            cd /www/wwwroot/dashboard.wakalor.com && ./deploy.sh
