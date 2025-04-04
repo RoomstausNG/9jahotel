@@ -61,4 +61,21 @@ jobs:
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            cd /www/wwwroot/dashboard.wakalor.com && ./deploy.sh
+            cd /www/wwwroot/dashboard.wakalor.com
+            # Try to fix permission on problematic file
+            [ -f public/.user.ini ] && chmod 644 public/.user.ini || true
+            # Run deployment script with error handling
+            ./deploy.sh || {
+              echo "Deployment script failed, trying alternative approach..."
+              git fetch
+              git reset --hard origin/dashboard
+              composer install --no-dev --optimize-autoloader
+              php artisan migrate --force
+              php artisan cache:clear
+              php artisan config:clear
+              php artisan route:clear
+              php artisan view:clear
+              chmod -R 775 storage bootstrap/cache
+              php artisan up
+              echo "Alternative deployment completed"
+            }
