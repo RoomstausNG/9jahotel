@@ -168,7 +168,7 @@ class Hotel extends Model implements HasMedia
         parent::boot();
 
         self::creating(function ($hotel) {
-            $hotel->code = $hotel->phone;
+            $hotel->code = $hotel->telephone;
             // $hotel->code = IdGenerator::generate(['table' => 'hotels', 'field' => 'code', 'reset_on_prefix_change' => true, 'length' => 8, 'prefix' => getFirstLetters($hotel->name) . date('y')]);
 
             $hotel->created_by = auth()->id();
