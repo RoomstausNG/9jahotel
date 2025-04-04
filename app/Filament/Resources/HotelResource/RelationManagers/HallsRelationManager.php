@@ -21,70 +21,74 @@ class HallsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Section::make('Hall Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('price')
-                            ->numeric()
-                            ->prefix('NGN'),
-                        Forms\Components\TextInput::make('capacity')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'available' => 'Available',
-                                'occupied' => 'Occupied'
-                            ])
-                            ->default('available'),
-                        Forms\Components\RichEditor::make('description')
-                            ->columnSpanFull(),
-                        Forms\Components\Toggle::make('is_available')
-                            ->default(true)
-                            ->required(),
-                        Forms\Components\TextInput::make('remarks')
-                            ->maxLength(255)
-                            ->default('sellable'),
-                    ])->columns(2),
-
-                Section::make('Images')
-                    ->schema([
-                        Forms\Components\FileUpload::make('image')
-                            ->label("Main Hall Image")
-                            ->optimize('webp')
-                            ->disk('cloudinary')
-                            ->visibility('private')
-                            ->required()
-                            ->directory('hall')
-                            ->image()
-                            ->imageEditor()
-                            ->columnSpanFull(),
-
-                        Forms\Components\Repeater::make('images')
-                            ->label('Other Images')
-                            ->relationship('images')
+                Forms\Components\Tabs::make('Hall Management')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Details')
                             ->schema([
-                                Forms\Components\FileUpload::make('url')
-                                    ->image()
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('price')
+                                    ->numeric()
+                                    ->prefix('NGN'),
+                                Forms\Components\TextInput::make('capacity')
+                                    ->required()
+                                    ->numeric(),
+                                Forms\Components\Select::make('status')
+                                    ->options([
+                                        'available' => 'Available',
+                                        'occupied' => 'Occupied'
+                                    ])
+                                    ->default('available'),
+                                Forms\Components\RichEditor::make('description')
+                                    ->columnSpanFull(),
+                                Forms\Components\Toggle::make('is_available')
+                                    ->default(true)
+                                    ->required(),
+                                Forms\Components\TextInput::make('remarks')
+                                    ->maxLength(255)
+                                    ->default('sellable'),
+                            ])->columns(2),
+
+                        Forms\Components\Tabs\Tab::make('Images')
+                            ->schema([
+                                Forms\Components\FileUpload::make('image')
+                                    ->label("Main Hall Image")
                                     ->optimize('webp')
                                     ->disk('cloudinary')
                                     ->visibility('private')
-                                    ->directory('hall_images')
+                                    ->required()
+                                    ->directory('hall')
+                                    ->image()
                                     ->imageEditor()
-                                    ->required(),
+                                    ->columnSpanFull(),
+
+                                Forms\Components\Repeater::make('images')
+                                    ->label('Other Images')
+                                    ->relationship('images')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('url')
+                                            ->image()
+                                            ->optimize('webp')
+                                            ->disk('cloudinary')
+                                            ->visibility('private')
+                                            ->directory('hall_images')
+                                            ->imageEditor()
+                                            ->required(),
+                                    ])
+                                    ->collapsible()
+                                    ->collapseAllAction(
+                                        fn(Forms\Components\Actions\Action $action) => $action->label('Collapse All Images')
+                                    )
+                                    ->expandAllAction(
+                                        fn(Forms\Components\Actions\Action $action) => $action->label('Expand All Images')
+                                    )
+                                    ->columnSpanFull()
+                                    ->defaultItems(0)
+                                    ->reorderable(),
                             ])
-                            ->collapsible()
-                            ->collapseAllAction(
-                                fn(Forms\Components\Actions\Action $action) => $action->label('Collapse All Images')
-                            )
-                            ->expandAllAction(
-                                fn(Forms\Components\Actions\Action $action) => $action->label('Expand All Images')
-                            )
-                            ->columnSpanFull()
-                            ->defaultItems(0)
-                            ->reorderable(),
                     ])
+                    ->columnSpanFull()
             ]);
     }
 
@@ -121,9 +125,10 @@ class HallsRelationManager extends RelationManager
                     ->extraAttributes(['class' => 'capitalize'])
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('image')
-                    ->state(fn(Model $record) => $record->image ? url($record->image) : url('img/9jahotel.png'))
-                    ->disk('cloudinary'),
+                    ->label('Image')
+                    ->state(fn(Model $record) => $record->image ? url(getCloudinaryUrl($record->image)) : url('img/9jahotel.png'))
+                    ->disk('cloudinary')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('remarks')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
