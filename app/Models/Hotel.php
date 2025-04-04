@@ -25,8 +25,30 @@ class Hotel extends Model implements HasMedia
     protected $guarded = [];
     protected $casts = [
         'checked_out' => 'datetime',
-        'renew' => 'date'
+        'renew' => 'date',
+        'location' => 'json'
     ];
+
+    /**
+     * Get the location with specific lat and lng structure
+     *
+     * @param  mixed  $value
+     * @return array
+     */
+    public function getLocationAttribute($value)
+    {
+        if (empty($value)) {
+            return ['lat' => null, 'lng' => null];
+        }
+
+        $location = json_decode($value, true);
+
+        // Ensure the location has lat and lng keys
+        return [
+            'lat' => $location['lat'] ?? null,
+            'lng' => $location['lng'] ?? null
+        ];
+    }
 
     public function power(): BelongsTo
     {
