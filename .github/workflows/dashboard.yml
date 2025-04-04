@@ -61,4 +61,17 @@ jobs:
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            cd /www/wwwroot/dashboard.wakalor.com && ./deploy.sh
+            cd /www/wwwroot/dashboard.wakalor.com
+            
+            # Fix permissions for problematic files before deployment
+            echo ">> Fixing permissions for .user.ini file..."
+            if [ -f public/.user.ini ]; then
+              chmod 666 public/.user.ini || true
+              echo "Changed permissions on public/.user.ini"
+            fi
+            
+            # Find and fix permissions for all .user.ini files
+            find . -type f -name ".user.ini" -exec chmod 666 {} \; 2>/dev/null || true
+            
+            # Run the deployment script
+            ./deploy.sh
