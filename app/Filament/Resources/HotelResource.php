@@ -252,13 +252,6 @@ class HotelResource extends Resource
                     ->minZoom(0)
                     ->maxZoom(28)
                     ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                    ->afterStateUpdated(function ($state, $record, Set $set): void {
-                        $set('location', [
-                            'lat' => $record->latitude,
-                            'lng' => $record->longitude,
-                            // 'geojson' => json_decode(strip_tags($record->description))
-                        ]);
-                    })
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
                         $set('latitude', $state['lat']);
                         $set('longitude', $state['lng']);
