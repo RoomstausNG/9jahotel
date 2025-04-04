@@ -19,19 +19,33 @@ fi
 
 # Pull the latest changes with a strategy to handle permission issues
 echo ">> Force pulling latest changes..."
+# First try to fix the problematic file permission
+echo ">> Attempting to fix .user.ini permission..."
+if [ -f "public/.user.ini" ]; then
+  sudo chmod 666 public/.user.ini || chmod 666 public/.user.ini || true
+  echo "Changed permissions on public/.user.ini"
+fi
+
 git pull --rebase --strategy-option=theirs
 if [ $? -eq 0 ]; then
   echo "✓ SUCCESS: Git pull from dashboard branch"
 else
   echo "✗ ERROR: Git pull from dashboard branch failed"
   # Try alternative approach if standard pull fails
+  echo ">> Attempting to fix permissions before reset..."
+  sudo find . -type f -name ".user.ini" -exec chmod 666 {} \; || find . -type f -name ".user.ini" -exec chmod 666 {} \; || true
+  
   git reset --hard origin/dashboard
   if [ $? -eq 0 ]; then
     echo "✓ SUCCESS: Git reset to dashboard branch"
   else
     echo "✗ ERROR: Git force pull from dashboard branch failed"
-    echo "Stopping script execution"
-    exit 1
+    echo ">> Attempting with sudo..."
+    sudo git reset --hard origin/dashboard || {
+      echo "✗ ERROR: Git force pull from dashboard branch failed even with sudo"
+      echo "Stopping script execution"
+      exit 1
+    }
   fi
 fi
 
