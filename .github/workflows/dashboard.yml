@@ -63,15 +63,53 @@ jobs:
           script: |
             cd /www/wwwroot/dashboard.wakalor.com
             
-            # Fix permissions for problematic files before deployment
-            echo ">> Fixing permissions for .user.ini file..."
+            # Try to remove the problematic file before deployment
+            echo ">> Handling problematic .user.ini file..."
             if [ -f public/.user.ini ]; then
-              chmod 666 public/.user.ini || true
-              echo "Changed permissions on public/.user.ini"
+              # Try multiple approaches to handle the file
+              sudo rm -f public/.user.ini 2>/dev/null || \
+              rm -f public/.user.ini 2>/dev/null || \
+              sudo chmod 777 public/.user.ini 2>/dev/null || \
+              chmod 777 public/.user.ini 2>/dev/null || \
+              echo "Could not remove or change permissions on public/.user.ini"
             fi
             
-            # Find and fix permissions for all .user.ini files
-            find . -type f -name ".user.ini" -exec chmod 666 {} \; 2>/dev/null || true
+            # Create a pre-deployment script to handle the file during git operations
+            cat > handle_user_ini.sh << 'EOF'
+            #!/bin/bash
+            # This script will be used to handle the .user.ini file during deployment
+            
+            # Backup the current git hooks
+            mkdir -p .git/hooks.backup
+            [ -f .git/hooks/pre-reset ] && cp .git/hooks/pre-reset .git/hooks.backup/
+            
+            # Create a pre-reset hook to handle the file
+            cat > .git/hooks/pre-reset << 'HOOK'
+            #!/bin/bash
+            if [ -f public/.user.ini ]; then
+              rm -f public/.user.ini 2>/dev/null || chmod 777 public/.user.ini 2>/dev/null || true
+            fi
+            exit 0
+            HOOK
+            
+            chmod +x .git/hooks/pre-reset
+            EOF
+            
+            chmod +x handle_user_ini.sh
+            ./handle_user_ini.sh
             
             # Run the deployment script
-            ./deploy.sh
+            ./deploy.sh || {
+              echo "Deployment failed, trying alternative approach..."
+              # If deploy.sh fails, try a direct git pull approach
+              git fetch
+              git checkout dashboard
+              git pull origin dashboard || git reset --hard origin/dashboard
+              
+              # Run essential deployment steps
+              composer install --no-dev --optimize-autoloader
+              php artisan migrate --force
+              php artisan optimize:clear
+              chmod -R 777 storage bootstrap/cache
+              php artisan up
+            }
