@@ -25,9 +25,6 @@ jobs:
       - name: Make deploy script executable
         run: chmod +x deploy.sh
 
-      - name: Clear Config
-        run: php artisan config:clear
-
       - name: autoload
         run: composer dump-autoload
 
