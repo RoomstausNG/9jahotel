@@ -153,7 +153,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
             }
 
             // sending login details
-            Mail::to($user)->later(now()->addSeconds(2), new RegistrationEmail($user));
+            Mail::to($user)->later(now()->addSeconds(5), new RegistrationEmail($user));
 
         });
 
