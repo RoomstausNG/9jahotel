@@ -40,11 +40,18 @@ echo ">> Installing dependencies..."
 composer install --no-dev --optimize-autoloader
 echo ">> Running migrations..."
 php artisan migrate --force
-echo ">> Clearing cache..."
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+
+# Ensure storage files aren't pushed to git
+echo ">> Checking .gitignore for storage entries..."
+if ! grep -q "storage/\*" .gitignore; then
+  echo "storage/*" >> .gitignore
+  echo "!storage/.gitignore" >> .gitignore
+  echo "✓ Added storage directory to .gitignore"
+fi
+
+# Use optimize:clear instead of individual clear commands
+echo ">> Clearing all caches..."
+php artisan optimize:clear
 
 # Fix storage permissions - Changed to 777 for full access
 echo ">> Setting permissions to 777..."
@@ -56,6 +63,10 @@ mkdir -p storage/framework/cache/data
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 chmod -R 777 storage/framework
+
+# Set proper ownership for web server
+echo ">> Setting proper ownership..."
+chown -R www-data:www-data storage bootstrap/cache
 
 # Bring the application back online
 echo ">> Bringing application online..."
