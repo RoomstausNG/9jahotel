@@ -68,19 +68,34 @@ echo ">> Clearing all caches..."
 php artisan optimize:clear
 
 # Fix storage permissions - Changed to 777 for full access
-echo ">> Setting permissions to 777..."
-chmod -R 777 storage bootstrap/cache
+echo ">> Setting permissions to 775..."
+sudo chmod -R 775 storage bootstrap/cache 2>/dev/null || chmod -R 775 storage bootstrap/cache
 
 # Ensure cache directories exist with proper permissions
 echo ">> Ensuring cache directories exist..."
-mkdir -p storage/framework/cache/data
-mkdir -p storage/framework/sessions
-mkdir -p storage/framework/views
-chmod -R 777 storage/framework
+if [ ! -d "storage/framework/cache/data" ]; then
+  sudo mkdir -p storage/framework/cache/data 2>/dev/null || mkdir -p storage/framework/cache/data
+  echo "Created storage/framework/cache/data directory"
+fi
 
-# Set proper ownership for web server
+if [ ! -d "storage/framework/sessions" ]; then
+  sudo mkdir -p storage/framework/sessions 2>/dev/null || mkdir -p storage/framework/sessions
+  echo "Created storage/framework/sessions directory"
+fi
+
+if [ ! -d "storage/framework/views" ]; then
+  sudo mkdir -p storage/framework/views 2>/dev/null || mkdir -p storage/framework/views
+  echo "Created storage/framework/views directory"
+fi
+
+if [ ! -d "bootstrap/cache" ]; then
+  sudo mkdir -p bootstrap/cache 2>/dev/null || mkdir -p bootstrap/cache
+  echo "Created bootstrap/cache directory"
+fi
+
+# Set proper permissions and ownership for web server
 echo ">> Setting proper ownership..."
-chown -R www-data:www-data storage bootstrap/cache
+sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R www-data:www-data storage bootstrap/cache
 
 # Bring the application back online
 echo ">> Bringing application online..."
