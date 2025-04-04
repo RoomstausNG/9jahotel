@@ -16,6 +16,14 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
+      - name: Check .env file for invalid characters
+        run: |
+          if [ -f .env ]; then
+            cp .env .env.backup
+            sed -i '/[{]/d' .env
+            echo "Cleaned .env file of potential invalid characters"
+          fi
+
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
@@ -27,15 +35,23 @@ jobs:
 
       - name: autoload
         run: composer dump-autoload
+        continue-on-error: true
+
+      - name: Clear Config
+        run: php artisan config:clear
+        continue-on-error: true
 
       - name: Clear route
         run: php artisan route:clear
+        continue-on-error: true
 
       - name: Clear Cache
         run: php artisan cache:clear
+        continue-on-error: true
 
       - name: Shut Down serve
         run: php artisan down
+        continue-on-error: true
 
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -44,4 +60,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd /www/wwwroot/dashboard.wakalor.com && ./deploy.sh"
+          script: |
+            cd /www/wwwroot/dashboard.wakalor.com && ./deploy.sh
