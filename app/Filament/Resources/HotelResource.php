@@ -239,24 +239,24 @@ class HotelResource extends Resource
                 Forms\Components\TextInput::make('longitude')
                     ->hiddenLabel()
                     ->hidden(),
-                Map::make('location')
-                    ->columnSpanFull()
-                    ->liveLocation(true, true, 5000)  // Updates live location every 10 seconds
-                    ->showMarker()
-                    ->draggable()
-                    ->clickable(true)
-                    ->showMyLocationButton(true)
-                    ->zoom(15)
-                    ->showFullscreenControl(true)
-                    ->showZoomControl(true)
-                    ->minZoom(0)
-                    ->maxZoom(28)
-                    ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                    ->afterStateUpdated(function (Set $set, ?array $state): void {
-                        $set('latitude', $state['lat']);
-                        $set('longitude', $state['lng']);
-                        // $set('geojson', json_encode($state['geojson']));
-                    })
+                // Map::make('location')
+                //     ->columnSpanFull()
+                //     ->liveLocation(true, true, 5000)  // Updates live location every 10 seconds
+                //     ->showMarker()
+                //     ->draggable()
+                //     ->clickable(true)
+                //     ->showMyLocationButton(true)
+                //     ->zoom(15)
+                //     ->showFullscreenControl(true)
+                //     ->showZoomControl(true)
+                //     ->minZoom(0)
+                //     ->maxZoom(28)
+                //     ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                //     ->afterStateUpdated(function (Set $set, ?array $state): void {
+                //         $set('latitude', $state['lat']);
+                //         $set('longitude', $state['lng']);
+                //         // $set('geojson', json_encode($state['geojson']));
+                //     })
             ])->columns(4);
     }
 

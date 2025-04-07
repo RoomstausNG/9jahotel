@@ -56,7 +56,6 @@ class HallsRelationManager extends RelationManager
                                     ->label("Main Hall Image")
                                     ->optimize('webp')
                                     ->disk('cloudinary')
-                                    ->visibility('private')
                                     ->required()
                                     ->directory('hall')
                                     ->image()
@@ -71,7 +70,7 @@ class HallsRelationManager extends RelationManager
                                             ->image()
                                             ->optimize('webp')
                                             ->disk('cloudinary')
-                                            ->visibility('private')
+                                            // ->visibility('private')
                                             ->directory('hall_images')
                                             ->imageEditor()
                                             ->required(),
