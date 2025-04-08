@@ -1,7 +1,7 @@
 <x-layouts.frontend>
     <div class="w-full max-w-6xl mx-auto px-6 py-12">
         <!-- Header -->
-        <header class="flex max-w-4xl mx-auto justify-between items-center mb-12">
+        <header class="flex max-w-4xl mx-auto justify-between items-center mb-12 text-lg">
 
             <div class="flex items-center">
                 <img src="{{ asset('img/logo.jpeg') }}" class="h-24 md:h-44 lg:h-60  bg-white rounded" alt="9jahotel logo">
