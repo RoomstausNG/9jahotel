@@ -52,8 +52,11 @@
                 <div class="bg-green-800/30 p-8 rounded-lg border border-green-600/20">
                     <p class="leading-relaxed">
                         If you are in the neighborhood any time soon - please stop by for a cup of coffee and
-                        have a chat with us! We are better than them because we listen - The trio of Bowofade,
-                        Hafsat & I will always be on hand to welcome you and fill your special coffee jug in
+                        have a chat with us! We are better than them because we listen - The trio of <a href="https://bowofade.com" target="_blank" class="text-primary font-medium">Bowofade</a>,
+
+                        <span class="text-primary font-medium"> Hafsat</span> & <span class="text-primary font-medium">I</span> will always be on hand to welcome you and fill your special coffee jug in
+
+
                         person!
                     </p>
                     <p class="leading-relaxed mt-4">
