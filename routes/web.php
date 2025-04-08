@@ -70,6 +70,7 @@ Route::get('/test', function () {
 // pages
 
 Route::view("/faqs", 'faq');
+Route::view("/about-us", 'about');
 Route::view("/cookies", 'cookies');
 Route::view("/affiliate", 'affiliate');
 Route::view("/privacy-statement", 'privacy-statement')->name('privacy');
