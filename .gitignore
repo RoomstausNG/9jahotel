@@ -1,5 +1,7 @@
 /.phpunit.cache
 /node_modules
+.qodo
+/.qodo
 /public/hot
 /public/build
 /public/storage
