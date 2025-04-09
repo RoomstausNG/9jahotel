@@ -12,9 +12,9 @@
         <div class="max-w-4xl mx-auto italic">
             <!-- Opening Quote -->
             <div class="mb-12">
-                <h1 class="text-2xl md:text-4xl lg:text-5xl font-medium leading-tight">
+                <h1 class="text-xl md:text-2xl lg:text-3xl font-medium leading-tight">
                     <span class="text-green-600"> ….because they were doing a scrappy job, causing pain to travellers and making life
-                        difficult for hotel owners</span> - <span class="text-red-600">we had to step in!</span>
+                        difficult for hotel owners</span><br> <br> - <span class="text-red-600">we had to step in!</span>
 
 
                 </h1>
@@ -25,7 +25,7 @@
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold mb-4">a little about us…</h2>
                     <p class="leading-relaxed">
-                        <psna class="font-bold text-primary">9jahotel.com</psna> is an online travel agency (OTA) like no other. In the last 28 months we
+                        <span class="font-bold text-primary">9jahotel.com</span> is an online travel agency (OTA) like no other. In the last 28 months we
 
                         have worked so tirelessly alongside our technical advisers and coders to create a
                         momentous project from the little known Gosa in the central part of Abuja. The popular
@@ -49,12 +49,12 @@
                     </p>
                 </div>
 
-                <div class="bg-green-800/30 p-8 rounded-lg border border-green-600/20">
+                <div class="bg-green-500 p-8 rounded-lg border border-green-600/20 text-white">
                     <p class="leading-relaxed">
                         If you are in the neighborhood any time soon - please stop by for a cup of coffee and
-                        have a chat with us! We are better than them because we listen - The trio of <a href="https://bowofade.com" target="_blank" class="text-primary font-medium">Bowofade</a>,
+                        have a chat with us! We are better than them because we listen - The trio of <a href="https://bowofade.com" target="_blank" class="text-green-800 font-bold">Bowofade</a>,
 
-                        <span class="text-primary font-medium"> Hafsat</span> & <span class="text-primary font-medium">I</span> will always be on hand to welcome you and fill your special coffee jug in
+                        <span class="text-green-800 font-bold"> Hafsat</span> & <span class="text-green-800 font-bold">I</span> will always be on hand to welcome you and fill your special coffee jug in
 
 
                         person!
