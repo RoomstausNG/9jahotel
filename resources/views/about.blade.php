@@ -76,7 +76,8 @@
                 </div>
 
                 <div class="mt-8">
-                    <p class="font-medium">Cheers</p>
+                    <p class="font-medium pb-2">Cheers</p>
+                    <img src="{{ asset('img/signature.png') }}" alt="siganture" class="w-36">
                     <p class="font-bold text-xl">Segun Oyebolu</p>
                     <p>Founder and CSO</p>
                     <p>segun@9jahotel.com</p>
