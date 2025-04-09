@@ -121,7 +121,6 @@
             <div class="space-y-4">
                 <div>
                     <a href="{{ route('hotels.show', $hotel->code) }}" class="text-lg block font-semibold text-gray-900 capitalize">{{ $hotel->name }}
-
                     </a>
                     <p class="text-sm capitalize" style="line-height: 16px">
                         {{ $hotel->address . ', ' . $hotel->city->name }}</p>
