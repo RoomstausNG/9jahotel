@@ -16,8 +16,8 @@
                     <div class="space-y-2">
                         <p class="font-medium">Price per night</p>
                         <div class="flex space-x-4">
-                            <input wire:model.live='low' type="text" placeholder="Min Price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
-                            <input wire:model.live='high' type="text" placeholder="Max Price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                            <input wire:model.live='low' type="text" placeholder="Min Price" class="w-full placeholder-font-medium border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                            <input wire:model.live='high' type="text" placeholder="Max Price" class="w-full placeholder-font-medium border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                         </div>
                         <input type="range" class="w-full focus:text-primary focus:bg-primary">
                     </div>
@@ -46,14 +46,15 @@
                     </div>
                     @forelse ($hotels as $hotel)
                     <div class="flex flex-col md:flex-row overflow-hidden rounded-xl  shadow-sm min-h-[200px] border gap-x-2">
-                        <div class="w-full h-full md:w-1/3">
+                        <a href="{{ route('hotels.show', $hotel->code) }}" class="w-full h-full md:w-1/3 block">
                             <img src="{{ getCloudinaryImage($hotel->background_image) }}" class="block object-cover object-center w-full min-h-[250px] md:max-h-[280px] md:min-h-[200px] h-full" alt="{{ $hotel->name }}">
-                        </div>
+                        </a>
 
                         <div class="flex flex-col justify-between flex-1 p-4 md:pb-6">
                             <div class="space-y-4">
                                 <div>
-                                    <p class="text-xl font-medium capitalize">{{ $hotel->name }}</p>
+                                    <p href="{{ route('hotels.show', $hotel->code) }}" class="text-xl font-medium capitalize">{{ $hotel->name }}</p>
+
                                     <p class="text-sm capitalize" style="line-height: 16px">
                                         {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                 </div>
