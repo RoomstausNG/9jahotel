@@ -29,14 +29,14 @@ class SearchCity extends Component implements HasForms
                     ->label('Where are you going? Select City')
                     ->options(function () {
                         // Get cities with hotels and count of hotels using withCount
-                        $citiesWithHotels = CityCopy::where('country_id', 160)
+                        $citiesWithHotels = CityCopy::with('state:id,name')->where('country_id', 160)
                             ->withCount('hotels')
                             ->having('hotels_count', '>', 0)
                             ->orderBy('name')
                             ->get()
                             ->mapWithKeys(
                                 fn($city) =>
-                                [$city->id => "{$city->name} ({$city->hotels_count} hotels)"]
+                                [$city->id => "{$city->name}, {$city->state->name} ({$city->hotels_count} hotels)"]
                             );
 
                         return $citiesWithHotels;
@@ -90,7 +90,9 @@ class SearchCity extends Component implements HasForms
         return redirect()->route('hotels.result', $data['city']);
     }
 
-    public function mount() {}
+    public function mount()
+    {
+    }
 
     public function render()
     {
