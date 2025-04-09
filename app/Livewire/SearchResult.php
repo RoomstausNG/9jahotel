@@ -25,6 +25,7 @@ class SearchResult extends Component
     public $filterAmenities = []; // Array to store selected amenity IDs
     public $sortBy = ''; // Property for sorting options
     public $perPage = 12; // Items per page
+    // Remove the $page property as it's handled by WithPagination trait
 
     protected $queryString = [
         'name' => ['except' => ''],
@@ -32,7 +33,7 @@ class SearchResult extends Component
         'high' => ['except' => null],
         'filterAmenities' => ['except' => []],
         'sortBy' => ['except' => ''],
-        'page' => ['except' => 1], // Add page to query string
+        'page' => ['except' => 1], // Keep this in queryString but don't define it as a property
     ];
 
     // Add listeners for specific events
