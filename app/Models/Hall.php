@@ -106,7 +106,7 @@ class Hall extends Model implements HasMedia
             $hall->hotel_id = auth()->check() ? auth()->user()->hotel_id : null;
         });
 
-        self::upsated(function ($hall) {
+        self::updated(function ($hall) {
             // update the pricing for hall
             self::updateHotelLowestPrice($hall->hotel_id);
         });
