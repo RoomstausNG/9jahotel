@@ -58,9 +58,19 @@
                                         {{ $hotel->address . ', ' . $hotel->city->name }}</p>
                                 </div>
                                 <p class="flex flex-wrap w-full gap-2">
-                                    @foreach ($hotel->amenities as $amenity)
+                                    @php
+                                    $totalAmenities = $hotel->amenities()->count();
+                                    $displayAmenities = $hotel->amenities->take(5);
+                                    $remainingCount = $totalAmenities - 5;
+                                    @endphp
+
+                                    @foreach ($displayAmenities as $amenity)
                                     <span style="white-space:nowrap" class="px-2 py-1 text-xs font-medium text-gray-500 border rounded shadow-sm">{{ $amenity->name }}</span>
                                     @endforeach
+
+                                    @if ($remainingCount > 0)
+                                    <span style="white-space:nowrap" class="px-2 py-1 text-xs font-medium text-blue-500 border rounded shadow-sm">+{{ $remainingCount }} more</span>
+                                    @endif
                                 </p>
                             </div>
                             <div class="space-y-3">

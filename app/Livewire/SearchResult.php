@@ -8,12 +8,14 @@ use Livewire\Component;
 use App\Models\CityCopy;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Http;
+use Livewire\WithPagination; // Add this import
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
 
 class SearchResult extends Component
 {
+    use WithPagination; // Add this trait
+
     public CityCopy $city;
     public $power_id;
     public $name = '';
@@ -21,7 +23,6 @@ class SearchResult extends Component
     public $high = null;
     public $filterAmenities = []; // Array to store selected amenity IDs
     public $sortBy = ''; // Property for sorting options
-    public $page = 1; // Current page for pagination
     public $perPage = 12; // Items per page
 
     protected $queryString = [
@@ -30,6 +31,7 @@ class SearchResult extends Component
         'high' => ['except' => null],
         'filterAmenities' => ['except' => []],
         'sortBy' => ['except' => ''],
+        'page' => ['except' => 1], // Add page to query string
     ];
 
     public function addToFavorite($hotelId)
@@ -63,41 +65,6 @@ class SearchResult extends Component
             ->send();
     }
 
-    public function getStaticMapUrl($cityName, $zoom = 1, $width = 600, $height = 300)
-    {
-        // Cache the map URL for 24 hours to avoid repeated API calls
-        return Cache::remember("map_url_{$cityName}_{$zoom}_{$width}_{$height}", 60 * 60 * 24, function () use ($cityName, $zoom, $width, $height) {
-            try {
-                // First, get coordinates using Nominatim with proper headers
-                $encodedCity = urlencode(Str::replace('-', '', $cityName));
-
-                $response = Http::withHeaders([
-                    'User-Agent' => 'YourAppName/1.0 (your@email.com)',  // Replace with your app name and contact email
-                ])->get("https://nominatim.openstreetmap.org/search", [
-                    'format' => 'json',
-                    'q' => $cityName
-                ]);
-
-                $data = $response->json();
-
-                if (empty($data)) {
-                    return "https://via.placeholder.com/{$width}x{$height}?text=Map+not+found";
-                }
-
-                $lat = $data[0]['lat'];
-                $lon = $data[0]['lon'];
-
-                // Use static OSM service
-                return "https://staticmap.openstreetmap.de/staticmap.php?center={$lat},{$lon}&zoom={$zoom}&size={$width}x{$height}&maptype=mapnik";
-            } catch (\Exception $e) {
-                // Log the error
-                \Log::error('Map error: ' . $e->getMessage());
-
-                // Return a placeholder
-                return "https://via.placeholder.com/{$width}x{$height}?text=Map+unavailable";
-            }
-        });
-    }
 
     // Reset all filters
     public function resetFilters()
@@ -107,14 +74,10 @@ class SearchResult extends Component
         $this->high = null;
         $this->filterAmenities = [];
         $this->sortBy = '';
-        $this->page = 1;
+        $this->resetPage(); // Use Livewire's resetPage method
     }
 
-    // Increase page for "Load More" functionality
-    public function increasePage()
-    {
-        $this->page++;
-    }
+    // Removed increasePage method
 
     #[Layout('components.layouts.frontend')]
     public function render()
@@ -132,21 +95,13 @@ class SearchResult extends Component
             $query->where('name', 'LIKE', $term);
         }
 
-        // Apply price range filters if provided
-        if ((!is_null($this->low) && is_numeric($this->low)) || (!is_null($this->high) && is_numeric($this->high))) {
-            $query->whereExists(function ($subQuery) {
-                $subQuery->select(\DB::raw(1))
-                    ->from('types')
-                    ->whereRaw('types.hotel_id = hotels.id');
+        // Apply price range filters if provided - now using room_lowest_price directly
+        if ((!is_null($this->low) && is_numeric($this->low))) {
+            $query->where('room_lowest_price', '>=', $this->low);
+        }
 
-                if (!is_null($this->low) && is_numeric($this->low)) {
-                    $subQuery->havingRaw('MIN(types.price1) >= ?', [$this->low]);
-                }
-
-                if (!is_null($this->high) && is_numeric($this->high)) {
-                    $subQuery->havingRaw('MIN(types.price1) <= ?', [$this->high]);
-                }
-            });
+        if ((!is_null($this->high) && is_numeric($this->high))) {
+            $query->where('room_lowest_price', '<=', $this->high);
         }
 
         // Apply amenity filters if any are selected
@@ -163,21 +118,14 @@ class SearchResult extends Component
         $sortOptions = [
             'class_high' => ['column' => 'star_rating', 'direction' => 'desc'],
             'class_low' => ['column' => 'star_rating', 'direction' => 'asc'],
+            'price_low' => ['column' => 'room_lowest_price', 'direction' => 'asc'],
+            'price_high' => ['column' => 'room_lowest_price', 'direction' => 'desc'],
         ];
 
         // Apply sorting based on selected option
         if (isset($sortOptions[$this->sortBy])) {
             $sort = $sortOptions[$this->sortBy];
             $query->orderBy($sort['column'], $sort['direction']);
-        } elseif ($this->sortBy === 'price_low' || $this->sortBy === 'price_high') {
-            // Handle price sorting using the types relationship
-            $direction = $this->sortBy === 'price_low' ? 'asc' : 'desc';
-
-            // Use a subquery to get the minimum price for each hotel
-            $query->select('hotels.*')
-                ->leftJoin('types', 'hotels.id', '=', 'types.hotel_id')
-                ->groupBy('hotels.id')
-                ->orderBy(\DB::raw('MIN(types.price1)'), $direction);
         } elseif ($this->sortBy === 'rating_high' || $this->sortBy === 'rating_low') {
             // Handle rating sorting using the ratings relationship
             $direction = $this->sortBy === 'rating_high' ? 'desc' : 'asc';
@@ -195,9 +143,8 @@ class SearchResult extends Component
         // Get the total count of filtered hotels
         $totalFilteredCount = $query->count();
 
-        // Get hotels with pagination
-        $limit = $this->perPage * $this->page;
-        $hotels = $query->limit($limit)->get();
+        // Use paginate instead of limit and get
+        $hotels = $query->paginate($this->perPage);
 
         // Get amenities for the city (cached to avoid repeated queries)
         $amenities = Cache::remember("city_amenities_{$cityId}", 60 * 5, function () use ($cityId) {
@@ -210,12 +157,10 @@ class SearchResult extends Component
         });
 
         // Get map URL (already cached in the method)
-        $mapUrl = $this->getStaticMapUrl($this->city->name);
 
         return view('livewire.search-result', [
             'hotels' => $hotels,
             'amenities' => $amenities,
-            'mapUrl' => $mapUrl,
             'totalFilteredCount' => $totalFilteredCount,
         ]);
     }

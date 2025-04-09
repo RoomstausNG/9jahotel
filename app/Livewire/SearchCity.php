@@ -44,7 +44,7 @@ class SearchCity extends Component implements HasForms
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->optionsLimit(5)
+                    ->optionsLimit(24)
                     ->default(Session::get('city'))
                     ->native(false),
                 Components\DatePicker::make('checkin')
