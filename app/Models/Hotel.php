@@ -11,6 +11,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -144,6 +145,21 @@ class Hotel extends Model implements HasMedia
     {
         return $this->belongsToMany(Amenity::class, 'amenity_hotel');
     }
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope a query to only include hotels with at least one type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeHasTypes(Builder $query): Builder
+    {
+        return $query->has('roomCategory');
+    }
 
     public function secondaryCurrency(): BelongsTo
     {
@@ -153,6 +169,27 @@ class Hotel extends Model implements HasMedia
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class)->withTimestamps();
+    }
+
+    /**
+     * Scope a query to search hotels by name while preserving pagination.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if ($search) {
+            return $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        return $query;
+    }
+
+    public function scopeForSearchResults(Builder $query): Builder
+    {
+        return $query->select('hotels.*')->distinct();
     }
 
     public static function boot()
