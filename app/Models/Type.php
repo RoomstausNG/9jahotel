@@ -102,8 +102,46 @@ class Type extends Model implements HasMedia
 
         parent::boot();
 
+        // Update room prices when type is updated
         self::updated(function ($type) {
             $type->rooms->each(fn($room) => $room->update(['price' => $type->price1]));
+
+            // Update hotel's lowest room price
+            self::updateHotelLowestPrice($type->hotel_id);
         });
+
+        // Update hotel's lowest room price when type is created
+        self::created(function ($type) {
+            self::updateHotelLowestPrice($type->hotel_id);
+        });
+
+        // Update hotel's lowest room price when type is deleted
+        self::deleted(function ($type) {
+            self::updateHotelLowestPrice($type->hotel_id);
+        });
+    }
+
+    /**
+     * Update the hotel's room_lowest_price field with the lowest price among all types
+     */
+    protected static function updateHotelLowestPrice($hotelId)
+    {
+        $hotel = Hotel::find($hotelId);
+
+        if ($hotel) {
+            // Get all types for this hotel
+            $types = self::where('hotel_id', $hotelId)->get();
+
+            if ($types->count() > 0) {
+                // Find the lowest price among all types
+                $lowestPrice = $types->min(fn($type) => $type->price1);
+
+                // Update the hotel's lowest price
+                $hotel->update(['room_lowest_price' => $lowestPrice]);
+            } else {
+                // No types, set lowest price to 0 or null
+                $hotel->update(['room_lowest_price' => 0]);
+            }
+        }
     }
 }

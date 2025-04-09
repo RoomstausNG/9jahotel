@@ -39,7 +39,7 @@ class Hall extends Model implements HasMedia
             ->first();
     }
 
-    function type(): BelongsTo
+    public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
     }
@@ -71,15 +71,46 @@ class Hall extends Model implements HasMedia
         return $this->bookings()->orderByDesc('id')->first();
     }
 
+    protected static function updateHotelLowestPrice($hotelId)
+    {
+        $hotel = Hotel::find($hotelId);
+
+        if ($hotel) {
+            // Get all halls for this hotel
+            $halls = self::where('hotel_id', $hotelId)->get();
+
+            if ($halls->count() > 0) {
+                // Find the lowest price among all halls
+                $lowestPrice = $halls->min('price');
+
+                // Update the hotel's lowest hall price
+                $hotel->update(['hall_lowest_price' => $lowestPrice]);
+            } else {
+                // No halls, set lowest price to 0
+                $hotel->update(['hall_lowest_price' => 0]);
+            }
+        }
+    }
+
+
     static function boot()
     {
         parent::boot();
+
+        self::created(function ($hall) {
+            // update the pricing for hall
+            self::updateHotelLowestPrice($hall->hotel_id);
+        });
 
         self::creating(function ($hall) {
             $hall->hotel_id = auth()->check() ? auth()->user()->hotel_id : null;
         });
 
         self::deleted(function ($hall) {
+
+            // update the pricing for hall
+            self::updateHotelLowestPrice($hall->hotel_id);
+
             // deleting booking when room got deleted
             $hall->bookings->each(fn($booking) => $booking->delete());
         });

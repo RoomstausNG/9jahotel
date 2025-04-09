@@ -11,7 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('hotels', function (Blueprint $table) {
-            $table->bigInteger('lowest_price')->nullable()->after('name');
+            $table->bigInteger('room_lowest_price')->nullable()->default(0)->after('name');
+            $table->bigInteger('hall_lowest_price')->nullable()->default(0)->after('name');
         });
     }
 
@@ -21,7 +22,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('hotels', function (Blueprint $table) {
-            $table->dropColumn('lowest_price');
+            $table->dropColumn(['room_lowest_price', 'hall_lowest_price']);
         });
     }
 };
