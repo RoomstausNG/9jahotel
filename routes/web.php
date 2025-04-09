@@ -2,15 +2,16 @@
 
 use App\Models\User;
 
+use App\Models\Hotel;
 use App\Livewire\BookRoom;
 use App\Livewire\LoginPage;
+use App\Livewire\CreateHotel;
 use App\Livewire\HotelDetails;
 use App\Livewire\SearchResult;
 use App\Models\BookingInvoice;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
-use App\Livewire\CreateHotel;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 /*
@@ -37,26 +38,25 @@ Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
 Route::get("/signin", LoginPage::class);
 
-Route::get('/session-debug', function () {
-    return response()->json([
+Route::get('/session-debug', fn() =>
+    response()->json([
         'city' => Session::get('city'),
         'checkin' => Session::get('checkin'),
         'checkout' => Session::get('checkout'),
-    ]);
-})->name('session.debug');
+    ]))->name('session.debug');
 
-Route::get(
-    '/test',
-    fn() =>
+Route::get('/test', function () {
+    $hotels = Hotel::all();
+    $count = 0;
+    foreach ($hotels as $hotel) {
+        $done = updateHotelLowestPrices($hotel->id);
 
-    // $permissions = $user->getPermissionsViaRoles();
-    // if (count($permissions) > 0) {
-    //     foreach ($permissions as $permission) {
-    //         $user->givePermissionTo($permission->name);
-    //     }
-    // }
-    ["user Image" => "milla"]
-);
+        if ($done) {
+            $count++;
+        }
+    }
+    return response()->json(['Successfully' => "{$count} hotels got their updated out of {$hotels->count()} hotels"]);
+});
 
 
 

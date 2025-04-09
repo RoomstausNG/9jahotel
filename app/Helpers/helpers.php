@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use App\Models\Hall;
 use App\Models\Item;
 use App\Models\Room;
+use App\Models\Type;
 use App\Models\User;
 use App\Models\Hotel;
 use App\Models\CityCopy;
@@ -77,7 +78,7 @@ function getColorCode($status)
     }
 }
 
-function myHotel(): Hotel | null
+function myHotel(): Hotel|null
 {
     return auth()->check() ? auth()->user()->hotel : null;
 }
@@ -223,7 +224,7 @@ function getLogoOrBg($hotel): string
     }
 }
 
-function roomStatus(Room| Hall $room, $date): string
+function roomStatus(Room|Hall $room, $date): string
 {
     $roomSt = $room->statuses()->where('date', $date)->orderByDesc('id')->first();
 
@@ -240,7 +241,7 @@ function roomStatus(Room| Hall $room, $date): string
 
 function countStatus($date, $status): int
 {
-    $rooms =  Room::all();
+    $rooms = Room::all();
     $count = 0;
     foreach ($rooms as $room) {
         if (roomStatus($room, $date) == $status) {
@@ -253,7 +254,7 @@ function countStatus($date, $status): int
 
 function countBasedOnCategory($category, $start, $end, $status = 'available'): int
 {
-    $rooms =  $category->rooms;
+    $rooms = $category->rooms;
     $count = 0;
     foreach ($rooms as $room) {
         if (roomStatus($room, $start) == $status) {
@@ -375,7 +376,7 @@ function getRatingColor(float $rating): string
     } elseif ($rating >= 6) {
         return '#A5FF00'; // Orange for Fair
     } elseif ($rating >= 5) {
-        return  '#808080'; // Red for Poor
+        return '#808080'; // Red for Poor
     } else {
         return '#FF0000'; // Gray for ratings below 5
     } #00FF00
@@ -406,8 +407,48 @@ function getAllBookingsDateRange($bookable)
 {
     $allDates = [];
     foreach ($bookable->bookings as $booking) {
-        $date =  $booking->getDateRange();
+        $date = $booking->getDateRange();
         array_merge($allDates, $date);
     }
     return $allDates;
+}
+
+
+/**
+ * Update the lowest price for rooms and halls for a specific hotel
+ *
+ * @param int $hotelId The ID of the hotel to update
+ * @return bool Whether the update was successful
+ */
+
+function updateHotelLowestPrices(int $hotelId): bool
+{
+    try {
+        $hotel = Hotel::find($hotelId);
+
+        if (!$hotel) {
+            return false;
+        }
+
+        // Update room lowest price
+        $lowestRoomPrice = Type::where('hotel_id', $hotelId)
+            ->min('price1') ?? 0;
+
+        // Update hall lowest price
+        $lowestHallPrice = Hall::where('hotel_id', $hotelId)
+            ->min('price') ?? 0;
+
+        // Update the hotel record
+        $hotel->update([
+            'room_lowest_price' => $lowestRoomPrice,
+            'hall_lowest_price' => $lowestHallPrice
+        ]);
+
+        return true;
+    } catch (\Exception $e) {
+        \Log::error('Error updating hotel lowest prices: ' . $e->getMessage(), [
+            'hotel_id' => $hotelId
+        ]);
+        return false;
+    }
 }
