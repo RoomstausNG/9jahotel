@@ -16,8 +16,8 @@
                     <div class="space-y-2">
                         <p class="font-medium">Price per night</p>
                         <div class="flex space-x-4">
-                            <input wire:model.live='low' type="text" placeholder="min price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
-                            <input wire:model.live='high' type="text" placeholder="max price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                            <input wire:model.live='low' type="text" placeholder="Min Price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
+                            <input wire:model.live='high' type="text" placeholder="Max Price" class="w-full border-gray-400 rounded-lg shadow focus:ring-0 focus:border-2 ring-0 focus:border-primary">
                         </div>
                         <input type="range" class="w-full focus:text-primary focus:bg-primary">
                     </div>
@@ -59,7 +59,7 @@
                                 </div>
                                 <p class="flex flex-wrap w-full gap-2">
                                     @php
-                                    $totalAmenities = $hotel->amenities()->count();
+                                    $totalAmenities = $hotel->amenities->count();
                                     $displayAmenities = $hotel->amenities->take(5);
                                     $remainingCount = $totalAmenities - 5;
                                     @endphp
@@ -69,7 +69,7 @@
                                     @endforeach
 
                                     @if ($remainingCount > 0)
-                                    <span style="white-space:nowrap" class="px-2 py-1 text-xs font-medium text-blue-500 border rounded shadow-sm">+{{ $remainingCount }} more</span>
+                                    <span style="white-space:nowrap" class="px-2 py-1 text-xs font-medium text-primary border rounded shadow-sm">+{{ $remainingCount }} more</span>
                                     @endif
                                 </p>
                             </div>
