@@ -3,22 +3,22 @@
         <!-- Header -->
         <header class="flex max-w-4xl mx-auto justify-between items-center mb-12 text-lg">
 
-            <div class="flex items-center">
-                <img src="{{ asset('img/logo.jpeg') }}" class="h-24 md:h-44 lg:h-60  bg-white rounded" alt="9jahotel logo">
+            <div class="flex gap-4">
+                <img src="{{ asset('img/logo.jpeg') }}" class="h-24 md:h-36 lg:h-40  bg-white rounded" alt="9jahotel logo">
+                <div class="mb-12 flex-1">
+                    <h1 class="text-xl md:text-2xl lg:text-3xl font-medium leading-tight italic">
+
+                        <span class="text-green-600 "> …."because they were doing a scrappy job, causing pain to travellers and making life
+                            difficult for hotel owners</span><br> - <span class="text-red-600">we had to step in!" </span>
+                    </h1>
+                </div>
+
             </div>
         </header>
 
         <!-- Main Content Section -->
         <div class="max-w-4xl mx-auto italic">
             <!-- Opening Quote -->
-            <div class="mb-12">
-                <h1 class="text-xl md:text-2xl lg:text-3xl font-medium leading-tight">
-                    <span class="text-green-600"> ….because they were doing a scrappy job, causing pain to travellers and making life
-                        difficult for hotel owners</span><br> <br> - <span class="text-red-600">we had to step in!</span>
-
-
-                </h1>
-            </div>
 
             <!-- About Us Section -->
             <div class="space-y-8 text-lg">
@@ -49,7 +49,7 @@
                     </p>
                 </div>
 
-                <div class="bg-green-500 p-8 rounded-lg border border-green-600/20 text-white">
+                <div class="p-8 rounded-lg border">
                     <p class="leading-relaxed">
                         If you are in the neighborhood any time soon - please stop by for a cup of coffee and
                         have a chat with us! We are better than them because we listen - The trio of <a href="https://bowofade.com" target="_blank" class="text-green-800 font-bold">Bowofade</a>,
