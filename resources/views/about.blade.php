@@ -8,8 +8,10 @@
                 <div class="mb-12 flex-1">
                     <h1 class="text-xl md:text-2xl lg:text-3xl font-medium leading-tight italic">
 
-                        <span class="text-green-600 "> …."because they were doing a scrappy job, causing pain to travellers and making life
-                            difficult for hotel owners</span><br> - <span class="text-red-600">we had to step in!" </span>
+                        <span class="text-green-600 "> …."because they were doing a scrappy job, causing pain to
+                            travellers and making life
+                            difficult for hotel owners</span><br> - <span class="text-red-600">we had to step in!"
+                        </span>
                     </h1>
                 </div>
 
@@ -25,7 +27,8 @@
                 <div>
                     <h2 class="text-2xl md:text-3xl font-bold mb-4">a little about us…</h2>
                     <p class="leading-relaxed">
-                        <span class="font-bold text-primary">9jahotel.com</span> is an online travel agency (OTA) like no other. In the last 28 months we
+                        <span class="font-bold text-primary">9jahotel.com</span> is an online travel agency (OTA) like
+                        no other. In the last 28 months we
 
                         have worked so tirelessly alongside our technical advisers and coders to create a
                         momentous project from the little known Gosa in the central part of Abuja. The popular
@@ -52,9 +55,12 @@
                 <div class="p-8 rounded-lg border">
                     <p class="leading-relaxed">
                         If you are in the neighborhood any time soon - please stop by for a cup of coffee and
-                        have a chat with us! We are better than them because we listen - The trio of <a href="https://bowofade.com" target="_blank" class="text-green-800 font-bold">Bowofade</a>,
+                        have a chat with us! We are better than them because we listen - The trio of <a
+                            href="https://bowofade.com" target="_blank" class="text-green-800 font-bold">Bowofade</a>,
 
-                        <span class="text-green-800 font-bold"> Hafsat</span> & <span class="text-green-800 font-bold">I</span> will always be on hand to welcome you and fill your special coffee jug in
+                        <span class="text-green-800 font-bold"> Hafsat</span> & <span
+                            class="text-green-800 font-bold">I</span> will always be on hand to welcome you and fill
+                        your special coffee jug in
 
 
                         person!
@@ -64,7 +70,7 @@
                         better. Too busy to check-in? You can shoot us an email too OR you may just pen us a
                         few words on WhatsApp. Those incredible feedbacks are the building blocks of future
                         phenomena changes we will implement for your convenience. If visiting, please tell us
-                        ahead - so we can have our coffee pot filled and handy!
+                        ahead - <strong class="italic">so we can have our coffee pot filled and handy!</strong>
                     </p>
                 </div>
 
