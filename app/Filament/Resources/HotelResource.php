@@ -98,9 +98,9 @@ class HotelResource extends Resource
                 Forms\Components\Select::make('state_id')
                     ->label('State')
                     ->options(fn(Get $get): Collection
-                        => State::query()
-                            ->where('country_id', $get('country_id'))
-                            ->pluck('name', 'id'))
+                    => State::query()
+                        ->where('country_id', $get('country_id'))
+                        ->pluck('name', 'id'))
                     ->searchable(['name'])
                     ->nullable()
                     ->preload()
@@ -125,10 +125,10 @@ class HotelResource extends Resource
                     ->label('City/Town')
                     ->relationship(name: 'city', titleAttribute: 'name')
                     ->options(fn(Get $get): Collection
-                        => City::query()
-                            // ->where('country_id', $get('country_id'))
-                            ->where('state_id', $get('state_id'))
-                            ->pluck('name', 'id'))
+                    => City::query()
+                        // ->where('country_id', $get('country_id'))
+                        ->where('state_id', $get('state_id'))
+                        ->pluck('name', 'id'))
                     ->searchable(['name'])
                     ->nullable()
                     ->helperText("if you can'\t find your town/city, select the nearest city. Also contact us via email,phone and chat")
@@ -370,7 +370,7 @@ class HotelResource extends Resource
             RelationManagers\HallsRelationManager::class,
             RelationManagers\RevenuesRelationManager::class,
             RelationManagers\ItemsRelationManager::class,
-                // RelationManagers\AmenitiesRelationManager::class,
+            // RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\ImagesRelationManager::class,
             RelationManagers\FaqsRelationManager::class,
 
