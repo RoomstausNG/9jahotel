@@ -12,17 +12,21 @@ return new class extends Migration {
     {
         Schema::table('customers', function (Blueprint $table) {
             $table->string("referral_code")->nullable()->unique()->after("id");
-            $table->foreignId("parent_id")->nullable()->after("id")->constrained("customers")->nullOnDelete();
+            $table->string("parent_id")->nullable()->after("id");
+
+            // Add proper foreign key constraint
+            $table->foreign('parent_id')
+                ->references('id')
+                ->on('customers')
+                ->onDelete('set null');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            //
+            $table->dropForeign(['parent_id']);
+            $table->dropColumn(['referral_code', 'parent_id']);
         });
     }
 };

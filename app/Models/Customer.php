@@ -19,7 +19,7 @@ use Nnjeim\World\Models\City;
 class Customer extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasManyFavourite, HasManyRating, Notifiable, BelongToHotel;
-    protected $guarded = ['bookable_id', 'discount', 'mode_of_payment', 'bookable_type',  'checked_in', 'checked_out', 'amount_paid'];
+    protected $guarded = ['bookable_id', 'discount', 'mode_of_payment', 'bookable_type', 'checked_in', 'checked_out', 'amount_paid'];
 
     protected $hidden = [
         'remember_token',
@@ -65,5 +65,15 @@ class Customer extends Authenticatable
     public function favourites(): HasMany
     {
         return $this->hasMany(Favourite::class);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Customer::class, 'parent_id');
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(Customer::class, 'parent_id');
     }
 }
