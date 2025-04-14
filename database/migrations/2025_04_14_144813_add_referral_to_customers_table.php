@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::table('customers', function (Blueprint $table) {
             $table->string("referral_code")->nullable()->unique()->after("id");
-            $table->string("parent_id")->nullable()->after("id");
+            $table->string("parent_id")->nullable()->after("referral_code");
 
             // Add proper foreign key constraint
             $table->foreign('parent_id')
-                ->references('id')
+                ->references('referral_code')
                 ->on('customers')
                 ->onDelete('set null');
         });
