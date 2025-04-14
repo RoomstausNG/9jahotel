@@ -86,7 +86,6 @@ class Customer extends Authenticatable
         $this->referral_code = $code;
     }
 
-
     protected static function boot()
     {
         parent::boot();
