@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use App\Traits\BelongToHotel;
-use App\Traits\HasManyFavourite;
 use App\Traits\HasManyRating;
+use Nnjeim\World\Models\City;
+use App\Traits\HasManyFavourite;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Nnjeim\World\Models\City;
 
 // #[ScopedBy([HotelScope::class])]
 class Customer extends Authenticatable
@@ -75,5 +76,25 @@ class Customer extends Authenticatable
     public function referrals()
     {
         return $this->hasMany(Customer::class, 'parent_id');
+    }
+    public function generateReferralCode()
+    {
+        do {
+            $code = Str::upper(Str::random(8));
+        } while (self::where('referral_code', $code)->exists());
+
+        $this->referral_code = $code;
+    }
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($customer) {
+            if (empty($customer->referral_code)) {
+                $customer->generateReferralCode();
+            }
+        });
     }
 }
