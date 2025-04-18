@@ -77,15 +77,6 @@ class Customer extends Authenticatable
     {
         return $this->hasMany(Customer::class, 'parent_id');
     }
-    public function generateReferralCode()
-    {
-        do {
-            $code = Str::upper(Str::random(8));
-        } while (self::where('referral_code', $code)->exists());
-
-        $this->referral_code = $code;
-    }
-
     protected static function boot()
     {
         parent::boot();
@@ -95,5 +86,14 @@ class Customer extends Authenticatable
                 $customer->generateReferralCode();
             }
         });
+    }
+
+    public function generateReferralCode()
+    {
+        do {
+            $code = Str::upper(Str::random(8));
+        } while (self::where('referral_code', $code)->exists());
+        
+        $this->referral_code = $code;
     }
 }
