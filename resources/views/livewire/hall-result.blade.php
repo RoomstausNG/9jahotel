@@ -132,12 +132,12 @@
                                 <div class="p-0">
                                     <div class="flex items-center justify-end p-0 space-x-3">
                                         @php
-                                        $price = $hotel->room_lowest_price;
+                                        $price = $hotel->hall_lowest_price;
                                         // $price = $hotel->roomCategory()->orderBy('price1')->first()?->price1;
                                         @endphp
                                         <p class="text-sm font-medium">Walk-in Price</p>
                                         <p class="text-lg font-medium text-gray-500 line-through ">
-                                            {{ formatAsNaira($hotel->room_lowest_price) }}
+                                            {{ formatAsNaira($hotel->hall_lowest_price) }}
                                         </p>
 
                                     </div>
@@ -145,7 +145,7 @@
 
                                         <p class="text-lg">Price from:</p>
                                         <p class="text-xl font-semibold">
-                                            {{ formatAsNaira(calculateRemainingAmount($hotel->room_lowest_price,
+                                            {{ formatAsNaira(calculateRemainingAmount($hotel->hall_lowest_price,
                                             $hotel->online_price)) }}
                                         </p>
 
