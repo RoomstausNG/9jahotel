@@ -47,5 +47,13 @@ class BookingInvoice extends Model
         self::creating(function ($invoice) {
             $invoice->reference = strtoupper(IdGenerator::generate(['table' => 'booking_invoices', 'field' => 'reference', 'length' => 12, 'reset_on_prefix_change' => true, 'prefix' => 'RE9A' . date('d')]));
         });
+
+        self::created(function ($invoice) {
+            $commission = $invoice->amount * $invoice->hotel->percentage_charge / 100;
+            $amountPayable = $invoice->amount * -$commission;
+            $invoice->commission = $commission;
+            $invoice->amount_payable = $amountPayable;
+            $invoice->save();
+        });
     }
 }
