@@ -67,7 +67,16 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('reference')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->label('Amount Received')
                     ->state(fn(Model $record) => formatAsNaira($record->amount))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('hotel_payable')
+                    ->label('Amount Due Hotel')
+                    ->state(fn(Model $record) => formatAsNaira($record->hotel_payable ?? $record->amount))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('commission_amount')
+                    ->label('Commission')
+                    ->state(fn(Model $record) => formatAsNaira($record->commission_amount ?? 0))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->sortable(),
@@ -90,6 +99,11 @@ class BookingResource extends Resource
                 // Tables\Columns\TextColumn::make('payed_on')
                 //     ->date()
                 //     ->sortable(),
+                Tables\Columns\TextColumn::make('checked_in')
+                    ->label('Checked In')
+                    ->date()
+                    ->default(fn(Model $record) => $record->bookings()->first()->checked_in)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Booked On')
                     ->date()
