@@ -163,8 +163,10 @@ class Hotel extends Model implements HasMedia
 
     public function scopeCapacity(Builder $query, $capacity): Builder
     {
-        return $query->whereHas('halls', fn(Builder $query) => $query->where('capacity', ">=", $capacity));
-        // return $query->halls()->where('capacity', ">=", $capacity);
+        $capacity = (int) $capacity;
+        return $query->whereHas('halls', function (Builder $query) use ($capacity) {
+            $query->withoutGlobalScopes()->where('capacity', '>=', $capacity);
+        });
     }
 
     public function secondaryCurrency(): BelongsTo

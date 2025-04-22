@@ -135,7 +135,7 @@ class HallResult extends Component
     {
         // Get city ID from the city model or session
         $cityId = $this->city->id ?? session('city');
-        $capacity = session('capacity');
+        $capacity = (int) session('capacity') ?? 50;
 
         if (!$cityId) {
             // Handle case where no city is selected
@@ -147,8 +147,9 @@ class HallResult extends Component
         }
 
         // Build the base query
-        $query = Hotel::capacity($capacity || 10)->forSearchResults()->with(['city', 'amenities', 'ratings'])
-            ->where('city_id', $cityId);
+        $query = Hotel::forSearchResults()->capacity($capacity)->with(['city', 'amenities', 'ratings'])
+            ->where('city_id', $cityId)
+        ;
 
         // Apply name filter if provided
         if (!empty($this->name)) {

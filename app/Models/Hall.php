@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[ScopedBy(HotelScope::class)]
 class Hall extends Model implements HasMedia
 {
     use HasFactory, BelongToHotel, HasManyBookings, InteractsWithMedia;
