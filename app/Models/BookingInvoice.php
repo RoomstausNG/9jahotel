@@ -49,10 +49,10 @@ class BookingInvoice extends Model
         });
 
         self::created(function ($invoice) {
-            $commission = $invoice->amount * $invoice->hotel->percentage_charge / 100;
+            $commission = round($invoice->amount * $invoice->hotel->percentage_charge / 100);
             $amountPayable = $invoice->amount - $commission;
-            $invoice->commission = $commission;
-            $invoice->amount_payable = $amountPayable;
+            $invoice->commission_amount = $commission;
+            $invoice->hotel_payable = $amountPayable;
             $invoice->save();
         });
     }
