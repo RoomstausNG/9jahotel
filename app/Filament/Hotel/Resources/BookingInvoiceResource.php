@@ -88,9 +88,12 @@ class BookingInvoiceResource extends Resource
                         'cancelled' => 'danger',
                     })
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('payed_on')
-                //     ->date()
-                //     ->sortable(),
+
+                Tables\Columns\TextColumn::make('checked_in')
+                    ->label('Checked In')
+                    ->state(fn(Model $record) => $record->checked_in->format('D M d, Y'))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Booked On')
                     ->state(fn(Model $record) => $record->created_at->format('D M d, Y'))
