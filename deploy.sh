@@ -101,6 +101,9 @@ sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R 
 echo ">> Bringing application online..."
 
 php artisan optimize:cache
+
+chown -R 777 storage bootstrap/cache
+chmod -R 777 storage bootstrap/cache
 php artisan up
 
 echo "✓ SUCCESS: Deployment completed successfully!"
