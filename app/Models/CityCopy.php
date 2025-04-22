@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\State;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CityCopy extends City
 {
@@ -21,17 +21,22 @@ class CityCopy extends City
         'deleted_at' => 'datetime',
     ];
 
-    function hotels(): HasMany
+    public function state(): BelongsTo
+    {
+        return $this->belongsTo(State::class, 'state_id');
+    }
+
+    public function hotels(): HasMany
     {
         return $this->hasMany(Hotel::class, 'city_id');
     }
 
-    function ratings(): HasManyThrough
+    public function ratings(): HasManyThrough
     {
         return $this->hasManyThrough(Rating::class, Hotel::class, 'city_id', 'hotel_id');
     }
 
-    function bookings(): HasManyThrough
+    public function bookings(): HasManyThrough
     {
         return $this->hasManyThrough(Booking::class, Hotel::class, 'city_id', 'hotel_id');
     }
