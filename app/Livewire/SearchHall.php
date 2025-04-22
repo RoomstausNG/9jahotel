@@ -97,8 +97,9 @@ class SearchHall extends Component implements HasForms
         Session::put('city', $data['city']);
         Session::put('checkin', $data['checkin']);
         Session::put('checkout', $data['checkout']);
+        Session::put('capacity', $data['capacity']);
 
-        return redirect()->route('hotels.result', $data['city']);
+        return redirect()->route('halls.result', $data['city']);
     }
 
     public function render()

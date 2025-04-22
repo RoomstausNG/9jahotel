@@ -6,6 +6,7 @@ use App\Livewire\BookRoom;
 use App\Livewire\Register;
 use App\Livewire\Dashboard;
 use App\Livewire\LoginPage;
+use App\Livewire\HallResult;
 use App\Livewire\CreateHotel;
 use App\Livewire\GroupBooking;
 use App\Livewire\HotelDetails;
@@ -36,6 +37,7 @@ Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy'
 
 Route::get('/home', Dashboard::class)->name('dashboard');
 
+Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
 Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');
 

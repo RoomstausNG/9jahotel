@@ -161,6 +161,12 @@ class Hotel extends Model implements HasMedia
         return $query->has('roomCategory');
     }
 
+    public function scopeCapacity(Builder $query, $capacity): Builder
+    {
+        return $query->whereHas('halls', fn(Builder $query) => $query->where('capacity', ">=", $capacity));
+        // return $query->halls()->where('capacity', ">=", $capacity);
+    }
+
     public function secondaryCurrency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'secondary_currency');
