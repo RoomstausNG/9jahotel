@@ -102,7 +102,7 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('checked_in')
                     ->label('Checked In')
                     ->date()
-                    ->default(fn(Model $record) => $record->bookings()->first()->checked_in)
+                    ->default(fn(Model $record) => $record->bookings()?->first()?->checked_in)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Booked On')
