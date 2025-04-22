@@ -34,7 +34,7 @@ else
   # Try alternative approach if standard pull fails
   echo ">> Attempting to fix permissions before reset..."
   sudo find . -type f -name ".user.ini" -exec chmod 666 {} \; || find . -type f -name ".user.ini" -exec chmod 666 {} \; || true
-  
+
   git reset --hard origin/dashboard
   if [ $? -eq 0 ]; then
     echo "✓ SUCCESS: Git reset to dashboard branch"
@@ -99,6 +99,8 @@ sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R 
 
 # Bring the application back online
 echo ">> Bringing application online..."
+
+php artisan optimize:cache
 php artisan up
 
 echo "✓ SUCCESS: Deployment completed successfully!"
