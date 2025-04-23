@@ -95,7 +95,7 @@ class Room extends Model implements HasMedia
      * @param string $end The end date of the range.
      * @return bool True if the room is available, false otherwise.
      */
-    function isAvailable($start, $end): bool
+    public function isAvailable($start, $end): bool
     {
         foreach (getDatesFromRange($start, $end) as $date) {
             if ($this->statuses()->whereDate('date', $date)->exists()) {

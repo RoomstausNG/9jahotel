@@ -37,7 +37,17 @@ class Hall extends Model implements HasMedia
             ->first();
     }
 
-    function type(): BelongsTo
+    public function isAvailable($start, $end): bool
+    {
+        foreach (getDatesFromRange($start, $end) as $date) {
+            if ($this->statuses()->whereDate('date', $date)->exists()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
     }
