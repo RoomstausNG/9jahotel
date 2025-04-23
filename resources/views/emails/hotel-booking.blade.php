@@ -317,7 +317,7 @@
                         <tr style="border-collapse:collapse">
                             <td cellpadding="0" cellspacing="0" border="0"
                                 style="padding:0;Margin:0;line-height:1px;min-width:600px" height="0">
-                                <img src="{{ 'https://roomstatus.ng/img/logo.png' }}"
+                                <img src="{{ asset('img/logo.png') }}"
                                     style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;max-height:0px;min-height:0px;min-width:600px;width:600px"
                                     alt="Roomstatus" width="600" height="1">
                             </td>
@@ -385,8 +385,7 @@
                                                                 <td align="center"
                                                                     style="padding:0;Margin:0;font-size:0px">
                                                                     <img class="adapt-img"
-                                                                        src="{{ 'https://roomstatus.ng/img/logo.png' }}"
-                                                                        alt
+                                                                        src="{{ asset('img/logo.png') }}" alt
                                                                         style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
                                                                         width="80">
                                                                 </td>
@@ -403,9 +402,8 @@
                                                             <tr style="border-collapse:collapse">
                                                                 <td bgcolor="#ffffff" align="center"
                                                                     style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%"
-                                                                        cellspacing="0" cellpadding="0"
-                                                                        border="0" role="presentation"
+                                                                    <table width="100%" height="100%" cellspacing="0"
+                                                                        cellpadding="0" border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td
@@ -444,13 +442,13 @@
                                                             width="100%" cellspacing="0" cellpadding="0"
                                                             bgcolor="#ffffff" role="presentation">
                                                             <tr style="border-collapse:collapse">
-                                                                <td class="es-m-txt-l" bgcolor="#ffffff"
-                                                                    align="left"
+                                                                <td class="es-m-txt-l" bgcolor="#ffffff" align="left"
                                                                     style="Margin:0;padding-top:20px;padding-bottom:20px;padding-left:30px;padding-right:30px">
                                                                     <table>
                                                                         <tr>
                                                                             <td style="width: 200px">Guest Name</td>
-                                                                            <td>{{ ucfirst($booking->customer->firstname . ' ' . $booking->customer->lastname) }}
+                                                                            <td>{{ ucfirst($booking->customer->firstname
+                                                                                . ' ' . $booking->customer->lastname) }}
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -461,18 +459,26 @@
                                                                         <tr>
                                                                             <td style="width: 200px">Reservation
                                                                                 Details</td>
-                                                                            <td><span>{{ calculateDateDifferenceInDays($booking->checked_in, $booking->checked_out) . ' nights 1 Room,' }}</span>
-                                                                                <span>{{ strtoupper($booking->type == 'room' ? $bookable->type->name . ' ' . $bookable->number : $bookable->name) }}</span>
+                                                                            <td><span>{{
+                                                                                    calculateDateDifferenceInDays($booking->checked_in,
+                                                                                    $booking->checked_out) . ' nights 1
+                                                                                    Room,' }}</span>
+                                                                                <span>{{ strtoupper($booking->type ==
+                                                                                    'room' ? $bookable->type->name . ' '
+                                                                                    . $bookable->number :
+                                                                                    $bookable->name) }}</span>
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-in</td>
-                                                                            <td>{{ $booking->checked_in->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_in->format('D d, M,
+                                                                                Y') }}
                                                                                 (12:00 - 16:00)</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-out</td>
-                                                                            <td>{{ $booking->checked_out->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_out->format('D d,
+                                                                                M, Y') }}
                                                                                 (03:00 - 12:00)</td>
                                                                         </tr>
 
@@ -483,7 +489,11 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Booked By</td>
-                                                                            <td>{{ $booking->agent ? ucfirst($booking->agent->firstname . ' ' . $booking->agent->lastname) : ucfirst($booking->customer->firstname . ' ' . $booking->customer->lastname) }}
+                                                                            <td>{{ $booking->agent ?
+                                                                                ucfirst($booking->agent->firstname . ' '
+                                                                                . $booking->agent->lastname) :
+                                                                                ucfirst($booking->customer->firstname .
+                                                                                ' ' . $booking->customer->lastname) }}
                                                                             </td>
                                                                         </tr>
                                                                     </table>
@@ -533,9 +543,8 @@
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
                                                                     style="Margin:0;padding-top:10px;padding-bottom:20px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%"
-                                                                        cellspacing="0" cellpadding="0"
-                                                                        border="0" role="presentation"
+                                                                    <table width="100%" height="100%" cellspacing="0"
+                                                                        cellpadding="0" border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td

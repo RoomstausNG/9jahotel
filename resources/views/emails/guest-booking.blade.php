@@ -317,7 +317,7 @@
                         <tr style="border-collapse:collapse">
                             <td cellpadding="0" cellspacing="0" border="0"
                                 style="padding:0;Margin:0;line-height:1px;min-width:600px" height="0">
-                                <img src="{{ 'https://roomstatus.ng/img/logo.png' }}"
+                                <img src="{{ asset('img/logo.png') }}"
                                     style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;max-height:0px;min-height:0px;min-width:600px;width:600px"
                                     alt="Roomstatus" width="600" height="1">
                             </td>
@@ -351,7 +351,8 @@
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#ffffff;font-size:18px">
                                                                         <strong>Thanks! Your Reservation is confirmed
                                                                             at
-                                                                            {{ strtoupper($booking->hotel->name) }}</strong>
+                                                                            {{ strtoupper($booking->hotel->name)
+                                                                            }}</strong>
                                                                     </p>
                                                                 </td>
                                                             </tr>
@@ -387,7 +388,7 @@
                                                                 <td align="center"
                                                                     style="padding:0;Margin:0;font-size:0px">
                                                                     <img class="adapt-img"
-                                                                        src="{{ asset('storage/' . $booking->hotel->logo) ?? 'https://roomstatus.ng/img/logo.png' }}"
+                                                                        src="{{ asset('storage/' . $booking->hotel->logo) ?? asset('img/logo.png') }}"
                                                                         alt
                                                                         style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
                                                                         width="80">
@@ -437,28 +438,30 @@
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">
                                                                         @if ($status == 'paid')
-                                                                            Your booking with
-                                                                            <strong>{{ ucfirst($booking->hotel->name) }}</strong>
-                                                                            is
-                                                                            now confirmed <br>
-                                                                            <span style="padding: 5px 0"></span>
+                                                                        Your booking with
+                                                                        <strong>{{ ucfirst($booking->hotel->name)
+                                                                            }}</strong>
+                                                                        is
+                                                                        now confirmed <br>
+                                                                        <span style="padding: 5px 0"></span>
                                                                         @endif
                                                                         @if ($status == 'unpaid')
-                                                                            Your booking with
-                                                                            <strong>{{ ucfirst($booking->hotel->name) }}</strong>
-                                                                            is
-                                                                            unconfirmed and not gurantee. <br> Please
-                                                                            make payment of
-                                                                            {{ formatAsNaira($booking->due) }} to
-                                                                            immediately confirm your booking and
-                                                                            room reservation. Unconfirmed booking
-                                                                            may be cancelled at any time by the
-                                                                            hotel. <br> <span
-                                                                                style="padding: 5px 0px"></span>
+                                                                        Your booking with
+                                                                        <strong>{{ ucfirst($booking->hotel->name)
+                                                                            }}</strong>
+                                                                        is
+                                                                        unconfirmed and not gurantee. <br> Please
+                                                                        make payment of
+                                                                        {{ formatAsNaira($booking->due) }} to
+                                                                        immediately confirm your booking and
+                                                                        room reservation. Unconfirmed booking
+                                                                        may be cancelled at any time by the
+                                                                        hotel. <br> <span
+                                                                            style="padding: 5px 0px"></span>
 
-                                                                            If you wish to make payment arrangement,
-                                                                            please reach the hotel on
-                                                                            {{ $booking->hotel->telephone }}
+                                                                        If you wish to make payment arrangement,
+                                                                        please reach the hotel on
+                                                                        {{ $booking->hotel->telephone }}
                                                                         @endif
                                                                         <br>
 
@@ -468,8 +471,7 @@
                                                                 </td>
                                                             </tr>
                                                             <tr style="border-collapse:collapse">
-                                                                <td class="es-m-txt-l" bgcolor="#ffffff"
-                                                                    align="left"
+                                                                <td class="es-m-txt-l" bgcolor="#ffffff" align="left"
                                                                     style="Margin:0;padding-top:20px;padding-bottom:20px;padding-left:30px;padding-right:30px">
                                                                     <table>
 
@@ -477,18 +479,28 @@
                                                                             <td style="width: 200px">Room Reservation
                                                                             </td>
                                                                             <td>
-                                                                                <span>{{ calculateDateDifferenceInDays($booking->checked_in, $booking->checked_out) . ' nights 1 Room' }}</span>
-                                                                                <span>{{ strtoupper($booking->bookable_type == 'App\Models\Room' ? $bookable->type->name . ' ' . $bookable->number : $bookable->name) }}</span>
+                                                                                <span>{{
+                                                                                    calculateDateDifferenceInDays($booking->checked_in,
+                                                                                    $booking->checked_out) . ' nights 1
+                                                                                    Room' }}</span>
+                                                                                <span>{{
+                                                                                    strtoupper($booking->bookable_type
+                                                                                    == 'App\Models\Room' ?
+                                                                                    $bookable->type->name . ' ' .
+                                                                                    $bookable->number : $bookable->name)
+                                                                                    }}</span>
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-in</td>
-                                                                            <td>{{ $booking->checked_in->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_in->format('D d, M,
+                                                                                Y') }}
                                                                                 (12:00 - 16:00)</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-out</td>
-                                                                            <td>{{ $booking->checked_out->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_out->format('D d,
+                                                                                M, Y') }}
                                                                                 (03:00 - 12:00)</td>
                                                                         </tr>
 
@@ -499,7 +511,11 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Booked By</td>
-                                                                            <td>{{ $booking->agent ? ucfirst($booking->agent->firstname . ' ' . $booking->agent->lastname) : ucfirst($booking->customer->firstname . ' ' . $booking->customer->lastname) }}
+                                                                            <td>{{ $booking->agent ?
+                                                                                ucfirst($booking->agent->firstname . ' '
+                                                                                . $booking->agent->lastname) :
+                                                                                ucfirst($booking->customer->firstname .
+                                                                                ' ' . $booking->customer->lastname) }}
                                                                             </td>
                                                                         </tr>
                                                                     </table>
@@ -553,9 +569,8 @@
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
                                                                     style="Margin:0;padding-top:10px;padding-bottom:20px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%"
-                                                                        cellspacing="0" cellpadding="0"
-                                                                        border="0" role="presentation"
+                                                                    <table width="100%" height="100%" cellspacing="0"
+                                                                        cellpadding="0" border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td

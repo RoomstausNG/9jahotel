@@ -317,7 +317,7 @@
                         <tr style="border-collapse:collapse">
                             <td cellpadding="0" cellspacing="0" border="0"
                                 style="padding:0;Margin:0;line-height:1px;min-width:600px" height="0">
-                                <img src="{{ $user->hotel->logo ?? 'https://roomstatus.ng/img/logo.png' }}"
+                                <img src="{{ $user->hotel->logo ?? asset('img/logo.png') }}"
                                     style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;max-height:0px;min-height:0px;min-width:600px;width:600px"
                                     alt="Al-Ansar Academy Suleja" width="600" height="1">
                             </td>
@@ -386,7 +386,7 @@
                                                                 <td align="center"
                                                                     style="padding:0;Margin:0;font-size:0px">
                                                                     <img class="adapt-img"
-                                                                        src="{{ $user->hotel->logo ?? 'https://roomstatus.ng/img/logo.png' }}"
+                                                                        src="{{ $user->hotel->logo ?? asset('img/logo.png') }}"
                                                                         alt
                                                                         style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
                                                                         width="80">
@@ -398,17 +398,16 @@
                                                                     <h1
                                                                         style="Margin:0;line-height:38px;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:25px;font-style:normal;font-weight:medium;color:#111111">
                                                                         Welcome!
-                                                                        <span
-                                                                            class="">{{ ucfirst($user->firstname . ' ' . $user->lastname) }}</span>
+                                                                        <span class="">{{ ucfirst($user->firstname . ' '
+                                                                            . $user->lastname) }}</span>
                                                                     </h1>
                                                                 </td>
                                                             </tr>
                                                             <tr style="border-collapse:collapse">
                                                                 <td bgcolor="#ffffff" align="center"
                                                                     style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%"
-                                                                        cellspacing="0" cellpadding="0"
-                                                                        border="0" role="presentation"
+                                                                    <table width="100%" height="100%" cellspacing="0"
+                                                                        cellpadding="0" border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td
@@ -447,8 +446,7 @@
                                                             width="100%" cellspacing="0" cellpadding="0"
                                                             bgcolor="#ffffff" role="presentation">
                                                             <tr style="border-collapse:collapse">
-                                                                <td class="es-m-txt-l" bgcolor="#ffffff"
-                                                                    align="left"
+                                                                <td class="es-m-txt-l" bgcolor="#ffffff" align="left"
                                                                     style="Margin:0;padding-top:20px;padding-bottom:20px;padding-left:30px;padding-right:30px">
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">
@@ -518,9 +516,8 @@
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
                                                                     style="Margin:0;padding-top:10px;padding-bottom:20px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%"
-                                                                        cellspacing="0" cellpadding="0"
-                                                                        border="0" role="presentation"
+                                                                    <table width="100%" height="100%" cellspacing="0"
+                                                                        cellpadding="0" border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td
