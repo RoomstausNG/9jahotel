@@ -119,7 +119,7 @@ class Booking extends Model
     {
         $allDates = [];
         foreach ($bookable->bookings as $bookings) {
-            $date =    $this->getDateRange();
+            $date = $this->getDateRange();
             array_merge($allDates, $date);
         }
         return $allDates;
@@ -172,8 +172,8 @@ class Booking extends Model
             }
 
             // notifications
-            Notification::send($booking->customer, (new GuestBookingNotification($booking, $booking->bookable, $booking->status))->delay($delay->addSeconds(1)));
-            Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(3)));
+            Notification::send($booking->customer, (new GuestBookingNotification($booking, $booking->bookable, $booking->status))->delay($delay->addSeconds(3)));
+            Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(5)));
         });
 
         self::updated(function ($booking) {
