@@ -6,7 +6,7 @@ set -e
 # --- Configuration ---
 # IMPORTANT: Set these variables according to your environment
 PROJECT_DIR="/www/wwwroot/9jahotel_api" 
-PM2_APP_NAME="wakalor-backend"        # The name of your app in PM2
+PM2_APP_NAME="wakalor"        # The name of your app in PM2
 GIT_BRANCH="api_v0"                     # The branch to pull from
 ENTRY_POINT="dist/index.js"          # The entry point for your built application
 
