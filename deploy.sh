@@ -13,49 +13,40 @@ NUM_INSTANCES=3                       # Specify the number of instances you want
 # --- Deployment Steps ---
 echo "🚀 Starting deployment to $PROJECT_DIR..."
 
-# Switch to www user and execute commands
-sudo -u root bash -c "
-  # Navigate to the project directory
-  cd \"$PROJECT_DIR\" || { echo \"❌ Error: Could not navigate to $PROJECT_DIR\"; exit 1; }
-  echo \"📂 Changed directory to $(pwd)\"
+# Navigate to the project directory
+cd "$PROJECT_DIR" || { echo "❌ Error: Could not navigate to $PROJECT_DIR"; exit 1; }
+echo "📂 Changed directory to $(pwd)"
 
-  # Giving permission to folder
-  git config --global --add safe.directory $PROJECT_DIR
+echo "Giving permission to folder..."
 
-  # Pull the latest changes from the specified branch
-  echo \"🔄 Pulling latest code from branch '$GIT_BRANCH'...\"
-  git checkout \"$GIT_BRANCH\"
-  git pull production \"$GIT_BRANCH\"
+# Pull the latest changes from the specified branch
+echo "🔄 Pulling latest code from branch '$GIT_BRANCH'..."
+git checkout "$GIT_BRANCH"
+git pull production "$GIT_BRANCH"
 
-  # Print the current user (for debug)
-  echo \"👤 Running as user: \$(whoami)\"
+# Print the current user (for debug)
+echo "👤 Running as user: $(whoami)"
 
+# Install/update dependencies using Bun (production only)
+echo "📦 Installing dependencies with Bun..."
+bun install --frozen-lockfile --production
 
-  # install bun
-  curl -fsSL https://bun.sh/install | bash 
-  export PATH=$PATH:$HOME/.bun/bin
-  # Install/update dependencies using Bun (production only)
-  echo \"📦 Installing dependencies with Bun...\"
-  bun install --frozen-lockfile --production
+# Sync database schema
+echo "🧠 Introspecting the database..."
+bun run db:pull
 
-  # Sync database schema
-  echo \"🧠 Introspecting the database...\"
-  bun run db:pull
+# Build the application
+echo "🏗️ Building application for production..."
+export NODE_ENV=production
+bun run build
 
-  # Build the application
-  echo \"🏗️ Building application for production and changing environment...\"
-  export NODE_ENV=production
-  bun run build
+# Restart the application using PM2 with Bun
+echo "🔁 Restarting application '$PM2_APP_NAME' with PM2 + Bun..."
+pm2 restart "$PM2_APP_NAME" || pm2 start bun --name "$PM2_APP_NAME" -- run start -i $NUM_INSTANCES --interpreter none --exec_mode cluster
 
-  # Restart the application using PM2 with Bun
-  echo "Restarting application '$PM2_APP_NAME' with PM2..."
-  pm2 restart "$PM2_APP_NAME" || pm2 start dist/index.js --name "$PM2_APP_NAME"
-  
-  #Optional: Save the PM2 process list
-  pm2 save
+# Optional: Save the PM2 process list
+pm2 save
 
-  # Done!
-  echo \"✅ Deployment complete at \$(date) by \$(whoami)\"
-"
-
+# Done!
+echo "✅ Deployment complete at $(date) by $(whoami)"
 exit 0
