@@ -4,51 +4,47 @@
 set -e
 
 # --- Configuration ---
-# IMPORTANT: Set these variables according to your environment
 PROJECT_DIR="/www/wwwroot/9jahotel_api" 
-PM2_APP_NAME="wakalor"        # The name of your app in PM2
-GIT_BRANCH="api_v0"                     # The branch to pull from
-ENTRY_POINT="dist/index.js"          # The entry point for your built application
+PM2_APP_NAME="wakalor"                 # The name of your app in PM2
+GIT_BRANCH="api_v0"                    # The branch to pull from
+ENTRY_POINT="dist/index.js"           # Optional if you're using a Bun script
+NUM_INSTANCES=3                       # Specify the number of instances you want to run
 
 # --- Deployment Steps ---
-echo "Starting deployment to $PROJECT_DIR..."
+echo "🚀 Starting deployment to $PROJECT_DIR..."
 
 # Navigate to the project directory
-cd "$PROJECT_DIR" || { echo "Error: Could not navigate to $PROJECT_DIR"; exit 1; }
-echo "Changed directory to $(pwd)"
+cd "$PROJECT_DIR" || { echo "❌ Error: Could not navigate to $PROJECT_DIR"; exit 1; }
+echo "📂 Changed directory to $(pwd)"
 
 # Pull the latest changes from the specified branch
-echo "Pulling latest code from branch '$GIT_BRANCH'..."
+echo "🔄 Pulling latest code from branch '$GIT_BRANCH'..."
 git checkout "$GIT_BRANCH"
 git pull production "$GIT_BRANCH"
 
-echo "I am " . whoami
-# pulls changes to migrations
-
+# Print the current user (for debug)
+echo "👤 Running as user: $(whoami)"
 
 # Install/update dependencies using Bun (production only)
-echo "Installing dependencies..."
+echo "📦 Installing dependencies with Bun..."
 bun install --frozen-lockfile --production
 
-echo "introspecting the database"
+# Sync database schema
+echo "🧠 Introspecting the database..."
 bun run db:pull
 
-# Build the application on the server
-echo "Building application..."
-
-# If you need environment variables during build, uncomment and configure:
+# Build the application
+echo "🏗️ Building application for production..."
 export NODE_ENV=production
-# export SOME_BUILD_VAR=value
 bun run build
 
-# Restart the application using PM2
-echo "Restarting application '$PM2_APP_NAME' with PM2..."
-# The `||` ensures that if the app isn't running, it tries to start it.
-pm2 restart "$PM2_APP_NAME" || pm2 start "$ENTRY_POINT" --name "$PM2_APP_NAME"
+# Restart the application using PM2 with Bun
+echo "🔁 Restarting application '$PM2_APP_NAME' with PM2 + Bun..."
+pm2 restart "$PM2_APP_NAME" || pm2 start bun --name "$PM2_APP_NAME" -- run start -i $NUM_INSTANCES --interpreter none --exec_mode cluster
 
-# Optional: Save the PM2 process list if a new process was started
+# Optional: Save the PM2 process list
 pm2 save
 
-echo "Deployment complete!"
-
+# Done!
+echo "✅ Deployment complete at $(date) by $(whoami)"
 exit 0
