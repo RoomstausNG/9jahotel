@@ -35,6 +35,7 @@ bun run db:pull
 
 # Build the application on the server
 echo "Building application..."
+
 # If you need environment variables during build, uncomment and configure:
 export NODE_ENV=production
 # export SOME_BUILD_VAR=value
