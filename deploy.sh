@@ -27,6 +27,10 @@ git pull production "$GIT_BRANCH"
 # Print the current user (for debug)
 echo "👤 Running as user: $(whoami)"
 
+# make bun available
+export BUN_INSTALL="/home/www/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
 # Install/update dependencies using Bun (production only)
 echo "📦 Installing dependencies with Bun..."
 bun install --frozen-lockfile --production
