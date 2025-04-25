@@ -32,16 +32,16 @@ sudo -u www bash -c "
 
   # Install/update dependencies using Bun (production only)
   echo \"📦 Installing dependencies with Bun...\"
-  bun install --frozen-lockfile --production
+  npm install --frozen-lockfile --production
 
   # Sync database schema
   echo \"🧠 Introspecting the database...\"
-  bun run db:pull
+  npm run db:pull
 
   # Build the application
   echo \"🏗️ Building application for production...\"
   export NODE_ENV=production
-  # bun run build
+  # npm run build
 
   # Restart the application using PM2 with Bun
   echo \"🔁 Restarting application '$PM2_APP_NAME' with PM2 + Bun...\"
