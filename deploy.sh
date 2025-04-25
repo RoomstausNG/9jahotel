@@ -6,21 +6,18 @@ set -e
 APP_NAME="wakalor"
 IMAGE_NAME="9jahotel:latest"
 
-echo "🔧 Building the Docker image locally..."
+echo "📥 Resetting and pulling latest code from Git..."
+git reset --hard HEAD
+git pull production api_v1  # replace 'main' with your branch if different
 
-# Build the Docker image on the local VPS
-# docker build -t $IMAGE_NAME .
-docker build --no-cache -t 9jahotel:latest .
+echo "🔧 Building the Docker image locally..."
+docker build --no-cache -t $IMAGE_NAME .
 
 echo "🧹 Stopping old services in Swarm..."
-# Scale down and remove the old service if it exists
-docker service scale wakalor=0 || true
-docker service rm 9jahotel:latest || true
+docker service scale $APP_NAME=0 || true
+docker service rm $APP_NAME || true
 
 echo "🚀 Deploying new service in Docker Swarm..."
-
-# Deploy the new service using Docker Stack
-# docker stack deploy -c docker-compose.yml wakalor
-docker stack deploy --with-registry-auth -c docker-compose.yml wakalor
+docker stack deploy --with-registry-auth -c docker-compose.yml $APP_NAME
 
 echo "✅ Deployment complete!"
