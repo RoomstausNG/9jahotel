@@ -26,7 +26,7 @@ git pull production "$GIT_BRANCH"
 echo "Installing dependencies..."
 bun install --frozen-lockfile --production
 
-echo whoami
+echo "I am " . whoami
 # pulls changes to migrations
 bun run db:pull
 
