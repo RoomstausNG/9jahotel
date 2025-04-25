@@ -3,7 +3,7 @@ name: Build and Deploy Backend (No Docker)
 on:
   push:
     branches:
-      - main # Trigger deployment only on pushes to the main branch
+      - api_v0
 
 jobs:
   build_verify:
