@@ -36,8 +36,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            # Navigate to the project directory on the server
-            # IMPORTANT: Ensure this path matches PROJECT_DIR in deploy.sh
+
             cd /www/wwwroot/9jahotel_api
 
             # Make sure the deploy script is executable
