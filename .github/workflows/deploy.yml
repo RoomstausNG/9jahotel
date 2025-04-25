@@ -31,5 +31,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             cd ~/wakalor
+            # cd /www/wwwroot/v1.9jahotel.com
             chmod +x deploy.sh
             ./deploy.sh
