@@ -39,7 +39,7 @@ bun run db:pull
 # Build the application
 echo "🏗️ Building application for production..."
 export NODE_ENV=production
-bun run build
+# bun run build
 
 # Restart the application using PM2 with Bun
 echo "🔁 Restarting application '$PM2_APP_NAME' with PM2 + Bun..."
