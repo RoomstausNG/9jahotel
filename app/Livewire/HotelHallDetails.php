@@ -64,7 +64,6 @@ class HotelHallDetails extends Component
                 'id' => $category->id,
                 'name' => $category->name,
                 'price1' => $category->price1,
-                'firstImage' => $firstImage,
                 'available' => $available,
                 'discountedPrice' => $discountedPrice,
                 'model' => $category // Keep the original model for compatibility
