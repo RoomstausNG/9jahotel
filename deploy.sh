@@ -39,7 +39,7 @@ sudo -u www bash -c "
   bun run db:pull
 
   # Build the application
-  echo \"🏗️ Building application for production...\"
+  echo \"🏗️ Building application for production and changing environment...\"
   export NODE_ENV=production
   bun run build
 
