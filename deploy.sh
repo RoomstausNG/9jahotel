@@ -17,6 +17,9 @@ echo "🚀 Starting deployment to $PROJECT_DIR..."
 cd "$PROJECT_DIR" || { echo "❌ Error: Could not navigate to $PROJECT_DIR"; exit 1; }
 echo "📂 Changed directory to $(pwd)"
 
+echo "Giving permission to folder..."
+git config --global --add safe.directory $PROJECT_DIR
+
 # Pull the latest changes from the specified branch
 echo "🔄 Pulling latest code from branch '$GIT_BRANCH'..."
 git checkout "$GIT_BRANCH"
