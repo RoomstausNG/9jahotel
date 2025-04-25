@@ -1,0 +1,47 @@
+name: Build and Deploy Backend (No Docker)
+
+on:
+  push:
+    branches:
+      - main # Trigger deployment only on pushes to the main branch
+
+jobs:
+  build_verify:
+    name: Verify Build Process
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build application (Verification Only)
+        run: bun run build
+        env:
+          NODE_ENV: production
+
+  deploy:
+    name: Deploy to Server
+    needs: build_verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            # Navigate to the project directory on the server
+            # IMPORTANT: Ensure this path matches PROJECT_DIR in deploy.sh
+            cd /var/www/wakalor-backend
+
+            # Make sure the deploy script is executable
+            chmod +x deploy.sh
+
+            # Execute the deployment script
+            ./deploy.sh
