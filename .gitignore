@@ -6,6 +6,8 @@ src/database/migrations
 .env
 .qodo
 .trae
+post-receive
+/post-receive
 
 # Logs and databases
 *.log
