@@ -9,7 +9,8 @@ IMAGE_NAME="9jahotel:latest"
 echo "🔧 Building the Docker image locally..."
 
 # Build the Docker image on the local VPS
-docker build -t $IMAGE_NAME .
+# docker build -t $IMAGE_NAME .
+docker build --no-cache -t $IMAGE_NAME .
 
 echo "🧹 Stopping old services in Swarm..."
 # Scale down and remove the old service if it exists
