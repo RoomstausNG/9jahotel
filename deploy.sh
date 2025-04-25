@@ -51,7 +51,7 @@ sudo -u www bash -c "
   echo "Restarting application '$PM2_APP_NAME' with PM2..."
   pm2 restart "$PM2_APP_NAME" || pm2 start dist/index.js --name "$PM2_APP_NAME"
   
-  # Optional: Save the PM2 process list
+  #Optional: Save the PM2 process list
   pm2 save
 
   # Done!
