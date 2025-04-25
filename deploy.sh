@@ -5,10 +5,10 @@ set -e
 
 # --- Configuration ---
 # IMPORTANT: Set these variables according to your environment
-PROJECT_DIR="/var/www/wakalor-backend" # Directory where your project is cloned on the server
+PROJECT_DIR="/www/wwwroot/9jahotel_api" 
 PM2_APP_NAME="wakalor-backend"        # The name of your app in PM2
-GIT_BRANCH="main"                     # The branch to pull from
-ENTRY_POINT="dist/server.js"          # The entry point for your built application
+GIT_BRANCH="api_v0"                     # The branch to pull from
+ENTRY_POINT="dist/index.js"          # The entry point for your built application
 
 # --- Deployment Steps ---
 echo "Starting deployment to $PROJECT_DIR..."
@@ -20,7 +20,7 @@ echo "Changed directory to $(pwd)"
 # Pull the latest changes from the specified branch
 echo "Pulling latest code from branch '$GIT_BRANCH'..."
 git checkout "$GIT_BRANCH"
-git pull origin "$GIT_BRANCH"
+git pull production "$GIT_BRANCH"
 
 # Install/update dependencies using Bun (production only)
 echo "Installing dependencies..."
@@ -29,7 +29,7 @@ bun install --frozen-lockfile --production
 # Build the application on the server
 echo "Building application..."
 # If you need environment variables during build, uncomment and configure:
-# export NODE_ENV=production
+export NODE_ENV=production
 # export SOME_BUILD_VAR=value
 bun run build
 
