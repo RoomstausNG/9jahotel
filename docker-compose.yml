@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     image: 9jahotel:latest
@@ -7,7 +5,7 @@ services:
       - "3003:3003"
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       resources:
         limits:
           cpus: "4"
