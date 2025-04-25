@@ -1,7 +1,7 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
 
-const BASE_URL = "http://localhost:3004/api";
+const BASE_URL = "http://localhost:3003/api";
 
 export let options = {
   stages: [

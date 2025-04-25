@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import * as mysql from "mysql2/promise";
 
 const dbUrl = env("DATABASE_URL", undefined, { required: true });
-const PORT = env("PORT", "3004");
+const PORT = env("PORT", "3003");
 
 const JWT_SECRET = env("JWT_SECRET", "supersecret");
 

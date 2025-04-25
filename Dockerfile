@@ -12,10 +12,10 @@ RUN bun install --production
 COPY . .
 
 # Build the project
-RUN bun run build
+RUN bun run build --sourcemap
 
 # Expose the port your app runs on
-EXPOSE 3004
+EXPOSE 3003
 
 # Command to run the application
 CMD ["bun", "run", "dist/index.js"]

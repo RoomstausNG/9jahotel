@@ -2,17 +2,23 @@
 
 set -e
 
-APP_NAME="bun-app"
-IMAGE_NAME="yourusername/yourapp:latest"
+# Define application and image names
+APP_NAME="wakalor"
+IMAGE_NAME="9jahotel:latest"
 
-echo "📦 Pulling latest image..."
-docker pull $IMAGE_NAME
+echo "🔧 Building the Docker image locally..."
+
+# Build the Docker image on the local VPS
+docker build -t $IMAGE_NAME .
 
 echo "🧹 Stopping old services in Swarm..."
+# Scale down and remove the old service if it exists
 docker service scale ${APP_NAME}=0 || true
 docker service rm ${APP_NAME} || true
 
 echo "🚀 Deploying new service in Docker Swarm..."
-docker stack deploy -c docker-compose.yml myapp
+
+# Deploy the new service using Docker Stack
+docker stack deploy -c docker-compose.yml wakalor
 
 echo "✅ Deployment complete!"
