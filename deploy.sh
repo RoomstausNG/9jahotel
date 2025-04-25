@@ -30,7 +30,7 @@ echo "I am " . whoami
 echo "Installing dependencies..."
 bun install --frozen-lockfile --production
 
-
+echo "introspecting the database"
 bun run db:pull
 
 # Build the application on the server
