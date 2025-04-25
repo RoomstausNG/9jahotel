@@ -10,6 +10,9 @@ GIT_BRANCH="api_v0"                    # The branch to pull from
 ENTRY_POINT="dist/index.js"           # Optional if you're using a Bun script
 NUM_INSTANCES=3                       # Specify the number of instances you want to run
 
+# get current folder
+echo pwd
+
 # --- Deployment Steps ---
 echo "🚀 Starting deployment to $PROJECT_DIR..."
 
