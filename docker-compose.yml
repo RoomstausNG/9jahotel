@@ -20,7 +20,8 @@ services:
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://redis:6379
-      - POSTGRES_URL=postgresql://postgres_user:postgres_pass@postgres:5432/hono_db
+      # - POSTGRES_URL=postgresql://postgres_user:postgres_pass@postgres:5432/hono_db
+      - POSTGRES_URL=postsql://postgres_user:postgres_pass@postgres:5432/hono_db
       - HONO_ADMIN_USER=admin
       - HONO_ADMIN_PASSWORD=secure_password
     depends_on:
