@@ -39,5 +39,6 @@
     "@types/bun": "^1.2.8",
     "drizzle-kit": "^0.30.5",
     "tsx": "^4.19.3"
-  }
+  },
+  "type": "module"
 }
