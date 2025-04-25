@@ -1,9 +1,11 @@
 # deps
 node_modules/
 dist
+/dist
 src/database/migrations
 .env
 .qodo
+.trae
 
 # Logs and databases
 *.log
