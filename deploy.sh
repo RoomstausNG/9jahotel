@@ -22,12 +22,15 @@ echo "Pulling latest code from branch '$GIT_BRANCH'..."
 git checkout "$GIT_BRANCH"
 git pull production "$GIT_BRANCH"
 
+echo "I am " . whoami
+# pulls changes to migrations
+
+
 # Install/update dependencies using Bun (production only)
 echo "Installing dependencies..."
 bun install --frozen-lockfile --production
 
-echo "I am " . whoami
-# pulls changes to migrations
+
 bun run db:pull
 
 # Build the application on the server
