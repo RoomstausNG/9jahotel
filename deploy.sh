@@ -26,6 +26,10 @@ git pull production "$GIT_BRANCH"
 echo "Installing dependencies..."
 bun install --frozen-lockfile --production
 
+
+# pulls changes to migrations
+bun run db:pull
+
 # Build the application on the server
 echo "Building application..."
 # If you need environment variables during build, uncomment and configure:
