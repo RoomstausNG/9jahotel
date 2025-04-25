@@ -8,7 +8,7 @@ IMAGE_NAME="9jahotel:latest"
 
 echo "📥 Resetting and pulling latest code from Git..."
 git reset --hard HEAD
-git pull production api_v1  # replace 'main' with your branch if different
+git pull production api_v1
 
 echo "🔧 Building the Docker image locally..."
 docker build --no-cache -t $IMAGE_NAME .
@@ -19,5 +19,12 @@ docker service rm $APP_NAME || true
 
 echo "🚀 Deploying new service in Docker Swarm..."
 docker stack deploy --with-registry-auth -c docker-compose.yml $APP_NAME
+
+echo "🧼 Cleaning up unused containers and images..."
+docker container prune -f
+docker image prune -f
+
+echo "📦 Currently running containers:"
+docker ps
 
 echo "✅ Deployment complete!"
