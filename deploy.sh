@@ -30,6 +30,10 @@ sudo -u www bash -c "
   # Print the current user (for debug)
   echo \"👤 Running as user: \$(whoami)\"
 
+
+  # install bun
+  curl -fsSL https://bun.sh/install | bash 
+  export PATH=$PATH:$HOME/.bun/bin
   # Install/update dependencies using Bun (production only)
   echo \"📦 Installing dependencies with Bun...\"
   bun install --frozen-lockfile --production
@@ -44,9 +48,9 @@ sudo -u www bash -c "
   bun run build
 
   # Restart the application using PM2 with Bun
-  echo \"🔁 Restarting application '$PM2_APP_NAME' with PM2 + Bun...\"
-  pm2 restart \"$PM2_APP_NAME\" || pm2 start bun --name \"$PM2_APP_NAME\" -- run start -i $NUM_INSTANCES --interpreter none --exec_mode cluster
-
+  echo "Restarting application '$PM2_APP_NAME' with PM2..."
+  pm2 restart "$PM2_APP_NAME" || pm2 start dist/index.js --name "$PM2_APP_NAME"
+  
   # Optional: Save the PM2 process list
   pm2 save
 
