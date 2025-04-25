@@ -14,7 +14,7 @@ NUM_INSTANCES=3                       # Specify the number of instances you want
 echo "🚀 Starting deployment to $PROJECT_DIR..."
 
 # Switch to www user and execute commands
-sudo -u www bash -c "
+sudo -u root bash -c "
   # Navigate to the project directory
   cd \"$PROJECT_DIR\" || { echo \"❌ Error: Could not navigate to $PROJECT_DIR\"; exit 1; }
   echo \"📂 Changed directory to $(pwd)\"
