@@ -38,7 +38,7 @@ jobs:
           script: |
             # Navigate to the project directory on the server
             # IMPORTANT: Ensure this path matches PROJECT_DIR in deploy.sh
-            cd /var/www/wakalor-backend
+            cd /www/wwwroot/9jahotel_api
 
             # Make sure the deploy script is executable
             chmod +x deploy.sh
