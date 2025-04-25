@@ -4,6 +4,7 @@
     "dev": "bun run --hot src/index.ts",
     "start": "bun run dist/index.js",
     "build": "bun build src/index.ts --outdir dist --target bun",
+    "prod": "bun build src/index.ts --outdir dist --target bun --minify --bundle",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
