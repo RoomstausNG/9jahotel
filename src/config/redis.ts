@@ -3,7 +3,7 @@ import { env } from "./env";
 
 // Configure Redis client with environment variables and defaults
 export const redis = new Redis({
-  host: env("REDIS_HOST", "wakalor_redis"), // Change this to the correct host, especially if running in Docker
+  host: env("REDIS_HOST", "redis"), // Change this to the correct host, especially if running in Docker
   port: Number(env("REDIS_PORT", "6379")), // Default to 6379 if not specified
   password: env("REDIS_PASSWORD", ""), // Use the Redis password if required, otherwise leave it empty
   db: Number(env("REDIS_DB", "0")), // Default to DB 0
