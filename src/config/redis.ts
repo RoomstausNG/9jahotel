@@ -15,6 +15,12 @@ export const redis = new Redis({
     }
     return false;
   },
+  retryStrategy: (times) => {
+    const delay = Math.min(times * 50, 2000);
+    console.log(`Retrying Redis connection in ${delay}ms... (attempt ${times})`);
+    return delay;
+  },
+  maxRetriesPerRequest: 5
 });
 
 // Handle Redis connection errors

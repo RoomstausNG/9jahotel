@@ -39,8 +39,8 @@ app.route("/users", userRoutes);
 // auth endpoint
 app.route("/", authRoutes);
 
-// heath cehck
-app.get("/api/health", (c) => {
+// heath check
+app.get("/health", (c) => {
   return c.text("OK", 200); // Respond with status 200 for health checks
 });
 
