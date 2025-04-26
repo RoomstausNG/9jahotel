@@ -45,7 +45,7 @@ echo "📊 Checking service status..."
 docker service ls --filter "name=${APP_NAME}_"
 
 echo "🧼 Cleaning up unused Docker resources..."
-docker system prune -a --volumes
+docker system prune -a -f
 
 echo "checking memory"
 docker system df
