@@ -6,6 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     redis-tools \
     ca-certificates \
+    perl libterm-readline-gnu-perl \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
