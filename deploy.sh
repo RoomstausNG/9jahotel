@@ -28,6 +28,12 @@ echo "📤 Tagging and pushing image to local registry ($LOCAL_REGISTRY)..."
 docker tag $IMAGE_NAME $REGISTRY_IMAGE
 docker push $REGISTRY_IMAGE
 
+# Get the image digest
+DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $REGISTRY_IMAGE)
+
+# Update docker-compose.yml with image digest
+sed -i.bak "s|image: 9jahotel:latest|image: $DIGEST|g" docker-compose.yml
+
 # Verify registry access
 echo "🔍 Verifying registry access..."
 if ! curl -s http://$LOCAL_REGISTRY/v2/ > /dev/null; then
