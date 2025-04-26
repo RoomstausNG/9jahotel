@@ -1,7 +1,7 @@
-import nodemailer from "nodemailer";
+import * as nodemailer from "nodemailer";
 import { readFileSync } from "fs";
-import path from "path";
-import Handlebars from "handlebars";
+import * as path from "path";
+import * as Handlebars from "handlebars";
 import { env } from "../config/env";
 
 interface EmailOptions {
