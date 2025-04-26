@@ -25,7 +25,7 @@ jobs:
             cd /www/wwwroot/v1.9jahotel.com
             echo "📂 Entered project directory"
             git reset --hard HEAD
-            git pull origin api_v1
+            git pull production api_v1
             echo "⚙️ Running deploy script..."
             chmod +x deploy.sh
             ./deploy.sh
