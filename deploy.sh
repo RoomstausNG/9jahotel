@@ -4,9 +4,9 @@ set -e
 
 # Define variables
 APP_NAME="wakalor"
-IMAGE_NAME="9jahotel:latest"
+IMAGE_NAME="9jahotel:v1.0.0"
 LOCAL_REGISTRY="localhost:5000"
-REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:latest"
+REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:v1.0.0"
 
 echo "📥 Resetting and pulling latest code from Git..."
 git reset --hard HEAD
@@ -47,7 +47,7 @@ docker service ls --filter "name=${APP_NAME}_"
 echo "🧼 Cleaning up unused Docker resources..."
 docker system prune -a -f
 
-echo "checking memory"
+echo "🛠 Checking system memory usage..."
 docker system df
 
 echo "📦 Active containers for '$APP_NAME':"
@@ -67,7 +67,7 @@ done
 
 if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
   echo "❌ Application failed to become healthy after deployment"
-  echo "📋 Logs from app service:"
+  echo "📋 Saving logs from app service..."
   docker service logs ${APP_NAME}_app --tail 50 > deployment_logs.txt
   cat deployment_logs.txt
   exit 1

@@ -1,6 +1,6 @@
 services:
   app:
-    image: 9jahotel:latest
+    image: localhost:5000/9jahotel:v1.0.0
     ports:
       - "3003:3003"
     deploy:
