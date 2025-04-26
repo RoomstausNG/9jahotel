@@ -1,20 +1,13 @@
+version: "3.8"
+
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: localhost:5000/9jahotel:v1.0.0
     ports:
       - "3003:3003"
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: "6"
-          memory: 8G
-      restart_policy:
-        condition: any # Restart under any condition, including failures and reboots
-        delay: 5s # Wait 5 seconds before restarting
-        max_attempts: 3 # Retry up to 3 times if the service fails
-        window: 120s # Count failures within a 2-minute window
     env_file:
       - .env
     depends_on:
@@ -29,23 +22,12 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    restart: always
 
   redis:
     image: redis:alpine
     ports:
       - "6382:6379"
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1G
-      restart_policy:
-        condition: any # Restart under any condition, including failures and reboots
-        delay: 5s
-        max_attempts: 3
-        window: 120s
     command: ["redis-server"]
     environment:
       - REDIS_HOST=redis
@@ -60,6 +42,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+    restart: always
 
 volumes:
   redis_data:
@@ -67,4 +50,4 @@ volumes:
 
 networks:
   9jahotel:
-    driver: overlay
+    driver: bridge
