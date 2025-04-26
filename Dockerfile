@@ -20,7 +20,7 @@ RUN bun install --frozen-lockfile --production
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN if grep -q '"build"' package.json; then bun run build; fi
+RUN if grep -q '"build"' package.json; then bun build --minify; fi
 
 # Stage 5: Final Minimal Image
 FROM base AS release
