@@ -170,7 +170,7 @@ const initServer = async (): Promise<Server> => {
 
     return {
       fetch: app.fetch,
-      PORT as Number,
+      PORT: Number(PORT),
     };
   } catch (error) {
     console.error(
