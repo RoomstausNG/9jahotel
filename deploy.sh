@@ -64,11 +64,11 @@ docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t
 # Add health check for application
 echo "🏥 Checking application health..."
 ATTEMPTS=0
-MAX_ATTEMPTS=10
-until $(curl --output /dev/null --silent --fail http://localhost:3003/api/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+MAX_ATTEMPTS=7
+until $(curl --output /dev/null --silent --fail http://localhost:3003/api/hello) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
   ATTEMPTS=$((ATTEMPTS+1))
   echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
-  sleep 5
+  sleep 3
 done
 
 if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
