@@ -29,15 +29,14 @@ RUN bun run build  # Assuming 'bun run prod' is not valid; replace if needed
 # Expose the port your app runs on
 EXPOSE 3003
 
-# Copy the wait-for-redis script
 COPY wait-for-redis.sh /usr/local/bin/wait-for-redis.sh
-
-# Make sure it's executable
 RUN chmod +x /usr/local/bin/wait-for-redis.sh
+
+ENTRYPOINT ["wait-for-redis.sh"]
 
 # Add healthcheck for the container itself
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3003/health || exit 1
 
 # Command to run the application
-CMD ["/usr/local/bin/wait-for-redis.sh", "redis:6379", "--", "bun", "run", "start"]
+CMD ["bun", "run", "start"]
