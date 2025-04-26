@@ -3,7 +3,7 @@ import { env } from "./env";
 
 // Configure Redis client
 export const redis = new Redis({
-  host: env("REDIS_HOST", "127.0.0.1"), // Use "redis" for Docker Compose
+  host: env("REDIS_HOST", "redis"), // Use "redis" for Docker Compose
   port: Number(env("REDIS_PORT", "6379")),
   password: env("REDIS_PASSWORD", ""), // Leave empty if no auth
   db: Number(env("REDIS_DB", "0")),
