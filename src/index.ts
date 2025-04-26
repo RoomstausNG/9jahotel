@@ -13,6 +13,7 @@ import authRoutes from "./routes/auth-routes"; // <-- 1. Import authRoutes
 import { ApiResponse } from "./utils/ApiResponse";
 import hotelRoutes from "./routes/hotel-routes";
 import { redis } from "./config/redis";
+import { hostname } from "os";
 
 const app = new Hono().basePath("/api");
 
@@ -52,6 +53,7 @@ app.all("*", (c) => {
 export default {
   fetch: app.fetch,
   PORT,
+  hostname: "0.0.0.0",
 };
 
 console.log(`Server running on port ${PORT}`);

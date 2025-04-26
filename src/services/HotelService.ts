@@ -22,13 +22,6 @@ import { buildReviewSummary } from "../utils/reviewSummary";
 import { RoomResource } from "../resources/RoomResource";
 import { getCloudinaryImage, getFullImageUrl } from "../utils/cloudinaryUtils";
 
-// Configure Redis client (adjust connection details as needed)
-// const redis = new Redis({
-//   host: process.env.REDIS_HOST || "127.0.0.1",
-//   port: parseInt(process.env.REDIS_PORT || "6379", 10),
-//   // password: process.env.REDIS_PASSWORD, // Uncomment if password is set
-// });
-
 @injectable()
 export class HotelService {
   private readonly CACHE_EXPIRATION_SECONDS = 3600; // Cache for 1 hour
