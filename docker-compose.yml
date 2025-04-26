@@ -11,10 +11,10 @@ services:
           cpus: "4"
           memory: 8G
       restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        condition: any # Restart under any condition, including failures and reboots
+        delay: 5s # Wait 5 seconds before restarting
+        max_attempts: 3 # Retry up to 3 times if the service fails
+        window: 120s # Count failures within a 2-minute window
     env_file:
       - .env
     depends_on:
@@ -42,7 +42,7 @@ services:
           cpus: "1"
           memory: 1G
       restart_policy:
-        condition: any
+        condition: any # Restart under any condition, including failures and reboots
         delay: 5s
         max_attempts: 3
         window: 120s
