@@ -7,7 +7,7 @@ set -e
 PROJECT_DIR="/www/wwwroot/9jahotel_api" 
 PM2_APP_NAME="wakalor"                 # The name of your app in PM2
 GIT_BRANCH="api_v0"                    # The branch to pull from
-ENTRY_POINT="dist/index.js"           # Optional if you're using a Bun script
+ENTRY_POINT="dist/index.js"           # Optional if you're using a bun script
 NUM_INSTANCES=3                       # Specify the number of instances you want to run
 
 # get current folder
@@ -34,7 +34,7 @@ echo "👤 Running as user: $(whoami)"
 export BUN_INSTALL="/home/www/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Install/update dependencies using Bun (production only)
+# Install/update dependencies using bun (production only)
 echo "📦 Installing dependencies with Bun..."
 bun install --frozen-lockfile --production
 
