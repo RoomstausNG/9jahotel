@@ -50,15 +50,12 @@ echo "📤 Tagging and pushing image to local registry ($LOCAL_REGISTRY)..."
 docker tag $IMAGE_NAME $REGISTRY_IMAGE
 docker push $REGISTRY_IMAGE
 
-# remove all instances before stopping
-docker service rm wakalor
-
-echo "🧹 Stopping old services in Swarm..."
-docker service scale $APP_NAME=0 || true
-docker service rm $APP_NAME || true
+# echo "🧹 Stopping old services in Swarm..."
+# docker service scale $APP_NAME=0 || true
+# docker service rm $APP_NAME || true
 
 echo "🚀 Deploying new service in Docker Swarm..."
-docker stack deploy --with-registry-auth -c docker-compose.yml $APP_NAME
+docker stack deploy -c docker-compose.yml $APP_NAME
 
 echo "🧼 Cleaning up unused Docker containers and images..."
 docker container prune -f
