@@ -27,5 +27,5 @@ jobs:
             git reset --hard HEAD
             git pull production api_v1
             echo "⚙️ Running deploy script..."
-            chmod +x deploy.sh
-            ./deploy.sh
+            chmod +x pm2.sh
+            ./pm2.sh
