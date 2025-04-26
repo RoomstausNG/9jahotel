@@ -1,34 +1,3 @@
-# #!/bin/bash
-
-# set -e
-
-# # Define application and image names
-# APP_NAME="wakalor"
-# IMAGE_NAME="9jahotel:latest"
-
-# echo "📥 Resetting and pulling latest code from Git..."
-# git reset --hard HEAD
-# git pull production api_v1
-
-# echo "🔧 Building the Docker image locally..."
-# docker build --no-cache -t $IMAGE_NAME .
-
-# echo "🧹 Stopping old services in Swarm..."
-# docker service scale $APP_NAME=0 || true
-# docker service rm $APP_NAME || true
-
-# echo "🚀 Deploying new service in Docker Swarm..."
-# docker stack deploy --with-registry-auth -c docker-compose.yml $APP_NAME
-
-# echo "🧼 Cleaning up unused containers and images..."
-# docker container prune -f
-# docker image prune -f
-
-# echo "📦 Currently running containers:"
-# docker ps
-
-# echo "✅ Deployment complete!"
-
 #!/bin/bash
 
 set -e
@@ -41,28 +10,65 @@ REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:latest"
 
 echo "📥 Resetting and pulling latest code from Git..."
 git reset --hard HEAD
-git pull production api_v1  # Change branch name if needed
+git pull production api_v1
 
 echo "🔧 Building the Docker image locally..."
-docker build --no-cache -t 9jahotel:latest .
+docker build --no-cache -t $IMAGE_NAME .
 
 echo "📤 Tagging and pushing image to local registry ($LOCAL_REGISTRY)..."
 docker tag $IMAGE_NAME $REGISTRY_IMAGE
 docker push $REGISTRY_IMAGE
 
-echo "🧹 Stopping old services in Swarm..."
-# docker service scale $APP_NAME=0 || true
+# Add a check that the registry is accessible
+echo "🔍 Verifying registry access..."
+if ! curl -s http://$LOCAL_REGISTRY/v2/ > /dev/null; then
+  echo "❌ Cannot access registry at $LOCAL_REGISTRY. Is it running?"
+  exit 1
+fi
+
+echo "🧹 Removing old stack deployment..."
 docker stack rm $APP_NAME || true
+
+# Wait for stack to be fully removed
+echo "⏳ Waiting for old stack to be removed..."
+while docker stack ps $APP_NAME 2>/dev/null | grep -q "$APP_NAME"; do
+  echo "  Still removing old stack..."
+  sleep 3
+done
 
 echo "🚀 Deploying new service in Docker Swarm..."
 docker stack deploy -c docker-compose.yml $APP_NAME
 
-echo "🧼 Cleaning up unused Docker containers and images..."
+echo "⏳ Waiting for services to start..."
+sleep 5
+
+echo "📊 Checking service status..."
+docker service ls --filter "name=${APP_NAME}_"
+
+echo "🧼 Cleaning up unused Docker resources..."
 docker container prune -f
 docker image prune -f
 
 echo "📦 Active containers for '$APP_NAME':"
 docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
 
-echo "✅ Deployment complete!"
+# Add health check for application
+echo "🏥 Checking application health..."
+ATTEMPTS=0
+MAX_ATTEMPTS=10
+until $(curl --output /dev/null --silent --fail http://localhost:3003/api/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+  ATTEMPTS=$((ATTEMPTS+1))
+  echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
+  sleep 5
+done
 
+if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
+  echo "❌ Application failed to become healthy after deployment"
+  echo "📋 Logs from app service:"
+  docker service logs ${APP_NAME}_app --tail 50
+  exit 1
+else
+  echo "✅ Application is healthy!"
+fi
+
+echo "✅ Deployment complete!"
