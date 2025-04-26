@@ -11,10 +11,10 @@ services:
           cpus: "4"
           memory: 8G
       restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        condition: any # Restart under any condition, including failures and reboots
+        delay: 5s # Wait 5 seconds before restarting
+        max_attempts: 3 # Retry up to 3 times if the service fails
+        window: 120s # Count failures within a 2-minute window
     env_file:
       - .env
     depends_on:
@@ -33,7 +33,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379" # Note: Your code probably needs to be updated to use this port
+      - "6379:6379"
     deploy:
       mode: replicated
       replicas: 1
@@ -42,23 +42,23 @@ services:
           cpus: "1"
           memory: 1G
       restart_policy:
-        condition: on-failure
+        condition: any # Restart under any condition, including failures and reboots
         delay: 5s
         max_attempts: 3
         window: 120s
-    command: ["redis-server"]
-    environment:
-      REDIS_PASSWORD: ""
-    volumes:
-      - redis_data:/data
-    networks:
-      - 9jahotel
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 5s # Give Redis time to initialize
+      command: ["redis-server"]
+      environment:
+        REDIS_PASSWORD: ""
+      volumes:
+        - redis_data:/data
+      networks:
+        - 9jahotel
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 5s
+        timeout: 3s
+        retries: 3
+        start_period: 5s
 
 volumes:
   redis_data:
