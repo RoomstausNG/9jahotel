@@ -7,6 +7,10 @@ export const redis = new Redis({
   port: Number(env("REDIS_PORT", "6379")), // Default to 6379 if not specified
   password: env("REDIS_PASSWORD", ""), // Use the Redis password if required, otherwise leave it empty
   db: Number(env("REDIS_DB", "0")), // Default to DB 0
+  retryStrategy(times) {
+    const delay = Math.min(times * 100, 2000); // retry delay
+    return delay;
+  },
   reconnectOnError: (err) => {
     // This will help reconnect if there are transient errors
     if (err.message.includes("READONLY")) {
