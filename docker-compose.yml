@@ -10,6 +10,11 @@ services:
         limits:
           cpus: "4"
           memory: 4G
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 5 # Retries added here for app healthcheck
     env_file:
       - .env
     depends_on:
@@ -18,11 +23,9 @@ services:
       - 9jahotel
     volumes:
       - app_data:/app/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    restart_policy: # Ensures automatic restart if the app fails
+      condition: on-failure
+      max_attempts: 3 # Limit number of retries for restarts
 
   redis:
     image: redis:alpine
@@ -35,6 +38,11 @@ services:
         limits:
           cpus: "0.5"
           memory: 512M
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 5s
+        timeout: 3s
+        retries: 5 # Retries added here for Redis healthcheck
     command: ["redis-server"]
     environment:
       REDIS_PASSWORD: ""
@@ -42,11 +50,9 @@ services:
       - redis_data:/data
     networks:
       - 9jahotel
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+    restart_policy: # Ensures automatic restart if redis fails
+      condition: on-failure
+      max_attempts: 3 # Limit number of retries for restarts
 
 volumes:
   redis_data:
