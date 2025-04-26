@@ -39,7 +39,7 @@ echo "🚀 Deploying new service in Docker Swarm..."
 docker stack deploy -c docker-compose.yml $APP_NAME
 
 echo "⏳ Waiting for services to start..."
-sleep 5
+sleep 30
 
 echo "📊 Checking service status..."
 docker service ls --filter "name=${APP_NAME}_"
