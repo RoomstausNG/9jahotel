@@ -3,9 +3,9 @@ import { env } from "./env";
 
 // Configure Redis client with environment variables and defaults
 export const redis = new Redis({
-  host: env("REDIS_HOST", "redis"), // Use "redis" as the host name for Docker
+  host: env("REDIS_HOST", "127.0.0.1"), // Use "redis" as the host name for Docker
   port: Number(env("REDIS_PORT", "6379")), // Default to 6379 if not specified
-  password: env("REDIS_PASSWORD", ""), // Use the Redis password if required, otherwise leave it empty
+  password: env("REDIS_PASSWORD", "Tokunbo11$"), // Use the Redis password if required, otherwise leave it empty
   db: Number(env("REDIS_DB", "0")), // Default to DB 0
   reconnectOnError: (err) => {
     // This will help reconnect if there are transient errors
@@ -17,10 +17,12 @@ export const redis = new Redis({
   },
   retryStrategy: (times) => {
     const delay = Math.min(times * 50, 2000);
-    console.log(`Retrying Redis connection in ${delay}ms... (attempt ${times})`);
+    console.log(
+      `Retrying Redis connection in ${delay}ms... (attempt ${times})`
+    );
     return delay;
   },
-  maxRetriesPerRequest: 5
+  maxRetriesPerRequest: 5,
 });
 
 // Handle Redis connection errors
