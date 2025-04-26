@@ -11,11 +11,11 @@ RUN bun install --production
 # Copy source code
 COPY . .
 
-# dbpull
-RUN bun run db:pull
-
 # Build the project
 RUN bun run build --sourcemap
+
+# dbpull
+RUN bun run db:pull
 
 # Expose the port your app runs on
 EXPOSE 3003
