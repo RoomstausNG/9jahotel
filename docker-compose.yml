@@ -1,6 +1,8 @@
 services:
   app:
     image: 9jahotel:latest
+    entrypoint:
+      ["./wait-for-redis.sh", "redis:6379", "--", "bun", "run", "dist/index.js"]
     ports:
       - "3003:3003"
     deploy:

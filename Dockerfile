@@ -29,6 +29,8 @@ RUN bun run prod
 # Expose the port your app runs on
 EXPOSE 3003
 
+COPY wait-for-it.sh /usr/local/bin/wait-for-redis.sh
+
 # Add healthcheck for the container itself
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3003/health || exit 1
