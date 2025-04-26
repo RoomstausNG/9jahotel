@@ -21,4 +21,4 @@ RUN bun run db:pull
 EXPOSE 3003
 
 # Command to run the application
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "dist/index.js"]
