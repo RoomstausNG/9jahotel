@@ -52,7 +52,7 @@ docker push $REGISTRY_IMAGE
 
 echo "🧹 Stopping old services in Swarm..."
 # docker service scale $APP_NAME=0 || true
-docker service rm $APP_NAME || true
+docker stack rm $APP_NAME || true
 
 echo "🚀 Deploying new service in Docker Swarm..."
 docker stack deploy -c docker-compose.yml $APP_NAME
