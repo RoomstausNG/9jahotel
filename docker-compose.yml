@@ -5,7 +5,7 @@ services:
       - "3003:3003"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       resources:
         limits:
           cpus: "4"
@@ -36,7 +36,7 @@ services:
       - "6379:6379" # Note: Your code probably needs to be updated to use this port
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       resources:
         limits:
           cpus: "1"
