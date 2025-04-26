@@ -17,8 +17,8 @@ services:
         window: 120s # Count failures within a 2-minute window
     env_file:
       - .env
-    # depends_on:
-    #   - redis
+    depends_on:
+      - redis
     networks:
       - 9jahotel
     volumes:
