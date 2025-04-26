@@ -7,6 +7,15 @@ APP_NAME="wakalor"
 IMAGE_NAME="9jahotel:latest"
 LOCAL_REGISTRY="localhost:5000"
 REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:latest"
+NETWORK_NAME="9jahotel"
+
+# Check if the network exists
+if ! docker network ls --filter name=$NETWORK_NAME --format "{{.Name}}" | grep -w $NETWORK_NAME > /dev/null; then
+  echo "Network '$NETWORK_NAME' not found, creating it..."
+  docker network create --driver overlay $NETWORK_NAME
+else
+  echo "Network '$NETWORK_NAME' already exists, skipping creation."
+fi
 
 echo "📥 Resetting and pulling latest code from Git..."
 git reset --hard HEAD
