@@ -20,7 +20,7 @@ export class EmailService {
     this.transporter = nodemailer.createTransport({
       host: env("SMTP_HOST", "smtp.example.com"),
       port: parseInt(env("SMTP_PORT", "587")),
-      secure: env("SMTP_SECURE", "false") === "true",
+      secure: env("SMTP_SECURE", "false"),
       auth: {
         user: env("SMTP_USER", ""),
         pass: env("SMTP_PASSWORD", ""),
