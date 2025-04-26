@@ -14,9 +14,6 @@ COPY . .
 # Build the project
 RUN bun run build --sourcemap --minify --bundle
 
-# dbpull
-RUN bun run db:pull
-
 # Expose the port your app runs on
 EXPOSE 3003
 
