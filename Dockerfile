@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y redis-tools curl \
 
 # Stage 2: Install Dependencies (Dev)
 FROM base AS deps
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # Stage 3: Install Dependencies (Prod Only)
 FROM base AS prod-deps
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 
 # Stage 4: Build App
