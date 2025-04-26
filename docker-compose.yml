@@ -13,7 +13,7 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 10
+        max_attempts: 3
         window: 120s
     env_file:
       - .env
@@ -24,11 +24,11 @@ services:
     volumes:
       - app_data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"] # Updated path to match your API prefix
+      test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s # Give the app time to initialize before checking health
+      start_period: 15s
 
   redis:
     image: redis:alpine
@@ -39,7 +39,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: "0.5"
+          cpus: 1
           memory: 1G
       restart_policy:
         condition: on-failure
@@ -57,7 +57,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
-      retries: 5
+      retries: 3
       start_period: 5s # Give Redis time to initialize
 
 volumes:
