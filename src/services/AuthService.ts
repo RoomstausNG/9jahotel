@@ -422,7 +422,7 @@ export class AuthService {
         .update(customers)
         .set(updatePayload) // Use the dynamically built payload
         .where(eq(customers.id, user.id))
-        .returning(); // Optional: get updated row directly if DB supports
+        .limit(1);
 
       const updatedUser = await AuthService.getUserById(user.id);
 
@@ -586,7 +586,7 @@ export class AuthService {
       console.log(`Password reset successfully for ${email}`);
       return { success: true, message: "Password reset successfully." };
     } catch (error) {
-      console.error(`Failed to reset password for ${email}:`, error);
+      console.error(`Failed to reset password for user}:`, error);
       throw new Error(
         `Password reset failed: ${
           error instanceof Error ? error.message : "Unknown error"
@@ -640,7 +640,7 @@ export class AuthService {
     try {
       const ticket = await googleClient.verifyIdToken({
         idToken: token,
-        audience: Bun.env.GOOGLE_CLIENT_ID,
+        audience: env("GOOGLE_CLIENT_ID"),
       });
 
       const payload = ticket.getPayload();
