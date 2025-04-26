@@ -69,6 +69,7 @@ if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
   echo "❌ Application failed to become healthy after deployment"
   echo "📋 Logs from app service:"
   docker service logs ${APP_NAME}_app --tail 50 > deployment_logs.txt
+  cat deployment_logs.txt
   exit 1
 else
   echo "✅ Application is healthy!"
