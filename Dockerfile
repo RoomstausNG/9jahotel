@@ -1,46 +1,43 @@
-# Stage 1: Base Image
-FROM oven/bun:1.2.10 AS base
+FROM oven/bun:1.2.10
+
 WORKDIR /app
 
-# Install redis-cli if needed
-RUN apt-get update && apt-get install -y redis-tools curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install Redis CLI and other system dependencies
+RUN apt-get update && apt-get install -y \
+    redis-tools \
+    ca-certificates \
+    perl libterm-readline-gnu-perl \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Stage 2: Install Production Dependencies
-FROM base AS deps
-COPY package.json bun.lock ./
+# Copy package.json first for better layer caching
+COPY package.json ./
+
+# Install dependencies 
 RUN bun install --production
 
-# Stage 3: Build the App
-FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
+# Copy source code
 COPY . .
-RUN if grep -q '"build"' package.json; then bun run build; fi
 
-# Stage 4: Release Image
-FROM base AS release
-WORKDIR /app
+# Create necessary directories if any needed for volumes
+RUN mkdir -p /app/data
 
-# Copy production node_modules
-COPY --from=deps /app/node_modules ./node_modules
+# Build the project
+RUN bun run build  # Assuming 'bun run prod' is not valid; replace if needed
 
-# Copy built app
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json ./package.json
-
-# Copy wait-for-redis script
-COPY wait-for-redis.sh /usr/local/bin/wait-for-redis.sh
-RUN chmod +x /usr/local/bin/wait-for-redis.sh
-
-# Expose application port
+# Expose the port your app runs on
 EXPOSE 3003
 
-# Healthcheck
+# Copy the wait-for-redis script
+COPY wait-for-redis.sh /usr/local/bin/wait-for-redis.sh
+
+# Make sure it's executable
+RUN chmod +x /usr/local/bin/wait-for-redis.sh
+
+# Add healthcheck for the container itself
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://127.0.0.1:3003/health || exit 1
+    CMD curl -f http://localhost:3003/health || exit 1
 
-# Entry point (wait for redis first)
-ENTRYPOINT ["wait-for-redis.sh"]
-
-# Command to start app
-CMD ["bun", "run", "dist/index.js"]
+# Command to run the application
+CMD ["bun", "run", "start"]
