@@ -55,8 +55,10 @@ echo "📊 Checking service status..."
 docker service ls --filter "name=${APP_NAME}_"
 
 echo "🧼 Cleaning up unused Docker resources..."
-docker container prune -f
-docker image prune -f
+docker system prune -a --volumes
+
+echo "checking memory"
+docker system df
 
 echo "📦 Active containers for '$APP_NAME':"
 docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
@@ -65,7 +67,7 @@ docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t
 echo "🏥 Checking application health..."
 ATTEMPTS=0
 MAX_ATTEMPTS=10
-until $(curl --output /dev/null --silent --fail http://localhost:3003/api/hello) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+until $(curl --output /dev/null --silent --fail http://localhost:3003/api/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
   ATTEMPTS=$((ATTEMPTS+1))
   echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
   sleep 3
