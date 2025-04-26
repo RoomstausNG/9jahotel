@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: localhost:5000/9jahotel:v1.0.0
+    image: wakalor
     ports:
       - "3003:3003"
     env_file:
