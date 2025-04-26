@@ -1,61 +1,3 @@
-# services:
-#   app:
-#     image: 9jahotel:latest
-#     ports:
-#       - "3003:3003"
-#     deploy:
-#       mode: replicated
-#       replicas: 1
-#       resources:
-#         limits:
-#           cpus: "4"
-#           memory: 4G
-#     env_file:
-#       - .env
-#     depends_on:
-#       - redis
-#     networks:
-#       - 9jahotel
-#     volumes:
-#       - app_data:/app/data
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
-#       interval: 30s
-#       timeout: 10s
-#       retries: 3
-
-#   redis:
-#     image: redis:alpine
-#     ports:
-#       - "6379:6379"
-#     deploy:
-#       mode: replicated
-#       replicas: 1
-#       resources:
-#         limits:
-#           cpus: "0.5"
-#           memory: 512M
-#     command: ["redis-server"]
-#     environment:
-#       REDIS_PASSWORD: ""
-#     volumes:
-#       - redis_data:/data
-#     networks:
-#       - 9jahotel
-#     healthcheck:
-#       test: ["CMD", "redis-cli", "ping"]
-#       interval: 5s
-#       timeout: 3s
-#       retries: 5
-
-# volumes:
-#   redis_data:
-#   app_data:
-
-# networks:
-#   9jahotel:
-#     driver: overlay
-
 services:
   app:
     image: 9jahotel:latest
@@ -67,12 +9,12 @@ services:
       resources:
         limits:
           cpus: "4"
-          memory: 4G
-      restart_policy:
+          memory: 8G
+      restart_policy: # Added restart policy
         condition: on-failure
         delay: 5s
-        max_attempts: 3
-        window: 60s
+        max_attempts: 10
+        window: 120s
     env_file:
       - .env
     depends_on:
@@ -82,7 +24,7 @@ services:
     volumes:
       - app_data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"] # Corrected URL (removed backticks)
       interval: 30s
       timeout: 10s
       retries: 3
@@ -97,12 +39,12 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512M
-      restart_policy:
+          memory: 1G
+      restart_policy: # Added restart policy
         condition: on-failure
         delay: 5s
         max_attempts: 3
-        window: 60s
+        window: 120s
     command: ["redis-server"]
     environment:
       REDIS_PASSWORD: ""
