@@ -10,7 +10,7 @@ services:
         limits:
           cpus: "4"
           memory: 8G
-      restart_policy: # Added restart policy
+      restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 10
@@ -18,21 +18,23 @@ services:
     env_file:
       - .env
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy # Wait for Redis to be healthy before starting
     networks:
       - 9jahotel
     volumes:
       - app_data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3003/health"] # Corrected URL (removed backticks)
+      test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"] # Updated path to match your API prefix
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 15s # Give the app time to initialize before checking health
 
   redis:
     image: redis:alpine
     ports:
-      - "6382:6379"
+      - "6382:6379" # Note: Your code probably needs to be updated to use this port
     deploy:
       mode: replicated
       replicas: 1
@@ -40,7 +42,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 1G
-      restart_policy: # Added restart policy
+      restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
@@ -57,6 +59,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+      start_period: 5s # Give Redis time to initialize
 
 volumes:
   redis_data:
