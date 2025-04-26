@@ -13,7 +13,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     networks:
       - 9jahotel
     volumes:
@@ -27,7 +28,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6382:6379"
+      - "6379:6379"
     deploy:
       mode: replicated
       replicas: 1
@@ -43,10 +44,10 @@ services:
     networks:
       - 9jahotel
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   redis_data:
