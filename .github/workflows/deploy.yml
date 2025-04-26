@@ -1,9 +1,42 @@
+# name: 🚀 Deploy to Docker Swarm
+
+# on:
+#   push:
+#     branches:
+#       - "api_v1"
+
+# jobs:
+#   deploy:
+#     name: Build & Deploy via SSH
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: 📥 Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: 🐳 SSH into VPS and deploy
+#         uses: appleboy/ssh-action@v0.1.10
+#         with:
+#           host: ${{ secrets.SSH_HOST }}
+#           username: ${{ secrets.USERNAME }}
+#           key: ${{ secrets.PRIVATE_KEY }}
+#           script: |
+#             echo "🔑 SSH access established"
+#             cd /www/wwwroot/v1.9jahotel.com
+#             echo "📂 Entered project directory"
+#             git reset --hard HEAD
+#             git pull production api_v1
+#             echo "⚙️ Running deploy script..."
+#             chmod +x deploy.sh
+#             ./deploy.sh
+
 name: 🚀 Deploy to Docker Swarm
 
 on:
   push:
     branches:
       - "api_v1"
+  workflow_dispatch: # Allows manual triggering from GitHub UI
 
 jobs:
   deploy:
@@ -13,6 +46,16 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
+
+      - name: 🔐 Set up SSH key
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: 🛡️ Add host key verification
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🐳 SSH into VPS and deploy
         uses: appleboy/ssh-action@v0.1.10
@@ -24,8 +67,25 @@ jobs:
             echo "🔑 SSH access established"
             cd /www/wwwroot/v1.9jahotel.com
             echo "📂 Entered project directory"
+
+            # Print Git status before pulling
+            echo "📊 Current Git status:"
+            git status
+
+            # Pull latest code
             git reset --hard HEAD
-            git pull production api_v1
+            git pull origin api_v1
+
+            # Verify deployment script exists
+            if [ ! -f deploy.sh ]; then
+              echo "❌ deploy.sh not found!"
+              exit 1
+            fi
+
             echo "⚙️ Running deploy script..."
             chmod +x deploy.sh
             ./deploy.sh
+
+            # Verify deployment success
+            echo "🔍 Checking service status:"
+            docker service ls --filter "name=wakalor_"
