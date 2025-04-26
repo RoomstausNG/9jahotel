@@ -2,7 +2,7 @@
   "name": "wakalor",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/index.js",
+    "start": "bun dist/index.js",
     "build": "bun build src/index.ts --outdir dist --target bun",
     "prod": "bun build src/index.ts --outdir dist --target bun --minify --bundle",
     "db:generate": "drizzle-kit generate",

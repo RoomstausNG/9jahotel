@@ -12,7 +12,7 @@ RUN bun install --production
 COPY . .
 
 # Build the project
-RUN bun run build --sourcemap
+RUN bun run build --sourcemap --minify --bundle
 
 # dbpull
 RUN bun run db:pull
@@ -21,4 +21,4 @@ RUN bun run db:pull
 EXPOSE 3003
 
 # Command to run the application
-CMD ["bun", "run", "dist/index.js"]
+CMD ["bun", "run", "start"]
