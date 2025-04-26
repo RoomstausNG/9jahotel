@@ -62,13 +62,13 @@ docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t
 # Health check for application
 echo "🏥 Checking application health..."
 ATTEMPTS=0
-MAX_ATTEMPTS=10
+MAX_ATTEMPTS=3
 until $(curl --output /dev/null --silent --fail http://localhost:3003/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
   ATTEMPTS=$((ATTEMPTS+1))
   echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
   echo "📦 Active containers for '$APP_NAME':"
   docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
-  sleep 3
+  sleep 5
 done
 
 if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
