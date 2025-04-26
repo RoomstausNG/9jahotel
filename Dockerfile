@@ -2,6 +2,9 @@ FROM oven/bun:latest
 
 WORKDIR /app
 
+# Install Redis CLI for health checks
+RUN apt-get update && apt-get install -y redis-tools && apt-get clean
+
 # Copy package.json first for better layer caching
 COPY package.json ./
 
