@@ -4,7 +4,7 @@ set -e  # exit immediately if any command fails
 
 echo "📦 Pulling latest changes from git..."
 git reset --hard HEAD
-git pull origin api_v1
+git pull production api_v1
 
 echo "🐳 Pulling latest Docker base images..."
 docker compose pull

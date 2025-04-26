@@ -10,7 +10,7 @@ export function clearAuthCookie(c: Context, cookieName: string) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  // Optionally, try clearing with domain if you set it originally
+  // Optionally, try clearing with domain if you set it productionally
   setCookie(c, cookieName, "", {
     maxAge: 0,
     expires: new Date(0),
