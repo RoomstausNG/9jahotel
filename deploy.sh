@@ -35,16 +35,6 @@ if ! curl -s http://$LOCAL_REGISTRY/v2/ > /dev/null; then
   exit 1
 fi
 
-echo "🧹 Removing old stack deployment..."
-docker stack rm $APP_NAME || true
-
-# Wait for stack to be fully removed
-echo "⏳ Waiting for old stack to be removed..."
-while docker stack ps $APP_NAME 2>/dev/null | grep -q "$APP_NAME"; do
-  echo "  Still removing old stack..."
-  sleep 10
-done
-
 echo "🚀 Deploying new service in Docker Swarm..."
 docker stack deploy -c docker-compose.yml $APP_NAME
 
