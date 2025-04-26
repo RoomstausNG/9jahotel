@@ -42,7 +42,7 @@ docker stack rm $APP_NAME || true
 echo "⏳ Waiting for old stack to be removed..."
 while docker stack ps $APP_NAME 2>/dev/null | grep -q "$APP_NAME"; do
   echo "  Still removing old stack..."
-  sleep 3
+  sleep 10
 done
 
 echo "🚀 Deploying new service in Docker Swarm..."
@@ -64,7 +64,7 @@ docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t
 # Add health check for application
 echo "🏥 Checking application health..."
 ATTEMPTS=0
-MAX_ATTEMPTS=7
+MAX_ATTEMPTS=10
 until $(curl --output /dev/null --silent --fail http://localhost:3003/api/hello) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
   ATTEMPTS=$((ATTEMPTS+1))
   echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
