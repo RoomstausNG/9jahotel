@@ -77,10 +77,10 @@ hotelRoutes.get(
 );
 
 // New route for images by room type
-hotelRoutes.get(
-  "/hotels/categories/:typeId/images", // Define the new route path for images
-  zValidator("param", RoomTypeParamDTO), // Validate typeId from path
-  (c) => hotelController.getImagesByRoomType(c) // Link to the new controller method
-);
+// hotelRoutes.get(
+//   "/hotels/categories/:typeId/images", // Define the new route path for images
+//   zValidator("param", RoomTypeParamDTO), // Validate typeId from path
+//   (c) => hotelController.getImagesByRoomType(c) // Link to the new controller method
+// );
 
 export default hotelRoutes;

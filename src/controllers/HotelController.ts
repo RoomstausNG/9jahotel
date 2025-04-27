@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { inject, injectable } from "inversify";
 import { HotelService } from "../services/HotelService";
+import { AuthService } from "../services/AuthService";
 import { ApiResponse } from "../utils/ApiResponse";
 import {
   SearchHotelByCityDTO,
@@ -202,6 +203,29 @@ export class HotelController {
         error.message || "Failed to fetch available rooms",
         500
       );
+    }
+  }
+
+  async authRoomBooking(c: Context) {
+    try {
+      const body = await c.req.json();
+
+      // Validate request
+      const parsed = await customerSchema.parseAsync(body);
+
+      const customer = c.get("user") || AuthService.getAuthUser(c);
+
+      const booking = await this.hotelService.bookARoom(parsed, customer);
+      return ApiResponse.success(
+        booking,
+        `Room booked successfully with booking code ${booking.code}`,
+        201
+      );
+    } catch (error: Error) {
+      if (error.message) {
+        return ApiResponse.failure("Validation error", 400, error.message);
+      }
+      return ApiResponse.failure("Booking failed", 500);
     }
   }
 }

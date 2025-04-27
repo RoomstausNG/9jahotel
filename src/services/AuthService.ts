@@ -135,7 +135,7 @@ export class AuthService {
       if (typeof tokenOrContext === "string") {
         token = tokenOrContext;
       } else {
-        token = getCookie(tokenOrContext, COOKIE_NAME) || "";
+        token = getToken(tokenOrContext) as string;
         if (!token) return null;
       }
       const payload = await verify(token, JWT_SECRET);
