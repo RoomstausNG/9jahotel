@@ -26,8 +26,8 @@ import "dotenv/config";
 import { env } from "./env";
 import { drizzle } from "drizzle-orm/mysql2"; // we'll conditionally import
 import * as mysql from "mysql2/promise";
-// import { Pool as PgPool } from "pg";
-// import Database from "better-sqlite3";
+import { Pool as PgPool } from "pg";
+import Database from "better-sqlite3";
 
 // Env variables
 const DB_CONNECTION = env("DB_CONNECTION", "mysql");
