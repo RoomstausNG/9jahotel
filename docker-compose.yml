@@ -47,4 +47,5 @@ volumes:
 
 networks:
   9jahotel:
+    name: 9jahotel
     driver: bridge

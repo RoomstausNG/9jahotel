@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { cities, states, hotels, ratings } from "../database/migrations/schema";
 import { eq, lt, or, like, sql, countDistinct, and } from "drizzle-orm";
-import { db } from "../config/database";
+import { db, dbPool } from "../config/database";
 import { ApiResponse } from "../utils/ApiResponse";
 import { CityResource } from "../resources/CityResource";
 import { HotelResource } from "../resources/HotelResource";
@@ -18,7 +18,7 @@ export class LocationService {
       : undefined;
 
     // Fetch cities with optional search filter
-    const cityList = await db
+    const cityList = await dbPool
       .select({
         id: cities.id,
         name: cities.name,
