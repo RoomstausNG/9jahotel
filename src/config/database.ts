@@ -21,7 +21,7 @@
 // export { db, dbUrl, PORT, JWT_SECRET };
 import "dotenv/config";
 import { env } from "./env";
-import { AnyMySql2Connection, drizzle } from "drizzle-orm/mysql2"; // drizzle for MySQL
+import { drizzle } from "drizzle-orm/mysql2"; // drizzle for MySQL
 import * as mysql from "mysql2/promise";
 
 // Env variables
@@ -36,17 +36,14 @@ export const DB_PASSWORD = env("DB_PASSWORD", "");
 // Initialize DB_CONFIG based on connection type
 let dbConfigValue: any;
 
-if (DB_CONNECTION.toLowerCase() === "sqlite") {
-  const databasePath = DB_DATABASE || "./database.sqlite";
-  dbConfigValue = { path: databasePath };
-} else if (
+if (
   DB_CONNECTION === "mysql" ||
   DB_CONNECTION === "pgsql" ||
   DB_CONNECTION === "postgres" ||
   DB_CONNECTION === "postgresql"
 ) {
   dbConfigValue = DB_URL
-    ? { url: DB_URL }
+    ? { uri: DB_URL } // For MySQL/Postgres, use `uri` or the standard object format
     : {
         host: DB_HOST,
         port: DB_PORT,
@@ -62,12 +59,18 @@ if (DB_CONNECTION.toLowerCase() === "sqlite") {
 // Export the config as a constant
 export const DB_CONFIG = dbConfigValue;
 
-const poolConnection = mysql.createPool(dbConfigValue);
-
-// Exported variables
+// Direct MySQL connection (db) for one-off interactions
 let db: any;
-db = drizzle(DB_URL as string);
-let dbPool = drizzle({ client: poolConnection });
-let client: any;
+if (DB_URL) {
+  db = drizzle(DB_URL as string); // Drizzle for direct connection
+} else {
+  db = mysql.createConnection(dbConfigValue); // MySQL connection for non-URI connection
+}
 
+// Pool MySQL connection (dbPool) for repeated queries
+const poolConnection = mysql.createPool(dbConfigValue);
+let dbPool: any = drizzle(poolConnection); // Drizzle for connection pool
+let client: any = db; // Use `db` for direct queries
+
+// Export the necessary variables
 export { db, dbPool, client };

@@ -5,11 +5,30 @@ import { db, dbPool } from "../config/database";
 import { ApiResponse } from "../utils/ApiResponse";
 import { CityResource } from "../resources/CityResource";
 import { HotelResource } from "../resources/HotelResource";
+import { redis } from "../config/redis"; // Import Redis client
 
 @injectable()
 export class LocationService {
+  private readonly CACHE_EXPIRATION_SECONDS = 3600; // Cache for 1 hour
+
   // No constructor injection for database
   async getAllCities(page: number, perPage: number, search: string) {
+    const cacheKey = `cities:page:${page}:limit:${perPage}:search:${
+      search || ""
+    }`;
+
+    try {
+      // Try to get from cache first
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        console.log(`Cache hit for key: ${cacheKey}`);
+        return JSON.parse(cachedData);
+      }
+      console.log(`Cache miss for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error getting cache:", error);
+    }
+
     const offset = (page - 1) * perPage;
 
     // Prepare the search filter
@@ -41,7 +60,27 @@ export class LocationService {
       .innerJoin(hotels, eq(cities.id, hotels.city_id))
       .where(searchFilter);
 
-    return CityResource.toCollection(cityList, totalcities, page, perPage);
+    const result = CityResource.toCollection(
+      cityList,
+      totalcities,
+      page,
+      perPage
+    );
+
+    try {
+      // Cache the result
+      await redis.set(
+        cacheKey,
+        JSON.stringify(result),
+        "EX",
+        this.CACHE_EXPIRATION_SECONDS
+      );
+      console.log(`Cached data for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error setting cache:", error);
+    }
+
+    return result;
   }
 
   async searchHotelsNearby(
@@ -50,8 +89,25 @@ export class LocationService {
     maxDistanceKm: number,
     page = 1,
     perPage = 10,
-    search = ""
+    search = "",
+    customerId?: number
   ) {
+    const cacheKey = `hotels:nearby:lat:${lat}:long:${long}:maxDist:${maxDistanceKm}:page:${page}:limit:${perPage}:search:${
+      search || ""
+    }:user:${customerId || "guest"}`;
+
+    try {
+      // Try to get from cache first
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        console.log(`Cache hit for key: ${cacheKey}`);
+        return JSON.parse(cachedData);
+      }
+      console.log(`Cache miss for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error getting cache:", error);
+    }
+
     const offset = (page - 1) * perPage;
 
     const distanceExpr = sql<number>`
@@ -86,7 +142,6 @@ export class LocationService {
           ),
       })
       .from(hotels)
-
       .leftJoin(ratings, eq(hotels.id, ratings.hotel_id))
       .where(
         and(
@@ -110,6 +165,21 @@ export class LocationService {
         )
       );
 
-    return HotelResource.toCollection(hotelList, total, page, perPage);
+    const result = HotelResource.toCollection(hotelList, total, page, perPage);
+
+    try {
+      // Cache the result
+      await redis.set(
+        cacheKey,
+        JSON.stringify(result),
+        "EX",
+        this.CACHE_EXPIRATION_SECONDS
+      );
+      console.log(`Cached data for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error setting cache:", error);
+    }
+
+    return result;
   }
 }
