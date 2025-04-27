@@ -22,8 +22,17 @@ app.use(errorHandler);
 app.use(prettyJSON());
 app.use(logger());
 
-app.get("/hello", (c) => {
-  return c.json({ message: "Welcome to 9jaHotel.com!" }, 200);
+app.get("/", (c) => {
+  return c.json(
+    {
+      version: "v0",
+      message:
+        "Welcome to 9jaHotel.com! The apis is working this is a test version to test the apis",
+      description:
+        "The latest version for production server will be v1.wakalor.com, therefore pls keep it in mind",
+    },
+    200
+  );
 });
 
 // location and hotels endpoint
