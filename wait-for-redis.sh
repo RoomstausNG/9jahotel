@@ -10,5 +10,13 @@ done
 
 echo "✅ Redis is ready!, App is starting..."
 
+# wait-for-it.sh style
+until mysqladmin ping -h"$DB_HOST" --silent; do
+  echo "Waiting for MySQL at $DB_HOST..."
+  sleep 2
+done
+
+echo "MySQL is up — starting app"
+
 # Replace shell with bun app (important: keep PID 1)
 exec "$@"
