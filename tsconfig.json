@@ -5,7 +5,7 @@
       "./src/global"
     ],
     "strict": true,
-    // "jsx": "react-jsx",
+    "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
     // "module": "ES2022"
   }
