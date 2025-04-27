@@ -8,13 +8,8 @@ until redis-cli -h redis ping | grep PONG > /dev/null 2>&1; do
   sleep 3
 done
 
-echo "✅ Redis is ready!, App is starting..."
-
-# wait-for-it.sh style
-until mysqladmin ping -h"$DB_HOST" --silent; do
-  echo "Waiting for MySQL at $DB_HOST..."
-  sleep 2
-done
+echo "✅ Redis is ready!, MySQL is starting..."
+exec bun run db:pull
 
 echo "MySQL is up — starting app"
 
