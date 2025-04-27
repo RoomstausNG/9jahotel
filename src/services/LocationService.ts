@@ -2,7 +2,6 @@ import { injectable } from "inversify";
 import { cities, states, hotels, ratings } from "../database/migrations/schema";
 import { eq, lt, or, like, sql, countDistinct, and } from "drizzle-orm";
 import { db, dbPool } from "../config/database";
-import { ApiResponse } from "../utils/ApiResponse";
 import { CityResource } from "../resources/CityResource";
 import { HotelResource } from "../resources/HotelResource";
 import { redis } from "../config/redis"; // Import Redis client
