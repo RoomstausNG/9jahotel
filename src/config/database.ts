@@ -23,8 +23,7 @@ import "dotenv/config";
 import { env } from "./env";
 import { AnyMySql2Connection, drizzle } from "drizzle-orm/mysql2"; // drizzle for MySQL
 import * as mysql from "mysql2/promise";
-import { Pool as PgPool } from "pg";
-import { drizzle as sqliteDrizzle } from "drizzle-orm/better-sqlite3";
+
 // Env variables
 export const DB_CONNECTION = env("DB_CONNECTION", "mysql");
 export const DB_URL: string | null = env("DATABASE_URL");
@@ -68,7 +67,7 @@ const poolConnection = mysql.createPool(dbConfigValue);
 // Exported variables
 let db: any;
 db = drizzle(DB_URL as string);
-let dbPool = drizzle(poolConnection);
+let dbPool = drizzle({ client: poolConnection });
 let client: any;
 
 export { db, dbPool, client };
