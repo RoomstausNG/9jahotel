@@ -50,6 +50,7 @@ if (
         user: DB_USERNAME,
         password: DB_PASSWORD,
         database: DB_DATABASE,
+        waitForConnections: true,
         ssl: true,
       };
 } else {
