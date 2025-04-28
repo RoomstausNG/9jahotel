@@ -6,7 +6,7 @@ COPY . .
 RUN bun run build
 
 # Runtime stage
-FROM oven/bun:1 as runtime
+FROM oven/bun:1 AS runtime
 WORKDIR /app
 RUN apt-get update && apt-get install -y redis-tools curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
