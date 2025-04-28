@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { existsRoomsValidator } from "../validators/exists-room";
+import { existEmail } from "../validators/exists-email";
+import { uniquePhone } from "../validators/unique-phone";
 
 // DTO for booking creation
 export const CreateBookingDto = z
@@ -14,8 +16,8 @@ export const CreateBookingDto = z
     }),
     firstname: z.string().min(3, "First name must be at least 3 characters"),
     lastname: z.string().min(3, "Last name must be at least 3 characters"),
-    email: z.string().email("Invalid email format"),
-    phone: z.string().min(10, "Phone number must be at least 10 characters"),
+    email: uniqueEmail,
+    phone: uniquePhone,
     roomIds: existsRoomsValidator,
     type: z.enum(["standard", "premium", "deluxe"], {
       errorMap: () => ({ message: "Invalid room type selected" }),

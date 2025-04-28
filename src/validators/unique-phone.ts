@@ -7,7 +7,10 @@ export const uniquePhone = z
   .string()
   .min(10, "Phone number must be atleast 10 digits")
   .max(11, "Phone number must be atleast 11 digits")
-  .refine(isPhoneUnique, "Phone number already exists");
+  .refine(
+    isPhoneUnique,
+    "Phone number already exists. if you are the owner kindly login. Click on forget password to reset your password"
+  );
 
 export async function isPhoneUnique(phone: string): Promise<boolean> {
   const result = await db

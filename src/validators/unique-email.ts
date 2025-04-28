@@ -6,7 +6,10 @@ import { eq } from "drizzle-orm";
 export const uniqueEmail = z
   .string()
   .email()
-  .refine(isEmailUnique, "Email address already exists");
+  .refine(
+    isEmailUnique,
+    "Email address already exists, if you are the owner kindly login. Click on forget password to reset your password"
+  );
 
 export async function isEmailUnique(email: string): Promise<boolean> {
   const result = await db
