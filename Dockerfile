@@ -7,6 +7,8 @@ RUN bun run build --sourcemap
 
 # Runtime stage
 FROM oven/bun:1 AS runtime
+LABEL name="wakalor-backend"
+LABEL version="1.0.0"
 WORKDIR /app
 RUN apt-get update && apt-get install -y redis-tools curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
