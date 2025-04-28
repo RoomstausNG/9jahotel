@@ -2,6 +2,7 @@ import { z } from "zod";
 import { existsRoomsValidator } from "../validators/exists-room";
 import { existEmail } from "../validators/exists-email";
 import { uniquePhone } from "../validators/unique-phone";
+import { uniqueEmail } from "../validators/unique-email";
 
 // DTO for booking creation
 export const CreateBookingDto = z
@@ -19,7 +20,7 @@ export const CreateBookingDto = z
     email: uniqueEmail,
     phone: uniquePhone,
     roomIds: existsRoomsValidator,
-    type: z.enum(["standard", "premium", "deluxe"], {
+    type: z.enum(["PayATHotel", "PayNow", "NonRefundable"], {
       errorMap: () => ({ message: "Invalid room type selected" }),
     }),
     total: z.number().positive("Total must be a positive number"),

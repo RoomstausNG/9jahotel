@@ -40,7 +40,7 @@ app.route("/", hotelRoutes);
 
 app.get("/clear-caches", (c) => {
   const done = redis.flushall();
-  return c.json({ done }, 200);
+  return ApiResponse.success(null, "All saved cache cleared successfully");
 });
 
 // user endpoint
