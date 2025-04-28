@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: wakalor-backend:1.0.0
     ports:
       - "3003:3003"
     env_file:
