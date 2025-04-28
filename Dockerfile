@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --minify
 COPY . .
-RUN bun run build
+RUN bun run build --sourcemap
 
 # Runtime stage
 FROM oven/bun:1 AS runtime
