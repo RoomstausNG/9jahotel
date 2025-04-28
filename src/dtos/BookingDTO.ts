@@ -21,7 +21,6 @@ export const CreateBookingDto = z
       errorMap: () => ({ message: "Invalid room type selected" }),
     }),
     total: z.number().positive("Total must be a positive number"),
-    // Status is not included as it will be set to "unpaid" by default
   })
   .refine(
     (data) => {

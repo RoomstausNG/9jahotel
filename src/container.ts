@@ -17,7 +17,7 @@ container.bind<UserService>(UserService).toSelf().inSingletonScope();
 container.bind<AuthService>(AuthService).toSelf().inSingletonScope();
 container.bind<EmailService>(EmailService).toSelf().inSingletonScope();
 container.bind<LocationService>(LocationService).toSelf().inSingletonScope();
-container.bind<HotelService>(HotelService).toSelf().inSingletonScope(); // Bind HotelService
+container.bind<HotelService>(HotelService).toSelf().inSingletonScope();
 
 // Bind controllers
 container.bind<UserController>(UserController).toSelf().inSingletonScope();
