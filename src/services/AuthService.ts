@@ -390,9 +390,11 @@ export class AuthService {
       if (data.cityId !== undefined) updatePayload.city_id = data.cityId;
       if (data.idType !== undefined) updatePayload.id_type = data.idType;
       if (data.idNumber !== undefined) updatePayload.id_number = data.idNumber;
-      // REMOVED latitude/longitude handling if they are not part of ProfileUpdateDto anymore
-      // if (data.latitude !== undefined) updatePayload.latitude = data.latitude as unknown as string;
-      // if (data.longitude !== undefined) updatePayload.longitude = data.longitude as unknown as string;
+      // Restore latitude/longitude handling if they are part of ProfileUpdateDto
+      if (data.latitude !== undefined)
+        updatePayload.latitude = data.latitude as unknown as string;
+      if (data.longitude !== undefined)
+        updatePayload.longitude = data.longitude as unknown as string;
 
       // Handle date formatting specifically
       if (data.dob instanceof Date) {
