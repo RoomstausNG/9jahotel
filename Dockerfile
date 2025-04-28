@@ -4,7 +4,7 @@ COPY package.json bun.lock ./
 RUN bun install --minify
 COPY . .
 ENV NODE_ENV=production
-RUN bun run build
+RUN bun run build --minify --sourcemap --bundle
 
 # Runtime stage
 FROM oven/bun:1 AS runtime
