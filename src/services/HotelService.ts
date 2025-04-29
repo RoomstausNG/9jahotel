@@ -13,7 +13,7 @@ import {
   bookings,
 } from "../database/migrations/schema";
 import { eq, and, sql, not, notInArray, isNotNull } from "drizzle-orm";
-import { db } from "../config/database";
+import { db, dbPool } from "../config/database";
 import { ApiResponse } from "../utils/ApiResponse";
 import { HotelResource } from "../resources/HotelResource";
 import { redis } from "../config/redis";
@@ -291,7 +291,7 @@ export class HotelService {
     try {
       const fetchedAmenitiesRaw = await amenitiesQuery;
       // Map directly if select is specific, otherwise map from raw result
-      formattedAmenities = fetchedAmenitiesRaw.map((item) => ({
+      formattedAmenities = fetchedAmenitiesRaw.map((item: any) => ({
         name: item.name,
         icon: item.icon,
       }));
@@ -768,5 +768,48 @@ export class HotelService {
     }
 
     return ApiResponse.success(message);
+  }
+
+  static async getRoomDetailsById(roomId: number) {
+    try {
+      const roomDetails = await db.query.rooms.findFirst({
+        where: eq(rooms.id, roomId),
+        with: {
+          // Select specific fields from the related hotel
+          hotel: {
+            columns: {
+              id: true,
+              code: true,
+              online_price: true,
+              non_refundable_price: true,
+            },
+          },
+          roomType: {
+            id: true,
+            price1: true,
+          },
+        },
+      });
+
+      if (!roomDetails) {
+        throw new Error(`Room with ID ${roomId} not found`);
+      }
+
+      // // Optionally, transform the image URL here if needed
+      // if (roomDetails.hotel?.background_image) {
+      //   roomDetails.hotel.background_image = getFullImageUrl(
+      //     roomDetails.hotel.background_image
+      //   );
+      // }
+
+      return roomDetails;
+    } catch (error: any) {
+      // Log the detailed error for debugging
+      console.error(`Error fetching room details for ID ${roomId}:`, error);
+      // Re-throw a more specific error or handle as appropriate
+      throw new Error(
+        `Could not fetch details for room with ID ${roomId}. Reason: ${error.message}`
+      );
+    }
   }
 }

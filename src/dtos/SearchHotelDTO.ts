@@ -27,13 +27,14 @@ export const SearchHotelByCityDTO = z
       }),
     }),
     page: z.coerce.number().min(1).default(1),
-    perpage: z.coerce.number().min(1).max(100).default(10),
+    perpage: z.coerce.number().min(1).max(100).default(24),
     search: z.string().optional().default(""),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date",
     path: ["checkOut"],
   });
+
 export const SearchHotelTypeDTO = z
   .object({
     checkIn: z.coerce

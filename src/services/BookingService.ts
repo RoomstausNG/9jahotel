@@ -1,7 +1,8 @@
 import { injectable, inject } from "inversify";
 import { db } from "../config/database";
 import { CreateBookingDtoType } from "../dtos/BookingDTO";
-import { v4 as uuidv4 } from "uuid";
+import { HotelService } from "../services/HotelService";
+import { getDaysBetweenDates } from "../utils/DateAmountUtils";
 
 @injectable()
 export class BookingService {
@@ -9,44 +10,49 @@ export class BookingService {
 
   async createBooking(bookingData: CreateBookingDtoType, userId?: number) {
     try {
-      // Start a transaction
-      const result = await db.transaction(async (tx) => {
+      const result = await db.transaction(async (tx: typeof db) => {
         // Create booking invoice first
-        const invoiceId = uuidv4();
-        const bookingInvoice = await tx.insert("booking_invoices").values({
-          id: invoiceId,
-          customer_id: userId || null,
-          customer_name: `${bookingData.firstname} ${bookingData.lastname}`,
-          customer_email: bookingData.email,
-          customer_phone: bookingData.phone,
-          total_amount: bookingData.total,
-          status: "unpaid", // Default status
-          check_in: bookingData.checkIn,
-          check_out: bookingData.checkOut,
-          created_at: new Date(),
-          updated_at: new Date(),
-        }).returning();
+        const invoiceId = await generateBookingReference();
+        const bookingInvoice = await tx
+          .insert("booking_invoices")
+          .values({
+            id: invoiceId,
+            customer_id: userId || null,
+            customer_name: `${bookingData.firstname} ${bookingData.lastname}`,
+            customer_email: bookingData.email,
+            customer_phone: bookingData.phone,
+            total_amount: bookingData.total,
+            status: "unpaid", // Default status
+            check_in: bookingData.checkIn,
+            check_out: bookingData.checkOut,
+            created_at: new Date(),
+            updated_at: new Date(),
+          })
+          .returning();
 
         // Create individual bookings for each room
         const bookings = await Promise.all(
           bookingData.roomIds.map(async (roomId) => {
-            return await tx.insert("bookings").values({
-              invoice_id: invoiceId,
-              room_id: roomId,
-              type: bookingData.type,
-              check_in: bookingData.checkIn,
-              check_out: bookingData.checkOut,
-              status: "unpaid", // Default status
-              created_at: new Date(),
-              updated_at: new Date(),
-            }).returning();
+            return await tx
+              .insert("bookings")
+              .values({
+                invoice_id: invoiceId,
+                room_id: roomId,
+                type: bookingData.type,
+                check_in: bookingData.checkIn,
+                check_out: bookingData.checkOut,
+                status: "unpaid", // Default status
+                created_at: new Date(),
+                updated_at: new Date(),
+              })
+              .returning();
           })
         );
 
         // Return combined result
         return {
           invoice: bookingInvoice[0],
-          bookings: bookings.map(booking => booking[0])
+          bookings: bookings.map((booking) => booking[0]),
         };
       });
 
@@ -57,10 +63,14 @@ export class BookingService {
     }
   }
 
-  async getBookingsByUser(userId: number, page: number = 1, perPage: number = 10) {
+  async getBookingsByUser(
+    userId: number,
+    page: number = 1,
+    perPage: number = 10
+  ) {
     try {
       const offset = (page - 1) * perPage;
-      
+
       // Get booking invoices for the user
       const invoices = await db.query.booking_invoices.findMany({
         where: (invoice, { eq }) => eq(invoice.customer_id, userId),
@@ -70,10 +80,10 @@ export class BookingService {
         with: {
           bookings: {
             with: {
-              room: true
-            }
-          }
-        }
+              room: true,
+            },
+          },
+        },
       });
 
       // Count total invoices for pagination
@@ -88,8 +98,8 @@ export class BookingService {
           total: totalCount[0].count,
           page,
           perPage,
-          totalPages: Math.ceil(totalCount[0].count / perPage)
-        }
+          totalPages: Math.ceil(totalCount[0].count / perPage),
+        },
       };
     } catch (error: any) {
       console.error("Error fetching bookings:", error);
@@ -104,10 +114,10 @@ export class BookingService {
         with: {
           bookings: {
             with: {
-              room: true
-            }
-          }
-        }
+              room: true,
+            },
+          },
+        },
       });
 
       if (!invoice) {

@@ -9,11 +9,12 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { PORT } from "./config/constants";
 import userRoutes from "./routes/user-routes";
-import authRoutes from "./routes/auth-routes"; // <-- 1. Import authRoutes
+import authRoutes from "./routes/auth-routes";
 import { ApiResponse } from "./utils/ApiResponse";
 import hotelRoutes from "./routes/hotel-routes";
 import { redis } from "./config/redis";
 import { hostname } from "os";
+import bookingRoutes from "./routes/booking-routes";
 
 const app = new Hono().basePath("/api");
 
@@ -36,6 +37,8 @@ app.get("/", (c) => {
 });
 
 // location and hotels endpoint
+app.route("/bookings", bookingRoutes);
+
 app.route("/", hotelRoutes);
 
 app.get("/clear-caches", (c) => {
