@@ -106,7 +106,7 @@ class Room extends Model implements HasMedia
     }
 
 
-    static function amountGenerated($start, $end)
+    public static function amountGenerated($start, $end)
     {
         self::has('bookings')
             ->withSum('bookings as total', 'due')

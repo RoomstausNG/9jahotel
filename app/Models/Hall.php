@@ -93,7 +93,7 @@ class Hall extends Model implements HasMedia
     }
 
 
-    static function boot()
+    protected static function boot()
     {
         parent::boot();
 
