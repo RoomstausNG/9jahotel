@@ -83,10 +83,10 @@ if [ ! -d "storage/framework/sessions" ]; then
   echo "Created storage/framework/sessions directory"
 fi
 
-if [ ! -d "storage/framework/views" ]; then
-  sudo mkdir -p storage/framework/views 2>/dev/null || mkdir -p storage/framework/views
-  echo "Created storage/framework/views directory"
-fi
+# if [ ! -d "storage/framework/views" ]; then
+#   sudo mkdir -p storage/framework/views 2>/dev/null || mkdir -p storage/framework/views
+#   echo "Created storage/framework/views directory"
+# fi
 
 if [ ! -d "bootstrap/cache" ]; then
   sudo mkdir -p bootstrap/cache 2>/dev/null || mkdir -p bootstrap/cache
@@ -99,6 +99,9 @@ sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R 
 
 # Bring the application back online
 echo ">> Bringing application online..."
+
+echo ">> Running hotel price update..."
+php artisan update:price
 
 php artisan optimize:cache
 
