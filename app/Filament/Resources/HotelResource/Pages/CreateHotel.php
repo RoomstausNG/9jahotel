@@ -6,6 +6,7 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use App\Filament\Resources\HotelResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Cache;
 
 class CreateHotel extends CreateRecord
 {
@@ -20,6 +21,12 @@ class CreateHotel extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function afterCreate(): void
+    {
+        parent::afterCreate();
+        Cache::forget('hotel_resource_' . $this->record->id);
     }
 
     // protected function mutateFormDataBeforeCreate(array $data): array

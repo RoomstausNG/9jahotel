@@ -379,7 +379,14 @@ class HotelResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        // Cache the hotel IDs for 5 minutes
+        $hotelIds = \Cache::remember('filament_hotels_ids', 300, function () {
+            return Hotel::withoutGlobalScopes([SoftDeletingScope::class])->pluck('id')->toArray();
+        });
+
+        // Return a query builder using the cached IDs
+        return Hotel::query()
+            ->whereIn('id', $hotelIds)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

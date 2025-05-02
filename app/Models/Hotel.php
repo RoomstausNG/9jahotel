@@ -204,9 +204,16 @@ class Hotel extends Model implements HasMedia
                 'from' => $hotel->created_at,
                 'subscription' => 'annually'
             ]);
-
-            // associated users to hotels
             $hotel->users()->attach(auth()->id());
+            \Cache::forget('hotel_resource_' . $hotel->id);
+        });
+
+        self::updated(function ($hotel) {
+            \Cache::forget('hotel_resource_' . $hotel->id);
+        });
+
+        self::deleted(function ($hotel) {
+            \Cache::forget('hotel_resource_' . $hotel->id);
         });
     }
 }
