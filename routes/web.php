@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Livewire\BookRoom;
 use App\Livewire\Register;
 use App\Livewire\Dashboard;
+use App\Livewire\HotelHall;
 use App\Livewire\LoginPage;
 use App\Livewire\HallResult;
 use App\Livewire\CreateHotel;
@@ -40,6 +41,7 @@ Route::get('/home', Dashboard::class)->name('dashboard');
 Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
 Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');
+Route::get('/hotel/{hotel:code}/halls', HotelHall::class)->name('hotels.halls');
 
 Route::get('/hotel/rooms/{category}', BookRoom::class)->name('bookroom');
 Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');

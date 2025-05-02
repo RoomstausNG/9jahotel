@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Livewire;
+
+use App\Models\Hall;
+use App\Models\Type;
+use App\Models\Hotel;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
+use Illuminate\Support\Facades\Session;
+use Livewire\Attributes\Layout;
+
+class HotelHall extends Component
+{
+    public Hotel $hotel;
+    public $hall;
+    public $halls = [];
+
+    public $review = false;
+    public $modal = false;
+
+    public function mount(Hotel $hotel)
+    {
+        $this->hotel = $hotel->load([
+            'halls',
+            'amenities' => function ($query) {
+                $query->select('amenities.id', 'name', 'icon');
+            },
+            'faqs' => function ($query) {
+                // Using the correct column names from the faqs table
+                $query->select('id', 'hotel_id', 'question_id', 'answer');
+            },
+            'faqs.question' => function ($query) {
+                $query->select('id', 'text', 'icon');
+            },
+            'city' => function ($query) {
+                $query->select('id', 'name');
+            },
+            'ratings' => function ($query) {
+                $query->select('id', 'hotel_id', 'number');
+            }
+        ]);
+
+        // Pre-process room categories to avoid N+1 queries in the view
+        $this->preparehalls();
+
+        // $this->hotel->load(['amenities', 'types']);
+    }
+
+    protected function preparehalls()
+    {
+        $checkin = Session::get('checkin');
+        $checkout = Session::get('checkout');
+
+        $this->halls = $this->hotel->halls()->whereHas(
+            'bookings',
+            fn(Builder $query) =>
+            $query->where('checked_in', '>', $checkout)
+                ->where('checked_out', '>', $checkin)
+        );
+    }
+
+
+    #[Layout('components.layouts.frontend')]
+    public function render()
+    {
+        return view('livewire.hotel-halls', [
+            'halls' => $this->halls
+        ]);
+    }
+}

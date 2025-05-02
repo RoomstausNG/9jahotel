@@ -148,8 +148,7 @@ class HallResult extends Component
 
         // Build the base query
         $query = Hotel::forSearchResults()->capacity($capacity)->with(['city', 'amenities', 'ratings'])
-            ->where('city_id', $cityId)
-        ;
+            ->where('city_id', $cityId);
 
         // Apply name filter if provided
         if (!empty($this->name)) {
