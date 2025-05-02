@@ -27,6 +27,7 @@ class CreateHotel extends CreateRecord
     {
         parent::afterCreate();
         Cache::forget('hotel_resource_' . $this->record->id);
+        Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
     }
 
     // protected function mutateFormDataBeforeCreate(array $data): array

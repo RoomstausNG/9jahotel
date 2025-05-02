@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 
 class Hotel extends Model implements HasMedia
 {
@@ -205,15 +206,18 @@ class Hotel extends Model implements HasMedia
                 'subscription' => 'annually'
             ]);
             $hotel->users()->attach(auth()->id());
-            \Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
         });
 
         self::updated(function ($hotel) {
-            \Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
         });
 
         self::deleted(function ($hotel) {
-            \Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('hotel_resource_' . $hotel->id);
+            Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
         });
     }
 }

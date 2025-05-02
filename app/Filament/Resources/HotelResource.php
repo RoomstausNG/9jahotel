@@ -18,6 +18,7 @@ use Nnjeim\World\Models\Country;
 use Dotswan\MapPicker\Fields\Map;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
@@ -380,7 +381,7 @@ class HotelResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         // Cache the hotel IDs for 5 minutes
-        $hotelIds = \Cache::remember('filament_hotels_ids', 300, function () {
+        $hotelIds = Cache::remember('filament_hotels_ids', 300, function () {
             return Hotel::withoutGlobalScopes([SoftDeletingScope::class])->pluck('id')->toArray();
         });
 

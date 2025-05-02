@@ -35,11 +35,13 @@ class EditHotel extends EditRecord
     {
         parent::afterSave();
         Cache::forget('hotel_resource_' . $this->record->id);
+        Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
     }
 
     protected function afterDelete(): void
     {
         parent::afterDelete();
         Cache::forget('hotel_resource_' . $this->record->id);
+        Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
     }
 }
