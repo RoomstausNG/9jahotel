@@ -58,7 +58,7 @@ class BookHall extends Component implements HasForms
 
     public function addBooking($type)
     {
-        if (count($this->checked) < 1) {
+        if (!$this->hall) {
             $details = [
                 'icon' => 'error',
                 'text' => 'Kindly select from the available halls from the list',
@@ -66,7 +66,7 @@ class BookHall extends Component implements HasForms
             ];
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
         } else {
-            $halls = Hall::whereIn('id', $this->checked)->get();
+            $hall = $this->hall;
             $customer = $this->getOrCreateCustomer($this->form->getState());
 
             $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
@@ -94,10 +94,10 @@ class BookHall extends Component implements HasForms
             $data['booking_invoice_id'] = $invoice->id;
 
             // create bookings
-            foreach ($halls as $hall) {
-                $data['bookable_id'] = $hall->id;
-                $created = $this->createBooking($hall, $data, $customer);
-            }
+
+            $data['bookable_id'] = $hall->id;
+            $created = $this->createBooking($hall, $data, $customer);
+
 
             // associate customer if not exist before
             $this->associateCustomer($customer->id);
