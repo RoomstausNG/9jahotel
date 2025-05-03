@@ -6,6 +6,9 @@
         $nonRefundablePrice = $hall->price - ($hall->price * ($hotel->non_refundable_price ?? 0)) / 100;
     @endphp
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
+        <div class="py-5 max-w-7xl">
+            @livewire('search-hall')
+        </div>
         <h1 class="text-xl font-bold">{{ $hotel->name }}</h1>
         <h1 class="text-xl font-medium">Select Hall</h1>
         <div class="flex flex-col justify-between gap-6 lg:flex-row-reverse ">

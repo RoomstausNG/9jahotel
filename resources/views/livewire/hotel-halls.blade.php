@@ -10,6 +10,9 @@
     @endphp
 
     <div class="grid w-full max-w-screen-lg px-4 py-4 mx-auto space-y-8 rounded-lg">
+        <div class="py-5 max-w-6xl">
+            @livewire('search-hall')
+        </div>
         {{-- back button --}}
         <div class="w-full">
             <a href="{{ route('hotels.result', $hotel->city->id) }}"

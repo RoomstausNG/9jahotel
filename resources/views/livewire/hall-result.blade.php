@@ -1,6 +1,8 @@
 <div class="w-full mx-auto">
     <div class="w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
-        {{-- @livewire('search-city') --}}
+        <div class="py-5 max-w-6xl">
+            @livewire('search-hall')
+        </div>
         <div class="grid gap-8">
             {{-- results --}}
             <div id="results" class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 w-grid">
@@ -48,7 +50,7 @@
                                         style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;">
                                         {!! preg_replace(
                                             '/<svg
-                                                                                                                                                                                                        /',
+                                                                                                                                                                                                                                                                                                                                                                                                                /',
                                             '<svg height="20" width="auto" style="height: 20px; width: auto;"',
                                             $amenity->icon,
                                         ) !!}
