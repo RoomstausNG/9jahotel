@@ -5,6 +5,7 @@
         $discountedPrice = $hall->price - ($hall->price * ($hotel->online_price ?? 0)) / 100;
         $nonRefundablePrice = $hall->price - ($hall->price * ($hotel->non_refundable_price ?? 0)) / 100;
     @endphp
+
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
         <div class="py-5 max-w-7xl">
             @livewire('search-hall')
