@@ -1,4 +1,10 @@
 <div class="relative w-full p-0 mx-auto" x-data="{ review: false, modal: @entangle('modal').live }">
+    @php
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $discountedPrice = $category->price1 - ($category->price1 * ($hotel->online_price ?? 0)) / 100;
+        $nonRefundablePrice = $category->price1 - ($category->price1 * ($hotel->non_refundable_price ?? 0)) / 100;
+    @endphp
+
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
         <h1 class="text-xl font-bold">{{ $hotel->name }}</h1>
         <h1 class="text-xl font-medium">Select Room</h1>
@@ -42,13 +48,11 @@
                         </p>
                         <p class="flex items-center justify-between">
                             <span class="text-sm">No of Rooms</span>
-                            <span class="text-sm font-bold">{{ count($this->checked) }}</span>
+                            <span class="text-sm font-bold">{{ count($checked) }}</span>
                         </p>
 
                     </div>
-                    @php
-                        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
-                    @endphp
+
                     <p class="flex justify-end px-4 py-[2px] max-w-max border bg-white font-medium">
                         {{ $days }} night
                     </p>
@@ -117,21 +121,39 @@
                     @else
                         <div class="w-full p-4 space-y-4">
                             {{ $this->form }}
-                            <div class="flex items-center justify-center gap-8 py-3 mx-auto max-w-max">
-                                <button data-tooltip-placement="top" data-tooltip-target="guarantee"
-                                    wire:click="addBooking('online')" type="button"
-                                    class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-full bg-primary border-primary hover:text-black max-w-max">Reserve
-                                    &
-                                    Pay Now</button>
-                                <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
-                                    wire:click="addBooking('payAtTheHotel')" type="button"
-                                    class="px-6 py-2 mx-auto font-medium bg-white border-2 rounded-full text-primary border-primary hover:bg-secondary hover:text-black max-w-max">Reserve
-                                    & Pay at Hotel
-                                </button>
-                            </div>
+
                         </div>
                     @endif
-                    <div class="flex items-center justify-center -pt-8 p-0">
+                    <div
+                        class="flex items-center md:items-start flex-col md:flex-row justify-center gap-8 py-3 mx-auto max-w-max">
+                        <div class="flex flex-col justify-center items-center">
+                            <button data-tooltip-placement="top" data-tooltip-target="guarantee"
+                                wire:click="addBooking('online')" type="button"
+                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black max-w-max">Reserve
+                                &
+                                Pay Now ( {{ formatAsNaira($discountedPrice * $days * count($checked)) }})</button>
+                            <span>Refundable</span>
+                        </div>
+
+                        <div class="flex flex-col justify-center items-center">
+                            <button wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
+                                data-tooltip-target="guarantee"
+                                class="relative block font-semibold w-full p-3 px-6 max-w-max text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                Instant Pay
+                                {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
+                            </button>
+                            <span>(Non-Refundable)</span>
+                        </div>
+                        <div class="">
+                            <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
+                                wire:click="addBooking('payAtTheHotel')" type="button"
+                                class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black max-w-max">Pay
+                                on arrival ({{ formatAsNaira($discountedPrice * $days * count($checked)) }})
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- <div class="flex items-center justify-center -pt-8 p-0">
                         <button wire:click="addBooking('non-refundable')"
                             class="relative block font-bold w-full p-3 px-6 max-w-max text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
                             More! Pay NON REFUNDABLE
@@ -139,7 +161,7 @@
                                 {{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($this->checked), $hotel->non_refundable_price)) }}</span>
                             Now!
                         </button>
-                    </div>
+                    </div> --}}
 
                     <x-tooltip id="guarantee" content="Booking is GUARANTEED " />
                     <x-tooltip id="not-guarantee" content="Booking is subject to Cancellation" />
