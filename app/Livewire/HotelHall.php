@@ -52,14 +52,16 @@ class HotelHall extends Component
         $checkin = Session::get('checkin');
         $checkout = Session::get('checkout');
 
-        $this->halls = $this->hotel->halls()->whereHas(
-            'bookings',
-            fn(Builder $query) =>
-            $query->where('checked_in', '>', $checkout)
-                ->where('checked_out', '>', $checkin)
-        );
+        $this->halls = $this->hotel->halls()->with('bookings')
+            ->where('status', 'available')
+            ->whereDoesntHave('bookings', function (Builder $query) use ($checkin, $checkout) {
+                $query->where(function ($q) use ($checkin, $checkout) {
+                    $q->where('checked_in', '<', $checkout)
+                        ->where('checked_out', '>', $checkin);
+                });
+            })
+            ->get();
     }
-
 
     #[Layout('components.layouts.frontend')]
     public function render()

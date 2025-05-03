@@ -169,23 +169,23 @@
                 @forelse ($halls as $hall)
                     <div class="overflow-hidden rounded-lg shadow">
                         <div class="relative w-full">
-                            <span
+                            {{-- <span
                                 class="absolute z-50 flex items-center justify-center w-8 h-8 text-center text-white bg-green-400 rounded-full top-3 right-2">
                                 {{ $hall['available'] }}
-                            </span>
+                            </span> --}}
                             <!-- Carousel wrapper -->
                             <div class="relative h-48 overflow-hidden md:h-56">
-                                <img src="{{ getCloudinaryUrl($hall['image']) }}"
+                                <img src="{{ getCloudinaryUrl($hall->image) }}"
                                     class="absolute block object-cover w-full h-full"
                                     alt="{{ $hotel->name . ' 9jahotel' }}">
                             </div>
                         </div>
                         <div class="block p-4 space-y-3">
-                            <h1 class="font-medium capitalize hover:text-primary">{{ $hall['name'] }}</h1>
+                            <h1 class="font-medium capitalize hover:text-primary">{{ $hall->name }}</h1>
                             <div class="space-y-1">
                                 <div class="flex items-center justify-start space-x-3">
                                     <p class="font-medium text-gray-500 line-through">
-                                        {{ formatAsNaira($hall['price']) }}</p>
+                                        {{ formatAsNaira($hall->price) }}</p>
                                     <p class="text-sm">Walk-in Price</p>
                                 </div>
                                 <div class="flex items-center justify-between">
@@ -195,12 +195,12 @@
                                     @if ($hall['available'] > 0)
                                         <a href="{{ route('bookroom', $hall['id']) }}"
                                             class="px-4 py-1 text-sm font-medium text-white rounded-full bg-primary hover:bg-primary-800">
-                                            Select Room
+                                            Select Hall
                                         </a>
                                     @else
                                         <span
                                             class="px-4 py-1 text-sm font-medium text-gray-400 bg-gray-100 rounded-full cursor-not-allowed">
-                                            No available room
+                                            No available hall
                                         </span>
                                     @endif
                                 </div>
@@ -208,7 +208,7 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-xl">No room hall yet</p>
+                    <p class="text-xl">No hall yet</p>
                 @endforelse
             </div>
         </div>
