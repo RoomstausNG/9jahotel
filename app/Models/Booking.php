@@ -172,8 +172,8 @@ class Booking extends Model
             }
 
             // notifications
-            Notification::send($booking->customer, (new GuestBookingNotification($booking, $booking->bookable, $booking->status))->delay($delay->addSeconds(3)));
-            Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(5)));
+            // Notification::send($booking->customer, (new GuestBookingNotification($booking, $booking->bookable, $booking->status))->delay($delay->addSeconds(3)));
+            // Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(5)));
         });
 
         self::updated(function ($booking) {

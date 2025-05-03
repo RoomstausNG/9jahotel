@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\BelongToHotel;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BookingInvoice extends Model
 {
@@ -54,6 +55,24 @@ class BookingInvoice extends Model
             $invoice->commission_amount = $commission;
             $invoice->hotel_payable = $amountPayable;
             $invoice->save();
+
+            // Eager load relationships for serialization
+            $invoice->load(['customer', 'hotel', 'bookings.bookable']);
+
+            // Send booking invoice email to customer (queued)
+            Mail::to($invoice->customer->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
+            // Send booking invoice email to hotel (queued)
+            Mail::to($invoice->hotel->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
         });
+    }
+
+    /**
+     * Call this method after payment is confirmed to send payment emails.
+     */
+    public function sendPaymentEmails()
+    {
+        $this->load(['customer', 'hotel', 'bookings.bookable']);
+        Mail::to($this->customer->email)->queue(new \App\Mail\BookingPaymentEmail($this));
+        Mail::to($this->hotel->email)->queue(new \App\Mail\BookingPaymentEmail($this));
     }
 }

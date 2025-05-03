@@ -53,7 +53,13 @@
                 </tr>
                 <tr>
                     <td class="px-2">Room Number:</td>
-                    <td class="px-2">{{ $booking->bookable->number }}</td>
+                    <td class="px-2 uppercase">
+                        @if (!empty($booking->bookable->name))
+                            {{ $booking->bookable->name }}
+                        @else
+                            Room Number {{ $booking->bookable->number ?? '' }}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-2">Checked-In Date:</td>

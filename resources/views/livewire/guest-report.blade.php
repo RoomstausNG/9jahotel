@@ -57,7 +57,11 @@
                             {{ $booking->customer->id_number }}
                         </td>
                         <td class="px-4 py-2 uppercase">
-                            {{ $booking->bookable->number }}
+                            @if (!empty($booking->bookable->name))
+                                {{ $booking->bookable->name }}
+                            @else
+                                Room Number {{ $booking->bookable->number ?? '' }}
+                            @endif
                         </td>
                         <td class="px-4 py-2">
                             {{ $booking->checked_in->format('D d M, Y') }}
