@@ -33,7 +33,7 @@
                     </div>
                     @php
                         $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
-                        $discountedPrice = $hall->price - ($hall->price * ($hotel->online_price ?? 0) / 100);
+                        $discountedPrice = $hall->price - ($hall->price * ($hotel->online_price ?? 0)) / 100;
                     @endphp
                     <p class="flex justify-end px-4 py-[2px] max-w-max border bg-white font-medium">
                         {{ $days }} night
@@ -41,7 +41,8 @@
                     <div class="p-0">
                         <p class="flex items-center justify-between text-sm">
                             <span>Walk-in Price</span>
-                            <span class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($hall->price * $days) }}</span>
+                            <span
+                                class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($hall->price * $days) }}</span>
                         </p>
                         <p class="flex items-center justify-between text-sm">
                             <span>Discounted Price</span>
@@ -110,7 +111,7 @@
                 Swal.fire(event.details)
                 setTimeout(() => {
                     location.reload();
-                }, 5000);
+                }, 10000);
             });
         });
     </script>

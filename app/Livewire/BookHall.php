@@ -75,12 +75,12 @@ class BookHall extends Component implements HasForms
             $data['checked_out'] = Session::get('checkout');
             if ($type == 'non-refundable') {
                 $data['discount'] = $this->hall->hotel->non_refundable_price;
-                $data['due'] = calculateRemainingAmount($this->hall->price1 * $days, $this->hall->hotel->non_refundable_price);
-                $this->due = calculateRemainingAmount($this->hall->price1 * $days * count($this->checked), $this->hall->hotel->non_refundable_price);
+                $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
+                $this->due = calculateRemainingAmount($this->hall->price * $days * count($this->checked), $this->hall->hotel->non_refundable_price);
             } else {
                 $data['discount'] = $this->hall->hotel->online_price;
-                $data['due'] = calculateRemainingAmount($this->hall->price1 * $days, $this->hall->hotel->online_price);
-                $this->due = calculateRemainingAmount($this->hall->price1 * $days * count($this->checked), $this->hall->hotel->online_price);
+                $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->online_price);
+                $this->due = calculateRemainingAmount($this->hall->price * $days * count($this->checked), $this->hall->hotel->online_price);
             }
 
             // booking invoice
