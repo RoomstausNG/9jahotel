@@ -6,9 +6,14 @@
     @endphp
 
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
+        <div class="w-full py-6">
+            {{-- search result --}}
+            @livewire('search-city')
+        </div>
         <h1 class="text-xl font-bold">{{ $hotel->name }}</h1>
         <h1 class="text-xl font-medium">Select Room</h1>
         <div class="flex flex-col justify-between gap-6 lg:flex-row-reverse ">
+
             <div class="w-full p-2 border rounded-sm lg:w-1/3 xl:w-1/4 max-h-min">
                 @php
                     // $firstImage = $category->rooms()->where('image', '!=', null)->first();
