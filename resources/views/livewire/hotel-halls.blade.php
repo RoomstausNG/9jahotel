@@ -162,8 +162,8 @@
             </div>
         </div>
 
-        {{-- Room Categories Section --}}
-        <div class="w-full gap-4 space-y-4" id="price">
+        {{-- hall Section --}}
+        <div class="w-full gap-4 space-y-4 py-8" id="price">
             <h1 class="text-2xl font-semibold md:text-3xl">Choose your hall based on price</h1>
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 @forelse ($halls as $hall)
@@ -189,20 +189,18 @@
                                     <p class="text-sm">Walk-in Price</p>
                                 </div>
                                 <div class="flex items-center justify-between">
+                                    @php
+                                        $discountedPrice =
+                                            $hall->price - ($hall->price * ($hotel->online_price ?? 0)) / 100;
+                                    @endphp
                                     <p class="text-xl font-medium">
-                                        {{ formatAsNaira($hall['discountedPrice']) }}
+                                        {{ formatAsNaira($discountedPrice) }}
                                     </p>
-                                    @if ($hall['available'] > 0)
-                                        <a href="{{ route('bookroom', $hall['id']) }}"
-                                            class="px-4 py-1 text-sm font-medium text-white rounded-full bg-primary hover:bg-primary-800">
-                                            Select Hall
-                                        </a>
-                                    @else
-                                        <span
-                                            class="px-4 py-1 text-sm font-medium text-gray-400 bg-gray-100 rounded-full cursor-not-allowed">
-                                            No available hall
-                                        </span>
-                                    @endif
+                                    <a href="{{ route('bookhall', $hall->id) }}"
+                                        class="px-4 py-1 text-sm font-medium text-white rounded-full bg-primary hover:bg-primary-800">
+                                        Select Hall
+                                    </a>
+
                                 </div>
                             </div>
                         </div>

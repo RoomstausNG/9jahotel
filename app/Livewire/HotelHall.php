@@ -51,9 +51,11 @@ class HotelHall extends Component
     {
         $checkin = Session::get('checkin');
         $checkout = Session::get('checkout');
+        $capacity = Session::get('capacity');
 
         $this->halls = $this->hotel->halls()->with('bookings')
             ->where('status', 'available')
+            ->where('capacity', '>=', $capacity)
             ->whereDoesntHave('bookings', function (Builder $query) use ($checkin, $checkout) {
                 $query->where(function ($q) use ($checkin, $checkout) {
                     $q->where('checked_in', '<', $checkout)

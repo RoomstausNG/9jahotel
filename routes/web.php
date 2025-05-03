@@ -2,6 +2,7 @@
 
 use App\Models\User;
 
+use App\Livewire\BookHall;
 use App\Livewire\BookRoom;
 use App\Livewire\Register;
 use App\Livewire\Dashboard;
@@ -44,6 +45,7 @@ Route::get('/hotel/{hotel:code}', HotelDetails::class)->name('hotels.show');
 Route::get('/hotel/{hotel:code}/halls', HotelHall::class)->name('hotels.halls');
 
 Route::get('/hotel/rooms/{category}', BookRoom::class)->name('bookroom');
+Route::get('/hotel/halls/{hall}', BookHall::class)->name('bookhall');
 Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
 Route::get("/login", LoginPage::class)->name('login')->middleware('page-cache');
