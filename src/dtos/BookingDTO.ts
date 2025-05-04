@@ -56,26 +56,6 @@ export const CreateBookingDto = z
     path: ["checkOut"],
   });
 
-// export const CreateBookingDto = z
-//   .object({
-//     checkIn: z.coerce
-//       .date({
-//         errorMap: (issue, ctx) => ({
-//           message: "Invalid check-in date format. Please provide a valid date.",
-//         }),
-//       })
-//       .min(startOfToday(), { message: "Check-in date cannot be in the past." }),
-
-//     checkOut: z.coerce.date({
-//       errorMap: (issue, ctx) => ({
-//         message: "Invalid check-out date format. Please provide a valid date.",
-//       }),
-//     }),
-//   })
-//   .refine((data) => data.checkOut > data.checkIn, {
-//     message: "Check-out date must be after check-in date",
-//     path: ["checkOut"],
-//   });
-
+  
 // Type inference
 export type CreateBookingDtoType = z.infer<typeof CreateBookingDto>;
