@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Notification;
 
 class GroupBooking extends Model
 {
@@ -64,6 +65,9 @@ class GroupBooking extends Model
                     $booking->hotels()->attach($hotelId);
                 }
             }
+            // Send notification email to info@9jahotel.com (queued)
+            Notification::route('mail', 'info.bowofade@gmail.com')
+                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking));
         });
     }
 }
