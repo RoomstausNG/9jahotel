@@ -71,7 +71,9 @@ class GroupBooking extends Model
                 $hotelNames = \App\Models\Hotel::whereIn('id', $booking->hotels)->pluck('name')->toArray();
             }
             // Send notification email to info@9jahotel.com (queued), with hotel names
-            Notification::route('mail', 'info.bowofade@gmail.com')
+            Notification::route('mail', 'group@9jahotel.com')
+                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
+            Notification::route('mail', 'bowofadeoyerinde@gmail.com')
                 ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
         });
     }
