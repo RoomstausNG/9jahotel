@@ -57,11 +57,13 @@ class GroupBooking extends Model
     {
         parent::booted();
 
-        // attach with hotels
+        // Attach hotels to the booking after creation
         self::created(function ($booking) {
-            foreach ($booking->hotels as $hotel) {
-                $hotel->group_bookings()->attach($booking->id);
-            };
+            if (is_array($booking->hotels)) {
+                foreach ($booking->hotels as $hotelId) {
+                    $booking->hotels()->attach($hotelId);
+                }
+            }
         });
     }
 }

@@ -276,6 +276,7 @@ class GroupBooking extends Component implements HasForms
         $booking->meal_from = $data['meal_from'] ?? null;
         $booking->meal_to = $data['meal_to'] ?? null;
         $booking->hotels = $data['hotels'] ?? null;
+        $booking->city_id = $data['city_id'];
         $booking->allow_external_bids = $data['allow_external_bids'] ?? false;
 
         $booking->save();
