@@ -10,7 +10,7 @@
     </div>
 </form> --}}
 
-<div>
+<div class="py-8 md:py-12 px-6 max-w-3xl mx-auto space-y-8">
     <x-filament-panels::form wire:submit="signUp">
         {{ $this->form }}
         <div class="w-full pt-2">
