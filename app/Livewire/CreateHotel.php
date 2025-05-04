@@ -249,7 +249,7 @@ class CreateHotel extends Component implements HasForms
     }
 
 
-    #[Layout('layouts.frontend')]
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         return view('livewire.create-hotel');
