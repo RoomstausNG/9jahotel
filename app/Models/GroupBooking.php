@@ -66,8 +66,8 @@ class GroupBooking extends Model
                 }
             }
             // Send notification email to info@9jahotel.com (queued)
-            // Notification::route('mail', 'info.bowofade@gmail.com')
-            //     ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking));
+            Notification::route('mail', 'info.bowofade@gmail.com')
+                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking));
         });
     }
 }
