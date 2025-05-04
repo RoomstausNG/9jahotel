@@ -4,7 +4,10 @@ import { BookingService } from "../services/BookingService";
 import { HotelService } from "../services/HotelService";
 import { ApiResponse } from "../utils/ApiResponse";
 import { CreateBookingDto } from "../dtos/BookingDTO";
-import { getDaysBetweenDates, calculateDiscountedAmount } from "../utils/DateAmountUtils";
+import {
+  getDaysBetweenDates,
+  calculateDiscountedAmount,
+} from "../utils/DateAmountUtils";
 
 @injectable()
 export class BookingController {
@@ -22,17 +25,21 @@ export class BookingController {
       console.log(room);
 
       const days = getDaysBetweenDates(body.checkIn, body.checkOut);
-      
-      const compute = calculateDiscountedAmount(room.price,days,percent);
+
+      const compute = calculateDiscountedAmount(room.price, days, percent);
 
       const percent =
         body.type == "NonRefundable"
           ? room.nonRefundablePercentage
           : room.onlinePercentage;
 
-          if(compute.remainingAmount != body.total){
-            ApiResponse.success(compute, `Invalid input the total amount for this booking type is ${compute.remainingAmount}`, ,400)
-          }
+      if (compute.remainingAmount != body.total) {
+        ApiResponse.success(
+          compute,
+          `Invalid input the total amount for this booking type is ${compute.remainingAmount}`,
+          400
+        );
+      }
 
       // Get user ID if authenticated
       const user = c.get("user");

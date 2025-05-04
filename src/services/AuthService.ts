@@ -58,8 +58,11 @@ export class AuthService {
 
   async register(data: CreateCustomerDtoType, c?: Context) {
     try {
-      // Hash password
-      const hashedPassword = bcrypt.hashSync(data.password, 12);
+      // Hash password and replace $2b$ with $2y$ for Laravel compatibility
+      let hashedPassword = bcrypt.hashSync(data.password, 12);
+      if (hashedPassword.startsWith("$2b$")) {
+        hashedPassword = "$2y$" + hashedPassword.slice(4);
+      }
 
       // Generate referral code once
       const referralCode = this._generateRandomCode(8);
@@ -224,8 +227,11 @@ export class AuthService {
         throw new Error("Current password is incorrect");
       }
 
-      // 3. Hash and update new password
-      const hashedPassword = bcrypt.hashSync(data.newPassword, 12);
+      // Hash and update new password, replace $2b$ with $2y$ for Laravel compatibility
+      let hashedPassword = bcrypt.hashSync(data.newPassword, 12);
+      if (hashedPassword.startsWith("$2b$")) {
+        hashedPassword = "$2y$" + hashedPassword.slice(4);
+      }
 
       await db
         .update(customers)
@@ -428,9 +434,6 @@ export class AuthService {
 
       const updatedUser = await AuthService.getUserById(user.id);
 
-      console.log("Update Payload:", updatePayload);
-      console.log("Update Result:", updateResult); // Log the result if using returning()
-      console.log("Fetched Updated User:", updatedUser);
       c.set("user", updatedUser);
       return updatedUser;
     } catch (error) {
@@ -570,8 +573,11 @@ export class AuthService {
         throw new Error("User not found.");
       }
 
-      // 3. Hash the new password
-      const hashedPassword = bcrypt.hashSync(password, 12);
+      // 3. Hash the new password and replace $2b$ with $2y$ for Laravel compatibility
+      let hashedPassword = bcrypt.hashSync(password, 12);
+      if (hashedPassword.startsWith("$2b$")) {
+        hashedPassword = "$2y$" + hashedPassword.slice(4);
+      }
 
       // 4. Update password and increment token_version
       await db
