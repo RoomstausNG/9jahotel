@@ -16,6 +16,7 @@
         }
     </style>
 
+    @livewireStyles
     @filamentStyles
     @vite('resources/css/app.css')
 </head>
@@ -35,8 +36,8 @@
                 </button>
             </div>
             <nav class="flex-1 py-4 space-y-2">
-                <a href="/dashboard"
-                    class="flex items-center px-4 py-2 hover:bg-gray-100 transition group {{ request()->is('dashboard') ? 'bg-gray-200 font-bold text-primary-700' : '' }}">
+                <a href="/home"
+                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('home') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6m-6 0H7m6 0v6m0 0h6m-6 0H7" />
@@ -44,15 +45,15 @@
                     <span class="ml-3 text-gray-700" x-show="open">Dashboard</span>
                 </a>
                 <a href="/profile"
-                    class="flex items-center px-4 py-2 hover:bg-gray-100 transition group {{ request()->is('profile') ? 'bg-gray-200 font-bold text-primary-700' : '' }}">
+                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('profile') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
                     </svg>
                     <span class="ml-3 text-gray-700" x-show="open">Profile</span>
                 </a>
-                <a href="/bookings"
-                    class="flex items-center px-4 py-2 hover:bg-gray-100 transition group {{ request()->is('bookings') ? 'bg-gray-200 font-bold text-primary-700' : '' }}">
+                <a href="/bookings/reservations"
+                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('bookings/reservations') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path
@@ -61,17 +62,15 @@
                     <span class="ml-3 text-gray-700" x-show="open">Bookings</span>
                 </a>
                 <a href="/favorites"
-                    class="flex items-center px-4 py-2 hover:bg-gray-100 transition group {{ request()->is('favorites') ? 'bg-gray-200 font-bold text-primary-700' : '' }}">
+                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('favorites') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path d="M5 15l7-7 7 7" />
                     </svg>
                     <span class="ml-3 text-gray-700" x-show="open">Favorites</span>
                 </a>
-                <!-- Logout link in aside navigation (now uses the same form as profile dropdown) -->
-                <a href="#"
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                    class="flex items-center px-4 py-2 text-red-600 hover:bg-gray-100 transition group">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                    class="flex items-center px-4 py-3 text-red-600 hover:bg-gray-100 transition group">
                     <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -113,12 +112,13 @@
                                 <div class="text-xs text-gray-500">{{ auth('customers')->user()->email }}</div>
                             </div>
                             <!-- Hidden logout form -->
-                            <form id="logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
+                            <form id="logout-form" method="POST" action="{{ route('customer.logout') }}"
+                                class="hidden">
                                 @csrf
                             </form>
                             <a href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                class="w-full flex items-center px-4 py-2 text-red-600 hover:bg-gray-100 transition">
+                                class="w-full flex items-center px-4 py-3 text-red-600 hover:bg-gray-100 transition">
                                 <svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -130,12 +130,13 @@
                     </div>
                 </div>
             </header>
-            <main class="flex-1">
+            <main class="flex-1 px-6">
                 {{ $slot }}
             </main>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    @livewireScripts
     @filamentScripts
     @vite('resources/js/app.js')
 </body>

@@ -151,6 +151,10 @@ class User extends Authenticatable implements FilamentUser, HasName
 
     public function scopeExcludeSuperadmins($query, $filter)
     {
+        if (is_array($filter)) {
+            // If array, join to string or handle as needed
+            $filter = implode(' ', $filter);
+        }
         return $query
             ->where('hotel_id', auth()->user()->hotel_id)
             // ->where('current_role', '!=', 'super-admin')
@@ -159,6 +163,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         // ->orWhere('lastname', 'LIKE', trim($filter))
         // ->orwhereHas('department', fn (Builder $query) => $query->where('name', 'LIKE', trim($filter)));
     }
+
     public function scopeMyStaff($query, $filter)
     {
         return $query

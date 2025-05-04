@@ -13,6 +13,7 @@ use App\Livewire\CreateHotel;
 use App\Livewire\GroupBooking;
 use App\Livewire\HotelDetails;
 use App\Livewire\SearchResult;
+use App\Livewire\Favorites;
 use App\Models\BookingInvoice;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -40,9 +41,10 @@ Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy'
 Route::get('/home', Dashboard::class)->name('dashboard')->middleware('auth:customers');
 Route::post('/customer/logout', function () {
     auth('customers')->logout();
+    // Session::flush(); // Ensure all session data is cleared
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/login');
+    return redirect('/login'); // Redirect to the correct login page
 })->name('customer.logout');
 
 Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');
@@ -89,6 +91,11 @@ Route::view("/privacy-statement", 'privacy-statement')->name('privacy');
 Route::view("/content", 'content');
 Route::view("/terms-and-condition", 'terms');
 
+Route::get('/favorites', Favorites::class)->name('favorites');
+
+// Route::get('/profile', \App\Livewire\UserProfile::class)->name('profile');
+Route::get('/profile', \App\Livewire\Profile::class)->name('profile');
+Route::get('/bookings/reservations', \App\Livewire\Reservation::class)->name('reservations');
 
 Route::get('/payment/callback', function () {
     $paymentDetails = Paystack::getPaymentData();
