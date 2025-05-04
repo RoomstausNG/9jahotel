@@ -120,6 +120,14 @@ class BookingResource extends Resource
                         DateConstraint::make('created_at')
                             ->label('Booked On'),
                     ])->columnSpanFull(),
+                SelectFilter::make('status')
+                    ->label('Payment Status')
+                    ->options([
+                        'paid' => 'Paid',
+                        'unpaid' => 'Unpaid',
+                        'cancelled' => 'Cancelled',
+                    ])
+                    ->placeholder('Select Status'),
                 SelectFilter::make('hotel_id')
                     ->relationship('hotel', 'name')
                     ->label('Hotel')
