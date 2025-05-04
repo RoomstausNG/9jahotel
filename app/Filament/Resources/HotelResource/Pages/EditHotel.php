@@ -31,17 +31,17 @@ class EditHotel extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 
-    protected function afterSave(): void
-    {
-        parent::afterSave();
-        Cache::forget('hotel_resource_' . $this->record->id);
-        Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
-    }
+    // protected function afterSave(): void
+    // {
+    //     parent::afterSave();
+    //     Cache::forget('hotel_resource_' . $this->record->id);
+    //     Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
+    // }
 
-    protected function afterDelete(): void
-    {
-        parent::afterDelete();
-        Cache::forget('hotel_resource_' . $this->record->id);
-        Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
-    }
+    // protected function afterDelete(): void
+    // {
+    //     parent::afterDelete();
+    //     Cache::forget('hotel_resource_' . $this->record->id);
+    //     Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
+    // }
 }
