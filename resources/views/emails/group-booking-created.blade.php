@@ -53,7 +53,13 @@
     </tr>
     <tr>
         <th align="left">Room Budget</th>
-        <td>{{ $booking->room_budget }}</td>
+        <td>
+            @if (!is_null($booking->room_budget))
+                ₦{{ number_format($booking->room_budget, 2) }}
+            @else
+                N/A
+            @endif
+        </td>
     </tr>
     <tr>
         <th align="left">Need Hall?</th>
@@ -70,7 +76,13 @@
     </tr>
     <tr>
         <th align="left">Hall Budget</th>
-        <td>{{ $booking->hall_budget }}</td>
+        <td>
+            @if (!is_null($booking->hall_budget))
+                ₦{{ number_format($booking->hall_budget, 2) }}
+            @else
+                N/A
+            @endif
+        </td>
     </tr>
     <tr>
         <th align="left">Need Meal?</th>
@@ -87,7 +99,13 @@
     </tr>
     <tr>
         <th align="left">Meal Budget</th>
-        <td>{{ $booking->meal_budget }}</td>
+        <td>
+            @if (!is_null($booking->meal_budget))
+                ₦{{ number_format($booking->meal_budget, 2) }}
+            @else
+                N/A
+            @endif
+        </td>
     </tr>
     <tr>
         <th align="left">Meal Options</th>
