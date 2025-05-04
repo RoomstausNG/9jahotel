@@ -195,6 +195,14 @@ class Hotel extends Model implements HasMedia
         return $query;
     }
 
+    public function favouritedByCustomers()
+    {
+        return $this->belongsToMany(Customer::class, 'favourites')
+            ->using(Favourite::class)
+            ->withTimestamps();
+    }
+
+
     public function scopeForSearchResults(Builder $query): Builder
     {
         return $query->select('hotels.*')->distinct();

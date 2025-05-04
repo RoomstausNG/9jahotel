@@ -1,6 +1,6 @@
 <div class="py-8">
     <h1 class="text-2xl font-bold mb-4">Favorites</h1>
-    <div class="mb-4">
+    {{-- <div class="mb-4">
         <label for="city" class="font-semibold">Filter by City:</label>
         <select wire:model="city" id="city" class="border rounded px-2 py-1">
             <option value="">All Cities</option>
@@ -35,5 +35,7 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
+    </table> --}}
+
+    {{ $this->table }}
 </div>

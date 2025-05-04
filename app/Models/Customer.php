@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Favourite;
 use App\Traits\BelongToHotel;
-use App\Traits\HasManyFavourite;
 use App\Traits\HasManyRating;
+use Nnjeim\World\Models\City;
+use App\Traits\HasManyFavourite;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Nnjeim\World\Models\City;
 
 // #[ScopedBy([HotelScope::class])]
 class Customer extends Authenticatable
@@ -28,6 +29,13 @@ class Customer extends Authenticatable
     public function getNameAttribute(): string
     {
         return ucfirst($this->attributes['firstname'] . ' ' . $this->attributes['lastname']);
+    }
+
+    public function favoriteHotels()
+    {
+        return $this->belongsToMany(Hotel::class, 'favourites')
+            ->using(Favourite::class)
+            ->withTimestamps();
     }
 
     protected $casts = [

@@ -44,15 +44,15 @@
                     </svg>
                     <span class="ml-3 text-gray-700" x-show="open">Dashboard</span>
                 </a>
-                <a href="/profile"
+                {{-- <a href="/profile"
                     class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('profile') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" />
                     </svg>
                     <span class="ml-3 text-gray-700" x-show="open">Profile</span>
-                </a>
-                <a href="/bookings/reservations"
+                </a> --}}
+                <a href="{{ route('bookings') }}"
                     class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('bookings/reservations') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">

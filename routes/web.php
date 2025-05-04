@@ -18,6 +18,7 @@ use App\Models\BookingInvoice;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
+use App\Livewire\BookingHistory;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
 /*
@@ -95,7 +96,7 @@ Route::get('/favorites', Favorites::class)->name('favorites');
 
 // Route::get('/profile', \App\Livewire\UserProfile::class)->name('profile');
 Route::get('/profile', \App\Livewire\Profile::class)->name('profile');
-Route::get('/bookings/reservations', \App\Livewire\Reservation::class)->name('reservations');
+Route::get('/bookings', BookingHistory::class)->name('bookings');
 
 Route::get('/payment/callback', function () {
     $paymentDetails = Paystack::getPaymentData();
