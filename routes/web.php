@@ -37,7 +37,11 @@ Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState']
 Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
 Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
 
-Route::get('/home', Dashboard::class)->name('dashboard');
+Route::get('/home', Dashboard::class)->name('dashboard')->middleware('auth:customers');
+Route::post('/customer/logout', function () {
+    auth('customers')->logout();
+    return redirect('/customer/login');
+})->name('customer.logout');
 
 Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');

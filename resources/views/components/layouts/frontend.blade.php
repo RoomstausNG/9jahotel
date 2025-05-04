@@ -108,7 +108,7 @@
                     </li>
                     <li>
                         <a href="/login"
-                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white">Sign
+                            class="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white {{ request()->is('login') ? 'bg-gray-200 font-bold text-primary-700' : '' }}">Sign
                             in</a>
                     </li>
                     <li class="">
