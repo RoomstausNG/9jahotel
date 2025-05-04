@@ -84,7 +84,9 @@ class BookHall extends Component implements HasForms
                 'customer_id' => $customer->id,
                 'hotel_id' => $this->hall->hotel_id,
                 'amount' => $this->due,
-                'status' => 'unpaid'
+                'status' => 'unpaid',
+                'checked_in' => $data['checked_in'], // ensure checkin is saved
+                'checked_out' => $data['checked_out'], // ensure checkout is saved
             ]);
 
             $data['booking_invoice_id'] = $invoice->id;
