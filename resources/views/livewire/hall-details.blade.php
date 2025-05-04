@@ -157,30 +157,18 @@
         </div>
 
         <div class="p">
+
             <div x-data="{ expanded: false }">
                 <div :class="expanded ? '' : 'line-clamp-3'"
                     class="overflow-hidden transition-all duration-300 text-gray-800">
-                    <div x-data="{ expanded: false }">
-                        <div :class="expanded ? '' : 'line-clamp-3'"
-                            class="overflow-hidden transition-all duration-300 text-gray-800">
-                            {!! $hotel->description !!}
-                        </div>
-                        <button x-show="!expanded" @click="expanded = true"
-                            class="mt-2 text-blue-600 underline text-sm font-medium focus:outline-none" type="button">
-                            See more
-                        </button>
-                        <button x-show="expanded" @click="expanded = false"
-                            class="mt-2 text-blue-600 underline text-sm font-medium focus:outline-none" type="button">
-                            See less
-                        </button>
-                    </div>
+                    {!! $hotel->description !!}
                 </div>
                 <button x-show="!expanded" @click="expanded = true"
-                    class="mt-2 text-blue-600 underline text-sm font-medium focus:outline-none" type="button">
+                    class="mt-2 text-primary-600 underline text-sm font-medium focus:outline-none" type="button">
                     See more
                 </button>
                 <button x-show="expanded" @click="expanded = false"
-                    class="mt-2 text-blue-600 underline text-sm font-medium focus:outline-none" type="button">
+                    class="mt-2 text-primary-600 underline text-sm font-medium focus:outline-none" type="button">
                     See less
                 </button>
             </div>
