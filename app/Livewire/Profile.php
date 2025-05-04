@@ -55,19 +55,22 @@ class Profile extends Component implements HasForms
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('firstname')->label('First Name')->required(),
-            Forms\Components\TextInput::make('lastname')->label('Last Name')->required(),
-            Forms\Components\Select::make('gender')->label('Gender')->options([
-                'male' => 'Male',
-                'female' => 'Female',
-            ])->required(),
-            Forms\Components\TextInput::make('dob')->label('Date of Birth')->type('date')->required(),
-            Forms\Components\TextInput::make('address')->label('Address'),
-            Forms\Components\TextInput::make('phone')->label('Phone'),
-            Forms\Components\TextInput::make('id_type')->label('ID Type'),
-            Forms\Components\TextInput::make('id_number')->label('ID Number'),
-            Forms\Components\TextInput::make('email')->label('Email')->email()->required(),
-            Forms\Components\TextInput::make('city_id')->label('City ID'),
+            Forms\Components\Grid::make(2)
+                ->schema([
+                    Forms\Components\TextInput::make('firstname')->label('First Name')->required(),
+                    Forms\Components\TextInput::make('lastname')->label('Last Name')->required(),
+                    Forms\Components\Select::make('gender')->label('Gender')->options([
+                        'male' => 'Male',
+                        'female' => 'Female',
+                    ])->required(),
+                    Forms\Components\TextInput::make('dob')->label('Date of Birth')->type('date')->required(),
+                    Forms\Components\TextInput::make('address')->label('Address'),
+                    Forms\Components\TextInput::make('phone')->label('Phone'),
+                    Forms\Components\TextInput::make('id_type')->label('ID Type'),
+                    Forms\Components\TextInput::make('id_number')->label('ID Number'),
+                    Forms\Components\TextInput::make('email')->label('Email')->email()->required(),
+                    Forms\Components\TextInput::make('city_id')->label('City ID'),
+                ]),
         ];
     }
 
