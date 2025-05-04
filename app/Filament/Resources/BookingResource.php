@@ -119,6 +119,10 @@ class BookingResource extends Resource
                     ->constraints([
                         DateConstraint::make('created_at')
                             ->label('Booked On'),
+                        DateConstraint::make('checked_in')
+                            ->label('Check In'),
+                        DateConstraint::make('checked_out')
+                            ->label('Check Out'),
                     ])->columnSpanFull(),
                 SelectFilter::make('status')
                     ->label('Payment Status')
