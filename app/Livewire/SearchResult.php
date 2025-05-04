@@ -71,7 +71,7 @@ class SearchResult extends Component
         }
 
         // Check if the hotel is already a favorite
-        if ($customer->favorites()->where('hotel_id', $hotelId)->exists()) {
+        if ($customer->favourites()->where('hotel_id', $hotelId)->exists()) {
             return Notification::make()
                 ->title('Hotel is already in your favorites')
                 ->duration(7000)
@@ -80,7 +80,7 @@ class SearchResult extends Component
         }
 
         // Add to favorites
-        $customer->favorites()->create(['hotel_id' => $hotelId]);
+        $customer->favourites()->create(['hotel_id' => $hotelId]);
 
         return Notification::make()
             ->title('Hotel added to favorite successfully')
@@ -124,7 +124,7 @@ class SearchResult extends Component
     {
         // Reset pagination when sort changes
         $this->resetPage();
-        
+
         // Ensure only one sort is active at a time
         // The $value parameter already contains the new sort value
         // No need to do anything else as Livewire will update the property
@@ -186,7 +186,7 @@ class SearchResult extends Component
         if (!empty($this->sortBy)) {
             if (isset($sortOptions[$this->sortBy])) {
                 $sort = $sortOptions[$this->sortBy];
-                
+
                 if (isset($sort['special']) && $sort['special'] === 'rating') {
                     // Handle rating sorting using the ratings relationship
                     $query->select('hotels.*')
