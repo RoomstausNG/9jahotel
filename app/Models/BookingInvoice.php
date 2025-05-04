@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongToHotel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +39,12 @@ class BookingInvoice extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function scopeMy(Builder $query)
+    {
+        $customer = auth('customers')->user();
+        return $query->where('customer_id', $customer->id);
     }
 
 

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -39,6 +41,11 @@ class Favorites extends Component implements HasTable, HasForms
         return $table
             ->query($query)
             ->columns([
+                ImageColumn::make('logo')
+                    ->size(48)
+                    ->state(fn(Model $record) => $record->logo ? url(getCloudinaryUrl($record->logo)) : url('img/9jahotel.png'))
+                    ->disk('cloudinary')
+                    ->circular(),
                 TextColumn::make('name')->label('Hotel')->searchable(),
                 TextColumn::make('city.name')->label('City')->searchable(),
                 TextColumn::make('address')->label('Address')->searchable(),
@@ -46,7 +53,11 @@ class Favorites extends Component implements HasTable, HasForms
             ->filters([
                 SelectFilter::make('city_id')
                     ->label('City')
-                    ->options(fn() => CityCopy::has('hotels')->get()->toArray()),
+
+                    // ->native(false)
+                    ->preload()
+                    ->options(fn() => CityCopy::has('hotels')->pluck('name', 'id')->toArray())
+                // ->searchable('name'),
             ])
             ->actions([
                 Tables\Actions\Action::make('unfavorite')

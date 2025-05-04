@@ -50,6 +50,8 @@ class Customer extends Authenticatable
         return $this->belongsTo(Business::class, 'business_id');
     }
 
+
+
     public function hotels(): BelongsToMany
     {
         return $this->belongsToMany(Hotel::class)->withTimestamps();

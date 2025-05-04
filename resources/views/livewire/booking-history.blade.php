@@ -1,3 +1,8 @@
-<div>
-    <x-filament::table :table="$this->table" />
+<div class="grid">
+    <div class="">
+
+    </div>
+    <div class="py-8">
+        {{ $this->table }}
+    </div>
 </div>
