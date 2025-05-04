@@ -14,9 +14,9 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $this->activeBookings = BookingInvoice::whereIn('status', ['active', 'occupied'])->count();
-        $this->canceledBookings = BookingInvoice::where('status', 'cancelled')->count();
-        $this->completedBookings = BookingInvoice::whereIn('status', ['completed', 'checked_out'])->count();
+        $this->activeBookings = BookingInvoice::whereIn('status', ['active', 'occupied'])->my()->count();
+        $this->canceledBookings = BookingInvoice::where('status', 'cancelled')->my()->count();
+        $this->completedBookings = BookingInvoice::whereIn('status', ['completed', 'checked_out'])->my()->count();
         $this->favorites = auth()->user()?->favourites()->count() ?? 0;
     }
 

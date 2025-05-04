@@ -53,7 +53,7 @@
                     <span class="ml-3 text-gray-700" x-show="open">Profile</span>
                 </a> --}}
                 <a href="{{ route('bookings') }}"
-                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('bookings/reservations') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
+                    class="flex items-center px-4 py-3 hover:bg-gray-100 transition group {{ request()->is('bookings') ? 'bg-primary-500/10 font-bold text-primary-500' : '' }}">
                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path

@@ -1,6 +1,6 @@
 <div class="container mx-auto py-8">
     <h2 class="text-2xl font-bold mb-6">Customer Dashboard</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
         <!-- Favorite Hotels -->
         <div class="rounded-xl p-6 h-40 flex flex-col justify-between relative overflow-hidden"
             style="background: linear-gradient(135deg, #ffb6b9 0%, #fae3d9 100%);">

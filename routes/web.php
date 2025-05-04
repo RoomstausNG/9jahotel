@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
 use App\Livewire\BookingHistory;
 use Unicodeveloper\Paystack\Facades\Paystack;
+use App\Livewire\SignupPage;
+use App\Livewire\ForgotPasswordPage;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +61,8 @@ Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
 Route::get("/login", LoginPage::class)->name('login')->middleware('page-cache');
 Route::get("/register", Register::class)->name('register')->middleware('page-cache');
+Route::get('/signup', SignupPage::class)->name('signup')->middleware('page-cache');
+Route::get('/forgot-password', ForgotPasswordPage::class)->name('password.request')->middleware('page-cache');
 
 Route::get('/session-debug', function () {
     return response()->json([

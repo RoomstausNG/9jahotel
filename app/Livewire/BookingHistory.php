@@ -20,7 +20,7 @@ class BookingHistory extends Component implements HasForms, HasTable
     public function table(Table $table)
     {
         return $table
-            ->query(BookingInvoice::query())
+            ->query(BookingInvoice::query()->my())
             ->columns([
                 Tables\Columns\TextColumn::make('reference')->label('Reference')->searchable(),
                 Tables\Columns\TextColumn::make('hotel.name')->label('Hotel'),
