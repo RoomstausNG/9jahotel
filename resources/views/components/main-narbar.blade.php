@@ -1,8 +1,17 @@
 <div class="hidden space-x-3 lg:flex">
-    {{-- <a href="/home"
-        class="flex items-center p-1 px-2 space-x-2 font-medium text-center {{ request()->is('home') ? 'bg-primary text-white' : 'bg-white' }} border border-gray-300 rounded-md shadow hover:bg-primary hover:text-white">
-        <img src="{{ asset('img/history-removebg-preview.png') }}" alt="{{ env('APP_NAME') }}" class="w-8 2xl:w-10">
-        <span>Dashboard</span> </a> --}}
+    @auth('customers')
+        <a href="{{ route('dashboard') }}"
+            class="flex items-center p-1 px-2 space-x-2 font-medium text-center {{ request()->is('home') ? 'bg-primary text-white' : 'bg-white' }} border border-gray-300 rounded-md shadow hover:bg-primary hover:text-white">
+            <img src="{{ asset('img/history-removebg-preview.png') }}" alt="{{ env('APP_NAME') }}" class="w-8 2xl:w-10">
+            <span>Dashboard</span>
+        </a>
+    @else
+        <a href="{{ route('login') }}"
+            class="flex items-center p-1 px-2 space-x-2 font-medium text-center {{ request()->is('login') ? 'bg-primary text-white' : 'bg-white' }} border border-gray-300 rounded-md shadow hover:bg-primary hover:text-white">
+            <img src="{{ asset('img/history-removebg-preview.png') }}" alt="{{ env('APP_NAME') }}" class="w-8 2xl:w-10">
+            <span>Sign In</span>
+        </a>
+    @endauth
 
     @can('read reservation')
         <a href="{{ route('reservations') }}"

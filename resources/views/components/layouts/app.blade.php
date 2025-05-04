@@ -68,12 +68,9 @@
                     </svg>
                     <span class="ml-3 text-gray-700" x-show="open">Favorites</span>
                 </a>
-                <!-- Logout link in aside navigation -->
-                <form id="aside-logout-form" method="POST" action="{{ route('logout') }}" class="hidden">
-                    @csrf
-                </form>
+                <!-- Logout link in aside navigation (now uses the same form as profile dropdown) -->
                 <a href="#"
-                    onclick="event.preventDefault(); document.getElementById('aside-logout-form').submit();"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                     class="flex items-center px-4 py-2 text-red-600 hover:bg-gray-100 transition group">
                     <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">

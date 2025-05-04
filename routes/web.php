@@ -40,7 +40,9 @@ Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy'
 Route::get('/home', Dashboard::class)->name('dashboard')->middleware('auth:customers');
 Route::post('/customer/logout', function () {
     auth('customers')->logout();
-    return redirect('/customer/login');
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
 })->name('customer.logout');
 
 Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');
