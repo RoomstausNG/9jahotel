@@ -11,8 +11,8 @@
 
 <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
     <tr>
-        <th align="left">Code</th>
-        <td>{{ $booking->code }}</td>
+        <th align="left">Name</th>
+        <td>{{ $booking->name }}</td>
     </tr>
     <tr>
         <th align="left">Organisation</th>
@@ -48,7 +48,8 @@
     </tr>
     <tr>
         <th align="left">Room Dates</th>
-        <td>{{ $booking->room_from }} to {{ $booking->room_to }}</td>
+        <td>{{ optional($booking->room_from)?->format('j F, Y') }} to
+            {{ optional($booking->room_to)?->format('j F, Y') }}</td>
     </tr>
     <tr>
         <th align="left">Room Budget</th>
@@ -64,7 +65,8 @@
     </tr>
     <tr>
         <th align="left">Hall Dates</th>
-        <td>{{ $booking->hall_from }} to {{ $booking->hall_to }}</td>
+        <td>{{ optional($booking->hall_from)?->format('j F, Y') }} to
+            {{ optional($booking->hall_to)?->format('j F, Y') }}</td>
     </tr>
     <tr>
         <th align="left">Hall Budget</th>
@@ -80,7 +82,8 @@
     </tr>
     <tr>
         <th align="left">Meal Dates</th>
-        <td>{{ $booking->meal_from }} to {{ $booking->meal_to }}</td>
+        <td>{{ optional($booking->meal_from)?->format('j F, Y') }} to
+            {{ optional($booking->meal_to)?->format('j F, Y') }}</td>
     </tr>
     <tr>
         <th align="left">Meal Budget</th>
@@ -97,7 +100,7 @@
     </tr>
     <tr>
         <th align="left">Created At</th>
-        <td>{{ $booking->created_at }}</td>
+        <td>{{ optional($booking->created_at)?->format('j F, Y') }}</td>
     </tr>
 </table>
 
