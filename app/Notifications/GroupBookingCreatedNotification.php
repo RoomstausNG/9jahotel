@@ -12,9 +12,7 @@ class GroupBookingCreatedNotification extends Notification implements ShouldQueu
 {
     use Queueable;
 
-
-
-    public function __construct(public GroupBooking $booking) {}
+    public function __construct(public GroupBooking $booking, public $hotelNames = []) {}
 
     public function via(object $notifiable): array
     {
@@ -30,7 +28,7 @@ class GroupBookingCreatedNotification extends Notification implements ShouldQueu
             ->view('emails.group-booking-created', [
                 'booking' => $this->booking,
                 'city' => $this->booking->city,
-                'hotels' => $this->booking->hotels,
+                'hotelNames' => $this->hotelNames,
             ]);
     }
 

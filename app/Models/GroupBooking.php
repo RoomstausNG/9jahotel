@@ -65,9 +65,14 @@ class GroupBooking extends Model
                     $booking->hotels()->attach($hotelId);
                 }
             }
-            // Send notification email to info@9jahotel.com (queued)
+            // Fetch hotel names for the email
+            $hotelNames = [];
+            if (is_array($booking->hotels) && count($booking->hotels)) {
+                $hotelNames = \App\Models\Hotel::whereIn('id', $booking->hotels)->pluck('name')->toArray();
+            }
+            // Send notification email to info@9jahotel.com (queued), with hotel names
             Notification::route('mail', 'info.bowofade@gmail.com')
-                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking));
+                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
         });
     }
 }

@@ -1,7 +1,10 @@
 <!-- ...existing code... -->
 @php
-    // Arrange by importance: hotels, city, dates, options, booleans, created_at
-    $hotelsList = $hotels->pluck('name')->join(', ');
+    // Use hotelNames if available, otherwise fallback to hotels collection
+    $hotelsList =
+        isset($hotelNames) && count($hotelNames)
+            ? collect($hotelNames)->join(', ')
+            : collect($hotels)->pluck('name')->join(', ');
 @endphp
 
 <h2>New Group Booking Created</h2>
