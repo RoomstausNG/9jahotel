@@ -124,14 +124,27 @@ class BookHall extends Component implements HasForms
 
     public function getOrCreateCustomer($data): Customer
     {
+        // Generate referral code: 8 uppercase chars, exclude 0,O,S,5
+        $referral_code = $this->generateReferralCode();
         return Customer::firstOrCreate(
             ['email' => $data['email']],
             [
                 'firstname' => $data['firstname'],
                 'lastname' => $data['lastname'],
                 'phone' => $data['phone'],
+                'referral_code' => $referral_code,
             ]
         );
+    }
+
+    private function generateReferralCode(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNPQRTUVWXYZ12346789'; // Exclude 0,O,S,5
+        $code = '';
+        for ($i = 0; $i < 8; $i++) {
+            $code .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $code;
     }
 
     public function createBooking($hall, $data, $customer): Booking

@@ -26,6 +26,26 @@ class Customer extends Authenticatable
         'remember_token',
     ];
 
+    protected static function booted()
+    {
+        parent::booted();
+        static::creating(function ($customer) {
+            if (empty($customer->referral_code)) {
+                $customer->referral_code = self::generateReferralCode();
+            }
+        });
+    }
+
+    protected static function generateReferralCode(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNPQRTUVWXYZ12346789'; // Exclude 0,O,S,5
+        $code = '';
+        for ($i = 0; $i < 8; $i++) {
+            $code .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $code;
+    }
+
     public function getNameAttribute(): string
     {
         return ucfirst($this->attributes['firstname'] . ' ' . $this->attributes['lastname']);
