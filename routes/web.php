@@ -96,11 +96,11 @@ Route::view("/privacy-statement", 'privacy-statement')->name('privacy');
 Route::view("/content", 'content');
 Route::view("/terms-and-condition", 'terms');
 
-Route::get('/favorites', Favorites::class)->name('favorites');
+Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:customers');
 
 // Route::get('/profile', \App\Livewire\UserProfile::class)->name('profile');
-Route::get('/profile', \App\Livewire\Profile::class)->name('profile');
-Route::get('/bookings', BookingHistory::class)->name('bookings');
+Route::get('/profile', \App\Livewire\Profile::class)->name('profile')->middleware('auth:customers');
+Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('auth:customers');
 
 Route::get('/payment/callback', function () {
     $paymentDetails = Paystack::getPaymentData();
