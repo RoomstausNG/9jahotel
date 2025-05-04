@@ -12,12 +12,9 @@ class GroupBookingCreatedNotification extends Notification implements ShouldQueu
 {
     use Queueable;
 
-    public GroupBooking $booking;
 
-    public function __construct(GroupBooking $booking)
-    {
-        $this->booking = $booking;
-    }
+
+    public function __construct(public GroupBooking $booking) {}
 
     public function via(object $notifiable): array
     {
