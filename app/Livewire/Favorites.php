@@ -54,10 +54,10 @@ class Favorites extends Component implements HasTable, HasForms
                 SelectFilter::make('city_id')
                     ->label('City')
 
-                    // ->native(false)
+                    ->native(false)
                     ->preload()
                     ->options(fn() => CityCopy::has('hotels')->pluck('name', 'id')->toArray())
-                // ->searchable('name'),
+                    ->searchable('name'),
             ])
             ->actions([
                 Tables\Actions\Action::make('unfavorite')
