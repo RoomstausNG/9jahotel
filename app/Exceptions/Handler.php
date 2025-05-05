@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Session\TokenMismatchException;
 
 class Handler extends ExceptionHandler
 {
@@ -34,6 +35,10 @@ class Handler extends ExceptionHandler
                     'message' => 'Record not found.',
                 ], 404);
             }
+        });
+
+        $this->renderable(function (TokenMismatchException $e, Request $request) {
+            return redirect('/');
         });
     }
 }
