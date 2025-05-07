@@ -21,17 +21,17 @@ export class BookingController {
 
       let singleRoomPrice = body.total / body.roomIds.length;
 
-      const room = HotelService.getRoomDetailsById(singleId);
+      const room = await HotelService.getRoomDetailsById(singleId);
       console.log(room);
 
       const days = getDaysBetweenDates(body.checkIn, body.checkOut);
-
-      const compute = calculateDiscountedAmount(room.price, days, percent);
 
       const percent =
         body.type == "NonRefundable"
           ? room.nonRefundablePercentage
           : room.onlinePercentage;
+
+      const compute = calculateDiscountedAmount(room.price, days, percent);
 
       if (compute.remainingAmount != body.total) {
         ApiResponse.success(

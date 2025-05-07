@@ -1,6 +1,7 @@
 FROM oven/bun:1 AS builder
 WORKDIR /app
 COPY package.json bun.lock ./
+COPY .env .env
 RUN bun install --minify
 COPY . .
 ENV NODE_ENV=production
@@ -16,6 +17,7 @@ RUN apt-get update && apt-get install -y redis-tools curl \
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
+COPY .env .env
 COPY wait-for-redis.sh /usr/local/bin/wait-for-redis.sh
 RUN chmod +x /usr/local/bin/wait-for-redis.sh
 EXPOSE 3003
