@@ -1,57 +1,77 @@
 import { injectable, inject } from "inversify";
 import { db } from "../config/database";
-import { CreateBookingDtoType } from "../dtos/BookingDTO";
-import { HotelService } from "../services/HotelService";
-import { getDaysBetweenDates } from "../utils/DateAmountUtils";
+import { generateBookingReference } from "../utils/referenceGenerator";
+import { HotelService } from "./HotelService";
+import { ourCommission } from "../utils/DateAmountUtils";
+import { booking_invoices } from "../database/index";
 
 @injectable()
 export class BookingService {
   constructor() {}
 
-  async createBooking(bookingData: CreateBookingDtoType, userId?: number) {
+  async createBooking(bookingData: any, userId?: number) {
+    let hotel: any;
     try {
+      // Fetch hotel name from the first roomId
+      let hotelName = undefined;
+
+      const room = await HotelService.getRoomDetailsById(
+        bookingData.roomIds[0]
+      );
+      hotel = room.hotel;
+      const settlement = ourCommission(
+        bookingData.total,
+        hotel.commsionPercent
+      );
+
+      const reference = await generateBookingReference(hotel.name);
       const result = await db.transaction(async (tx: typeof db) => {
         // Create booking invoice first
-        const invoiceId = await generateBookingReference();
-        const bookingInvoice = await tx
-          .insert("booking_invoices")
-          .values({
-            id: invoiceId,
-            customer_id: userId || null,
-            customer_name: `${bookingData.firstname} ${bookingData.lastname}`,
-            customer_email: bookingData.email,
-            customer_phone: bookingData.phone,
-            total_amount: bookingData.total,
-            status: "unpaid", // Default status
-            check_in: bookingData.checkIn,
-            check_out: bookingData.checkOut,
-            created_at: new Date(),
-            updated_at: new Date(),
-          })
-          .returning();
+        const bookingInvoiceResult = await tx.insert(booking_invoices).values({
+          reference,
+          amount: bookingData.total,
+          commission_amount: settlement.commissionAmount,
+          hotel_payable: settlement.hotelPayable,
+          status: "unpaid",
+          customer_id: userId,
+          hotel_id: hotel.id,
+          checked_in: bookingData.checkIn,
+          checked_out: bookingData.checkOut,
+          type: bookingData.type,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+
+        const invoiceId = bookingInvoiceResult[0].insertId;
 
         // Create individual bookings for each room
         const bookings = await Promise.all(
-          bookingData.roomIds.map(async (roomId) => {
-            return await tx
-              .insert("bookings")
-              .values({
-                invoice_id: invoiceId,
-                room_id: roomId,
-                type: bookingData.type,
-                check_in: bookingData.checkIn,
-                check_out: bookingData.checkOut,
-                status: "unpaid", // Default status
-                created_at: new Date(),
-                updated_at: new Date(),
-              })
-              .returning();
+          bookingData.roomIds.map(async (roomId: number) => {
+            return await tx.insert("bookings").values({
+              code: reference + "-" + roomId,
+              room_id: roomId,
+              type: "room",
+              booking_invoice_id: invoiceId,
+              hotel_id: hotel.id,
+              customer_id: userId,
+              bookable_id: roomId,
+              due: bookingData.total / bookingData.roomIds.length,
+              discount: this.getBookingCommissionPercent(bookingData, hotel),
+              amount_paid: 0,
+              via: "9jahotel",
+              bookable_type: "App\\Models\\Room",
+              check_in: bookingData.checkIn,
+              check_out: bookingData.checkOut,
+              status: "unpaid",
+              // created_at: new Date(),
+              // updated_at: new Date(),
+            });
           })
         );
 
         // Return combined result
         return {
-          invoice: bookingInvoice[0],
+          invoice: bookingInvoiceResult[0],
           bookings: bookings.map((booking) => booking[0]),
         };
       });
@@ -129,5 +149,21 @@ export class BookingService {
       console.error("Error fetching booking details:", error);
       throw new Error(error.message || "Failed to fetch booking details");
     }
+  }
+
+  /**
+   * Get the commission percent based on booking type.
+   * @param bookingData - The booking data object (must have type)
+   * @param hotel - The hotel object (must have nonRefundablePercentage and onlinePercentage)
+   * @returns The commission percent (number)
+   */
+  getBookingCommissionPercent(
+    bookingData: { type: string },
+    hotel: any
+  ): number {
+    if (bookingData.type === "Nonrefundable") {
+      return hotel.nonRefundablePercentage;
+    }
+    return hotel.onlinePercentage;
   }
 }

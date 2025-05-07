@@ -8,10 +8,15 @@ import {
   getDaysBetweenDates,
   calculateDiscountedAmount,
 } from "../utils/DateAmountUtils";
+import { AuthService } from "../services/AuthService";
+import { CreateCustomerDtoType } from "../types/customer";
 
 @injectable()
 export class BookingController {
-  constructor(@inject(BookingService) private bookingService: BookingService) {}
+  constructor(
+    @inject(BookingService) private bookingService: BookingService,
+    @inject(AuthService) private authService: AuthService
+  ) {}
 
   async createBooking(c: Context) {
     try {
@@ -22,28 +27,69 @@ export class BookingController {
       let singleRoomPrice = body.total / body.roomIds.length;
 
       const room = await HotelService.getRoomDetailsById(singleId);
-      console.log(room);
 
       const days = getDaysBetweenDates(body.checkIn, body.checkOut);
 
-      const percent =
+      const percent = Number(
         body.type == "NonRefundable"
-          ? room.nonRefundablePercentage
-          : room.onlinePercentage;
+          ? room.hotel.nonRefundablePercentage
+          : room.hotel.onlinePercentage
+      );
 
       const compute = calculateDiscountedAmount(room.price, days, percent);
-
-      if (compute.remainingAmount != body.total) {
-        ApiResponse.success(
-          compute,
-          `Invalid input the total amount for this booking type is ${compute.remainingAmount}`,
-          400
+      console.log({ room, body, percent, compute });
+      if (compute.remainingAmount !== body.total) {
+        return ApiResponse.failure(
+          `Invalid input the total amount for this booking type suppose to be ${compute.remainingAmount} but you provided ${body.total}`,
+          400,
+          compute
         );
       }
 
       // Get user ID if authenticated
-      const user = c.get("user");
-      const userId = user?.id;
+      let user = c.get("user");
+      let userId = user?.id;
+
+      // return ApiResponse.success(body, "Booking data validated successfully");
+
+      // If not authenticated, create a new customer and get the id
+      if (!userId) {
+        // Use AuthService.register to create a new customer
+        const customerData = {
+          email: body.email,
+          firstname: body.firstname,
+          lastname: body.lastname,
+          phone: body.phone,
+          password: body.password || "password",
+        };
+
+        user = await this.authService.register(customerData);
+        userId = user?.id;
+      } else {
+        // If authenticated, check idType and idNumber
+        if (!user.idType || !user.idNumber) {
+          return ApiResponse.failure(
+            "Documents must be updated before booking can be made.",
+            400,
+            {
+              idType: "ID type is required",
+              idNumber: "ID number is required",
+            }
+          );
+        }
+      }
+
+      const validatedData = {
+        ...body,
+        ...compute,
+        days,
+        percent,
+      };
+
+      return ApiResponse.success(
+        validatedData,
+        "Booking data validated successfully"
+      );
 
       // Create booking
       const booking = await this.bookingService.createBooking(

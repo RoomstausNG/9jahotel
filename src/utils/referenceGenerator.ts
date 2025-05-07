@@ -5,22 +5,35 @@ const REFERENCE_PREFIX = "RE9A";
 const PADDING_LENGTH = 8;
 
 /**
- * Generates a unique booking reference number (e.g., RE9A00000001).
+ * Generates a unique booking reference number (e.g., RE9A0501AH00000001).
  * Uses Redis to atomically increment a counter for the numeric part.
+ * @param hotelName Optional hotel name to generate prefix (e.g., "ADele Hotel" -> "AH")
  * @returns {Promise<string>} The generated booking reference.
  * @throws {Error} If Redis operation fails.
  */
-export async function generateBookingReference(): Promise<string> {
+export async function generateBookingReference(hotelName?: string): Promise<string> {
   try {
-    // Atomically increment the counter in Redis.
-    // If the key doesn't exist, Redis initializes it to 0 before incrementing.
-    const currentCount = await redis.incr(REDIS_COUNTER_KEY);
+    // Get month as two digits
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
 
-    // Pad the number with leading zeros to match the desired length.
+    // Generate hotel prefix (first letter of each word, max 2, uppercase)
+    let hotelPrefix = "";
+    if (hotelName) {
+      hotelPrefix = hotelName
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    }
+
+    // Atomically increment the counter in Redis.
+    const currentCount = await redis.incr(REDIS_COUNTER_KEY);
     const paddedCount = String(currentCount).padStart(PADDING_LENGTH, "0");
 
-    // Combine the prefix and the padded count.
-    const reference = `${REFERENCE_PREFIX}${paddedCount}`;
+    // Combine the prefix, month, hotelPrefix, and the padded count.
+    const reference = `${REFERENCE_PREFIX}${month}${hotelPrefix}${paddedCount}`;
 
     console.log(`Generated booking reference: ${reference}`); // Optional logging
     return reference;

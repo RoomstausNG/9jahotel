@@ -58,6 +58,19 @@ export class AuthService {
 
   async register(data: CreateCustomerDtoType, c?: Context) {
     try {
+      // First, check if user already exists by email
+      const [existingUser] = await this.getUserByEmail(data.email);
+      if (existingUser) {
+        // Optionally, fetch the user in the same format as after creation
+        const user = await AuthService.getUserById(existingUser.id);
+        // Optionally set cookie if context is provided
+        if (user && c) {
+          const token = await this.generateToken(user);
+          this.setAuthCookie(c, token);
+        }
+        return user;
+      }
+
       // Hash password and replace $2b$ with $2y$ for Laravel compatibility
       let hashedPassword = bcrypt.hashSync(data.password, 12);
       if (hashedPassword.startsWith("$2b$")) {
@@ -709,18 +722,3 @@ export class AuthService {
     }
   }
 }
-
-// You might need a helper function like this if your middleware provides a stream
-// Place this in a utils file, e.g., src/utils/streamToBuffer.ts
-/*
-import { Readable } from 'stream';
-
-export async function streamToBuffer(stream: Readable): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    stream.on('data', (chunk) => chunks.push(chunk));
-    stream.on('error', reject);
-    stream.on('end', () => resolve(Buffer.concat(chunks)));
-  });
-}
-*/

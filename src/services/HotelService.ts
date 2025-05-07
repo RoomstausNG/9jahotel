@@ -772,37 +772,50 @@ export class HotelService {
 
   static async getRoomDetailsById(roomId: number) {
     try {
-      const roomDetails = await db.query.rooms.findFirst({
-        where: eq(rooms.id, roomId),
-        with: {
-          // Select specific fields from the related hotel
+      // Join rooms and hotels to get both room and hotel info
+      const result = await db
+        .select({
+          id: rooms.id,
+          number: rooms.number,
+          type_id: rooms.type_id,
+          floor_id: rooms.floor_id,
+          hotel_id: rooms.hotel_id,
+          price: rooms.price,
+          capacity: rooms.capacity,
+          bed_type: rooms.bed_type,
+          status: rooms.status,
+          character: rooms.character,
+          description: rooms.description,
+          image: rooms.image,
+          is_available: rooms.is_available,
+          created_at: rooms.created_at,
+          updated_at: rooms.updated_at,
+          comment: rooms.comment,
           hotel: {
-            columns: {
-              id: true,
-              code: true,
-              online_price: true,
-              non_refundable_price: true,
-            },
+            id: hotels.id,
+            code: hotels.code,
+            name: hotels.name,
+            commsionPercent: hotels.percentage_charge,
+            onlinePercentage: hotels.online_price,
+            nonRefundablePercentage: hotels.non_refundable_price,
+            background_image: hotels.background_image,
           },
-          roomType: {
-            id: true,
-            price1: true,
-          },
-        },
-      });
+        })
+        .from(rooms)
+        .innerJoin(hotels, eq(rooms.hotel_id, hotels.id))
+        .where(eq(rooms.id, roomId))
+        .limit(1);
 
-      if (!roomDetails) {
+      if (!result || result.length === 0) {
         throw new Error(`Room with ID ${roomId} not found`);
       }
 
-      // // Optionally, transform the image URL here if needed
-      // if (roomDetails.hotel?.background_image) {
-      //   roomDetails.hotel.background_image = getFullImageUrl(
-      //     roomDetails.hotel.background_image
-      //   );
+      // Optionally, transform the image URL here if needed
+      // if (result[0].hotel?.background_image) {
+      //   result[0].hotel.background_image = getFullImageUrl(result[0].hotel.background_image);
       // }
 
-      return roomDetails;
+      return result[0];
     } catch (error: any) {
       // Log the detailed error for debugging
       console.error(`Error fetching room details for ID ${roomId}:`, error);
