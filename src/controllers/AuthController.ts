@@ -184,10 +184,9 @@ export class AuthController {
   async sendOtp(c: Context) {
     try {
       const body = await c.req.json();
-      const parsed = await SendOtpDto.parseAsync(body);
 
-      const result = await this.authService.sendOtp(parsed.email);
-      return ApiResponse.success(result.message);
+      const result = await this.authService.sendOtp(body.email);
+      return ApiResponse.success(null, result.message);
     } catch (error: any) {
       if (error.errors) {
         return ApiResponse.failure("Validation error", 422, error.errors);
@@ -200,10 +199,9 @@ export class AuthController {
   async resetPassword(c: Context) {
     try {
       const body = await c.req.json();
-      const parsed = await ResetPasswordDto.parseAsync(body); // Validate using ResetPasswordDto
 
-      const result = await this.authService.resetPassword(parsed);
-      return ApiResponse.success(result.message);
+      const result = await this.authService.resetPassword(body);
+      return ApiResponse.success(null, result.message, 201);
     } catch (error: any) {
       if (error.errors) {
         return ApiResponse.failure("Validation error", 422, error.errors);

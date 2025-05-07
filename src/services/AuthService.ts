@@ -46,7 +46,7 @@ export class AuthService {
     return result;
   }
 
-  private _generateOtp(length: number = 6): string {
+  private _generateOtp(length: number = 5): string {
     // Generate a simple numeric OTP
     const digits = "0123456789";
     let otp = "";
@@ -568,10 +568,6 @@ export class AuthService {
 
       // 2. Find user by email
       const [user] = await this.getUserByEmail(email);
-      if (!user) {
-        // Should ideally not happen if OTP was valid, but check anyway
-        throw new Error("User not found.");
-      }
 
       // 3. Hash the new password and replace $2b$ with $2y$ for Laravel compatibility
       let hashedPassword = bcrypt.hashSync(password, 12);
@@ -601,6 +597,13 @@ export class AuthService {
         }`
       );
     }
+  }
+
+  // Check if OTP Redis key exists for a given email
+  async checkOtpKeyExists(email: string): Promise<boolean> {
+    const redisKey = `${OTP_KEY_PREFIX}${email}`;
+    const exists = await redis.exists(redisKey);
+    return exists === 1;
   }
 
   async socialLogin(data: SocialLoginDtoType, c?: Context) {

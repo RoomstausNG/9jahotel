@@ -18,14 +18,18 @@ export class EmailService {
   constructor() {
     // Initialize the email transporter
     this.transporter = nodemailer.createTransport({
-      host: env("SMTP_HOST", "smtp.example.com"),
-      port: parseInt(env("SMTP_PORT", "587")),
-      secure: env("SMTP_SECURE", "false"),
+      pool: true, // Enable connection pooling
+      host: env("SMTP_HOST"),
+      port: 465,
+      secure: true, // Use TLS
+      maxConnections: 5, // Best practice default
+      maxMessages: 100, // Best practice default
       auth: {
-        user: env("SMTP_USER", ""),
-        pass: env("SMTP_PASSWORD", ""),
+        user: env("SMTP_USER"),
+        pass: "9jaHotel@2024",
       },
-    });
+      tls: { rejectUnauthorized: false },
+    } as nodemailer.TransportOptions);
 
     // Set the templates directory path
     this.templatesDir = path.join(process.cwd(), "src/templates/emails");
@@ -47,16 +51,25 @@ export class EmailService {
 
       // Compile the template with Handlebars
       const template = Handlebars.compile(templateSource);
-      const html = template(options.context);
+      // Always add current year to context
+      let contextWithYear = {
+        ...options.context,
+        year: new Date().getFullYear(),
+      };
+      const html = template(contextWithYear);
 
       // Send the email
       const result = await this.transporter.sendMail({
-        from: env("EMAIL_FROM", "noreply@example.com"),
+        from: env("EMAIL_FROM", "noreply@9jahotel.com"),
         to: options.to,
         subject: options.subject,
         html,
+        envelope: {
+          from: env("EMAIL_FROM", "noreply@9jahotel.com"),
+          to: options.to,
+        },
       });
-
+      console.log(options, typeof result);
       console.log(`Email sent to ${options.to}: ${result.messageId}`);
       return result;
     } catch (error) {
