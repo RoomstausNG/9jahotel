@@ -69,8 +69,6 @@ export class EmailService {
           to: options.to,
         },
       });
-      console.log(options, typeof result);
-      console.log(`Email sent to ${options.to}: ${result.messageId}`);
       return result;
     } catch (error) {
       console.error("Failed to send email:", error);
