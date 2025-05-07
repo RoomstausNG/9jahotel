@@ -80,30 +80,29 @@
                             {{ $this->form }}
                         </div>
                     @endif
-                    <div
-                        class="flex items-center md:items-start flex-col md:flex-row justify-center gap-8 py-3 mx-auto max-w-max">
-                        <div class="flex flex-col justify-center items-center">
+                    <div class="flex flex-col md:flex-row flex-wrap gap-8 mx-auto justify-center pt-8 w-full">
+                        <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                             <button data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('online')" type="button"
-                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black max-w-max">Reserve
+                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full">Reserve
                                 &
                                 Pay Now ( {{ formatAsNaira($discountedPrice * $days) }})</button>
                             <span>Refundable</span>
                         </div>
 
-                        <div class="flex flex-col justify-center items-center">
+                        <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                             <button wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
                                 data-tooltip-target="guarantee"
-                                class="relative block font-semibold w-full p-3 px-6 max-w-max text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                class="relative block font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100  border-primary animate ">
                                 Instant Pay
                                 {{ formatAsNaira($nonRefundablePrice * $days) }}
                             </button>
                             <span>(Non-Refundable)</span>
                         </div>
-                        <div class="">
+                        <div class=" w-full md:max-w-max">
                             <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
                                 wire:click="addBooking('payAtTheHotel')" type="button"
-                                class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black max-w-max">Pay
+                                class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black w-full">Pay
                                 on arrival ({{ formatAsNaira($discountedPrice * $days) }})
                             </button>
                         </div>
