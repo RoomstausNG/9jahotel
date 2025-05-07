@@ -67,7 +67,8 @@ app.get("/test-email", async (c) => {
       subject: "Test Email from 9jaHotel API",
       templateName: "password-reset", // Using existing template
       context: {
-        resetUrl: "https://example.com/reset-password?token=testtoken",
+        resetUrl:
+          env("FRONTEND_URL", "https://example.com") + "/reset-password",
         expiryHours: 1,
       },
     });
