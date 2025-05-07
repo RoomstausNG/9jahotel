@@ -2,7 +2,7 @@ import { redis } from "../config/redis";
 
 const REDIS_COUNTER_KEY = "booking_reference_counter";
 const REFERENCE_PREFIX = "RE9A";
-const PADDING_LENGTH = 4;
+const PADDING_LENGTH = 5;
 
 /**
  * Generates a unique booking reference number (e.g., RE9A0501AH00000001).

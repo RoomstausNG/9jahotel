@@ -1,4 +1,8 @@
-import { booking_invoices, bookings } from "./../database/migrations/schema";
+import {
+  booking_invoices,
+  bookings,
+  customers,
+} from "./../database/migrations/schema";
 import { injectable, inject } from "inversify";
 import { db, dbPool } from "../config/database";
 import { generateBookingReference } from "../utils/referenceGenerator";
@@ -52,7 +56,7 @@ export class BookingService {
           created_at: new Date(),
           updated_at: new Date(),
         });
-        
+
         const invoiceId =
           bookingInvoiceResult[0]?.insertId || bookingInvoiceResult[0]?.id;
         if (!invoiceId) {
@@ -83,9 +87,6 @@ export class BookingService {
             });
           })
         );
-
-        // Return the booking invoice resource
-        return await this.getBookingByIdOrReference(invoiceId);
       });
 
       // Send confirmation email after successful booking
@@ -96,12 +97,13 @@ export class BookingService {
             : bookingData.customerName || "Guest";
         const bookingAmount = bookingData.total;
         const numberOfRooms = bookingData.roomIds.length;
-        const roomCategory = room.category || room.type || "Room";
+        const roomCategory = room.roomCategory.name.toUpperCase();
         const bookingReference = reference;
         const checkIn = bookingData.checkIn;
         const checkOut = bookingData.checkOut;
         const guestEmail = bookingData.email;
 
+        // Send email to guest
         await this.emailService.sendTemplateEmail({
           to: guestEmail,
           subject: "Your Reservation is Confirmed",
@@ -119,11 +121,34 @@ export class BookingService {
             totalRooms: numberOfRooms,
           },
         });
+
+        // Send email to hotel
+        if (hotel.email) {
+          await this.emailService.sendTemplateEmail({
+            to: hotel.email,
+            subject: "New Reservation Received",
+            templateName: "hotelBooking",
+            context: {
+              hotelName: hotel.name,
+              customerName,
+              bookingAmount,
+              numberOfRooms,
+              roomCategory, // now uppercase
+              bookingReference,
+              checkIn,
+              checkOut,
+              bookedBy: customerName,
+              totalRooms: numberOfRooms,
+              guestEmail,
+            },
+          });
+        }
       } catch (emailError) {
         console.error("Failed to send booking confirmation email:", emailError);
       }
 
-      return result;
+      // Return the booking invoice resource
+      return await this.getBookingByIdOrReference(reference);
     } catch (error: any) {
       console.error("Error creating booking:", error);
       throw new Error(error.message || "Failed to create booking");
@@ -230,16 +255,12 @@ export class BookingService {
       }
       console.log(`Cache miss for key: ${cacheKey}`);
 
-      // Determine if input is numeric (ID) or string (reference)
-      const isNumeric = !isNaN(Number(idOrReference));
       let invoices;
+      const isNumeric =
+        !isNaN(Number(idOrReference)) &&
+        idOrReference !== "" &&
+        idOrReference !== null;
       if (isNumeric) {
-        invoices = await db
-          .select()
-          .from(booking_invoices)
-          .where(eq(booking_invoices.id, Number(idOrReference)))
-          .limit(1);
-      } else {
         invoices = await db
           .select()
           .from(booking_invoices)
@@ -250,6 +271,12 @@ export class BookingService {
             )
           )
           .limit(1);
+      } else {
+        invoices = await db
+          .select()
+          .from(booking_invoices)
+          .where(eq(booking_invoices.reference, String(idOrReference)))
+          .limit(1);
       }
       console.log(invoices);
 
@@ -259,26 +286,44 @@ export class BookingService {
         throw new Error("Booking not found");
       }
 
-      // Fetch related bookings and rooms manually if needed
+      // Fetch related bookings
       const relatedBookings = await db
         .select()
         .from(bookings)
         .where(eq(bookings.booking_invoice_id, invoice.id));
 
+      // Fetch customer details
+      const customer = await db
+        .select()
+        .from(customers)
+        .where(eq(customers.id, invoice.customer_id))
+        .first();
+      invoice.customer = customer;
+
+      // For each booking, fetch room/hall and category
+      for (const booking of relatedBookings) {
+        if (booking.room_id) {
+          booking.room = await db
+            .select()
+            .from(rooms)
+            .where(eq(rooms.id, booking.room_id))
+            .first();
+          // Optionally fetch category if not included in room
+          // booking.room.category = ...
+        }
+        if (booking.hall_id) {
+          booking.hall = await db
+            .select()
+            .from(halls)
+            .where(eq(halls.id, booking.hall_id))
+            .first();
+          // Optionally fetch category if not included in hall
+          // booking.hall.category = ...
+        }
+      }
       invoice.bookings = relatedBookings;
 
-      // Return the booking resource (not an array)
-      const result = BookingResource.toResource(invoice);
-
-      // Cache the result
-      await redis.set(
-        cacheKey,
-        JSON.stringify(result),
-        "EX",
-        CACHE_EXPIRATION_SECONDS
-      );
-
-      return result;
+      return BookingResource.toResource(invoice);
     } catch (error: any) {
       console.error("Error fetching booking by ID or reference:", error);
       throw new Error(error.message || "Failed to fetch booking");

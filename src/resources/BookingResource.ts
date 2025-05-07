@@ -9,7 +9,15 @@ export class BookingResource {
       commissionAmount: booking.commission_amount,
       hotelPayable: booking.hotel_payable,
       status: booking.status,
-      customerId: booking.customer_id,
+      customer: booking.customer
+        ? {
+            id: booking.customer.id,
+            firstname: booking.customer.firstname,
+            lastname: booking.customer.lastname,
+            email: booking.customer.email,
+            phone: booking.customer.phone,
+          }
+        : null,
       hotelId: booking.hotel_id,
       checkedIn: booking.checked_in,
       checkedOut: booking.checked_out,
@@ -20,28 +28,12 @@ export class BookingResource {
         ? booking.bookings.map((b: any) => ({
             id: b.id,
             code: b.code,
-            roomId: b.room_id,
-            type: b.type,
-            bookingInvoiceId: b.booking_invoice_id,
-            hotelId: b.hotel_id,
-            customerId: b.customer_id,
-            bookableId: b.bookable_id,
-            due: b.due,
-            discount: b.discount,
-            amountPaid: b.amount_paid,
-            via: b.via,
-            bookableType: b.bookable_type,
-            checkIn: b.check_in,
-            checkOut: b.check_out,
-            status: b.status,
-            createdAt: b.created_at,
-            updatedAt: b.updated_at,
-            room: b.room
-              ? {
-                  id: b.room.id,
-                  name: b.room.name,
-                  // ...add more room fields as needed
-                }
+            roomNumber: b.room ? b.room.number : undefined,
+            hallName: b.hall ? b.hall.name : undefined,
+            category: b.room
+              ? b.room.category
+              : b.hall
+              ? b.hall.category
               : undefined,
           }))
         : [],

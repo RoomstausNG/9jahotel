@@ -791,10 +791,16 @@ export class HotelService {
           created_at: rooms.created_at,
           updated_at: rooms.updated_at,
           comment: rooms.comment,
+          roomCategory: {
+            id: types.id,
+            name: types.name,
+            price1: types.price1,
+          },
           hotel: {
             id: hotels.id,
             code: hotels.code,
             name: hotels.name,
+            email: hotels.email,
             commissionPercent: hotels.percentage_charge,
             onlinePercentage: hotels.online_price,
             nonRefundablePercentage: hotels.non_refundable_price,
@@ -803,6 +809,7 @@ export class HotelService {
         })
         .from(rooms)
         .innerJoin(hotels, eq(rooms.hotel_id, hotels.id))
+        .innerJoin(types, eq(rooms.type_id, types.id))
         .where(eq(rooms.id, roomId))
         .limit(1);
 
