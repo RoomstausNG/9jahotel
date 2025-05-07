@@ -795,7 +795,7 @@ export class HotelService {
             id: hotels.id,
             code: hotels.code,
             name: hotels.name,
-            commsionPercent: hotels.percentage_charge,
+            commissionPercent: hotels.percentage_charge,
             onlinePercentage: hotels.online_price,
             nonRefundablePercentage: hotels.non_refundable_price,
             background_image: hotels.background_image,

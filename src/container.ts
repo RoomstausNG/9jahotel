@@ -9,6 +9,7 @@ import { LocationService } from "./services/LocationService";
 import { HotelService } from "./services/HotelService";
 import { HotelController } from "./controllers/HotelController";
 import { BookingService } from "./services/BookingService";
+import { PaymentService } from "./services/PaymentService";
 import { BookingController } from "./controllers/BookingController";
 
 // Create the container
@@ -21,6 +22,7 @@ container.bind<EmailService>(EmailService).toSelf().inSingletonScope();
 container.bind<LocationService>(LocationService).toSelf().inSingletonScope();
 container.bind<HotelService>(HotelService).toSelf().inSingletonScope();
 container.bind<BookingService>(BookingService).toSelf().inSingletonScope();
+container.bind<PaymentService>(PaymentService).toSelf().inSingletonScope();
 
 // Bind controllers
 container.bind<UserController>(UserController).toSelf().inSingletonScope();

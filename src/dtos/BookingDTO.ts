@@ -31,8 +31,8 @@ export const CreateBookingDto = z
 
     lastname: z.string().min(3, "Last name must be at least 3 characters"),
 
-    email: uniqueEmail,
-    phone: uniquePhone,
+    email: z.string(),
+    phone: z.string(),
     roomIds: existsRoomsValidator,
 
     type: z.enum(["PayAtHotel", "PayNow", "NonRefundable"], {
@@ -56,6 +56,17 @@ export const CreateBookingDto = z
     path: ["checkOut"],
   });
 
-  
 // Type inference
 export type CreateBookingDtoType = z.infer<typeof CreateBookingDto>;
+
+export const GetBookingByIdOrReferenceDTO = z.object({
+  reference: z.string().min(1, "Booking ID or reference is required"),
+});
+
+export const GetBookingsByStatusDTO = z.object({
+  status: z.enum(["completed", "cancelled", "current"], {
+    errorMap: (issue, ctx) => ({
+      message: "Status must be one of: completed, cancelled, current",
+    }),
+  }),
+});

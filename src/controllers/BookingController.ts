@@ -86,11 +86,6 @@ export class BookingController {
         percent,
       };
 
-      return ApiResponse.success(
-        validatedData,
-        "Booking data validated successfully"
-      );
-
       // Create booking
       const booking = await this.bookingService.createBooking(
         validatedData,
@@ -160,6 +155,72 @@ export class BookingController {
 
       return ApiResponse.failure(
         error.message || "Failed to fetch booking details",
+        error.status || 500
+      );
+    }
+  }
+
+  async getBookingByIdOrReference(c: Context) {
+    try {
+      const { reference: idOrReference } = c.req.param();
+      const booking = await this.bookingService.getBookingByIdOrReference(
+        idOrReference
+      );
+
+      if (!booking) {
+        return ApiResponse.failure("Booking not found", 404);
+      }
+
+      // Optionally, check user ownership here if needed
+
+      return ApiResponse.success(booking, "Booking fetched successfully");
+    } catch (error: any) {
+      return ApiResponse.failure(
+        error.message || "Failed to fetch booking",
+        error.status || 500
+      );
+    }
+  }
+
+  async verifyPayment(c) {
+    try {
+      const { transactionId, invoiceReference, userEmail } = await c.req.json();
+      // Fetch the booking invoice to get the expected amount
+      const [invoice] = await db
+        .select()
+        .from(booking_invoices)
+        .where(eq(booking_invoices.reference, invoiceReference))
+        .limit(1);
+      if (!invoice) {
+        return ApiResponse.failure(null, "Booking invoice not found.", 404);
+      }
+      const expectedAmount = invoice.amount;
+      // Call the payment verification service
+      const result = await PaymentService.verifyFlutterwavePayment({
+        transactionId,
+        expectedAmount,
+        invoiceReference,
+        userEmail,
+      });
+      if (result.success) {
+        return ApiResponse.success(null, result.message);
+      } else {
+        return ApiResponse.failure(null, result.message, 400);
+      }
+    } catch (error) {
+      return ApiResponse.failure(null, "Internal server error.", 500);
+    }
+  }
+
+  async getBookingsByStatus(c: Context) {
+    try {
+      const { status } = c.req.valid("param");
+      const userId = c.user.id; // Adjust this if you get userId differently
+      const bookings = await this.bookingService.getBookingsByStatus(userId, status);
+      return ApiResponse.success(bookings, "Bookings fetched successfully");
+    } catch (error: any) {
+      return ApiResponse.failure(
+        error.message || "Failed to fetch bookings",
         error.status || 500
       );
     }
