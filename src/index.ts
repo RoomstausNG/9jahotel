@@ -15,6 +15,7 @@ import hotelRoutes from "./routes/hotel-routes";
 import { redis } from "./config/redis";
 import { hostname } from "os";
 import bookingRoutes from "./routes/booking-routes";
+import { EmailService } from "./services/EmailService";
 
 const app = new Hono().basePath("/api");
 
@@ -55,6 +56,28 @@ app.route("/", authRoutes);
 // heath check
 app.get("/health", (c) => {
   return c.text("OK", 200); // Respond with status 200 for health checks
+});
+
+const emailService = new EmailService();
+
+app.get("/test-email", async (c) => {
+  try {
+    await emailService.sendTemplateEmail({
+      to: "fedumsoftware@gmail.com",
+      subject: "Test Email from 9jaHotel API",
+      templateName: "password-reset", // Using existing template
+      context: {
+        resetUrl: "https://example.com/reset-password?token=testtoken",
+        expiryHours: 1,
+      },
+    });
+    return ApiResponse.success(
+      null,
+      "Test email sent to fedumsoftware@gmail.com"
+    );
+  } catch (error: any) {
+    return ApiResponse.failure(error.message, 500);
+  }
 });
 
 // Not found errorHandler
