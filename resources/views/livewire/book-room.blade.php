@@ -131,7 +131,7 @@
                     @endif
                     <div
                         class="flex items-center flex-wrap md:items-start flex-col md:flex-row justify-center gap-8 pt-8 w-full mx-auto">
-                        <div class="flex flex-col justify-center items-center">
+                        <div class="flex flex-col justify-center items-center w-full md:max-w-max">
                             <button data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('online')" type="button"
                                 class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full">Reserve
@@ -140,16 +140,16 @@
                             <span>Refundable</span>
                         </div>
 
-                        <div class="flex flex-col justify-center items-center">
+                        <div class="flex flex-col justify-center items-center w-full md:max-w-max">
                             <button wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
                                 data-tooltip-target="guarantee"
-                                class="relative block font-semibold w-full p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                class="relative block font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100  border-primary animate ">
                                 Instant Pay
                                 {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
                             </button>
                             <span>(Non-Refundable)</span>
                         </div>
-                        <div class="">
+                        <div class="w-full md:max-w-max">
                             <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
                                 wire:click="addBooking('payAtTheHotel')" type="button"
                                 class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">Pay
