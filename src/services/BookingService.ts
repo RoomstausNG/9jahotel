@@ -7,6 +7,8 @@ import { ourCommission } from "../utils/DateAmountUtils";
 import { count, eq } from "drizzle-orm";
 import { EmailService } from "./EmailService";
 import { BookingResource } from "../resources/BookingResource";
+import { redis } from "../config/redis";
+import { or } from "drizzle-orm";
 
 @injectable()
 export class BookingService {
@@ -50,11 +52,7 @@ export class BookingService {
           created_at: new Date(),
           updated_at: new Date(),
         });
-
-        // Log the result for debugging
-        console.log("bookingInvoiceResult:", bookingInvoiceResult);
-
-        // Fix: get the correct insert ID
+        
         const invoiceId =
           bookingInvoiceResult[0]?.insertId || bookingInvoiceResult[0]?.id;
         if (!invoiceId) {
@@ -220,7 +218,18 @@ export class BookingService {
   }
 
   async getBookingByIdOrReference(idOrReference: string | number) {
+    const CACHE_EXPIRATION_SECONDS = 3600;
+    const cacheKey = `booking:invoice:${idOrReference}`;
+
     try {
+      // Try to get from cache first
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        console.log(`Cache hit for key: ${cacheKey}`);
+        return JSON.parse(cachedData);
+      }
+      console.log(`Cache miss for key: ${cacheKey}`);
+
       // Determine if input is numeric (ID) or string (reference)
       const isNumeric = !isNaN(Number(idOrReference));
       let invoices;
@@ -234,9 +243,15 @@ export class BookingService {
         invoices = await db
           .select()
           .from(booking_invoices)
-          .where(eq(booking_invoices.reference, idOrReference as string))
+          .where(
+            or(
+              eq(booking_invoices.id, Number(idOrReference)),
+              eq(booking_invoices.reference, String(idOrReference))
+            )
+          )
           .limit(1);
       }
+      console.log(invoices);
 
       const invoice = invoices[0];
 
@@ -253,14 +268,27 @@ export class BookingService {
       invoice.bookings = relatedBookings;
 
       // Return the booking resource (not an array)
-      return BookingResource.toResource(invoice);
+      const result = BookingResource.toResource(invoice);
+
+      // Cache the result
+      await redis.set(
+        cacheKey,
+        JSON.stringify(result),
+        "EX",
+        CACHE_EXPIRATION_SECONDS
+      );
+
+      return result;
     } catch (error: any) {
       console.error("Error fetching booking by ID or reference:", error);
       throw new Error(error.message || "Failed to fetch booking");
     }
   }
 
-  async getBookingsByStatus(userId: number, status: "completed" | "cancelled" | "current") {
+  async getBookingsByStatus(
+    userId: number,
+    status: "completed" | "cancelled" | "current"
+  ) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -283,19 +311,27 @@ export class BookingService {
 
     // If your ORM doesn't support this where clause function, use query builder logic instead.
 
-    const invoices = await db.query.booking_invoices.findMany({
-      where: whereClause,
-      orderBy: (booking_invoices, { desc }) => [
-        desc(booking_invoices.created_at),
-      ],
-      with: {
-        bookings: {
-          with: {
-            room: true,
-          },
-        },
-      },
-    });
+    // Replace this:
+    // const invoices = await db.query.booking_invoices.findMany({
+    //   where: whereClause,
+    //   orderBy: (booking_invoices, { desc }) => [
+    //     desc(booking_invoices.created_at),
+    //   ],
+    //   with: {
+    //     bookings: {
+    //       with: {
+    //         room: true,
+    //       },
+    //     },
+    //   },
+    // });
+    // With this:
+    const invoices = await db
+      .select()
+      .from(booking_invoices)
+      .where(whereClause)
+      .orderBy(booking_invoices.created_at, "desc");
+    // Note: If you need to include related bookings and rooms, you will need to fetch them separately and attach them to each invoice.
 
     return BookingResource.toCollection(invoices);
   }

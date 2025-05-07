@@ -2,7 +2,7 @@ import { redis } from "../config/redis";
 
 const REDIS_COUNTER_KEY = "booking_reference_counter";
 const REFERENCE_PREFIX = "RE9A";
-const PADDING_LENGTH = 8;
+const PADDING_LENGTH = 4;
 
 /**
  * Generates a unique booking reference number (e.g., RE9A0501AH00000001).
@@ -11,7 +11,9 @@ const PADDING_LENGTH = 8;
  * @returns {Promise<string>} The generated booking reference.
  * @throws {Error} If Redis operation fails.
  */
-export async function generateBookingReference(hotelName?: string): Promise<string> {
+export async function generateBookingReference(
+  hotelName?: string
+): Promise<string> {
   try {
     // Get month as two digits
     const now = new Date();
