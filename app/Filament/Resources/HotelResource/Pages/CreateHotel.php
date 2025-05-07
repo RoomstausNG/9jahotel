@@ -25,7 +25,7 @@ class CreateHotel extends CreateRecord
 
     protected function afterCreate(): void
     {
-        parent::afterCreate();
+
         Cache::forget('hotel_resource_' . $this->record->id);
         Cache::forget('filament_hotels_ids'); // Invalidate hotel list cache
     }
