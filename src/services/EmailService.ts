@@ -18,7 +18,7 @@ export class EmailService {
   constructor() {
     // Initialize the email transporter
     this.transporter = nodemailer.createTransport({
-      pool: true, // Enable connection pooling
+      pool: true,
       host: env("SMTP_HOST"),
       port: 465,
       secure: true, // Use TLS
@@ -26,7 +26,7 @@ export class EmailService {
       maxMessages: 100, // Best practice default
       auth: {
         user: env("SMTP_USER"),
-        pass: "9jaHotel@2024",
+        pass: env("SMTP_PASSWORD"),
       },
       tls: { rejectUnauthorized: false },
     } as nodemailer.TransportOptions);
@@ -60,12 +60,12 @@ export class EmailService {
 
       // Send the email
       const result = await this.transporter.sendMail({
-        from: env("EMAIL_FROM", "noreply@9jahotel.com"),
+        from: '"9jaHotel" <noreply@9jahotel.com>',
         to: options.to,
         subject: options.subject,
         html,
         envelope: {
-          from: env("EMAIL_FROM", "noreply@9jahotel.com"),
+          from: '"9jaHotel" <noreply@9jahotel.com>',
           to: options.to,
         },
       });
