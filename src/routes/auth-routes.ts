@@ -64,7 +64,7 @@ authRoutes.post("/send-otp", zValidator("json", SendOtpDto), (c) =>
 );
 
 // Route to reset password using OTP
-authRoutes.post("/reset-password", zValidator("json", ResetPasswordDto), (c) =>
+authRoutes.patch("/reset-password", zValidator("json", ResetPasswordDto), (c) =>
   authController.resetPassword(c)
 );
 
