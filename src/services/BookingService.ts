@@ -153,6 +153,22 @@ export class BookingService {
         console.error("Failed to send booking confirmation email:", emailError);
       }
 
+      // Clear bookings status caches for this user
+      try {
+        const user = userId || c.get("user")?.id;
+        if (user) {
+          // Assuming redis supports the 'keys' and 'del' commands
+          const pattern = `bookings:status:${user}:*`;
+          const keys = await redis.keys(pattern);
+          if (keys.length > 0) {
+            await redis.del(...keys);
+            console.log(`Cleared bookings cache for user ${user}`);
+          }
+        }
+      } catch (cacheError) {
+        console.error("Failed to clear bookings cache:", cacheError);
+      }
+
       // Return the booking invoice resource
       return await this.getBookingByIdOrReference(reference, c);
     } catch (error: any) {
