@@ -15,7 +15,7 @@ import { count, eq } from "drizzle-orm";
 import { EmailService } from "./EmailService";
 import { BookingResource } from "../resources/BookingResource";
 import { redis } from "../config/redis";
-import { or } from "drizzle-orm";
+import { or, gt, and, lte } from "drizzle-orm";
 import { Context } from "hono";
 import { AuthService } from "./AuthService";
 import { getToken } from "../utils/getToken";
@@ -24,7 +24,7 @@ import { getToken } from "../utils/getToken";
 export class BookingService {
   constructor(@inject(EmailService) private emailService: EmailService) {}
 
-  async createBooking(bookingData: any, userId?: number) {
+  async createBooking(bookingData: any, c: Context, userId?: number) {
     let hotel: any;
     try {
       // Fetch hotel name from the first roomId
@@ -154,7 +154,7 @@ export class BookingService {
       }
 
       // Return the booking invoice resource
-      return await this.getBookingByIdOrReference(reference);
+      return await this.getBookingByIdOrReference(reference, c);
     } catch (error: any) {
       console.error("Error creating booking:", error);
       throw new Error(error.message || "Failed to create booking");
@@ -168,19 +168,9 @@ export class BookingService {
     return hotel.onlinePercentage;
   }
 
-  async getBookingByIdOrReference(idOrReference: string | number, c: Context) {
+  async getBookingByIdOrReference(idOrReference: string | number, c?: Context) {
     const CACHE_EXPIRATION_SECONDS = 3600;
     const cacheKey = `booking:invoice:${idOrReference}`;
-    const token = getToken(c);
-
-    const user =
-      c.get("user") ?? (await AuthService.getAuthUser(token as string));
-
-    if (!user) {
-      throw new Error("User not authenticated");
-    }
-
-    const userId = user.id;
 
     try {
       // Try to get from cache first
@@ -291,7 +281,7 @@ export class BookingService {
   async getBookingsByStatus(
     status: string,
     page: number = 1,
-    perPage: number = 10,
+    perPage: number = 24,
     c: Context
   ) {
     const today = new Date();
@@ -308,31 +298,53 @@ export class BookingService {
 
     const userId = user.id;
 
+    // Generate a unique cache key for this user, status, and pagination
+    const CACHE_EXPIRATION_SECONDS = 3600;
+    const cacheKey = `bookings:status:${userId}:${status}:page:${page}:perPage:${perPage}`;
+
+    // Try to get from cache first
+    try {
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        console.log(`Cache hit for key: ${cacheKey}`);
+        return JSON.parse(cachedData);
+      }
+      console.log(`Cache miss for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error getting cache:", error);
+    }
+
     // Calculate offset for pagination
     const offset = (page - 1) * perPage;
 
     let whereClause;
+
     if (status === "completed") {
-      whereClause = (booking_invoices: any, { eq, gt }: any) =>
-        eq(booking_invoices.customer_id, userId) &&
-        gt(booking_invoices.checked_in, today);
+      whereClause = and(
+        eq(booking_invoices.customer_id, userId),
+        gt(booking_invoices.checked_in, today)
+      );
     } else if (status === "cancelled") {
-      whereClause = (booking_invoices: any, { eq }: any) =>
-        eq(booking_invoices.customer_id, userId) &&
-        eq(booking_invoices.status, "cancelled");
+      whereClause = and(
+        eq(booking_invoices.customer_id, userId),
+        eq(booking_invoices.status, "cancelled")
+      );
     } else if (status === "upcoming") {
-      whereClause = (booking_invoices: any, { eq, lte }: any) =>
-        eq(booking_invoices.customer_id, userId) &&
-        lte(booking_invoices.checked_in, today);
+      whereClause = and(
+        eq(booking_invoices.customer_id, userId),
+        lte(booking_invoices.checked_in, today)
+      );
     } else {
       throw new Error("Invalid status");
     }
 
-    // Get total count for pagination
-    const [{ count: total }] = await db
+    // Get total count for pagination - modified to handle potential undefined result
+    const countResult = await db
       .select({ count: count() })
       .from(booking_invoices)
       .where(whereClause);
+
+    const total = countResult[0]?.count ?? 0;
 
     // Get paginated invoices
     const invoices = await db
@@ -343,17 +355,68 @@ export class BookingService {
       .limit(perPage)
       .offset(offset);
 
-    // Note: If you need to include related bookings and rooms, you will need to fetch them separately and attach them to each invoice.
+    // Fetch and attach related data for each invoice
+    for (const invoice of invoices) {
+      // Fetch related bookings
+      const relatedBookings = await db
+        .select()
+        .from(bookings)
+        .where(eq(bookings.booking_invoice_id, invoice.id));
 
-    // Return with pagination metadata
-    return {
-      data: BookingResource.toCollection(invoices),
-      meta: {
-        total,
-        page,
-        perPage,
-        lastPage: Math.ceil(total / perPage),
-      },
-    };
+      // Fetch customer details
+      const customerResult = await db
+        .select()
+        .from(customers)
+        .where(eq(customers.id, invoice.customer_id))
+        .limit(1);
+      invoice.customer = customerResult[0] || null;
+
+      // Fetch hotel details
+      if (invoice.hotel_id) {
+        const hotelResult = await db
+          .select()
+          .from(hotels)
+          .where(eq(hotels.id, invoice.hotel_id))
+          .limit(1);
+        invoice.hotel = hotelResult[0] || null;
+      }
+
+      // For each booking, fetch room/hall and category
+      for (const booking of relatedBookings) {
+        if (booking.room_id) {
+          booking.room = await db
+            .select()
+            .from(rooms)
+            .where(eq(rooms.id, booking.room_id))
+            .limit(1);
+        }
+        if (booking.hall_id) {
+          booking.hall = await db
+            .select()
+            .from(halls)
+            .where(eq(halls.id, booking.hall_id))
+            .limit(1);
+        }
+      }
+      invoice.bookings = relatedBookings;
+    }
+
+    // Return with pagination metadata using BookingResource
+    const result = BookingResource.toCollection(invoices, total, page, perPage);
+
+    // Cache the result before returning
+    try {
+      await redis.set(
+        cacheKey,
+        JSON.stringify(result),
+        "EX",
+        CACHE_EXPIRATION_SECONDS
+      );
+      console.log(`Cached data for key: ${cacheKey}`);
+    } catch (error) {
+      console.error("Redis error setting cache:", error);
+    }
+
+    return result;
   }
 }

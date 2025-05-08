@@ -87,6 +87,7 @@ export class BookingController {
       // Create booking
       const booking = await this.bookingService.createBooking(
         validatedData,
+        c,
         userId
       );
 
@@ -125,34 +126,6 @@ export class BookingController {
     } catch (error: any) {
       return ApiResponse.failure(
         error.message || "Failed to fetch bookings",
-        error.status || 500
-      );
-    }
-  }
-
-  async getBookingDetails(c: Context) {
-    try {
-      const invoiceId = c.req.param("invoiceId");
-      const userId = c.get("user")?.id;
-
-      const booking = await this.bookingService.getBookingDetails(invoiceId);
-
-      // Check if the booking belongs to the authenticated user
-      if (userId && booking.customer_id !== userId) {
-        return ApiResponse.failure("Unauthorized access to booking", 403);
-      }
-
-      return ApiResponse.success(
-        booking,
-        "Booking details fetched successfully"
-      );
-    } catch (error: any) {
-      if (error.message === "Booking not found") {
-        return ApiResponse.failure(error.message, 404);
-      }
-
-      return ApiResponse.failure(
-        error.message || "Failed to fetch booking details",
         error.status || 500
       );
     }

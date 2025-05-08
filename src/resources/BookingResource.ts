@@ -52,7 +52,41 @@ export class BookingResource {
     };
   }
 
-  static toCollection(bookings: any[]) {
-    return bookings.map(this.toResource);
+  /**
+   * Returns a paginated collection of bookings, matching the HotelResource style.
+   * @param bookings Array of booking objects
+   * @param total Total number of bookings
+   * @param page Current page number
+   * @param perPage Number of bookings per page
+   */
+  static toCollection(
+    bookings: any[],
+    total: number,
+    page: number,
+    perPage: number
+  ) {
+    const mappedBookings = bookings.map(this.toResource);
+
+    const lastPage = Math.ceil(total / perPage);
+    const hasMorePages = page < lastPage;
+    const isFirstPage = page === 1;
+
+    return {
+      bookings: mappedBookings,
+      meta: {
+        pagination: {
+          total,
+          count: mappedBookings.length,
+          per_page: perPage,
+          current_page: page,
+          total_pages: lastPage,
+          has_more_pages: hasMorePages,
+          first_page: isFirstPage,
+          last_page: page === lastPage,
+          next_page: hasMorePages ? page + 1 : null,
+          prev_page: page > 1 ? page - 1 : null,
+        },
+      },
+    };
   }
 }
