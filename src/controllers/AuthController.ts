@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 import { SocialLoginDtoType } from "../dtos/UserDTO";
 import { inject, injectable } from "inversify";
 import { customerSchema } from "../validators/customer-schema";
-import { ResetPasswordDto, SendOtpDto } from "../dtos/auth-dto";
+import { ResetPasswordDto, SendOtpDto, VerifyOtpDto } from "../dtos/auth-dto";
 
 @injectable()
 export class AuthController {
@@ -81,10 +81,11 @@ export class AuthController {
       }
 
       // Check file size (example: max 5MB) - Middleware might handle this better
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        // Adjust property based on middleware
-        return ApiResponse.failure("File size exceeds the 5MB limit.", 400);
+      const maxSize = 512 * 1024; // 512KB
+      if ((file as File).size > maxSize) {
+        return ApiResponse.failure("File size exceeds the 512KB limit.", 400, {
+          avatar: "File size too large. Maximum allowed size is 512KB.",
+        });
       }
 
       const result = await this.authService.updateAvatar(file, c);
@@ -196,6 +197,26 @@ export class AuthController {
     }
   }
 
+  async verifyOtp(c: Context) {
+    try {
+      const body = await c.req.json();
+
+      const result = await this.authService.verifyOtp(body.email, body.otp);
+
+      if (!result.success) {
+        return ApiResponse.failure(result.message, 400);
+      }
+
+      return ApiResponse.success(null, result.message);
+    } catch (error: any) {
+      if (error.errors) {
+        return ApiResponse.failure("Validation error", 422, error.errors);
+      }
+      console.error("Verify OTP error:", error);
+      return ApiResponse.failure(error.message || "Failed to verify OTP", 500);
+    }
+  }
+
   async resetPassword(c: Context) {
     try {
       const body = await c.req.json();
@@ -207,13 +228,6 @@ export class AuthController {
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
       console.error("Reset Password error:", error);
-      // Provide specific feedback for common errors
-      if (
-        error.message === "OTP expired or invalid." ||
-        error.message === "Incorrect OTP."
-      ) {
-        return ApiResponse.failure(error.message, 400);
-      }
       return ApiResponse.failure(
         error.message || "Failed to reset password",
         500

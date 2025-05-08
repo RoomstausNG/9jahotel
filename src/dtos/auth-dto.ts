@@ -6,11 +6,16 @@ export const SendOtpDto = z.object({
   email: existEmail,
 });
 
+// DTO for verifying OTP
+export const VerifyOtpDto = z.object({
+  email: existEmail,
+  otp: z.string().length(5, "OTP must be 5 digits"),
+});
+
 // DTO for resetting the password using an OTP
 export const ResetPasswordDto = z
   .object({
     email: existEmail,
-    otp: z.string().length(5, "OTP must be 5 digits"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z
       .string()
@@ -23,6 +28,7 @@ export const ResetPasswordDto = z
 
 // Define types from schemas
 export type SendOtpDtoType = z.infer<typeof SendOtpDto>;
+export type VerifyOtpDtoType = z.infer<typeof VerifyOtpDto>;
 export type ResetPasswordDtoType = z.infer<typeof ResetPasswordDto>;
 import { uniqueEmail } from "../validators/unique-email";
 

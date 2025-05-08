@@ -64,10 +64,11 @@ export const GetBookingByIdOrReferenceDTO = z.object({
 });
 
 export const GetBookingsByStatusDTO = z.object({
-  status: z.enum(["completed", "cancelled", "current"], {
+  status: z.enum(["completed", "cancelled", "upcoming"], {
     errorMap: (issue, ctx) => ({
-      message: "Status must be one of: completed, cancelled, current",
+      message: "Status must be one of: completed, cancelled, upcoming",
     }),
   }),
+  page: z.coerce.number().min(1).default(1),
+  perPage: z.coerce.number().min(1).max(100).default(10),
 });
-

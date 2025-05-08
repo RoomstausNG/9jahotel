@@ -2,6 +2,9 @@ import {
   booking_invoices,
   bookings,
   customers,
+  halls,
+  hotels,
+  rooms,
 } from "./../database/migrations/schema";
 import { injectable, inject } from "inversify";
 import { db, dbPool } from "../config/database";
@@ -13,6 +16,9 @@ import { EmailService } from "./EmailService";
 import { BookingResource } from "../resources/BookingResource";
 import { redis } from "../config/redis";
 import { or } from "drizzle-orm";
+import { Context } from "hono";
+import { AuthService } from "./AuthService";
+import { getToken } from "../utils/getToken";
 
 @injectable()
 export class BookingService {
@@ -40,7 +46,7 @@ export class BookingService {
         : settlement.hotelPayable;
 
       const reference = await generateBookingReference(hotel.name);
-      const result = await db.transaction(async (tx: typeof db) => {
+      const result = await dbPool.transaction(async (tx: typeof db) => {
         // Create booking invoice first
         const bookingInvoiceResult = await tx.insert(booking_invoices).values({
           reference,
@@ -162,89 +168,19 @@ export class BookingService {
     return hotel.onlinePercentage;
   }
 
-  async getBookingsByUser(
-    userId: number,
-    page: number = 1,
-    perPage: number = 10
-  ) {
-    try {
-      const offset = (page - 1) * perPage;
-
-      // Get booking invoices for the user
-      const invoices = await db.query.booking_invoices.findMany({
-        where: (booking_invoices, { eq }) =>
-          eq(booking_invoices.customer_id, userId),
-        orderBy: (booking_invoices, { desc }) => [
-          desc(booking_invoices.created_at),
-        ],
-        limit: perPage,
-        offset,
-        with: {
-          bookings: {
-            with: {
-              room: true,
-            },
-          },
-        },
-      });
-
-      // Count total invoices for pagination
-      const totalCount = await db
-        .select({ count: count() })
-        .from(booking_invoices)
-        .where(eq(booking_invoices.customer_id, userId));
-
-      return {
-        data: BookingResource.toCollection(invoices),
-        pagination: {
-          total: totalCount[0].count,
-          page,
-          perPage,
-          totalPages: Math.ceil(totalCount[0].count / perPage),
-        },
-      };
-    } catch (error: any) {
-      console.error("Error fetching bookings:", error);
-      throw new Error(error.message || "Failed to fetch bookings");
-    }
-  }
-
-  async getBookingDetails(invoiceId: string) {
-    try {
-      // Use Drizzle ORM query builder instead of db.query
-      const invoices = await db
-        .select()
-        .from(booking_invoices)
-        .where(eq(booking_invoices.id, Number(invoiceId)))
-        .limit(1);
-
-      const invoice = invoices[0];
-
-      if (!invoice) {
-        throw new Error("Booking not found");
-      }
-
-      // Fetch related bookings and rooms manually if needed
-      const relatedBookings = await db
-        .select()
-        .from(bookings)
-        .where(eq(bookings.booking_invoice_id, Number(invoiceId)));
-
-      // Optionally, fetch rooms for each booking if needed
-      // (Assuming you have a rooms table and schema)
-
-      invoice.bookings = relatedBookings;
-
-      return BookingResource.toResource(invoice);
-    } catch (error: any) {
-      console.error("Error fetching booking details:", error);
-      throw new Error(error.message || "Failed to fetch booking details");
-    }
-  }
-
-  async getBookingByIdOrReference(idOrReference: string | number) {
+  async getBookingByIdOrReference(idOrReference: string | number, c: Context) {
     const CACHE_EXPIRATION_SECONDS = 3600;
     const cacheKey = `booking:invoice:${idOrReference}`;
+    const token = getToken(c);
+
+    const user =
+      c.get("user") ?? (await AuthService.getAuthUser(token as string));
+
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const userId = user.id;
 
     try {
       // Try to get from cache first
@@ -278,6 +214,7 @@ export class BookingService {
           .where(eq(booking_invoices.reference, String(idOrReference)))
           .limit(1);
       }
+
       console.log(invoices);
 
       const invoice = invoices[0];
@@ -293,12 +230,24 @@ export class BookingService {
         .where(eq(bookings.booking_invoice_id, invoice.id));
 
       // Fetch customer details
-      const customer = await db
+      const customerResult = await db
         .select()
         .from(customers)
         .where(eq(customers.id, invoice.customer_id))
-        .first();
-      invoice.customer = customer;
+        .limit(1);
+
+      // Fix: Assign the first item from the array instead of the whole array
+      invoice.customer = customerResult[0] || null;
+
+      // Fetch hotel details
+      if (invoice.hotel_id) {
+        const hotelResult = await db
+          .select()
+          .from(hotels)
+          .where(eq(hotels.id, invoice.hotel_id))
+          .limit(1);
+        invoice.hotel = hotelResult[0] || null;
+      }
 
       // For each booking, fetch room/hall and category
       for (const booking of relatedBookings) {
@@ -307,7 +256,7 @@ export class BookingService {
             .select()
             .from(rooms)
             .where(eq(rooms.id, booking.room_id))
-            .first();
+            .limit(1);
           // Optionally fetch category if not included in room
           // booking.room.category = ...
         }
@@ -316,14 +265,23 @@ export class BookingService {
             .select()
             .from(halls)
             .where(eq(halls.id, booking.hall_id))
-            .first();
+            .limit(1);
           // Optionally fetch category if not included in hall
           // booking.hall.category = ...
         }
       }
       invoice.bookings = relatedBookings;
 
-      return BookingResource.toResource(invoice);
+      // Cache the result before returning
+      const resourceResult = BookingResource.toResource(invoice);
+      await redis.set(
+        cacheKey,
+        JSON.stringify(resourceResult),
+        "EX",
+        CACHE_EXPIRATION_SECONDS
+      );
+
+      return resourceResult;
     } catch (error: any) {
       console.error("Error fetching booking by ID or reference:", error);
       throw new Error(error.message || "Failed to fetch booking");
@@ -331,11 +289,27 @@ export class BookingService {
   }
 
   async getBookingsByStatus(
-    userId: number,
-    status: "completed" | "cancelled" | "current"
+    status: string,
+    page: number = 1,
+    perPage: number = 10,
+    c: Context
   ) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const token = getToken(c);
+
+    const user =
+      c.get("user") ?? (await AuthService.getAuthUser(token as string));
+
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const userId = user.id;
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * perPage;
 
     let whereClause;
     if (status === "completed") {
@@ -346,7 +320,7 @@ export class BookingService {
       whereClause = (booking_invoices: any, { eq }: any) =>
         eq(booking_invoices.customer_id, userId) &&
         eq(booking_invoices.status, "cancelled");
-    } else if (status === "current") {
+    } else if (status === "upcoming") {
       whereClause = (booking_invoices: any, { eq, lte }: any) =>
         eq(booking_invoices.customer_id, userId) &&
         lte(booking_invoices.checked_in, today);
@@ -354,30 +328,32 @@ export class BookingService {
       throw new Error("Invalid status");
     }
 
-    // If your ORM doesn't support this where clause function, use query builder logic instead.
+    // Get total count for pagination
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(booking_invoices)
+      .where(whereClause);
 
-    // Replace this:
-    // const invoices = await db.query.booking_invoices.findMany({
-    //   where: whereClause,
-    //   orderBy: (booking_invoices, { desc }) => [
-    //     desc(booking_invoices.created_at),
-    //   ],
-    //   with: {
-    //     bookings: {
-    //       with: {
-    //         room: true,
-    //       },
-    //     },
-    //   },
-    // });
-    // With this:
+    // Get paginated invoices
     const invoices = await db
       .select()
       .from(booking_invoices)
       .where(whereClause)
-      .orderBy(booking_invoices.created_at, "desc");
+      .orderBy(booking_invoices.created_at, "desc")
+      .limit(perPage)
+      .offset(offset);
+
     // Note: If you need to include related bookings and rooms, you will need to fetch them separately and attach them to each invoice.
 
-    return BookingResource.toCollection(invoices);
+    // Return with pagination metadata
+    return {
+      data: BookingResource.toCollection(invoices),
+      meta: {
+        total,
+        page,
+        perPage,
+        lastPage: Math.ceil(total / perPage),
+      },
+    };
   }
 }

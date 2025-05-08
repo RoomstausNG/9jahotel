@@ -14,7 +14,7 @@ import {
   ProfileUpdateDto,
   SocialLoginDto,
 } from "../dtos/UserDTO";
-import { SendOtpDto, ResetPasswordDto } from "../dtos/auth-dto";
+import { SendOtpDto, VerifyOtpDto, ResetPasswordDto } from "../dtos/auth-dto";
 
 const authRoutes = new Hono();
 
@@ -63,7 +63,12 @@ authRoutes.post("/send-otp", zValidator("json", SendOtpDto), (c) =>
   authController.sendOtp(c)
 );
 
-// Route to reset password using OTP
+// New route to verify OTP
+authRoutes.post("/verify-otp", zValidator("json", VerifyOtpDto), (c) =>
+  authController.verifyOtp(c)
+);
+
+// Route to reset password (now without OTP)
 authRoutes.patch("/reset-password", zValidator("json", ResetPasswordDto), (c) =>
   authController.resetPassword(c)
 );

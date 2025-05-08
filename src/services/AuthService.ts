@@ -526,89 +526,123 @@ export class AuthService {
     });
   }
 
-  async sendOtp(email: string): Promise<{ success: boolean; message: string }> {
+  /**
+   * Send OTP to user's email for verification
+   * @param email User's email address
+   * @returns Object with success message
+   */
+  async sendOtp(email: string) {
     try {
-      const [user] = await this.getUserByEmail(email);
-      if (!user) {
-        // Avoid enumeration attacks by pretending success
-        console.warn(`OTP request for non-existent email: ${email}`);
-        return {
-          success: true,
-          message: "If your email is registered, you will receive an OTP.",
-        };
-      }
-
+      // Generate a new OTP
       const otp = this._generateOtp();
       const redisKey = `${OTP_KEY_PREFIX}${email}`;
 
       // Store OTP in Redis with expiry
       await redis.set(redisKey, otp, "EX", OTP_EXPIRY_SECONDS);
 
-      // Send OTP email using EmailService
+      // Send email with OTP
       await this.emailService.sendTemplateEmail({
         to: email,
-        subject: "Your Password Reset OTP",
-        templateName: "otp-verification", // Ensure this template exists
+        subject: "Your One-Time Password (OTP)",
+        templateName: "otp-verification",
         context: {
           otp,
           expiryMinutes: OTP_EXPIRY_SECONDS / 60,
         },
       });
 
-      console.log(`OTP sent to ${email}`);
-      return { success: true, message: "OTP sent successfully." };
+      return {
+        success: true,
+        message: `OTP sent to ${email}. Valid for ${
+          OTP_EXPIRY_SECONDS / 60
+        } minutes.`,
+      };
     } catch (error) {
-      console.error(`Failed to send OTP to ${email}:`, error);
-      throw new Error("Failed to process OTP request.");
+      console.error("Failed to send OTP:", error);
+      throw new Error("Failed to send OTP. Please try again later.");
     }
   }
 
-  async resetPassword(
-    data: ResetPasswordDtoType
-  ): Promise<{ success: boolean; message: string }> {
+  /**
+   * Verify OTP for a given email
+   * @param email User's email address
+   * @param otp OTP to verify
+   * @returns Object with verification result
+   */
+  async verifyOtp(email: string, otp: string) {
     try {
-      const { email, otp, password } = data;
       const redisKey = `${OTP_KEY_PREFIX}${email}`;
 
-      // 1. Verify OTP
+      // Get stored OTP from Redis
       const storedOtp = await redis.get(redisKey);
+
       if (!storedOtp) {
-        throw new Error("OTP expired or invalid.");
-      }
-      if (storedOtp !== otp) {
-        throw new Error("Incorrect OTP.");
+        return {
+          success: false,
+          message: "OTP expired or not found. Please request a new one.",
+        };
       }
 
-      // 2. Find user by email
+      // Compare OTPs
+      if (storedOtp !== otp) {
+        return {
+          success: false,
+          message: "Invalid OTP. Please try again.",
+        };
+      }
+
+      // OTP is valid, delete it from Redis (one-time use)
+      // await redis.del(redisKey);
+
+      return {
+        success: true,
+        message: "OTP verified successfully.",
+      };
+    } catch (error) {
+      console.error("Failed to verify OTP:", error);
+      throw new Error("Failed to verify OTP. Please try again later.");
+    }
+  }
+
+  /**
+   * Reset user password after OTP verification
+   * @param data Reset password data
+   * @returns Object with reset result
+   */
+  async resetPassword(data: ResetPasswordDtoType) {
+    try {
+      const { email, password } = data;
+
+      // Find user by email
       const [user] = await this.getUserByEmail(email);
 
-      // 3. Hash the new password and replace $2b$ with $2y$ for Laravel compatibility
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Hash the new password
       let hashedPassword = bcrypt.hashSync(password, 12);
       if (hashedPassword.startsWith("$2b$")) {
         hashedPassword = "$2y$" + hashedPassword.slice(4);
       }
 
-      // 4. Update password and increment token_version
+      // Update user's password
       await db
         .update(customers)
         .set({
           password: hashedPassword,
-          token_version: sql.raw("token_version + 1"), // Invalidate old sessions
+          token_version: sql.raw("token_version + 1"), // Invalidate existing tokens
         })
         .where(eq(customers.id, user.id));
 
-      // 5. Delete OTP from Redis now that it's used
-      await redis.del(redisKey);
-
-      console.log(`Password reset successfully for ${email}`);
-      return { success: true, message: "Password reset successfully." };
+      return {
+        success: true,
+        message:
+          "Password reset successfully. You can now login with your new password.",
+      };
     } catch (error) {
-      console.error(`Failed to reset password for user}:`, error);
-      throw new Error(
-        `Password reset failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
+      console.error("Failed to reset password:", error);
+      throw new Error("Failed to reset password. Please try again later.");
     }
   }
 

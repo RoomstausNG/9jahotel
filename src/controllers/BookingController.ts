@@ -37,7 +37,7 @@ export class BookingController {
       );
 
       const compute = calculateDiscountedAmount(room.price, days, percent);
-      console.log({ room, body, percent, compute });
+
       if (compute.remainingAmount !== body.total) {
         return ApiResponse.failure(
           `Invalid input the total amount for this booking type suppose to be ${compute.remainingAmount} but you provided ${body.total}`,
@@ -49,8 +49,6 @@ export class BookingController {
       // Get user ID if authenticated
       let user = c.get("user");
       let userId = user?.id;
-
-      // return ApiResponse.success(body, "Booking data validated successfully");
 
       // If not authenticated, create a new customer and get the id
       if (!userId) {
@@ -96,7 +94,7 @@ export class BookingController {
     } catch (error: any) {
       // Handle validation errors
       if (error.errors) {
-        return ApiResponse.failure("Validation error", 400, error.errors);
+        return ApiResponse.failure("Validation error", 422, error.errors);
       }
 
       return ApiResponse.failure(
@@ -164,7 +162,8 @@ export class BookingController {
     try {
       const { reference: idOrReference } = c.req.param();
       const booking = await this.bookingService.getBookingByIdOrReference(
-        idOrReference
+        idOrReference,
+        c
       );
 
       if (!booking) {
@@ -214,9 +213,19 @@ export class BookingController {
 
   async getBookingsByStatus(c: Context) {
     try {
-      const { status } = c.req.valid("param");
-      const userId = c.user.id; // Adjust this if you get userId differently
-      const bookings = await this.bookingService.getBookingsByStatus(userId, status);
+      const { status } = c.req.query();
+      const userId = c.get("user").id; // Adjust this if you get userId differently
+
+      const page = Number(c.req.query("page") || 1);
+      const perPage = Number(c.req.query("perPage") || 24);
+
+      const bookings = await this.bookingService.getBookingsByStatus(
+        status,
+        page,
+        perPage,
+        c
+      );
+
       return ApiResponse.success(bookings, "Bookings fetched successfully");
     } catch (error: any) {
       return ApiResponse.failure(

@@ -23,15 +23,15 @@ bookingRoutes.post("/verify-payment", (c) =>
 // GET /:idOrReference - fetch booking by ID or reference
 bookingRoutes.get(
   "/:reference",
-  // authMiddleware,
+  authMiddleware,
   zValidator("param", GetBookingByIdOrReferenceDTO),
   (c) => bookingController.getBookingByIdOrReference(c)
 );
 
-// ...
 bookingRoutes.get(
-  "/status/:status",
-  zValidator("param", GetBookingsByStatusDTO),
+  "/",
+  authMiddleware,
+  zValidator("query", GetBookingsByStatusDTO),
   (c) => bookingController.getBookingsByStatus(c)
 );
 
