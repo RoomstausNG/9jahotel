@@ -20,3 +20,12 @@ export async function isPhoneUnique(phone: string): Promise<boolean> {
     .limit(1);
   return result.length === 0;
 }
+
+export async function isPhoneExist(phone: string): Promise<boolean> {
+  const result = await db
+    .select()
+    .from(customers)
+    .where(eq(customers.phone, phone))
+    .limit(1);
+  return result.length === 1;
+}

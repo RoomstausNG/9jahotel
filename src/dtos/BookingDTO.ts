@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { existsRoomsValidator } from "../validators/exists-room";
 import { existEmail } from "../validators/exists-email";
-import { uniquePhone } from "../validators/unique-phone";
+import { isPhoneExist, uniquePhone } from "../validators/unique-phone";
 import { uniqueEmail } from "../validators/unique-email";
 
 const startOfToday = () => {
@@ -31,8 +31,8 @@ export const CreateBookingDto = z
 
     lastname: z.string().min(3, "Last name must be at least 3 characters"),
 
-    email: z.string(),
-    phone: z.string(),
+    email: uniqueEmail,
+    phone: uniquePhone,
     roomIds: existsRoomsValidator,
 
     type: z.enum(["PayAtHotel", "PayNow", "NonRefundable"], {
