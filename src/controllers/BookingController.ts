@@ -207,4 +207,19 @@ export class BookingController {
       );
     }
   }
+
+  async createBookingForAuthUser(c: Context) {
+    try {
+      const bookingData = await c.req.json();
+      const user = c.get("user");
+      if (!user) {
+        return ApiResponse.failure("User not authenticated", 401);
+      }
+      // Reuse the BookingService method, passing the authenticated user's ID
+      const booking = await this.bookingService.createBooking(bookingData, c, user.id);
+      return ApiResponse.success(booking, "Booking created successfully");
+    } catch (error: any) {
+      return ApiResponse.failure(error.message || "Failed to create booking", 500);
+    }
+  }
 }

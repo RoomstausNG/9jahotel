@@ -56,6 +56,45 @@ export const CreateBookingDto = z
     path: ["checkOut"],
   });
 
+export const CreateAuthBookingDto = z
+  .object({
+    checkIn: z.coerce
+      .date({
+        errorMap: (issue, ctx) => ({
+          message: "Invalid check-in date format. Please provide a valid date.",
+        }),
+      })
+      .min(startOfToday(), { message: "Check-in date cannot be in the past." }),
+
+    checkOut: z.coerce.date({
+      errorMap: (issue, ctx) => ({
+        message: "Invalid check-out date format. Please provide a valid date.",
+      }),
+    }),
+
+    roomIds: existsRoomsValidator,
+
+    type: z.enum(["PayAtHotel", "PayNow", "NonRefundable"], {
+      errorMap: (issue, ctx) => {
+        // Kept errorMap for specific enum message
+        if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+          return {
+            message:
+              "Invalid payment type. Please choose PayATHotel, PayNow, or NonRefundable.",
+          };
+        }
+        return { message: ctx.defaultError };
+      },
+    }),
+    total: z
+      .number() // Removed required_error and invalid_type_error
+      .positive("Total must be a positive number"),
+  })
+  .refine((data) => data.checkOut > data.checkIn, {
+    message: "Check-out date must be after check-in date",
+    path: ["checkOut"],
+  });
+
 // Type inference
 export type CreateBookingDtoType = z.infer<typeof CreateBookingDto>;
 

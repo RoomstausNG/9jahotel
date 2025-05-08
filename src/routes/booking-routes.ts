@@ -3,7 +3,7 @@ import { container } from "../container";
 import { BookingController } from "../controllers/BookingController";
 import { zValidator } from "../validators/validator-wrapper";
 import { authMiddleware } from "../middlewares/auth-middleware";
-import { CreateBookingDto } from "../dtos/BookingDTO";
+import { CreateAuthBookingDto, CreateBookingDto } from "../dtos/BookingDTO";
 import { GetBookingByIdOrReferenceDTO } from "../dtos/BookingDTO";
 import { GetBookingsByStatusDTO } from "../dtos/BookingDTO";
 
@@ -33,6 +33,14 @@ bookingRoutes.get(
   authMiddleware,
   zValidator("query", GetBookingsByStatusDTO),
   (c) => bookingController.getBookingsByStatus(c)
+);
+
+// Route for authenticated user booking creation
+bookingRoutes.post(
+  "/auth",
+  authMiddleware,
+  zValidator("json", CreateAuthBookingDto),
+  (c) => bookingController.createBookingForAuthUser(c)
 );
 
 export default bookingRoutes;
