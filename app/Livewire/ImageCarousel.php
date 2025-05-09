@@ -42,61 +42,63 @@ class ImageCarousel extends Component
      */
     protected function loadSlides()
     {
-        // Start with default slides to ensure we always have something
+        // Use the provided logo as the default image
         $defaultSlides = [
             [
-                'imgSrc' => 'https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp',
-                'imgAlt' => 'Vibrant abstract painting with swirling blue and light pink hues on a canvas.',
-            ],
-            [
-                'imgSrc' => 'https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp',
-                'imgAlt' => 'Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.',
-            ],
-            [
-                'imgSrc' => 'https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp',
-                'imgAlt' => 'Vibrant abstract painting with swirling blue and purple hues on a canvas.',
-            ],
+                'imgSrc' => 'https://9jahotel.com/img/logo.jpeg',
+                'imgAlt' => 'Default hotel image',
+            ]
         ];
 
         if (!$this->hotelId) {
             $this->slides = $defaultSlides;
+            $this->showAllPhotos = false;
+            $this->hasRealImages = false;
             return;
         }
 
         try {
             $hotel = Hotel::with('images')->find($this->hotelId);
 
+            $slides = [];
+            $hasImages = false;
+
+            // 1. Add background image as the first slide if available
+            if ($hotel && $hotel->background_image) {
+                $slides[] = [
+                    'imgSrc' => getCloudinaryImage($hotel->background_image),
+                    'imgAlt' => $hotel->name . ' - Background image'
+                ];
+            }
+
+            // 2. Add up to 4 more images
             if ($hotel && $hotel->images && $hotel->images->count() > 0) {
-                // Transform hotel images into the format expected by the carousel
-                $hotelSlides = $hotel->images->map(function ($image) use ($hotel) {
-                    return [
-                        'imgSrc' => getCloudinaryImage($image->url), // Using the helper function
+                $images = $hotel->images;
+                $imageSlides = [];
+                foreach ($images->take(4) as $image) {
+                    $imageSlides[] = [
+                        'imgSrc' => getCloudinaryImage($image->url),
                         'imgAlt' => $hotel->name . ' - ' . ($image->description ?? 'Hotel image')
                     ];
-                })->toArray();
-
-                if (!empty($hotelSlides)) {
-                    $this->slides = $hotelSlides;
-                    return;
                 }
+                $slides = array_merge($slides, $imageSlides);
+                $hasImages = true;
             }
 
-            // If hotel has no images but has a background image
-            if ($hotel && $hotel->background_image) {
-                $this->slides = [
-                    [
-                        'imgSrc' => getCloudinaryImage($hotel->background_image),
-                        'imgAlt' => $hotel->name . ' - Background image'
-                    ]
-                ];
-                return;
+            // 3. If no images at all, use default
+            if (empty($slides)) {
+                $slides = $defaultSlides;
             }
 
-            // Fall back to default slides if no hotel images are available
-            $this->slides = $defaultSlides;
+            // 4. Only show "Show all photos" if there are real hotel images
+            $this->showAllPhotos = $hasImages;
+            $this->hasRealImages = $hasImages;
+
+            $this->slides = $slides;
         } catch (\Exception $e) {
-            // If anything goes wrong, use default slides
             $this->slides = $defaultSlides;
+            $this->showAllPhotos = false;
+            $this->hasRealImages = false;
         }
     }
 

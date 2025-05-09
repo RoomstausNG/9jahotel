@@ -3,19 +3,19 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@paystack/inline-js": "^2.19.2",
+        "@paystack/inline-js": "^2.22.3",
       },
       "devDependencies": {
-        "@tailwindcss/forms": "^0.5.2",
-        "@tailwindcss/typography": "^0.5.0",
-        "autoprefixer": "^10.4.16",
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/typography": "^0.5.16",
+        "autoprefixer": "^10.4.21",
         "flowbite": "^1.8.1",
-        "laravel-vite-plugin": "^1.0.0",
-        "postcss": "^8.4.39",
-        "postcss-nesting": "^12.0.1",
-        "sass": "^1.67.0",
-        "tailwindcss": "^3.4.1",
-        "vite": "^5.0.0",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.5.3",
+        "postcss-nesting": "^12.1.5",
+        "sass": "^1.87.0",
+        "tailwindcss": "^3.4.17",
+        "vite": "^5.4.19",
       },
     },
   },
@@ -118,7 +118,7 @@
 
     "@parcel/watcher-win32-x64": ["@parcel/watcher-win32-x64@2.5.1", "", { "os": "win32", "cpu": "x64" }, "sha512-9lHBdJITeNR++EvSQVUcaZoWupyHfXe1jZvGZ06O/5MflPcuPLtEphScIBL+AiCWBO46tDSHzWyD0uDmmZqsgA=="],
 
-    "@paystack/inline-js": ["@paystack/inline-js@2.22.3", "", {}, "sha512-yACFrcWh+b3TghKiMky2soO6vkk6RRkalC8DqltvBASnvEzArPX085/4boL0R8JlW3yxPtNMMuwa/hKgad6sIA=="],
+    "@paystack/inline-js": ["@paystack/inline-js@2.22.4", "", {}, "sha512-H2nmBMJGJFvdTGCeTdFrjaf2pzbnXg4wV+9HdfSnUGwpye09TUIjHkAM+Ah13AOTbWRed2cDGvXzZs8qgw+faQ=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
