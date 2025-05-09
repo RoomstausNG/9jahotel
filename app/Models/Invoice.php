@@ -31,7 +31,7 @@ class Invoice extends Model
 
         self::creating(function ($invoice) {
             $hotel = Hotel::find($invoice->hotel_id);
-            $invoice->reference = IdGenerator::generate(['table' => 'invoices', 'field' => 'reference', 'length' => 10, 'reset_on_prefix_change' => true, 'prefix' => 'INV' . strtoupper(substr($hotel->code, 0, 3)) .  date('y')]);
+            $invoice->reference = IdGenerator::generate(['table' => 'invoices', 'field' => 'reference', 'length' => 10, 'reset_on_prefix_change' => true, 'prefix' => 'INV' . strtoupper(substr($hotel->code, 0, random_int(1, 3))) .  date('d')]);
             $invoice->to = Carbon::parse($invoice->from)->addYear();
         });
 
