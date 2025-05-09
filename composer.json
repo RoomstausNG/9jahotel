@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "afatmustafa/blade-hugeicons": "*",
         "althinect/filament-spatie-roles-permissions": "^2.2",
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "dotswan/filament-map-picker": "^1.8",
