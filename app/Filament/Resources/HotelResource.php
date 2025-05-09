@@ -47,6 +47,7 @@ class HotelResource extends Resource
                     ->imageEditor()
                     ->required()
                     ->directory('hotel_logo'),
+                    
                 Forms\Components\FileUpload::make('background_image')
                     ->image()
                     ->disk('cloudinary')->visibility('private')
