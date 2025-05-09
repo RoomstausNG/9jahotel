@@ -32,6 +32,68 @@
         @endif
     </div>
 
+    {{-- Mobile: Slideshow with badge --}}
+    <div 
+        x-data="{
+            slides: {{ json_encode($slides) }},
+            currentSlideIndex: 1,
+            slidesCount: {{ $imageCount }},
+            next() {
+                if (this.currentSlideIndex < this.slides.length) {
+                    this.currentSlideIndex = this.currentSlideIndex + 1;
+                } else {
+                    this.currentSlideIndex = 1;
+                }
+            },
+            previous() {
+                if (this.currentSlideIndex > 1) {
+                    this.currentSlideIndex = this.currentSlideIndex - 1;
+                } else {
+                    this.currentSlideIndex = this.slides.length;
+                }
+            }
+        }"
+        class="block md:hidden relative"
+    >
+        <template x-for="(slide, index) in slides" :key="index">
+            <div x-show="currentSlideIndex == index + 1" class="relative">
+                <img :src="slide.imgSrc" :alt="slide.imgAlt"
+                    class="w-full aspect-square object-cover rounded cursor-pointer"
+                    @click="next()"
+                >
+                <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                    <span x-text="slidesCount"></span> photos
+                </span>
+                <!-- Optional: Show navigation arrows on mobile -->
+                <button type="button"
+                    class="absolute left-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-1 text-neutral-600"
+                    aria-label="previous slide" @click.stop="previous()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
+                        stroke-width="3" class="size-4" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+                <button type="button"
+                    class="absolute right-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-1 text-neutral-600"
+                    aria-label="next slide" @click.stop="next()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
+                        stroke-width="3" class="size-4" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
+        </template>
+        <!-- Indicators -->
+        <div class="absolute rounded-sm bottom-3 left-3 z-20 flex gap-2 bg-white/75 px-1 py-0.5"
+            role="group" aria-label="slides">
+            <template x-for="(slide, index) in slides" :key="index">
+                <button class="size-2 rounded-full transition"
+                    :class="currentSlideIndex === index + 1 ? 'bg-neutral-600' : 'bg-neutral-600/50'"
+                    @click="currentSlideIndex = index + 1" :aria-label="'slide ' + (index + 1)"></button>
+            </template>
+        </div>
+    </div>
+
     {{-- Desktop: Main image left, 4-grid right --}}
     <div class="hidden md:flex gap-2 w-full max-h-max">
         <div class="w-1/2 h-full">
