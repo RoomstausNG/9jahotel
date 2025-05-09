@@ -27,7 +27,7 @@ class ImagesRelationManager extends RelationManager
                     ->imageEditor()
                     ->imageCropAspectRatio('16:9')
                     ->directory('hotels')
-                    ->optimize('webp'),
+                // ->optimize('webp'),
             ]);
     }
 
