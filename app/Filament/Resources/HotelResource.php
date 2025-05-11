@@ -47,7 +47,7 @@ class HotelResource extends Resource
                     ->imageEditor()
                     ->required()
                     ->directory('hotel_logo'),
-                    
+
                 Forms\Components\FileUpload::make('background_image')
                     ->image()
                     ->disk('cloudinary')->visibility('private')
@@ -60,7 +60,8 @@ class HotelResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('code')
                     ->hiddenOn('create')
-                    ->readonly()
+                    // ->readonly()
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 // Forms\Components\FileUpload::make('background_image')
