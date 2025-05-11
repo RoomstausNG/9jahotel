@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Throwable;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -35,5 +37,14 @@ class Handler extends ExceptionHandler
                 ], 404);
             }
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof HttpException && $exception->getStatusCode() === 419) {
+            return redirect()->back()->with('error', 'Your session expired, please try again.');
+        }
+
+        return parent::render($request, $exception);
     }
 }
