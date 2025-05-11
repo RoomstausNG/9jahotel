@@ -14,18 +14,24 @@ use Nnjeim\World\Models\State;
 use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
+// function getFirstLetters(string $inputString): string
+// {
+//     $words = explode(' ', trim($inputString));
+//     $firstWord = $words[0] ?? '';
+
+//     // Take the first 3 letters and make them uppercase
+//     $code = strtoupper(substr($firstWord, 0, 3));
+
+//     // Optionally add randomness or timestamp to ensure uniqueness
+//     return $code . strtoupper(Str::random(3)) . time();
+// }
+
 function getFirstLetters(string $inputString): string
 {
     $words = explode(' ', trim($inputString));
     $firstWord = $words[0] ?? '';
-
-    // Take the first 3 letters and make them uppercase
-    $code = strtoupper(substr($firstWord, 0, 3));
-
-    // Optionally add randomness or timestamp to ensure uniqueness
-    return $code . strtoupper(Str::random(3)) . time();
+    return strtoupper(substr($firstWord, 0, 3));
 }
-
 
 function currentUser()
 {
