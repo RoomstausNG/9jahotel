@@ -92,16 +92,18 @@
 <div class="hidden md:flex gap-2 w-full max-h-max">
     <div class="w-1/2 h-full">
         <img src="{{ $mainImage['imgSrc'] }}" alt="{{ $mainImage['imgAlt'] }}"
-            class="w-full h-full aspect-square object-cover rounded-lg">
+            class="w-full h-full aspect-square object-cover rounded-lg cursor-pointer"
+            @click="$dispatch('open-carousel', { startSlide: 1 })">
     </div>
     <div class="w-1/2 grid grid-cols-2 grid-rows-2 gap-2 h-full relative">
         @foreach($gridImages as $i => $img)
         <img src="{{ $img['imgSrc'] }}" alt="{{ $img['imgAlt'] }}"
-            class="w-full h-full aspect-square object-cover rounded @if($i==3) rounded-br-lg @endif @if($i==1) rounded-tr-lg @endif">
+            class="w-full h-full aspect-square object-cover rounded @if($i==3) rounded-br-lg @endif @if($i==1) rounded-tr-lg @endif cursor-pointer"
+            @click="$dispatch('open-carousel', { startSlide: {{ $i + 2 }} })">
         @endforeach
         @if (!empty($showAllPhotos) && $showAllPhotos)
         <button class="absolute bottom-3 right-3 z-30 bg-white/80 px-4 py-2 rounded shadow"
-            @click="$dispatch('open-carousel')">
+            @click="$dispatch('open-carousel')"> {{-- This will default to slide 1 --}}
             Show all photos
         </button>
         @endif
@@ -114,7 +116,14 @@
                 currentSlideIndex: 1,
                 showCarousel: false,
                 init() {
-                    window.addEventListener('open-carousel', () => { this.showCarousel = true });
+                    window.addEventListener('open-carousel', (event) => {
+                        if (event.detail && event.detail.startSlide) {
+                            this.currentSlideIndex = event.detail.startSlide;
+                        } else {
+                            this.currentSlideIndex = 1; // Default to first slide
+                        }
+                        this.showCarousel = true;
+                    });
                 },
                 close() { this.showCarousel = false; },
                 previous() {
