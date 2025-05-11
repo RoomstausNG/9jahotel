@@ -191,7 +191,6 @@ class Hotel extends Model implements HasMedia
         parent::boot();
 
         self::creating(function ($hotel) {
-            $hotel->code = $hotel->telephone;
             $city = CityCopy::with('state:id,name')->find($hotel->city_id);
             $hotel->code = IdGenerator::generate(['table' => 'hotels', 'field' => 'code', 'reset_on_prefix_change' => true, 'length' => 8, 'prefix' => getFirstLetters($city->state->name)]);
 

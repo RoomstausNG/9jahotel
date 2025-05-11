@@ -16,14 +16,14 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 function getFirstLetters(string $inputString): string
 {
-    $words = explode(' ', $inputString);
-    $firstLetters = array_filter(array_map(function ($word) {
-        return ctype_alpha($word) ? strtoupper(substr($word, 0, 1)) : '';
-    }, $words));
-    $result = implode('', $firstLetters);
+    $words = explode(' ', trim($inputString));
+    $firstWord = $words[0] ?? '';
 
-    // Add more random characters and ensure uniqueness
-    return strtoupper(Str::random(3)) . $result . time();
+    // Take the first 3 letters and make them uppercase
+    $code = strtoupper(substr($firstWord, 0, 3));
+
+    // Optionally add randomness or timestamp to ensure uniqueness
+    return $code . strtoupper(Str::random(3)) . time();
 }
 
 
