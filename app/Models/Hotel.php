@@ -8,15 +8,16 @@ use App\Traits\HasManyRating;
 use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\Currency;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\Cache;
 
 class Hotel extends Model implements HasMedia
 {
@@ -191,7 +192,8 @@ class Hotel extends Model implements HasMedia
 
         self::creating(function ($hotel) {
             $hotel->code = $hotel->telephone;
-            // $hotel->code = IdGenerator::generate(['table' => 'hotels', 'field' => 'code', 'reset_on_prefix_change' => true, 'length' => 8, 'prefix' => getFirstLetters($hotel->name) . date('y')]);
+            $city = CityCopy::with('state:id,name')->find($hotel->city_id);
+            $hotel->code = IdGenerator::generate(['table' => 'hotels', 'field' => 'code', 'reset_on_prefix_change' => true, 'length' => 8, 'prefix' => getFirstLetters($city->state->name)]);
 
             $hotel->created_by = auth()->id();
         });
