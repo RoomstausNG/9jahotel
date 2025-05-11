@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-medium">Welcome Back!</h1>
             <p>Log in your 9jahotel account to continue</p>
         </div>
-        <div class="">
+        <div class="px-8">
             <a href="" class="bg-primary-50 border-primary py-3 gap-2 font-medium border w-full text-center block">
                 <img src="{{ asset('img/DeviconGoogle.svg') }}" alt="" class="w-6 h-6 inline-block">
                 <span class="">Proceed with Google</span>
