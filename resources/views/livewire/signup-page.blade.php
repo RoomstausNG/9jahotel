@@ -1,5 +1,5 @@
 <div class="w-full space-y-6 max-w-xl mx-auto">
-    <div class="py-20 md:py-28 lg:py-32 space-y-8">
+    <div class="py-20 md:py-28 lg:py-32 space-y-8 px-8 lg:px-0">
         <div class="text-center">
             <h1 class="text-2xl font-medium">Create an Account</h1>
             <p>Sign up for your 9jahotel account</p>
