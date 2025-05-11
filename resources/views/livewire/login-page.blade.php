@@ -1,5 +1,5 @@
 <div class="w-full space-y-6 max-w-xl mx-auto">
-    <div class="py-20 md:py-28 lg:py-32 space-y-8">
+    <div class="py-20 md:py-28 lg:py-32 space-y-8 px-8 lg:px-0">
         <div class="text-center">
             <h1 class="text-2xl font-medium">Welcome Back!</h1>
             <p>Log in your 9jahotel account to continue</p>
@@ -10,7 +10,7 @@
                 <span class="">Proceed with Google</span>
             </a>
         </div>
-        <form wire:submit="login" class="space-y-6">
+        <form wire:submit="login" class="space-y-6 px-8">
             {{ $this->form }}
 
             <div class="flex items-center justify-between">
