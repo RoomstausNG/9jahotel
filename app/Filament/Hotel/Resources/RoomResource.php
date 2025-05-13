@@ -234,6 +234,28 @@ class RoomResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+                    Tables\Actions\Action::make('set_availability')
+                        ->label('Set Availability')
+                        ->requiresConfirmation()
+                        ->action(function (Room $record) {
+                            // $dates = getDateRange($data['from'], $data['to']);
+                            // foreach ($dates as $date) {
+                            //     $record->statuses()->firstOrCreate(
+                            //         [
+                            //             'room_id' => $record->id, // Conditions to check for existence
+                            //             'date' => $date,
+                            //         ],
+                            //         [
+                            //             'status' => 'available', // Attributes to set if a new record is created
+                            //         ]
+                            //     );
+                            // }
+                            $record->update(['status' => 'available']);
+                            Notification::make()
+                                ->title("Success! Your room will now be available for booking")
+                                ->success()
+                                ->send();
+                        }),
                     Tables\Actions\EditAction::make()
                         ->color('info')
                         ->successNotificationTitle('Room Updated successfully!'),

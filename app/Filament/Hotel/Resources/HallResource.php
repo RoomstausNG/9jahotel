@@ -72,6 +72,9 @@ class HallResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                return $query->where('hotel_id', auth()->user()->hotel_id)->orderByDesc('created_at');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
