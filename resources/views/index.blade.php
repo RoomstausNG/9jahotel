@@ -6,7 +6,7 @@
             <div x-data="typeWriter()" x-init="start()" class="text-center py-16 text-white">
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-medium md:font-bold">
                     <span class="font-black italic text-red-600" x-text="text"></span>
-                    <span>Hotels Deals just for You!</span>
+                    <span>Hotel Deals just for You!</span>
                 </h1>
                 <script>
                     function typeWriter() {

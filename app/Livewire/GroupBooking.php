@@ -224,6 +224,7 @@ class GroupBooking extends Component implements HasForms
                     Step::make('Review & Confirm')
                         ->schema([
                             Select::make('hotels')
+                                ->required()
                                 ->multiple()
                                 ->options(fn(Get $get) => Hotel::where('city_id', $get('city_id'))
                                     ->get()
@@ -236,7 +237,7 @@ class GroupBooking extends Component implements HasForms
                                 ->placeholder('Select your preferred hotels')
                                 ->helperText('Hotels available in the selected city'),
                             Toggle::make('allow_external_bids')
-                                ->label('Allow external hotels to bid for this booking?')
+                                ->label('Allow other hotels to bid for this booking?')
                                 ->helperText('If enabled, hotels outside your preferred list can also offer their services'),
                         ]),
                 ])
@@ -292,6 +293,10 @@ class GroupBooking extends Component implements HasForms
             ->send();
 
         $this->form->fill();
+
+        sleep(3);
+
+        return redirect('/');
     }
 
     #[Layout("components.layouts.frontend")]

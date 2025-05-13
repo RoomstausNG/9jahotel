@@ -26,7 +26,7 @@ class SearchCity extends Component implements HasForms
         return $form
             ->schema([
                 Components\Select::make('city')
-                    ->label('Where are you going? Select City')
+                    ->label('Where are you going?')
                     ->options(function () {
                         // Get cities with hotels and count of hotels using withCount
                         $citiesWithHotels = CityCopy::with('state:id,name')->where('country_id', 160)
@@ -45,10 +45,14 @@ class SearchCity extends Component implements HasForms
                     ->searchable()
                     ->preload()
                     ->optionsLimit(24)
+                    ->extraAttributes(['class' => 'text-xl'])
+
                     ->default(Session::get('city'))
                     ->native(false),
                 Components\DatePicker::make('checkin')
                     ->label('Check-In')
+                    ->extraAttributes(['class' => 'text-xl'])
+
                     ->default(Session::get('checkin') ?? today())
                     ->displayFormat('d F Y')
                     ->closeOnDateSelection()
@@ -58,6 +62,8 @@ class SearchCity extends Component implements HasForms
                     ->required(),
                 Components\DatePicker::make('checkout')
                     ->label('Check-Out')
+                    ->extraAttributes(['class' => 'text-xl'])
+
                     ->closeOnDateSelection()
                     ->default(Session::get('checkout') ?? now()->addDay())
                     ->prefixIcon('heroicon-m-calendar-days')
@@ -90,9 +96,7 @@ class SearchCity extends Component implements HasForms
         return redirect()->route('hotels.result', $data['city']);
     }
 
-    public function mount()
-    {
-    }
+    public function mount() {}
 
     public function render()
     {

@@ -1,9 +1,11 @@
-<div class="max-w-5xl w-full mx-auto py-10 sm:px-6 lg:px-8">
-    <div class="bg-white pb-20  overflow-hidden sm:rounded-lg">
-        <form wire:submit="submitForm" class="p-6 py-20 md:py-24 lg:py-28 bg-white space-y-4">
-            <h1 class="text-2xl font-bold mb-6">Group Booking Request</h1>
+<div class="w-full"
+    style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(95% 100% at 50% 0%);">
+    <div class="max-w-5xl w-full mx-auto py-16 md:py-24 lg sm:px-6 lg:px-8">
+        <div class="bg-white pb-8  overflow-hidden sm:rounded-lg">
+            <form wire:submit="submitForm" class="p-6 py-8 bg-white space-y-4">
+                <h1 class="text-2xl font-bold mb-6">Group Booking Request</h1>
 
-            {{-- <div class="mb-8">
+                {{-- <div class="mb-8">
                 <div class="flex items-center justify-between">
                     @foreach ($steps as $key => $step)
                         <div class="flex flex-col items-center">
@@ -27,8 +29,8 @@
                 </div>
             </div> --}}
 
-            {{ $this->form }}
-        </form>
+                {{ $this->form }}
+            </form>
+        </div>
     </div>
 </div>
-</qodoArtifact>
