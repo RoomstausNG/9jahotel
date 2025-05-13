@@ -67,9 +67,9 @@ class BookingInvoice extends Model
             $invoice->load(['customer', 'hotel', 'bookings.bookable']);
 
             // Send booking invoice email to customer (queued)
-            Mail::to($invoice->customer->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
+            // Mail::to($invoice->customer->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
             // Send booking invoice email to hotel (queued)
-            Mail::to($invoice->hotel->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
+            // Mail::to($invoice->hotel->email)->queue(new \App\Mail\BookingInvoiceEmail($invoice));
         });
     }
 
