@@ -282,7 +282,7 @@
                                         <div>
                                             <p class="font-medium">{{ $rating->customer->name ?? 'Guest' }}</p>
                                             <p class="text-sm text-gray-500">
-                                                {{ $rating->created_at->format('M d, Y') }}</p>
+                                                {{ $rating->created_at?->format('M d, Y') }}</p>
                                         </div>
                                     </div>
                                     <div

@@ -234,7 +234,7 @@ class BookingResource extends Resource
                         Infolists\Components\TextEntry::make('bookable.type.name')
                             ->label("Room Type"),
                         Infolists\Components\TextEntry::make('duration')
-                            ->state(fn(Model $record) => $record->checked_in->format('M d, Y') . " to " . $record->checked_out->format('M d, Y')),
+                            ->state(fn(Model $record) => $record->checked_in?->format('M d, Y') . " to " . $record->checked_out?->format('M d, Y')),
                     ])
                     ->columns(3)
                     ->columnSpanFull(),
