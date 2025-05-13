@@ -104,7 +104,7 @@
                 {{-- Right Column: Contact Form --}}
                 <div class="md:w-1/2">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Contact Us</h2>
-                    <form action="#" method="POST"> {{-- Update action and add CSRF token for Laravel --}}
+                    <form method="POST"> {{-- Update action and add CSRF token for Laravel --}}
                         @csrf {{-- Add CSRF token for Laravel forms --}}
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -128,7 +128,7 @@
                                 class="w-full px-3 py-2 bg-primary-50 border border-primary-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
                         </div>
                         <div>
-                            <button type="submit"
+                            <button type="button"
                                 class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-md transition duration-150">
                                 Submit
                             </button>
