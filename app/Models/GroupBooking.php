@@ -76,11 +76,11 @@ class GroupBooking extends Model
             Notification::route('mail', 'bowofadeoyerinde@gmail.com')
                 ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
 
-                 // send a copy to guest if email is available
-                if($booking->email){
-                      Notification::route('mail', $booking->email)
-                ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
-                }
+            // send a copy to guest if email is available
+            if ($booking->email) {
+                Notification::route('mail', $booking->email)
+                    ->notify(new \App\Notifications\GroupBookingCreatedNotification($booking, $hotelNames));
+            }
         });
     }
 }

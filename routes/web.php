@@ -40,6 +40,7 @@ Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
 Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
 Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
+Route::get('/support', [PageController::class, 'support'])->name('support');
 
 Route::get('/home', Dashboard::class)->name('dashboard')->middleware('auth:customers');
 Route::post('/customer/logout', function () {

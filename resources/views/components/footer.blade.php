@@ -55,6 +55,9 @@
                         <a href="/faqs" class="">Faqs</a>
                     </li>
                     <li class="hover:underline">
+                        <a href="{{ route('support') }}" class="">Support</a> {{-- Added this line --}}
+                    </li>
+                    <li class="hover:underline">
                         <a href="/about-us" class="">About Us</a>
                     </li>
                 </ul>

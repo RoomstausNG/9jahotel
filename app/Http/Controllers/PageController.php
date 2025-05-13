@@ -31,6 +31,10 @@ class PageController extends Controller
         $term = Page::where('key', 'term')->first();
         return view('term', compact(['term']));
     }
+    public function support()
+    {
+        return view('support');
+    }
 
 
 
