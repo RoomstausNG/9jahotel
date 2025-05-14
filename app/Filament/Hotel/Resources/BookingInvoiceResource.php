@@ -93,7 +93,7 @@ class BookingInvoiceResource extends Resource
                 //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Booked On')
-                    ->state(fn(Model $record) => $record->created_at->format('D M d, Y'))
+                    ->state(fn(Model $record) => $record->created_at?->format('D M d, Y'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
@@ -229,7 +229,7 @@ class BookingInvoiceResource extends Resource
                     }),
                 Infolists\Components\TextEntry::make('created_at')
                     ->label("Booked on")
-                    ->state(fn(Model $record) => $record->created_at->format('D M d, Y')),
+                    ->state(fn(Model $record) => $record->created_at?->format('D M d, Y')),
                 Section::make("Money")->schema([
                     Infolists\Components\TextEntry::make('amount')
                         ->state(fn(Model $record) => formatAsNaira($record->amount)),
@@ -249,7 +249,7 @@ class BookingInvoiceResource extends Resource
                         Infolists\Components\TextEntry::make('bookable.type.name')
                             ->label("Room Type"),
                         Infolists\Components\TextEntry::make('duration')
-                            ->state(fn(Model $record) => $record->checked_in?->format('M d, Y') . " to " . $record->checked_out?->format('M d, Y')),
+                            ->state(fn(Model $record) => $record->checked_in??->format('M d, Y') . " to " . $record->checked_out??->format('M d, Y')),
                     ])
                     ->columns(3)
                     ->columnSpanFull(),
