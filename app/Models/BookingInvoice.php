@@ -17,6 +17,8 @@ class BookingInvoice extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'checked_in' => 'datetime',
+        'checked_out' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
