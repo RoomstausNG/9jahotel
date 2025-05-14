@@ -483,12 +483,12 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-in</td>
-                                                                            <td>{{ $booking->checked_in->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_in?->format('D d, M, Y') }}
                                                                                 (12:00 - 16:00)</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-out</td>
-                                                                            <td>{{ $booking->checked_out->format('D d, M, Y') }}
+                                                                            <td>{{ $booking->checked_out?->format('D d, M, Y') }}
                                                                                 (03:00 - 12:00)</td>
                                                                         </tr>
 

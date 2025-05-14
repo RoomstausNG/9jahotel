@@ -129,7 +129,7 @@
                                 {{ $customer->city?->name }}
                             </td>
                             <td class="px-4 py-2 text-sm">
-                                {{ $customer->created_at->format('d M, Y') }}</td>
+                                {{ $customer->created_at?->format('d M, Y') }}</td>
                             <td class="px-4 py-2 text-sm">
                                 {{ $customer->company?->name ?? 'No' }}
                             </td>

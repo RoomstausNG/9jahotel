@@ -233,7 +233,7 @@
                                         {{ $sale->agent->firstname . ' ' . $sale->agent->lastname }}
                                     </td>
                                     <td class="px-4 py-2 text-sm nowrap">
-                                        {{ $sale->created_at->format('d M, Y') }}</td>
+                                        {{ $sale->created_at?->format('d M, Y') }}</td>
                                     </td>
                                 </tr>
                             @empty
@@ -283,11 +283,11 @@
                                 </td> --}}
                                     <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                     <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                        {{ $reserv->checked_in->format('d M, Y') }}
+                                        {{ $reserv->checked_in?->format('d M, Y') }}
                                     </td>
 
                                     <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                        {{ $reserv->checked_out->format('d M, Y') }}
+                                        {{ $reserv->checked_out?->format('d M, Y') }}
                                     </td>
 
                                     <td class="px-4 py-2 uppercase nowrap">
@@ -375,11 +375,11 @@
                             </td> --}}
                                         <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                         <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                            {{ $reserv->checked_in->format('d M, Y') }}
+                                            {{ $reserv->checked_in?->format('d M, Y') }}
                                         </td>
 
                                         <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                            {{ $reserv->checked_out->format('d M, Y') }}
+                                            {{ $reserv->checked_out?->format('d M, Y') }}
                                         </td>
 
                                         <td class="px-4 py-2 uppercase nowrap">

@@ -25,7 +25,7 @@ trait HasManyBookings
             $endDate = new \DateTime($booking->checked_out);
 
             while ($startDate <= $endDate) {
-                $dates[] = $startDate->format('Y-m-d');
+                $dates[] = $startDate?->format('Y-m-d');
                 $startDate->modify('+1 day');
             }
 

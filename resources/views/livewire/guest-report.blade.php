@@ -60,10 +60,10 @@
                             {{ $booking->bookable->number }}
                         </td>
                         <td class="px-4 py-2">
-                            {{ $booking->checked_in->format('D d M, Y') }}
+                            {{ $booking->checked_in?->format('D d M, Y') }}
                         </td>
                         <td class="px-4 py-2">
-                            {{ $booking->checked_out->format('D d M, Y') }}
+                            {{ $booking->checked_out?->format('D d M, Y') }}
                         </td>
                     </tr>
                 @empty

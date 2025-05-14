@@ -46,10 +46,10 @@
                             <td class="px-4 py-2 capitalize">
                                 {{ formatAsNaira($invoice->amount) }}
                             </td>
-                            <td class="px-4 py-2 capitalize nowrap">{{ $invoice->created_at->format('d M, Y') }}</td>
-                            <td class="px-4 py-2 capitalize nowrap">{{ $invoice->from->format('d M, Y') }}</td>
+                            <td class="px-4 py-2 capitalize nowrap">{{ $invoice->created_at?->format('d M, Y') }}</td>
+                            <td class="px-4 py-2 capitalize nowrap">{{ $invoice->from?->format('d M, Y') }}</td>
                             <td class="px-4 py-2">
-                                {{ $invoice->to->format('d M, Y') }}
+                                {{ $invoice->to?->format('d M, Y') }}
                             </td>
                             <td class="px-4 py-2 text-center">
                                 <span

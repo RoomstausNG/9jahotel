@@ -282,7 +282,7 @@ class Reservation extends Component
             $this->business_id = session('business_id');
         }
 
-        $this->date  = now()->format('Y-m-d');
+        $this->date  = now()?->format('Y-m-d');
     }
 
     public function render()
@@ -292,11 +292,11 @@ class Reservation extends Component
             ->where('type', 'LIKE', trim($term))
             ->orWhereHas(
                 'customer',
-                fn (Builder $query)
+                fn(Builder $query)
                 => $query->where('firstname', 'LIKE', trim($term))
                     ->orWhere('phone', 'LIKE', trim($term))
             )
-            ->orWhereHas('bookable', fn (Builder $query) => $query->where('number', 'LIKE', trim($term)))
+            ->orWhereHas('bookable', fn(Builder $query) => $query->where('number', 'LIKE', trim($term)))
             ->paginate($this->perPage);
         return view('livewire.reservation', compact(['reservations']));
     }

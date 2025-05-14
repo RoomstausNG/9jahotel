@@ -121,8 +121,8 @@ class AddHallReservation extends Component
         $this->customer_id = $this->booking->customer_id;
         $this->cid = $this->booking->id;
         $this->status = $this->booking->status;
-        $this->checked_in = $this->booking->checked_in->format('Y-m-d');
-        $this->checked_out = $this->booking->checked_out->format('Y-m-d');
+        $this->checked_in = $this->booking->checked_in?->format('Y-m-d');
+        $this->checked_out = $this->booking->checked_out?->format('Y-m-d');
         $this->amount_paid = $this->booking->amount_paid;
         $this->due = $this->booking->due;
         $this->discount = $this->booking->discount;

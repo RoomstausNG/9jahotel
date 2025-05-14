@@ -43,7 +43,7 @@
             </tr>
             <tr class="w-full p-2">
                 <td class="px-2 py-1 text-left">Expiration date:</td>
-                <td class="px-2 py-1 text-left first-letter:capitalize">{{ $hotel->renew->format('d M, Y') }}</td>
+                <td class="px-2 py-1 text-left first-letter:capitalize">{{ $hotel->renew?->format('d M, Y') }}</td>
             </tr>
         </table>
     </div>

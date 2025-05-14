@@ -121,7 +121,7 @@ function getDateRange($checked_in, $checked_out)
 
     // Iterate through the date range and add each date to the array
     while ($startDate < $endDate) {
-        $dates[] = $startDate->format('Y-m-d');
+        $dates[] = $startDate?->format('Y-m-d');
         $startDate->modify('+1 day');
     }
 
@@ -296,7 +296,7 @@ function getDateR($dat)
 
     // Iterate through the date range and add each date to the array
 
-    return $endDate->format('D d M, Y');
+    return $endDate?->format('D d M, Y');
 }
 
 function myLogo(): string

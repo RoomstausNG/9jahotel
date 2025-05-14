@@ -91,7 +91,7 @@ class Booking extends Model
 
         // Iterate through the date range and add each date to the array
         while ($startDate <= $endDate) {
-            $dates[] = $startDate->format('Y-m-d');
+            $dates[] = $startDate?->format('Y-m-d');
             $startDate->modify('+1 day');
         }
 

@@ -127,8 +127,8 @@ class HallHistory extends Component
         $this->amount_paid = $booking->amount_paid;
         $this->status = $booking->status;
         $this->country_id = $booking->country_id;
-        // $this->checked_in = $booking->checked_in->format('d-m-Y');
-        // $this->checked_out = $booking->checked_out->format('d-m-Y');
+        // $this->checked_in = $booking->checked_in?->format('d-m-Y');
+        // $this->checked_out = $booking->checked_out?->format('d-m-Y');
         $this->checked_in = $booking->checked_in;
         $this->checked_out = $booking->checked_out;
     }
@@ -209,7 +209,7 @@ class HallHistory extends Component
     {
         $term = "%" . $this->query . "%";
         $histories = $this->hall->bookings()
-            ->whereHas('customer', fn (Builder $query) => $query->where('firstname', 'LIKE', trim($term)))
+            ->whereHas('customer', fn(Builder $query) => $query->where('firstname', 'LIKE', trim($term)))
             ->paginate($this->perPage);
         return view('livewire.hall-history', compact(['histories']));
     }

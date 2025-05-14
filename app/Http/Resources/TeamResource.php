@@ -19,8 +19,8 @@ class TeamResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
             'description' => $this->description,
-            'created_at' => $this->created_at->format('M d, Y'),
-            'updated_at' => $this->updated_at->format('M d, Y'),
+            'created_at' => $this->created_at?->format('M d, Y'),
+            'updated_at' => $this->updated_at?->format('M d, Y'),
             'hotels' => $this->when($this->hotels, HotelResource::collection($this->hotels)),
         ];
     }

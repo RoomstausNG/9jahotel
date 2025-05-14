@@ -92,11 +92,11 @@
                             </td> --}}
                             <td class="px-4 py-2">{{ $loop->iteration }}</td>
                             <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                {{ $reservation->checked_in->format('d M, Y') }}
+                                {{ $reservation->checked_in?->format('d M, Y') }}
                             </td>
 
                             <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                {{ $reservation->checked_out->format('d M, Y') }}
+                                {{ $reservation->checked_out?->format('d M, Y') }}
                             </td>
 
                             <td class="px-4 py-2 ">

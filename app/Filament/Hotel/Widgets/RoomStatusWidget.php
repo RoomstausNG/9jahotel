@@ -22,7 +22,7 @@ class RoomStatusWidget extends Widget implements HasForms
     function mount()
     {
         $this->form->fill();
-        $this->data['date'] = today()->format('Y-m-d');
+        $this->data['date'] = today()?->format('Y-m-d');
     }
 
     public function form(Form $form): Form
@@ -39,7 +39,7 @@ class RoomStatusWidget extends Widget implements HasForms
 
     protected function getViewData(): array
     {
-        $date = today()->format('Y-m-d');
+        $date = today()?->format('Y-m-d');
         $user = auth()->user(); // get the authenticated user
         return compact(['user', 'date']);
     }

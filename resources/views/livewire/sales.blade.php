@@ -118,7 +118,7 @@
                                 {{ $sale->agent->firstname . ' ' . $sale->agent->lastname }}
                             </td>
                             <td class="px-4 py-2 text-sm nowrap">
-                                {{ $sale->created_at->format('d M, Y') }}</td>
+                                {{ $sale->created_at?->format('d M, Y') }}</td>
                             <td class="px-4 py-2">
                                 <p class="flex items-center justify-start space-x-2 text-sm">
                                     <a href="{{ route('sales.receipt', $sale->code) }}" target="_balnk"

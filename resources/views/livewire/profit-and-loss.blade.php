@@ -17,8 +17,8 @@
 
             <div class="w-full p-2 space-y-4">
                 <h1 class="text-lg font-semibold text-center uppercase">Profit and Loss Report from
-                    <span class="text-blue-600">{{ $start ?? now()->format('d M, Y') }}</span> to
-                    <span class="text-blue-600"> {{ $end ?? now()->format('d M, Y') }}</span> generated on
+                    <span class="text-blue-600">{{ $start ?? now()?->format('d M, Y') }}</span> to
+                    <span class="text-blue-600"> {{ $end ?? now()?->format('d M, Y') }}</span> generated on
                     {{ date('d M, Y') }}
                 </h1>
                 <div class="flex w-full border divide-x">

@@ -57,11 +57,11 @@
                 </tr>
                 <tr>
                     <td class="px-2">Checked-In Date:</td>
-                    <td class="px-2">{{ $booking->checked_in->format('D d M, Y') }}</td>
+                    <td class="px-2">{{ $booking->checked_in?->format('D d M, Y') }}</td>
                 </tr>
                 <tr>
                     <td class="px-2">Checked-Out Date:</td>
-                    <td class="px-2">{{ $booking->checked_out->format('D d M, Y') }}</td>
+                    <td class="px-2">{{ $booking->checked_out?->format('D d M, Y') }}</td>
                 </tr>
                 @if ($booking->due > $booking->amount_paid)
                     <tr>
@@ -81,7 +81,7 @@
         <div class="w-full text-center">
             <p class="px-6 py-1 mx-auto text-sm font-medium text-gray-600 bg-gray-100 rounded-sm max-w-max">BOOKING
                 CODE: <span class="font-semibold text-black uppercase">{{ $booking->code }}</span></p>
-            <p class="text-sm font-medium">Date: {{ $booking->created_at->format('d M, Y') }}</p>
+            <p class="text-sm font-medium">Date: {{ $booking->created_at?->format('d M, Y') }}</p>
         </div>
         <button onclick="window.print()"
             class="block px-2 py-1 mr-2 text-sm text-white bg-blue-600 rounded cursor-pointer max-w-max print:hidden">

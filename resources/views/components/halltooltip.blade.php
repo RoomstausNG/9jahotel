@@ -25,10 +25,10 @@
                 <span class='inline-block capitalize'>{{ 'Telephone:    ' . $filteredBooking->customer?->phone }}</span>
                 <br>
                 <span
-                    class='inline-block capitalize'>{{ 'Checked-In Date:  ' . $filteredBooking->checked_in->format('d-M-Y') }}</span>
+                    class='inline-block capitalize'>{{ 'Checked-In Date:  ' . $filteredBooking->checked_in?->format('d-M-Y') }}</span>
                 <br>
                 <span
-                    class='inline-block capitalize'>{{ 'Checked-Out Date:  ' . $filteredBooking->checked_out->format('d-M-Y') }}</span>
+                    class='inline-block capitalize'>{{ 'Checked-Out Date:  ' . $filteredBooking->checked_out?->format('d-M-Y') }}</span>
                 <br>
             @endif
             {{-- <span class='capitalize'>{{ 'Hall Character: ' . $hall->character }}</span> --}}

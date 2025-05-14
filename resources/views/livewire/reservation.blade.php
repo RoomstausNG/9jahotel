@@ -38,7 +38,7 @@
             </form>
         </div>
         <span class="inline-block w-full -mt-8 text-right">Showing status for
-            <span class="font-bold"> {{ $newDate->format('l, d M Y') }}</span>
+            <span class="font-bold"> {{ $newDate?->format('l, d M Y') }}</span>
         </span>
 
         <div
@@ -90,11 +90,11 @@
                                 </td> --}}
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                    {{ $reservation->checked_in->format('d M, Y') }}
+                                    {{ $reservation->checked_in?->format('d M, Y') }}
                                 </td>
 
                                 <td class="px-4 py-2 text-sm capitalize break-keep nowrap">
-                                    {{ $reservation->checked_out->format('d M, Y') }}
+                                    {{ $reservation->checked_out?->format('d M, Y') }}
                                 </td>
 
                                 <td class="px-4 py-2 ">
@@ -211,7 +211,7 @@ $(document).ready(function() {
             function initSelect() {
                 el.select2({
                     placeholder: '{{ __('
-                                                                                                                                        Select your option ') }}',
+                                                                                                                                                            Select your option ') }}',
                     allowClear: !el.attr('required'),
                 })
             }

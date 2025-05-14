@@ -85,7 +85,7 @@
         <div class="w-full text-center">
             <p class="px-6 py-1 mx-auto font-medium bg-gray-100 rounded-sm max-w-max">Order <span
                     class="uppercase ">{{ $sale->code }}</span></p>
-            <p class="text-lg font-medium">Date: {{ $sale->created_at->format('d-m-Y') }}</p>
+            <p class="text-lg font-medium">Date: {{ $sale->created_at?->format('d-m-Y') }}</p>
         </div>
         <button onclick="window.print()"
             class="block px-2 py-1 mr-2 text-sm text-white bg-blue-600 rounded cursor-pointer max-w-max print:hidden">

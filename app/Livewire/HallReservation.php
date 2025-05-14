@@ -280,7 +280,7 @@ class HallReservation extends Component
             $this->business_id = session('business_id');
         }
 
-        $this->date  = now()->format('Y-m-d');
+        $this->date  = now()?->format('Y-m-d');
     }
 
     public function render()
@@ -290,11 +290,11 @@ class HallReservation extends Component
             ->where('type', 'LIKE', trim($term))
             ->orWhereHas(
                 'customer',
-                fn (Builder $query)
+                fn(Builder $query)
                 => $query->where('firstname', 'LIKE', trim($term))
                     ->orWhere('phone', 'LIKE', trim($term))
             )
-            ->orWhereHas('bookable', fn (Builder $query) => $query->where('number', 'LIKE', trim($term)))
+            ->orWhereHas('bookable', fn(Builder $query) => $query->where('number', 'LIKE', trim($term)))
             ->paginate($this->perPage);
         return view('livewire.hall-reservation', compact(['reservations']));
     }

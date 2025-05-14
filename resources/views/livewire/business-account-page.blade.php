@@ -95,7 +95,7 @@
                                 {{ $business->email }}
                             </td>
                             <td class="px-4 py-2 text-sm">
-                                {{ $business->created_at->format('d M, Y') }}</td>
+                                {{ $business->created_at?->format('d M, Y') }}</td>
                             <td class="px-4 py-2 ">
                                 {{ formatAsNaira($business->balance) }}
                             </td>
