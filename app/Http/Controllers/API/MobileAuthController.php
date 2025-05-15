@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\User;
 use App\Models\Hotel;
 use App\Models\Customer;
 use App\Traits\ApiResponse;
 use App\Rules\MobileOTPRule;
 use Illuminate\Http\Request;
 use App\Rules\DefaultPasswordRule;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\OtpNotification;
+use App\Filament\Resources\UserResource;
 use App\Http\Resources\CustomerResource;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\HotelCreationNotification;
+use App\Http\Resources\UserResource as UResource;
+use Illuminate\Support\Facades\Cache; // Add this line
 
 class MobileAuthController extends Controller
 {
@@ -27,8 +31,8 @@ class MobileAuthController extends Controller
             'firstname' => 'required',
             'lastname' => 'required',
             'address' => ['nullable'],
-            'phone' => ['required', 'numeric', 'digits:11', 'unique:customers,phone'],
-            'email' => ['required', 'email', 'unique:customers,email'],
+            'phone' => ['required', 'numeric', 'digits:11', 'unique:users,phone'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed'],
         ]);
 
@@ -36,10 +40,10 @@ class MobileAuthController extends Controller
         $data['password'] = Hash::make($data['password']);
         $data['device_name'] = $request->header('user-agent');
 
-        $customer = Customer::create($data);
+        $user = User::create($data);
 
-        if ($customer) {
-            return $this->successResponse(new CustomerResource($customer), 'Customer created successfully', 201);
+        if ($user) {
+            return $this->successResponse(new CustomerResource($user), 'Customer created successfully', 201);
         }
     }
 
@@ -64,7 +68,7 @@ class MobileAuthController extends Controller
         $data = $request->validate([
             'password' => 'required',
             'device_name' => 'nullable',
-            'email' => ['required', 'exists:customers,email']
+            'email' => ['required', 'exists:users,email']
         ]);
         // $device =
 
@@ -73,23 +77,23 @@ class MobileAuthController extends Controller
         }
 
         // Find customer by (email)
-        $customer = Customer::where('email', $request->email)
+        $user = User::where('email', $request->email)
             ->first();
 
 
-        if (!$customer || !Hash::check($data['password'], $customer->password)) {
+        if (!$user || !Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $customer->update(['device_name' => $data['device_name']]);
+        $user->update(['device_name' => $data['device_name']]);
 
 
-        $token = $customer->createToken($data['device_name'])->plainTextToken;
+        $token = $user->createToken($data['device_name'])->plainTextToken;
 
         $res['token'] = $token;
-        $res['user'] = new CustomerResource($customer);
+        $res['user'] = new UResource($user->load('hotel'));
 
 
         return $this->successResponse($res, 'Logged-in successfully', 200);
@@ -100,26 +104,26 @@ class MobileAuthController extends Controller
     {
         // Validation
         $data = $request->validate([
-            'email' => ['required', 'exists:customers,email'],
+            'email' => ['required', 'exists:users,email'],
         ]);
 
         // Find user by email (email or any other unique identifier)
-        $customer = Customer::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
         // Generate OTP
         $otp = rand(100000, 999999);
 
         // Save OTP in session
-        // session([$customer->email => $otp]);
+        // session([$user->email => $otp]);
 
-        $customer->update(['otp' => Hash::make($otp)]);
+        $user->update(['otp' => Hash::make($otp)]);
 
         // send notifications
-        // $customer->notify(new OtpNotification($otp));
+        // $user->notify(new OtpNotification($otp));
 
         try {
-            Notification::sendNow($customer, new OtpNotification($otp));
-            return $this->successResponse(new CustomerResource($customer), 'A one time password has been send for password reset', 200);
+            Notification::sendNow($user, new OtpNotification($otp));
+            return $this->successResponse(new CustomerResource($user), 'A one time password has been send for password reset', 200);
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 500);
         }
@@ -128,23 +132,23 @@ class MobileAuthController extends Controller
     public function verifyOtp(Request $request)
     {
         $data = request()->validate([
-            'email' => ['required', 'email', 'exists:customers,email'],
+            'email' => ['required', 'email', 'exists:users,email'],
             'otp' => ['required', 'numeric']
         ]);
 
-        $customer = Customer::where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
-        if (!$customer) {
+        if (!$user) {
             return $this->errorResponse('Account doesn\'t exist', 404);
         }
 
-        // $storedOtp = session($customer->email);
+        // $storedOtp = session($user->email);
 
         try {
-            if (Hash::check($data['otp'], $customer->otp) || $data['otp'] == 147258) {
+            if (Hash::check($data['otp'], $user->otp) || $data['otp'] == 147258) {
                 // delete previous token before creating another one
-                $customer->tokens()->delete();
-                $token = $customer->createToken($customer->device_name)->plainTextToken;
+                $user->tokens()->delete();
+                $token = $user->createToken($user->device_name)->plainTextToken;
                 return $this->successResponse(['token' => $token], 'Logged-in successfully', 200);
             } else {
                 return $this->errorResponse('Invalid or expired OTP', 400);
@@ -156,20 +160,20 @@ class MobileAuthController extends Controller
 
     public function resendOtp(Request $request)
     {
-        $data = request()->validate(['email' => ['required', 'email', 'exists:customers,email']]);
+        $data = request()->validate(['email' => ['required', 'email', 'exists:users,email']]);
 
         // Generate OTP
         $otp = rand(100000, 999999);
 
-        $customer = Customer::where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
 
         // Save OTP in session
         // session([$request->email => $otp]);
-        $customer->update(['otp' => Hash::make($otp)]);
+        $user->update(['otp' => Hash::make($otp)]);
         try {
-            Notification::sendNow($customer, new OtpNotification($otp));
-            return $this->successResponse(new CustomerResource($customer), 'OTP sent successfully', 200);
+            Notification::sendNow($user, new OtpNotification($otp));
+            return $this->successResponse(new CustomerResource($user), 'OTP sent successfully', 200);
         } catch (\Throwable $th) {
             return $this->errorResponse('Error sending OTP, kindly retry', 500);
         }
@@ -177,11 +181,11 @@ class MobileAuthController extends Controller
 
     public function logout(Request $request)
     {
-        $customer = $request->user();
-        // $customer = Customer::where('email', $request->email)->first();
+        $user = $request->user();
+        // $user = User::where('email', $request->email)->first();
 
-        if ($customer) {
-            $customer->tokens()->delete();
+        if ($user) {
+            $user->tokens()->delete();
             return $this->successResponse([null, 'Logout successfuly', 204]);
             // return json()->response;
         }
@@ -191,7 +195,15 @@ class MobileAuthController extends Controller
 
     public function profile(Request $request)
     {
-        return $this->successResponse(new CustomerResource($request->user()), 'My Profile');
+        $user = $request->user();
+        $cacheKey = 'user_profile_' . $user->id;
+        $cacheDuration = 60 * 24; // 24 hours in minutes
+
+        $profileData = Cache::remember($cacheKey, $cacheDuration, function () use ($user) {
+            return new UResource($user->loadMissing('hotel')); // Eager load relations if not already loaded
+        });
+
+        return $this->successResponse($profileData, 'My Profile');
     }
 
     public function updatePassword(Request $request)
@@ -201,9 +213,9 @@ class MobileAuthController extends Controller
             'password' => ['required', 'min:6', 'confirmed', 'different:current_password']
         ]);
 
-        $customer = $request->user();
-        $customer->password = Hash::make($data['password']);
-        $customer->save();
+        $user = $request->user();
+        $user->password = Hash::make($data['password']);
+        $user->save();
 
         return $this->successResponse(new CustomerResource($request->user()), 'Password updated successfully!', 201);
     }
@@ -211,24 +223,24 @@ class MobileAuthController extends Controller
     public function resetPass(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required', 'exists:customers,email'],
+            'email' => ['required', 'exists:users,email'],
             'otp' => ['required', new MobileOTPRule($request->email)],
             'password' => ['required', 'min:6', 'confirmed']
         ]);
 
-        $customer = Customer::where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])->first();
         $password = bcrypt($data['password']);
-        $customer->update(['password' => $password]);
+        $user->update(['password' => $password]);
 
-        return $this->successResponse(new CustomerResource($customer), 'Password updated successfully, You can now login!', 201);
+        return $this->successResponse(new CustomerResource($user), 'Password updated successfully, You can now login!', 201);
     }
 
     public function deleteAccount(Request $request)
     {
-        $customer =  $request->user();
+        $user = $request->user();
 
-        $customer->tokens()->delete();
-        $done =  $customer->delete();
+        $user->tokens()->delete();
+        $done = $user->delete();
         if ($done) {
             return $this->successResponse(null, 'Account Deleted successfully');
         }

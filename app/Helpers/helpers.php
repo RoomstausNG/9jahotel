@@ -51,7 +51,7 @@ function getCloudinaryUrlViaStorage($publicId, $extension = "webp")
 
 function profilePicture(object $user): string
 {
-    return $user->signature ? asset('storage/' . $user->signature) : asset('img/avatar.png');
+    return $user->avatar ? getCloudinaryUrl($user->avatar) : asset('img/avatar.png');
 }
 
 function getColorCode($status)
