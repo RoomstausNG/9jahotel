@@ -14,12 +14,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\OtpNotification;
-use App\Filament\Resources\UserResource;
 use App\Http\Resources\CustomerResource;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\HotelCreationNotification;
-use App\Http\Resources\UserResource as UResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Cache; // Add this line
 
 class MobileAuthController extends Controller
@@ -93,7 +92,7 @@ class MobileAuthController extends Controller
         $token = $user->createToken($data['device_name'])->plainTextToken;
 
         $res['token'] = $token;
-        $res['user'] = new UResource($user->load('hotel'));
+        $res['user'] = new UserResource($user->load('hotel'));
 
 
         return $this->successResponse($res, 'Logged-in successfully', 200);
@@ -200,7 +199,7 @@ class MobileAuthController extends Controller
         $cacheDuration = 60 * 24; // 24 hours in minutes
 
         $profileData = Cache::remember($cacheKey, $cacheDuration, function () use ($user) {
-            return new UResource($user->loadMissing('hotel')); // Eager load relations if not already loaded
+            return new UserResource($user->loadMissing('hotel')); // Eager load relations if not already loaded
         });
 
         return $this->successResponse($profileData, 'My Profile');

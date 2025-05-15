@@ -43,7 +43,7 @@ class RoomCollection extends ResourceCollection
                     'character' => $item->character,
                     'floor' => $item->floor->name . " floor",
                     'bed_type' => $item->bed_type,
-                    'image' => $item->type->getFirstMediaUrl('rooms'),
+                    'image' => getCloudinaryUrl($item->image),
                     'date' => $this->extraData
                 ];
             })

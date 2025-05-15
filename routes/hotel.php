@@ -4,12 +4,13 @@ use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Resources\CustomerResource;
 use App\Http\Controllers\API\CityController;
 use App\Http\Controllers\API\HotelController;
 use App\Http\Controllers\API\RatingController;
-use App\Http\Controllers\API\MobileAuthController;
 use App\Http\Controllers\FrontendApiController;
-use App\Http\Resources\CustomerResource;
+use App\Http\Controllers\API\MobileAuthController;
+use App\Http\Controllers\API\MobileHotelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [MobileAuthController::class, 'logout']);
     Route::get('/profile', [MobileAuthController::class, 'profile']);
     Route::post('/password/update', [MobileAuthController::class, 'updatePassword']);
+
+    Route::get('/rooms', [MobileHotelController::class, 'rooms']);
+    Route::get('/halls', [MobileHotelController::class, 'halls']);
+    Route::get('/room-categories', [MobileHotelController::class, 'roomCategories']);
+    Route::patch('/room/{room}', [MobileHotelController::class, 'makeRoomAvailable']);
+    Route::patch('/hall/{hall}', [MobileHotelController::class, 'makeHallAvailable']);
+    Route::patch('/room/{room}/set-unavailability', [MobileHotelController::class, 'setRoomUnavailability']);
+    Route::patch('/hall/{hall}/set-unavailability', [MobileHotelController::class, 'setHallUnavailability']);
 });
 
 

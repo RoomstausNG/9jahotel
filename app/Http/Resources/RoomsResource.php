@@ -27,7 +27,8 @@ class RoomsResource extends JsonResource
             'character' => $this->character,
             'floor' => $this->floor->name . " floor",
             'bed_type' => $this->bed_type,
-            // 'image' => $this->type->getFirstMediaUrl('rooms'),
+            'status' => $this->status,
+            'image' => getCloudinaryUrl($this->image)
         ];
     }
 }
