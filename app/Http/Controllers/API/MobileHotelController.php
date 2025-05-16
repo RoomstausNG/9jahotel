@@ -387,5 +387,4 @@ class MobileHotelController extends Controller
 
         return $this->successResponse($data, "Dashboard Statistics");
     }
-
 }
