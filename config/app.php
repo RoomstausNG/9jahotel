@@ -178,7 +178,8 @@ return [
         App\Providers\FortifyServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Unicodeveloper\Paystack\PaystackServiceProvider::class,
-        CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class
+        CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class,
+        // Triverla\LaravelOpay\OpayServiceProvider::class
     ])->toArray(),
 
     /*
@@ -196,6 +197,7 @@ return [
         // 'Example' => App\Facades\Example::class,
 
         // 'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
+        // 'Opay' => Triverla\LaravelOPay\Facades\Opay::class,
     ])->toArray(),
 
 ];

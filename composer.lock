@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3be3dd9aba004a3de8f2fc8a551c10ca",
+    "content-hash": "d7658e9295bc5d17006657886a7ef4f7",
     "packages": [
         {
             "name": "althinect/filament-spatie-roles-permissions",
@@ -10963,6 +10963,82 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
             },
             "time": "2024-12-21T16:25:41+00:00"
+        },
+        {
+            "name": "triverla/laravel-opay",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Triverla/laravel-opay.git",
+                "reference": "40a17301323e4de6a39c65501c8092e3b8f946b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Triverla/laravel-opay/zipball/40a17301323e4de6a39c65501c8092e3b8f946b2",
+                "reference": "40a17301323e4de6a39c65501c8092e3b8f946b2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "~6|~7|~8|~9",
+                "illuminate/support": "~6|~7|~8|~9|^10.0",
+                "php": "^7.2|^8.0|^8.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "1.*",
+                "orchestra/testbench": "^5.0|^6.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Opay": "Triverla\\LaravelOpay\\Facades\\Opay"
+                    },
+                    "providers": [
+                        "Triverla\\LaravelOpay\\OpayServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Triverla\\LaravelOpay\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benaiah Yusuf",
+                    "email": "yusufbenaiah@gmail.com"
+                }
+            ],
+            "description": "A laravel package for Opay",
+            "keywords": [
+                "github",
+                "laravel",
+                "laravel 10",
+                "laravel 7",
+                "laravel 8",
+                "laravel 9",
+                "laravel opay",
+                "laravel-opay",
+                "opay",
+                "opay api",
+                "opay.com",
+                "open source",
+                "payments",
+                "php",
+                "subscription",
+                "transactions"
+            ],
+            "support": {
+                "issues": "https://github.com/Triverla/laravel-opay/issues",
+                "source": "https://github.com/Triverla/laravel-opay/tree/v1.0.0"
+            },
+            "time": "2023-07-26T22:55:19+00:00"
         },
         {
             "name": "unicodeveloper/laravel-paystack",
