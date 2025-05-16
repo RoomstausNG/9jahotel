@@ -31,20 +31,17 @@ Route::middleware('auth:customer')->get('/customer', function (Request $request)
     return new CustomerResource(Auth::guard('customer')->user());
 });
 
-// // get a single hotels with categories under it
-// Route::get('/hotel/{hotel:code}', [HotelController::class, 'show']);
 
-// // get rooms under a room categories
-// Route::get('/hotel/categories/{cat:id}', [HotelController::class, 'getRooms']);
-
-// Route::post('/register', [MobileAuthController::class, 'register']);
-Route::post('/login', [MobileAuthController::class, 'login']);
+Route::post('/login', [MobileHotelController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [MobileAuthController::class, 'logout']);
-    Route::get('/profile', [MobileAuthController::class, 'profile']);
-    Route::post('/password/update', [MobileAuthController::class, 'updatePassword']);
+    Route::post('/logout', [MobileHotelController::class, 'logout']);
+    Route::get('/profile', [MobileHotelController::class, 'profile']);
+    Route::post('/password/update', [MobileHotelController::class, 'updatePassword']);
+    Route::get('/bookings', [MobileHotelController::class, 'bookings']);
+    Route::get('/bookings/today', [MobileHotelController::class, 'todaysBookings']);
+    Route::get('/stats', [MobileHotelController::class, 'stats']);
 
     Route::get('/rooms', [MobileHotelController::class, 'rooms']);
     Route::get('/halls', [MobileHotelController::class, 'halls']);

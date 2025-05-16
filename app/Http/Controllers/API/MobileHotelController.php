@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Traits\ApiResponse;
 use App\Rules\MobileOTPRule;
 use Illuminate\Http\Request;
+use App\Models\BookingInvoice;
 use App\Rules\DefaultPasswordRule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\HallResource;
@@ -21,6 +22,7 @@ use App\Http\Resources\RoomsResource;
 use App\Http\Resources\HallCollection;
 use App\Http\Resources\RoomCollection;
 use App\Notifications\OtpNotification;
+use App\Http\Resources\BookingResource;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\HotelCreationNotification;
@@ -329,7 +331,7 @@ class MobileHotelController extends Controller
             'to' => ['required', 'date', 'after:from']
         ]);
         $dates = getDateRange($data['from'], $data['to']);
-        $hall->update(['status'=> 'occupied']);
+        $hall->update(['status' => 'occupied']);
         foreach ($dates as $date) {
             $hall->statuses()->firstOrCreate(
                 [
@@ -353,4 +355,37 @@ class MobileHotelController extends Controller
         }
         return $this->successResponse(new HallResource($hall), "Hall {$hall->name} is now set for Unavailable from {$data['from']} to {$data['to']}");
     }
+
+    public function todaysBookings(Request $request)
+    {
+        $bookings = BookingInvoice::with('customer:id,firstname,lastname,phone,email')
+            ->where('reference', 'like', "%{trim($request->reference)}%")
+            ->withCount('bookings')
+            ->where('hotel_id', $request->user()->hotel_id)->whereDate('created_at', today())->latest()->get();
+
+        return $this->successResponse(new BookingResource($bookings), 'Today\'s bookings')->make();
+    }
+
+    public function bookings(Request $request)
+    {
+        $bookings = BookingInvoice::with('customer:id,firstname,lastname,phone,email')
+            ->where('reference', 'like', "%{trim($request->reference)}%")
+            ->withCount('bookings')
+            ->where('hotel_id', $request->user()->hotel_id)->latest()->paginate(24);
+
+        return $this->successResponse(new BookingResource($bookings), 'All bookings')->make();
+    }
+
+    public function stats(Request $request)
+    {
+        $data = [
+            'total_bookings' => BookingInvoice::where('hotel_id', $request->user()->hotel_id)->count(),
+            'today\'s' => BookingInvoice::where('hotel_id', $request->user()->hotel_id)->whereDate('created_at', today())->count(),
+            'total_room' => Room::where('hotel_id', $request->user()->hotel_id)->count(),
+            'total_hall' => Hall::where('hotel_id', $request->user()->hotel_id)->count(),
+        ];
+
+        return $this->successResponse($data, "Dashboard Statistics");
+    }
+
 }
