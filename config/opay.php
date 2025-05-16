@@ -4,6 +4,8 @@ return [
 
     'base_url' => env('OPAY_BASE_URL', 'https://cashierapi.opayweb.com'),
 
+    'payment_url' => env('OPAY_PAYMENT_URL', 'https://testapi.opaycheckout.com/api/v1/international/payment/create'),
+
     'secret_key' => env('OPAY_SECRET_KEY', ''),
 
     'public_key' => env('OPAY_PUBLIC_KEY', ''),
