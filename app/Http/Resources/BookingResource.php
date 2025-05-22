@@ -45,7 +45,6 @@ class BookingResource extends JsonResource
             'amount_paid' => $this->amount,
             'commission_amount' => $this->commission_amount,
             'hotel_payable' => $this->hotel_payable,
-            'amount_paid' => $this->amount_paid,
             'checked_in' => $this->checked_in?->format('d M, Y'),
             'checked_out' => $this->checked_out?->format('d M, Y'),
             'status' => $this->status,
