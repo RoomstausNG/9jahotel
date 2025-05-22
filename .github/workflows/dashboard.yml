@@ -16,13 +16,13 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      # - name: Check .env file for invalid characters
-      #   run: |
-      #     if [ -f .env ]; then
-      #       cp .env .env.backup
-      #       sed -i '/[{]/d' .env
-      #       echo "Cleaned .env file of potential invalid characters"
-      #     fi
+      - name: Check .env file for invalid characters
+        run: |
+          if [ -f .env ]; then
+            cp .env .env.backup
+            sed -i '/[{]/d' .env
+            echo "Cleaned .env file of potential invalid characters"
+          fi
 
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
