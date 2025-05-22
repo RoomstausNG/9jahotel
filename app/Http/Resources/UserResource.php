@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'avatar' => getCloudinaryUrl($this->avatar),
-            'hotel_code' => $this->hotel->code
+            'hotel_code' => $this->hotel?->code
         ];
     }
 }
