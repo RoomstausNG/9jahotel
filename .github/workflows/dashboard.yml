@@ -67,7 +67,6 @@ jobs:
               echo "Deployment failed, trying alternative approach..."
               # If deploy.sh fails, try a direct git pull approach
               git fetch
-              git checkout dashboard
               git pull origin dashboard || git reset --hard origin/dashboard
 
               # Run essential deployment steps
