@@ -373,7 +373,7 @@ class MobileHotelController extends Controller
             ->withCount('bookings')
             ->where('hotel_id', $request->user()->hotel_id)->latest()->paginate(24);
 
-        return $this->successResponse(BookingResource::collection($bookings), 'All bookings');
+        return $this->successResponse(new BookingResource($bookings)->make(), 'All bookings');
     }
 
     public function stats(Request $request)
