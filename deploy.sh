@@ -14,12 +14,6 @@ git reset --hard origin/dashboard
 
 # Pull the latest changes with a strategy to handle permission issues
 echo ">> Force pulling latest changes..."
-# First try to fix the problematic file permission
-echo ">> Attempting to fix .user.ini permission..."
-if [ -f "public/.user.ini" ]; then
-  sudo chmod 666 public/.user.ini || chmod 666 public/.user.ini || true
-  echo "Changed permissions on public/.user.ini"
-fi
 
 git pull --rebase --strategy-option=theirs
 if [ $? -eq 0 ]; then
@@ -50,14 +44,6 @@ composer install --no-dev --optimize-autoloader
 echo ">> Running migrations..."
 php artisan migrate --force
 
-# Ensure storage files aren't pushed to git
-echo ">> Checking .gitignore for storage entries..."
-if ! grep -q "storage/\*" .gitignore; then
-  echo "storage/*" >> .gitignore
-  echo "!storage/.gitignore" >> .gitignore
-  echo "✓ Added storage directory to .gitignore"
-fi
-
 # Use optimize:clear instead of individual clear commands
 echo ">> Clearing all caches..."
 php artisan optimize:clear
@@ -82,4 +68,4 @@ chown -R 777 storage bootstrap/cache
 chmod -R 777 storage bootstrap/cache
 php artisan up
 
-echo "✓ SUCCESS: Deployment completed successfully!"
+echo "✓ SUCCESS: Deployment is successfully!"
