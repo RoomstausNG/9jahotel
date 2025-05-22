@@ -27,7 +27,9 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 
 
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
-Route::redirect('/', "/hotel/login");
+Route::get('/', function () {
+    return redirect('hotel/login');
+});
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
 
 Route::get('/hotels/{city?}', SearchResult::class)->name('hotels.result');
@@ -39,11 +41,11 @@ Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 Route::get("/signin", LoginPage::class);
 
 Route::get('/session-debug', fn() =>
-    response()->json([
-        'city' => Session::get('city'),
-        'checkin' => Session::get('checkin'),
-        'checkout' => Session::get('checkout'),
-    ]))->name('session.debug');
+response()->json([
+    'city' => Session::get('city'),
+    'checkin' => Session::get('checkin'),
+    'checkout' => Session::get('checkout'),
+]))->name('session.debug');
 
 Route::get('/test', function () {
     $hotels = Hotel::all();
