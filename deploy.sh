@@ -10,12 +10,7 @@ git stash
 # Fetch the latest changes
 echo ">> Fetching latest changes..."
 git fetch
-if [ $? -eq 0 ]; then
-  echo "✓ SUCCESS: Git fetch"
-else
-  echo "✗ ERROR: Git fetch failed"
-  exit 1
-fi
+git reset --hard origin/dashboard
 
 # Pull the latest changes with a strategy to handle permission issues
 echo ">> Force pulling latest changes..."
