@@ -359,7 +359,7 @@ class MobileHotelController extends Controller
     public function todaysBookings(Request $request)
     {
         $bookings = BookingInvoice::with('customer:id,firstname,lastname,phone,email')
-            ->where('reference', 'like', "%{trim($request->reference)}%")
+            ->where('reference', 'like', "%{$request->reference}%")
             ->withCount('bookings')
             ->where('hotel_id', $request->user()->hotel_id)->whereDate('created_at', today())->latest()->get();
 
@@ -369,7 +369,7 @@ class MobileHotelController extends Controller
     public function bookings(Request $request)
     {
         $bookings = BookingInvoice::with('customer:id,firstname,lastname,phone,email')
-            ->where('reference', 'like', "%{trim($request->reference)}%")
+            ->where('reference', 'like', "%{$request->reference}%")
             ->withCount('bookings')
             ->where('hotel_id', $request->user()->hotel_id)->latest()->paginate(24);
 
