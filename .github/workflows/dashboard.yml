@@ -16,13 +16,13 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Check .env file for invalid characters
-        run: |
-          if [ -f .env ]; then
-            cp .env .env.backup
-            sed -i '/[{]/d' .env
-            echo "Cleaned .env file of potential invalid characters"
-          fi
+      # - name: Check .env file for invalid characters
+      #   run: |
+      #     if [ -f .env ]; then
+      #       cp .env .env.backup
+      #       sed -i '/[{]/d' .env
+      #       echo "Cleaned .env file of potential invalid characters"
+      #     fi
 
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -62,41 +62,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             cd /www/wwwroot/dashboard.wakalor.com
-
-
-            # Ensure cache directories exist with proper permissions
-            echo ">> Ensuring cache directories exist..."
-            if [ ! -d "storage/framework/cache/data" ]; then
-              sudo mkdir -p storage/framework/cache/data 2>/dev/null || mkdir -p storage/framework/cache/data
-              echo "Created storage/framework/cache/data directory"
-            fi
-
-            if [ ! -d "storage/framework/sessions" ]; then
-              sudo mkdir -p storage/framework/sessions 2>/dev/null || mkdir -p storage/framework/sessions
-              echo "Created storage/framework/sessions directory"
-            fi
-
-            if [ ! -d "storage/framework/views" ]; then
-              sudo mkdir -p storage/framework/views 2>/dev/null || mkdir -p storage/framework/views
-              echo "Created storage/framework/views directory"
-            fi
-
-            if [ ! -d "bootstrap/cache" ]; then
-              sudo mkdir -p bootstrap/cache 2>/dev/null || mkdir -p bootstrap/cache
-              echo "Created bootstrap/cache directory"
-            fi
-
-            # Set proper permissions and ownership
-            echo ">> Setting proper permissions and ownership..."
-            sudo chmod -R 775 storage bootstrap/cache 2>/dev/null || chmod -R 775 storage bootstrap/cache
-            sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R www-data:www-data storage bootstrap/cache
-
-            # Handle problematic .user.ini file
-            echo ">> Handling problematic .user.ini file..."
-            if [ -f public/.user.ini ]; then
-              sudo rm -f public/.user.ini 2>/dev/null || rm -f public/.user.ini 2>/dev/null || true
-            fi
-
             # Run the deployment script
             ./deploy.sh || {
               echo "Deployment failed, trying alternative approach..."
