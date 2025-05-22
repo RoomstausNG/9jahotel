@@ -62,7 +62,7 @@ echo ">> Bringing application online..."
 echo ">> Running hotel price update..."
 php artisan update:price
 
-php artisan optimize:cache
+php artisan optimize
 
 chown -R 777 storage bootstrap/cache
 chmod -R 777 storage bootstrap/cache
