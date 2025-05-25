@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Triverla\LaravelOpay\Facades\Opay;
 use Triverla\LaravelOpay\Exceptions\FailedRequestException;
-use Illuminate\Support\Facades\Log;
 
 class OpayService
 {
