@@ -54,7 +54,7 @@
         }
 
         .logo-section img {
-            max-width: 120px;
+            max-width: 220px;
             height: auto;
         }
 
