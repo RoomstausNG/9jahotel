@@ -22,6 +22,7 @@ use App\Livewire\BookingHistory;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use App\Livewire\SignupPage;
 use App\Livewire\ForgotPasswordPage;
+use App\Livewire\OpayPaymentForm;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,7 @@ use App\Livewire\ForgotPasswordPage;
 */
 
 
+Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
@@ -123,3 +125,12 @@ Route::get('/payment/callback', function () {
 
     return redirect()->route('payment.success', $inv->reference)->with(['invoice' => $inv]);
 })->name('paystack.callback');
+
+
+use App\Http\Controllers\OpayPaymentController; // Create this controller
+
+// Route for OPay to redirect to after 3DS or other processes
+Route::match(['get', 'post'], '/opay/payment/callback', [OpayPaymentController::class, 'handleCallback'])->name('opay.payment.callback');
+
+// Route for OPay to send webhook notifications to
+Route::post('/opay/payment/webhook', [OpayPaymentController::class, 'handleWebhook'])->name('opay.payment.webhook');

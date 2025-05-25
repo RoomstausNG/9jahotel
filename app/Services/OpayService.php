@@ -159,7 +159,7 @@ class OpayService
         } catch (FailedRequestException $e) {
             Log::error('OPay Card Transaction Initialization Failed: ' . $e->getMessage(), [
                 'code' => $e->getCode(),
-                'opay_error_code' => $e->getOpayErrorCode(),
+                'opay_error_code' => $e->getCode(),
                 'reference' => $reference
             ]);
             return null;
