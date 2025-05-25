@@ -39,8 +39,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Phone Number</h3>
-                            <p class="text-gray-800 text-sm md:text-base">+234 811 111 0790</p>
-                            <p class="text-gray-800 text-sm md:text-base">+234 814 395 390</p>
+                            <p class="text-sm md:text-base">+234 811 111 0790</p>
+                            <p class="text-sm md:text-base">+234 814 395 390</p>
                         </div>
 
                         {{-- Email --}}
@@ -57,8 +57,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Email</h3>
-                            <p class="text-gray-800 text-sm md:text-base">ask@9jahotel.com</p>
-                            <p class="text-gray-800 text-sm md:text-base">corporate@9jahotel.com</p>
+                            <p class="text-sm md:text-base">ask@9jahotel.com</p>
+                            <p class="text-sm md:text-base">corporate@9jahotel.com</p>
                         </div>
 
                         {{-- Location --}}
@@ -77,7 +77,7 @@
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Location</h3>
 
-                            <p class="text-gray-800 text-sm md:text-base">24 1st Avenue Fort Royal<br>Estate Airport
+                            <p class="text-sm md:text-base">24 1st Avenue Fort Royal<br>Estate Airport
                                 Road,<br>Gosa,
                                 Abuja.</p>
                         </div>
@@ -95,8 +95,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Opening Hours</h3>
-                            <p class="text-gray-800 text-sm md:text-base">Monday - Saturday</p>
-                            <p class="text-gray-800 text-sm md:text-base">9:00AM - 5:00PM</p>
+                            <p class="text-sm md:text-base">Monday - Saturday</p>
+                            <p class="text-sm md:text-base">9:00AM - 5:00PM</p>
                         </div>
                     </div>
                 </div>
