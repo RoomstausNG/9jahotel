@@ -5,7 +5,7 @@
             <div class="flex max-w-5xl mx-auto px-4 flex-col md:flex-row items-center mb-12 md:mb-16">
                 <div class="md:flex-1 mb-8 md:mb-0 md:pr-12">
                     <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">We're here to help 24/7</h1>
-                    <p class="text-gray-600 text-lg">
+                    <p class="text-gray-600 text-lg md:text-xl">
                         Every guide is trained and excited to work with you, whether you need help with a password reset
                         or
                         you're having issue booking a room or hall.
@@ -39,8 +39,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Phone Number</h3>
-                            <p class="text-gray-600 text-sm">+234 811 111 0790</p>
-                            <p class="text-gray-600 text-sm">+234 814 395 390</p>
+                            <p class="text-gray-800 text-sm md:text-base">+234 811 111 0790</p>
+                            <p class="text-gray-800 text-sm md:text-base">+234 814 395 390</p>
                         </div>
 
                         {{-- Email --}}
@@ -57,8 +57,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Email</h3>
-                            <p class="text-gray-600 text-sm">ask@9jahotel.com</p>
-                            <p class="text-gray-600 text-sm">corporate@9jahotel.com</p>
+                            <p class="text-gray-800 text-sm md:text-base">ask@9jahotel.com</p>
+                            <p class="text-gray-800 text-sm md:text-base">corporate@9jahotel.com</p>
                         </div>
 
                         {{-- Location --}}
@@ -77,7 +77,7 @@
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Location</h3>
 
-                            <p class="text-gray-600 text-sm">24 1st Avenue Fort Royal<br>Estate Airport
+                            <p class="text-gray-800 text-sm md:text-base">24 1st Avenue Fort Royal<br>Estate Airport
                                 Road,<br>Gosa,
                                 Abuja.</p>
                         </div>
@@ -95,8 +95,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Opening Hours</h3>
-                            <p class="text-gray-600 text-sm">Monday - Saturday</p>
-                            <p class="text-gray-600 text-sm">9:00AM - 5:00PM</p>
+                            <p class="text-gray-800 text-sm md:text-base">Monday - Saturday</p>
+                            <p class="text-gray-800 text-sm md:text-base">9:00AM - 5:00PM</p>
                         </div>
                     </div>
                 </div>
