@@ -193,7 +193,7 @@
             <!-- Body -->
             <div class="email-body">
                 <div class="logo-section">
-                    <img src="https://9jahotel.com/img/logo.png" alt="9jahotel Logo">
+                    <img src="https://9jahotel.com/img/9jahotel_logo.png" alt="9jahotel Logo">
                 </div>
 
                 <h2 class="support-title">Customer Support Request</h2>
