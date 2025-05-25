@@ -23,7 +23,6 @@ import { getToken } from "../utils/getToken";
 @injectable()
 export class BookingService {
   constructor(@inject(EmailService) private emailService: EmailService) {}
-
   async createBooking(bookingData: any, c: Context, userId?: number) {
     let hotel: any;
     try {
