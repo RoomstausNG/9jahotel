@@ -82,7 +82,7 @@
 
                 <div class="mt-8">
                     <p class="font-medium pb-2">Cheers</p>
-                    <img src="{{ asset('img/signature.png') }}" alt="siganture" class="w-36">
+                    {{-- <img src="{{ asset('img/signature.png') }}" alt="siganture" class="w-36"> --}}
                     <p class="font-bold text-xl">Jimi Peters</p>
                     <p>Managing Director</p>
                     <a href="https://9jahotel.com" class="text-medium text-primary">9jahotel.com</a>
