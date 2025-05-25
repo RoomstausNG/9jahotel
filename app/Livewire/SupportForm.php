@@ -27,6 +27,7 @@ class SupportForm extends Component
 
         // Queue the email to ask@9jahotel.com
         Mail::to('ask@9jahotel.com')
+            ->cc('bowofadeoyerinde@gmail.com')
             ->queue(new SupportMessageMail(
                 $validated['name'],
                 $validated['phone'],
