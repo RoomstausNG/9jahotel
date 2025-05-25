@@ -36,7 +36,7 @@ use App\Livewire\OpayPaymentForm;
 */
 
 
-Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
+// Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
