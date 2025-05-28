@@ -172,9 +172,9 @@ cancellation with or without notice by the Hotel.',
 
     public function payforBooking(BookingInvoice $booking)
     {
-        // Prepare payment data array that matches OpayService::createExpressCheckout expectations
+        $reference = $booking->id . "-" . $booking->reference;
         $paymentData = [
-            'reference' => strtoupper($booking->reference),
+            'reference' => strtoupper($reference),
             'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
             'currency' => 'NGN',
             'callback_url' => route('opay.callback'),
