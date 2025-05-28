@@ -105,4 +105,13 @@ Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:
 Route::get('/profile', \App\Livewire\Profile::class)->name('profile')->middleware('auth:customers');
 Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('auth:customers');
 
-Route::get('/opay/callback', [\App\Livewire\BookRoom::class, 'handleGatewayCallback'])->name('opay.callback');
+Route::get('/opay/callback', [BookRoom::class, 'handleGatewayCallback'])->name('opay.callback');
+
+// Success and failure routes for payment callback redirects
+Route::get('/booking/success', function () {
+    return view('booking.success');
+})->name('booking.success');
+
+Route::get('/booking/failed', function () {
+    return view('booking.failed');
+})->name('booking.failed');

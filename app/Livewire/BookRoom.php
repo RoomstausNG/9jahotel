@@ -172,40 +172,47 @@ cancellation with or without notice by the Hotel.',
 
     public function payforBooking(BookingInvoice $booking)
     {
-
-        $data = array(
-            'first_name' => $booking->customer->firstname,
-            'last_name' => $booking->customer->lastname,
-            "amount" => $booking->amount * 100,
-            "reference" => strtoupper($booking->reference),
-            "email" => $booking->customer->email,
-            "currency" => "NGN",
-            "orderID" => $booking->id,
-            'description' => 'Booking payment for ' . ucfirst($booking->hotel->name),
-            'metadata' => [
-                'hotel_name' => ucfirst($booking->hotel->name),
-                'reference' => $booking->reference
-            ]
-        );
-
+        // Prepare payment data array that matches OpayService::createExpressCheckout expectations
+        $paymentData = [
+            'reference' => strtoupper($booking->reference),
+            'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
+            'currency' => 'NGN',
+            'callback_url' => route('opay.callback'),
+            'return_url' => route('opay.callback'), // You might want different routes for callback vs return
+            'country' => 'NG',
+            'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
+            'customer_email' => $booking->customer->email,
+            'customer_phone' => $booking->customer->phone ?? '', // Add phone if available
+            'product_name' => 'Hotel Booking - ' . ucfirst($booking->hotel->name),
+            'product_description' => 'Booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $booking->reference . ')',
+            // Optional: Add payment method if you want to specify one
+            // 'pay_method' => 'BankCard', // or other supported methods
+        ];
 
         try {
             $opayService = new OpayService();
-            $response = $opayService->createExpressCheckout(
-                $booking->amount,
-                strtoupper($booking->reference),
-                $booking->customer->email,
-                ucfirst($booking->hotel->name),
-                route('opay.callback'), // Assuming you have a route named 'opay.callback'
-                route('opay.callback') // Assuming you have a route named 'opay.callback'
-            );
+            $response = $opayService->createExpressCheckout($paymentData);
 
-            if (isset($response['data']['cashierUrl'])) {
-                return redirect()->away($response['data']['cashierUrl']);
+            if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+                // Log successful payment initiation
+                \Log::info('OPay payment initiated successfully', [
+                    'booking_id' => $booking->id,
+                    'reference' => $booking->reference,
+                    'amount' => $booking->amount
+                ]);
+
+                return redirect()->away($response['cashier_url']);
             } else {
                 throw new \Exception('Failed to get OPay cashier URL.');
             }
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('OPay payment initiation failed', [
+                'booking_id' => $booking->id,
+                'reference' => $booking->reference,
+                'error' => $e->getMessage()
+            ]);
+
             $details = [
                 'icon' => 'error',
                 'text' => $e->getMessage(),
@@ -213,12 +220,12 @@ cancellation with or without notice by the Hotel.',
             ];
 
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
-            // return Redirect::back()->withMessage(['msg' => 'The paystack token has expired. Please refresh the page and try again.', 'type' => 'error']);
         }
     }
     /**
-     * Obtain Paystack payment information
-     * @return void
+     * Obtain OPay payment information
+     * This method is called via HTTP route, so it must return a proper HTTP response
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function handleGatewayCallback()
     {
@@ -229,39 +236,53 @@ cancellation with or without notice by the Hotel.',
             try {
                 $paymentDetails = $opayService->verifyPayment($reference);
 
-                if ($paymentDetails['status'] === true && $paymentDetails['data']['status'] === 'SUCCESS') {
+                if ($paymentDetails['status'] === 'success' && $paymentDetails['payment_status'] === 'SUCCESS') {
                     // Payment was successful, update your invoice
                     $bookingInvoice = BookingInvoice::where('reference', $reference)->first();
                     if ($bookingInvoice) {
-                        $this->updateInvoice($bookingInvoice->id);
+                        // Update the invoice and associated bookings
+                        $bookingInvoice->update(['status' => 'paid', 'date_paid' => now()]);
+
+                        // Update all associated bookings
+                        Booking::where('booking_invoice_id', $bookingInvoice->id)
+                            ->update(['status' => 'paid', 'date_paid' => now()]);
+
+                        \Log::info('Payment successful', [
+                            'reference' => $reference,
+                            'booking_invoice_id' => $bookingInvoice->id
+                        ]);
                     }
-                    $details = [
-                        'icon' => 'success',
-                        'text' => 'Payment successful for booking ' . $reference,
-                        'title' => 'Payment Successful'
-                    ];
+
+                    // Redirect to a success page with flash message
+                    return redirect()->route('booking.success')
+                        ->with('success', 'Payment successful for booking ' . $reference);
                 } else {
-                    $details = [
-                        'icon' => 'error',
-                        'text' => 'Payment verification failed for booking ' . $reference,
-                        'title' => 'Payment Failed'
-                    ];
+                    \Log::error('Payment verification failed', [
+                        'reference' => $reference,
+                        'payment_details' => $paymentDetails
+                    ]);
+
+                    // Redirect to a failure page with flash message
+                    return redirect()->route('booking.failed')
+                        ->with('error', 'Payment verification failed for booking ' . $reference);
                 }
             } catch (\Exception $e) {
-                $details = [
-                    'icon' => 'error',
-                    'text' => 'Error verifying payment: ' . $e->getMessage(),
-                    'title' => 'Payment Error'
-                ];
+                \Log::error('Payment verification error', [
+                    'reference' => $reference,
+                    'error' => $e->getMessage()
+                ]);
+
+                // Redirect to a failure page with flash message
+                return redirect()->route('booking.failed')
+                    ->with('error', 'Error verifying payment: ' . $e->getMessage());
             }
         } else {
-            $details = [
-                'icon' => 'error',
-                'text' => 'Payment reference not found in callback.',
-                'title' => 'Payment Error'
-            ];
+            \Log::error('Payment callback without reference');
+
+            // Redirect to a failure page with flash message
+            return redirect()->route('booking.failed')
+                ->with('error', 'Payment reference not found in callback.');
         }
-        return $this->dispatch('swal:success', details: sweetAlert(...$details));
     }
 
     #[On('savePayment')]

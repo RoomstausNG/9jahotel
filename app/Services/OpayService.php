@@ -15,7 +15,7 @@ class OpayService
 
     public function __construct()
     {
-        $this->baseUrl = config('opay.base_url', 'https://sandboxapi.opaycheckout.com');
+        $this->baseUrl = config('opay.base_url', 'https://testapi.opaycheckout.com/api/v1/');
         $this->secretKey = config('opay.secret_key');
         $this->publicKey = config('opay.public_key');
         $this->merchantId = config('opay.merchant_id');
@@ -23,7 +23,7 @@ class OpayService
 
     /**
      * Create OPay Express Checkout payment
-     * 
+     *
      * @param array $paymentData
      * @return array
      * @throws Exception
@@ -31,7 +31,7 @@ class OpayService
     public function createExpressCheckout(array $paymentData)
     {
         try {
-            $endpoint = '/api/v1/international/cashier/create';
+            $endpoint = '/international/cashier/create';
             $url = $this->baseUrl . $endpoint;
 
             // Prepare the payment data
@@ -61,8 +61,9 @@ class OpayService
             }
 
             // Generate signature
-            $signature = $this->generateSignature($data);
+            // $signature = $this->generateSignature($data);
 
+            $signature = $this->publicKey;
             // Prepare headers
             $headers = [
                 'Content-Type' => 'application/json',
@@ -76,13 +77,13 @@ class OpayService
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                
+
                 if ($responseData['code'] === '00000') {
                     Log::info('OPay Express Checkout created successfully', [
                         'reference' => $paymentData['reference'],
                         'cashier_url' => $responseData['data']['cashierUrl']
                     ]);
-                    
+
                     return [
                         'status' => 'success',
                         'data' => $responseData['data'],
@@ -94,7 +95,7 @@ class OpayService
                         'reference' => $paymentData['reference'],
                         'error' => $responseData['message']
                     ]);
-                    
+
                     throw new Exception($responseData['message'] ?? 'Payment creation failed');
                 }
             } else {
@@ -102,7 +103,7 @@ class OpayService
                     'status' => $response->status(),
                     'response' => $response->body()
                 ]);
-                
+
                 throw new Exception('Failed to connect to OPay API');
             }
         } catch (Exception $e) {
@@ -110,14 +111,14 @@ class OpayService
                 'reference' => $paymentData['reference'] ?? 'unknown',
                 'error' => $e->getMessage()
             ]);
-            
+
             throw $e;
         }
     }
 
     /**
      * Verify payment status
-     * 
+     *
      * @param string $reference
      * @return array
      * @throws Exception
@@ -125,7 +126,7 @@ class OpayService
     public function verifyPayment(string $reference)
     {
         try {
-            $endpoint = '/api/v1/international/transaction/status';
+            $endpoint = '/international/transaction/status';
             $url = $this->baseUrl . $endpoint;
 
             $data = [
@@ -149,13 +150,13 @@ class OpayService
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                
+
                 if ($responseData['code'] === '00000') {
                     Log::info('OPay payment verification successful', [
                         'reference' => $reference,
                         'status' => $responseData['data']['status']
                     ]);
-                    
+
                     return [
                         'status' => 'success',
                         'data' => $responseData['data'],
@@ -167,7 +168,7 @@ class OpayService
                         'reference' => $reference,
                         'error' => $responseData['message']
                     ]);
-                    
+
                     throw new Exception($responseData['message'] ?? 'Payment verification failed');
                 }
             } else {
@@ -175,7 +176,7 @@ class OpayService
                     'status' => $response->status(),
                     'response' => $response->body()
                 ]);
-                
+
                 throw new Exception('Failed to connect to OPay API for verification');
             }
         } catch (Exception $e) {
@@ -183,14 +184,14 @@ class OpayService
                 'reference' => $reference,
                 'error' => $e->getMessage()
             ]);
-            
+
             throw $e;
         }
     }
 
     /**
      * Handle webhook callback
-     * 
+     *
      * @param array $payload
      * @return array
      */
@@ -198,10 +199,10 @@ class OpayService
     {
         try {
             Log::info('OPay webhook received', $payload);
-            
+
             // Verify webhook signature if needed
             // $this->verifyWebhookSignature($payload);
-            
+
             return [
                 'status' => 'success',
                 'reference' => $payload['reference'] ?? null,
@@ -213,14 +214,14 @@ class OpayService
                 'payload' => $payload,
                 'error' => $e->getMessage()
             ]);
-            
+
             throw $e;
         }
     }
 
     /**
      * Generate signature for OPay API requests
-     * 
+     *
      * @param array $data
      * @return string
      */
@@ -229,13 +230,13 @@ class OpayService
         // Convert data to JSON and create signature
         $jsonData = json_encode($data, JSON_UNESCAPED_SLASHES);
         $signature = hash_hmac('sha512', $jsonData, $this->secretKey);
-        
+
         return $signature;
     }
 
     /**
      * Verify webhook signature
-     * 
+     *
      * @param array $payload
      * @return bool
      * @throws Exception
