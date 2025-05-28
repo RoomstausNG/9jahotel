@@ -6,23 +6,24 @@ use App\Livewire\BookHall;
 use App\Livewire\BookRoom;
 use App\Livewire\Register;
 use App\Livewire\Dashboard;
+use App\Livewire\Favorites;
 use App\Livewire\HotelHall;
 use App\Livewire\LoginPage;
 use App\Livewire\HallResult;
+use App\Livewire\SignupPage;
 use App\Livewire\CreateHotel;
 use App\Livewire\GroupBooking;
 use App\Livewire\HotelDetails;
 use App\Livewire\SearchResult;
-use App\Livewire\Favorites;
 use App\Models\BookingInvoice;
+use App\Livewire\BookingHistory;
+use App\Livewire\OpayPaymentForm;
+use App\Livewire\ForgotPasswordPage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
-use App\Livewire\BookingHistory;
 use Unicodeveloper\Paystack\Facades\Paystack;
-use App\Livewire\SignupPage;
-use App\Livewire\ForgotPasswordPage;
-use App\Livewire\OpayPaymentForm;
+use App\Http\Controllers\OpayCallbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,7 +106,9 @@ Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:
 Route::get('/profile', \App\Livewire\Profile::class)->name('profile')->middleware('auth:customers');
 Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('auth:customers');
 
-Route::get('/opay/callback', [BookRoom::class, 'handleGatewayCallback'])->name('opay.callback');
+Route::post('/opay/callback', [OpayCallbackController::class, 'handleGatewayCallback'])->name('opay.callback');
+
+Route::get('/opay/return', [OpayCallbackController::class, 'handleGatewayReturn'])->name('opay.return');
 
 // Success and failure routes for payment callback redirects
 Route::get('/booking/success', function () {

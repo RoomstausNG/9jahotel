@@ -39,7 +39,7 @@ class OpayService
                 'reference' => $paymentData['reference'],
                 'amount' => [
                     'currency' => $paymentData['currency'] ?? 'NGN',
-                    'total' => $paymentData['amount']
+                    'total' => $paymentData['amount'] * 100 // Convert to kobo
                 ],
                 'callbackUrl' => $paymentData['callback_url'],
                 'returnUrl' => $paymentData['return_url'],

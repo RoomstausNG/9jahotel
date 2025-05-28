@@ -178,7 +178,7 @@ cancellation with or without notice by the Hotel.',
             'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
             'currency' => 'NGN',
             'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.callback'), // You might want different routes for callback vs return
+            'return_url' => route('opay.return'), // You might want different routes for callback vs return
             'country' => 'NG',
             'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
             'customer_email' => $booking->customer->email,
@@ -194,12 +194,6 @@ cancellation with or without notice by the Hotel.',
             $response = $opayService->createExpressCheckout($paymentData);
 
             if ($response['status'] === 'success' && isset($response['cashier_url'])) {
-                // Log successful payment initiation
-                \Log::info('OPay payment initiated successfully', [
-                    'booking_id' => $booking->id,
-                    'reference' => $booking->reference,
-                    'amount' => $booking->amount
-                ]);
 
                 return redirect()->away($response['cashier_url']);
             } else {
@@ -230,11 +224,16 @@ cancellation with or without notice by the Hotel.',
     public function handleGatewayCallback()
     {
         $opayService = new OpayService();
-        $reference = request()->query('reference'); // OPay typically returns reference in query params
+        $reference = request()->query('reference');
 
         if ($reference) {
             try {
                 $paymentDetails = $opayService->verifyPayment($reference);
+
+                \Log::info('Payment verification initiated', [
+                    'reference' => $reference,
+                    'payment_details' => $paymentDetails
+                ]);
 
                 if ($paymentDetails['status'] === 'success' && $paymentDetails['payment_status'] === 'SUCCESS') {
                     // Payment was successful, update your invoice
@@ -259,7 +258,7 @@ cancellation with or without notice by the Hotel.',
                 } else {
                     \Log::error('Payment verification failed', [
                         'reference' => $reference,
-                        'payment_details' => $paymentDetails
+                        'payment_details' => $paymentDetails ?? "nothing returned"
                     ]);
 
                     // Redirect to a failure page with flash message
