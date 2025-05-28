@@ -169,40 +169,38 @@ class BookHall extends Component implements HasForms
 
     public function payforBooking(BookingInvoice $booking)
     {
-
-        $data = array(
-            'first_name' => $booking->customer->firstname,
-            'last_name' => $booking->customer->lastname,
-            "amount" => $booking->amount * 100,
-            "reference" => strtoupper($booking->reference),
-            "email" => $booking->customer->email,
-            "currency" => "NGN",
-            "orderID" => $booking->id,
-            'description' => 'Booking payment for ' . ucfirst($booking->hotel->name),
-            'metadata' => [
-                'hotel_name' => ucfirst($booking->hotel->name),
-                'reference' => $booking->reference
-            ]
-        );
-
+        // Prepare payment data array that matches OpayService::createExpressCheckout expectations
+        $paymentData = [
+            'reference' => strtoupper($booking->reference),
+            'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
+            'currency' => 'NGN',
+            'callback_url' => route('opay.callback'),
+            'return_url' => route('opay.return'), // Use separate return URL for user redirects
+            'country' => 'NG',
+            'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
+            'customer_email' => $booking->customer->email,
+            'customer_phone' => $booking->customer->phone ?? '', // Add phone if available
+            'product_name' => 'Hall Booking - ' . ucfirst($booking->hotel->name),
+            'product_description' => 'Hall booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $booking->reference . ')',
+        ];
 
         try {
             $opayService = new OpayService();
-            $response = $opayService->createExpressCheckout(
-                $booking->amount,
-                strtoupper($booking->reference),
-                $booking->customer->email,
-                ucfirst($booking->hotel->name),
-                route('opay.callback'), // Assuming you have a route named 'opay.callback'
-                route('opay.callback') // Assuming you have a route named 'opay.callback'
-            );
+            $response = $opayService->createExpressCheckout($paymentData);
 
-            if (isset($response['data']['cashierUrl'])) {
-                return redirect()->away($response['data']['cashierUrl']);
+            if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+                return redirect()->away($response['cashier_url']);
             } else {
                 throw new \Exception('Failed to get OPay cashier URL.');
             }
         } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('OPay payment initiation failed', [
+                'booking_id' => $booking->id,
+                'reference' => $booking->reference,
+                'error' => $e->getMessage()
+            ]);
+
             $details = [
                 'icon' => 'error',
                 'text' => $e->getMessage(),
@@ -210,55 +208,7 @@ class BookHall extends Component implements HasForms
             ];
 
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
-            // return Redirect::back()->withMessage(['msg' => 'The paystack token has expired. Please refresh the page and try again.', 'type' => 'error']);
         }
-    }
-    /**
-     * Obtain Paystack payment information
-     * @return void
-     */
-    public function handleGatewayCallback()
-    {
-        $opayService = new OpayService();
-        $reference = request()->query('reference'); // OPay typically returns reference in query params
-
-        if ($reference) {
-            try {
-                $paymentDetails = $opayService->verifyPayment($reference);
-
-                if ($paymentDetails['status'] === true && $paymentDetails['data']['status'] === 'SUCCESS') {
-                    // Payment was successful, update your invoice
-                    $bookingInvoice = BookingInvoice::where('reference', $reference)->first();
-                    if ($bookingInvoice) {
-                        $this->updateInvoice($bookingInvoice->id);
-                    }
-                    $details = [
-                        'icon' => 'success',
-                        'text' => 'Payment successful for booking ' . $reference,
-                        'title' => 'Payment Successful'
-                    ];
-                } else {
-                    $details = [
-                        'icon' => 'error',
-                        'text' => 'Payment verification failed for booking ' . $reference,
-                        'title' => 'Payment Failed'
-                    ];
-                }
-            } catch (\Exception $e) {
-                $details = [
-                    'icon' => 'error',
-                    'text' => 'Error verifying payment: ' . $e->getMessage(),
-                    'title' => 'Payment Error'
-                ];
-            }
-        } else {
-            $details = [
-                'icon' => 'error',
-                'text' => 'Payment reference not found in callback.',
-                'title' => 'Payment Error'
-            ];
-        }
-        return $this->dispatch('swal:success', details: sweetAlert(...$details));
     }
 
     #[On('savePayment')]

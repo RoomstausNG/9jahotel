@@ -45,7 +45,7 @@ class OpayCallbackController extends Controller
 
             // Check if payment was successful
             if ($this->isPaymentSuccessful($paymentDetails)) {
-                return $this->handleSuccessfulPayment($reference, $paymentDetails);
+                return $this->handleSuccessfulPayment($reference);
             } else {
                 return $this->handleFailedPayment($reference, $paymentDetails);
             }
@@ -157,7 +157,7 @@ class OpayCallbackController extends Controller
      * @param array $paymentDetails
      * @return RedirectResponse
      */
-    private function handleSuccessfulPayment(string $reference, array $paymentDetails): RedirectResponse
+    private function handleSuccessfulPayment(string $reference): RedirectResponse
     {
         try {
             // Find the booking invoice
