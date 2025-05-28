@@ -13,6 +13,7 @@ use Filament\Forms\Components;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Session;
 use Unicodeveloper\Paystack\Facades\Paystack;
+use App\Services\OpayService;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Livewire\Attributes\Layout;
 use App\Models\Hall;
@@ -186,7 +187,21 @@ class BookHall extends Component implements HasForms
 
 
         try {
-            return  Paystack::getAuthorizationUrl($data)->redirectNow();
+            $opayService = new OpayService();
+            $response = $opayService->createExpressCheckout(
+                $booking->amount,
+                strtoupper($booking->reference),
+                $booking->customer->email,
+                ucfirst($booking->hotel->name),
+                route('opay.callback'), // Assuming you have a route named 'opay.callback'
+                route('opay.callback') // Assuming you have a route named 'opay.callback'
+            );
+
+            if (isset($response['data']['cashierUrl'])) {
+                return redirect()->away($response['data']['cashierUrl']);
+            } else {
+                throw new \Exception('Failed to get OPay cashier URL.');
+            }
         } catch (\Exception $e) {
             $details = [
                 'icon' => 'error',
@@ -204,12 +219,46 @@ class BookHall extends Component implements HasForms
      */
     public function handleGatewayCallback()
     {
-        $paymentDetails = Paystack::getPaymentData();
+        $opayService = new OpayService();
+        $reference = request()->query('reference'); // OPay typically returns reference in query params
 
-        dd($paymentDetails);
-        // Now you have the payment details,
-        // you can store the authorization_code in your db to allow for recurrent subscriptions
-        // you can then redirect or do whatever you want
+        if ($reference) {
+            try {
+                $paymentDetails = $opayService->verifyPayment($reference);
+
+                if ($paymentDetails['status'] === true && $paymentDetails['data']['status'] === 'SUCCESS') {
+                    // Payment was successful, update your invoice
+                    $bookingInvoice = BookingInvoice::where('reference', $reference)->first();
+                    if ($bookingInvoice) {
+                        $this->updateInvoice($bookingInvoice->id);
+                    }
+                    $details = [
+                        'icon' => 'success',
+                        'text' => 'Payment successful for booking ' . $reference,
+                        'title' => 'Payment Successful'
+                    ];
+                } else {
+                    $details = [
+                        'icon' => 'error',
+                        'text' => 'Payment verification failed for booking ' . $reference,
+                        'title' => 'Payment Failed'
+                    ];
+                }
+            } catch (\Exception $e) {
+                $details = [
+                    'icon' => 'error',
+                    'text' => 'Error verifying payment: ' . $e->getMessage(),
+                    'title' => 'Payment Error'
+                ];
+            }
+        } else {
+            $details = [
+                'icon' => 'error',
+                'text' => 'Payment reference not found in callback.',
+                'title' => 'Payment Error'
+            ];
+        }
+        return $this->dispatch('swal:success', details: sweetAlert(...$details));
     }
 
     #[On('savePayment')]
@@ -240,7 +289,7 @@ class BookHall extends Component implements HasForms
         }
     }
 
-    public  function mount()
+    public function mount()
     {
         $this->hotel = $this->hall->hotel;
     }

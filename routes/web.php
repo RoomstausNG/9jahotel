@@ -105,32 +105,4 @@ Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:
 Route::get('/profile', \App\Livewire\Profile::class)->name('profile')->middleware('auth:customers');
 Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('auth:customers');
 
-Route::get('/payment/callback', function () {
-    $paymentDetails = Paystack::getPaymentData();
-    $ref = $paymentDetails['data']['reference'];
-
-    $inv = BookingInvoice::where('reference', $ref)->first();
-
-    $done = $inv->update(['status' => 'paid', 'payed_on' => now()]);
-
-    // update hotel renew date
-    $inv->bookings->each(
-        fn($booking) => $booking->update(['status' => 'paid', 'amount_paid' => $booking->due, 'mode_of_payment' => 'Online'])
-    );
-
-    // flush session
-    session()->forget('city');
-    session()->forget('checkin');
-    session()->forget('checkout');
-
-    return redirect()->route('payment.success', $inv->reference)->with(['invoice' => $inv]);
-})->name('paystack.callback');
-
-
-use App\Http\Controllers\OpayPaymentController; // Create this controller
-
-// Route for OPay to redirect to after 3DS or other processes
-Route::match(['get', 'post'], '/opay/payment/callback', [OpayPaymentController::class, 'handleCallback'])->name('opay.payment.callback');
-
-// Route for OPay to send webhook notifications to
-Route::post('/opay/payment/webhook', [OpayPaymentController::class, 'handleWebhook'])->name('opay.payment.webhook');
+Route::get('/opay/callback', [\App\Livewire\BookRoom::class, 'handleGatewayCallback'])->name('opay.callback');
