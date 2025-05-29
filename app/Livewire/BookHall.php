@@ -2,21 +2,22 @@
 
 namespace App\Livewire;
 
+use App\Models\Hall;
 use App\Models\Booking;
 use App\Models\Invoice;
 use Livewire\Component;
 use App\Models\Customer;
 use Filament\Forms\Form;
 use Livewire\Attributes\On;
+use Silber\PageCache\Cache;
+use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Filament\Forms\Components;
+use Livewire\Attributes\Layout;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Session;
 use Unicodeveloper\Paystack\Facades\Paystack;
-use App\Services\OpayService;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Livewire\Attributes\Layout;
-use App\Models\Hall;
 
 class BookHall extends Component implements HasForms
 {
@@ -169,7 +170,9 @@ class BookHall extends Component implements HasForms
 
     public function payforBooking(BookingInvoice $booking)
     {
-        // Prepare payment data array that matches OpayService::createExpressCheckout expectations
+
+        $reference = $booking->reference;
+
         $paymentData = [
             'reference' => strtoupper($booking->reference),
             'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
@@ -189,6 +192,7 @@ class BookHall extends Component implements HasForms
             $response = $opayService->createExpressCheckout($paymentData);
 
             if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+                Cache::put($reference, $booking->reference, now()->addMinutes(30));
                 return redirect()->away($response['cashier_url']);
             } else {
                 throw new \Exception('Failed to get OPay cashier URL.');

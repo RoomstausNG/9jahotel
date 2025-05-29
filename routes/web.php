@@ -108,7 +108,7 @@ Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('au
 
 Route::post('/opay/callback', [OpayCallbackController::class, 'handleGatewayCallback'])->name('opay.callback');
 
-Route::get('/opay/return', [OpayCallbackController::class, 'handleGatewayReturn'])->name('opay.return');
+Route::get('/opay/return/{reference?}', [OpayCallbackController::class, 'handleGatewayReturn'])->name('opay.return');
 
 // Success and failure routes for payment callback redirects
 Route::get('/booking/success', function () {

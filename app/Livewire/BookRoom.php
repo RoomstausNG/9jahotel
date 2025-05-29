@@ -11,16 +11,17 @@ use App\Models\Customer;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Filament\Forms\Components;
+use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Redirect;
 use Unicodeveloper\Paystack\Facades\Paystack;
-use App\Services\OpayService;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Livewire\Attributes\Layout;
 
 class BookRoom extends Component implements HasForms
 {
@@ -172,19 +173,20 @@ cancellation with or without notice by the Hotel.',
 
     public function payforBooking(BookingInvoice $booking)
     {
-        $reference = $booking->id . "-" . $booking->reference;
+        $reference = $booking->reference;
+
         $paymentData = [
             'reference' => strtoupper($reference),
-            'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
+            'amount' => $booking->amount,
             'currency' => 'NGN',
             'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.return'), // You might want different routes for callback vs return
+            'return_url' => route('opay.return'),
             'country' => 'NG',
             'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
             'customer_email' => $booking->customer->email,
-            'customer_phone' => $booking->customer->phone ?? '', // Add phone if available
+            'customer_phone' => $booking->customer->phone ?? '',
             'product_name' => 'Hotel Booking - ' . ucfirst($booking->hotel->name),
-            'product_description' => 'Booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $booking->reference . ')',
+            'product_description' => 'Booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $reference . ')',
             // Optional: Add payment method if you want to specify one
             // 'pay_method' => 'BankCard', // or other supported methods
         ];
@@ -194,7 +196,7 @@ cancellation with or without notice by the Hotel.',
             $response = $opayService->createExpressCheckout($paymentData);
 
             if ($response['status'] === 'success' && isset($response['cashier_url'])) {
-
+                Cache::put($reference, $booking->reference, now()->addMinutes(30));
                 return redirect()->away($response['cashier_url']);
             } else {
                 throw new \Exception('Failed to get OPay cashier URL.');

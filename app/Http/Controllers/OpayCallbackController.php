@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Booking;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 use App\Services\OpayService;
 use App\Models\BookingInvoice;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
 
 class OpayCallbackController extends Controller
 {
-
     public function __construct(protected OpayService $opayService) {}
 
     /**
@@ -26,7 +26,7 @@ class OpayCallbackController extends Controller
         Log::info('OPay callback received', $request->all());
 
         // Get the reference from the request
-        $reference = $request->query('reference') ?? $request->input('reference');
+        $reference = $request->query('reference') ?? Cache::get('reference');
 
         if (!$reference) {
             Log::error('OPay callback: No reference provided');
@@ -61,12 +61,14 @@ class OpayCallbackController extends Controller
         }
     }
 
-    public function handleGatewayReturn(Request $request)
+    public function handleGatewayReturn(Request $request, $reference)
     {
         Log::info('OPay return received', $request->all());
 
-        return view('booking.success')
-            ->with('success', 'Payment successful. Thank you for your booking!');
+        return $this->handleSuccessfulPayment($reference);
+
+        // return view('booking.success')
+        //     ->with('success', 'Payment successful. Thank you for your booking!');
     }
 
     // public function handleGatewayCallback(Request $request)

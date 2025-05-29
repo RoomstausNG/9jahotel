@@ -148,6 +148,15 @@ class OpayService
             // Make the API request
             $response = Http::withHeaders($headers)->post($url, $data);
 
+
+            // log response
+            Log::info('OPay payment verification request', [
+                'reference' => $reference,
+                'response' => $response,
+                'response_status' => $response->status(),
+                'response_body' => $response->body()
+            ]);
+
             if ($response->successful()) {
                 $responseData = $response->json();
 
