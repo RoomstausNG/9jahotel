@@ -122,7 +122,10 @@ Kindly note that UNPAID Bookings are subject to
 cancellation with or without notice by the Hotel.',
                 'title' => 'Your Booking is Received!'
             ];
-            return $this->dispatch('swal:success', details: sweetAlert(...$details));
+            $this->dispatch('swal:success', details: sweetAlert(...$details));
+            sleep(5);
+
+            return redirect("/");
         } else {
             return $this->payforBooking($invoice);
         }

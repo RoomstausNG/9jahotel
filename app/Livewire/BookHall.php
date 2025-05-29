@@ -108,7 +108,12 @@ class BookHall extends Component implements HasForms
                 'text' => 'Please check your email for confirmation\nKindly note that UNPAID Bookings are subject to\ncancellation with or without notice by the Hotel.',
                 'title' => 'Your Booking is Received!'
             ];
-            return $this->dispatch('swal:success', details: sweetAlert(...$details));
+
+            $this->dispatch('swal:success', details: sweetAlert(...$details));
+
+            sleep(5);
+
+            return redirect("/");
         } else {
             return $this->payforBooking($invoice);
         }
