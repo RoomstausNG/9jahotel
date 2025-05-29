@@ -181,17 +181,14 @@ class OpayCallbackController extends Controller
             // Update the booking invoice
             $bookingInvoice->update([
                 'status' => 'paid',
-                'date_paid' => now(),
-                'payment_method' => 'opay',
-                'transaction_reference' => $reference
+                'payed_on' => now()
             ]);
-
+            $bookingInvoice->loadCount('bookings'); // Convert to actual amount if needed
             // Update all associated bookings
             $updatedBookings = Booking::where('booking_invoice_id', $bookingInvoice->id)
                 ->update([
                     'status' => 'paid',
-                    'date_paid' => now(),
-                    'mode_of_payment' => 'opay'
+                    'amount_paid' => (int) ($bookingInvoice->amount / $bookingInvoice->bookings_count),
                 ]);
 
             Log::info('Payment successfully processed', [

@@ -178,7 +178,7 @@ class BookHall extends Component implements HasForms
             'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
             'currency' => 'NGN',
             'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.return'), // Use separate return URL for user redirects
+            'return_url' => route('opay.return', $reference), // Use separate return URL for user redirects
             'country' => 'NG',
             'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
             'customer_email' => $booking->customer->email,
