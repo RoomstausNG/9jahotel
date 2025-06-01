@@ -24,8 +24,6 @@
 </head>
 
 <body class="antialiased">
-
-
     <nav class="bg-white border-b border-gray-200 ">
         <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 py-2 mx-auto">
             <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -213,8 +211,18 @@
     </script> --}}
 
     <script type="text/javascript">
-        <!-- Tawk.to script is now included in the global footer component
-        -->
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/66374d3607f59932ab3c2e1b/1ht40b8fe';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
 </body>
 
 </html>
