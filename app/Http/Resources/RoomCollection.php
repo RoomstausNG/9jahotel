@@ -34,6 +34,9 @@ class RoomCollection extends ResourceCollection
 
         return [
             'rooms' => $this->collection->transform(function ($item) {
+                if (is_array($item)) {
+                    $item = (object) $item;
+                }
                 return [
                     'id' => $item->id,
                     'number' => $item->number,
