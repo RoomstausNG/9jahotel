@@ -40,6 +40,23 @@
             font-size: 13px;
             color: #888;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #f1f1f1;
+            text-align: left;
+        }
     </style>
 </head>
 
@@ -51,6 +68,61 @@
         @if (isset($customMessage) && $customMessage)
             <p style="white-space: pre-line;">{!! nl2br(e($customMessage)) !!}</p>
         @endif
+
+        {{-- Booking summary table --}}
+        <table width="100%" cellpadding="8" cellspacing="0" border="1"
+            style="border-collapse:collapse;margin-top:20px;">
+            <tbody>
+                <tr>
+                    <th align="left">Room Reservation</th>
+                    <td>
+                        @if (isset($roomSummary))
+                            {{ $roomSummary }}
+                        @else
+                            {{ $bookings->count() }}
+                            @php
+                                $types = $bookings
+                                    ->map(function ($b) {
+                                        return strtoupper(optional($b->bookable->type)->name ?? ($b->type ?? 'ROOM'));
+                                    })
+                                    ->unique()
+                                    ->implode(', ');
+                            @endphp
+                            {{ $types }} Room(s)
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th align="left">Check-in</th>
+                    <td>
+                        @if (isset($checked_in))
+                            {{ $checked_in }}
+                        @else
+                            {{ optional($bookings->first())->checked_in ? $bookings->first()->checked_in->format('D d M, Y') : '-' }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th align="left">Check-out</th>
+                    <td>
+                        @if (isset($checked_out))
+                            {{ $checked_out }}
+                        @else
+                            {{ optional($bookings->first())->checked_out ? $bookings->first()->checked_out->format('D d M, Y') : '-' }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th align="left">Booking number</th>
+                    <td>{{ $reference ?? ($invoice->reference ?? '-') }}</td>
+                </tr>
+                <tr>
+                    <th align="left">Booked By</th>
+                    <td>{{ $customer->firstname }} {{ $customer->lastname }}</td>
+                </tr>
+            </tbody>
+        </table>
+
         <table width="100%" cellpadding="8" cellspacing="0" border="1"
             style="border-collapse:collapse;margin-top:20px;">
             <thead style="background:#f1f1f1;">
@@ -75,6 +147,13 @@
                         <td>{{ strtoupper($booking->type) }}</td>
                         <td>{{ $booking->checked_in->format('D d M, Y') }}</td>
                         <td>{{ $booking->checked_out->format('D d M, Y') }}</td>
+                        <td>
+                            @if (property_exists($booking, 'guests') && $booking->guests)
+                                {{ $booking->guests }}
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

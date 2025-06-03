@@ -65,7 +65,7 @@ class BookingInvoice extends Model
 
             // Eager load relationships for serialization
             $invoice->load(['customer', 'hotel', 'bookings.bookable']);
-
+            $invoice->loadCount(['bookings']);
 
             // Normalize payment type to one of three options: 'PayAtHotel', 'PayNow', 'NonRefundable'
             $rawType = $invoice->type ?? 'PayAtHotel';
@@ -76,16 +76,16 @@ class BookingInvoice extends Model
                 default => 'PayAtHotel',
             };
 
-            $totalRooms = $invoice->bookings()->count();
+            $totalRooms = $invoice->bookings_count ?? $invoice->bookings()->count();
 
             // Guest message (updated for PayAtHotel to show as unpaid/unconfirmed)
             $hotelName = strtoupper($invoice->hotel->name);
             $amount = formatAsNaira($invoice->amount);
             $bookingNumber = $invoice->reference;
             $bookedBy = $invoice->customer->firstname . ' ' . $invoice->customer->lastname;
-            $checkin = optional($invoice->bookings->first())->checked_in;
-            $checkout = optional($invoice->bookings->first())->checked_out;
-            $roomSummary = $invoice->bookings->count() . ' ';
+            $checkin = $invoice->checked_in;
+            $checkout = $invoice->checked_out;
+            $roomSummary = $invoice->bookings_count . ' ';
             if ($invoice->bookings->count() > 0) {
                 $roomTypes = $invoice->bookings->map(function ($b) {
                     return strtoupper(optional($b->bookable->type)->name ?? 'ROOM');
@@ -97,16 +97,16 @@ class BookingInvoice extends Model
 
             switch ($normalizedType) {
                 case 'PayAtHotel':
-                    $guestMessage = "Your booking with {$hotelName} is unconfirmed and not guaranteed.\nPlease make payment of {$amount} to immediately confirm your booking and room reservation. Unconfirmed booking may be cancelled at any time by the hotel.\nIf you wish to make payment arrangement, please reach the hotel.\nYour booking details are below:\n\nRoom Reservation\t{$roomSummary}\nCheck-in\t{$checkin}\nCheck-out\t{$checkout}\nBooking number\t{$bookingNumber}\nBooked By\t{$bookedBy}\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
+                    $guestMessage = "Your booking with {$hotelName} is unconfirmed and not guaranteed.\nPlease make payment of {$amount} to immediately confirm your booking and room reservation. Unconfirmed booking may be cancelled at any time by the hotel.\nIf you wish to make payment arrangement, please reach the hotel.\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
                     break;
                 case 'PayNow':
-                    $guestMessage = "Your booking with {$hotelName} is received but unconfirmed. Payment is pending. You have reserved {$roomSummary}. Once payment is received, your booking will be confirmed.\nYour booking details are below:\n\nRoom Reservation\t{$roomSummary}\nCheck-in\t{$checkin}\nCheck-out\t{$checkout}\nBooking number\t{$bookingNumber}\nBooked By\t{$bookedBy}\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
+                    $guestMessage = "Your booking with {$hotelName} is received but unconfirmed. Payment is pending. Once payment is received, your booking will be confirmed.\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
                     break;
                 case 'NonRefundable':
-                    $guestMessage = "Your non-refundable booking with {$hotelName} is received but unconfirmed. Payment is pending. You have reserved {$roomSummary}. Once payment is received, your booking will be confirmed.\nYour booking details are below:\n\nRoom Reservation\t{$roomSummary}\nCheck-in\t{$checkin}\nCheck-out\t{$checkout}\nBooking number\t{$bookingNumber}\nBooked By\t{$bookedBy}\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
+                    $guestMessage = "Your non-refundable booking with {$hotelName} is received but unconfirmed. Payment is pending. Once payment is received, your booking will be confirmed.\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
                     break;
                 default:
-                    $guestMessage = "Your booking with {$hotelName} is received. You have reserved {$roomSummary}.\nYour booking details are below:\n\nRoom Reservation\t{$roomSummary}\nCheck-in\t{$checkin}\nCheck-out\t{$checkout}\nBooking number\t{$bookingNumber}\nBooked By\t{$bookedBy}\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
+                    $guestMessage = "Your booking with {$hotelName} is received.\nThe hotel reserves the right to change your selected room to a room in same or higher category for your comfort in the rare case of your selected room being unavailable.\n9jahotel";
             }
 
             // Hotel owner message
