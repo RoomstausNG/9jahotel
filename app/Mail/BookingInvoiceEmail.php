@@ -31,7 +31,14 @@ class BookingInvoiceEmail extends Mailable implements ShouldQueue
                 'customer' => $this->invoice->customer,
                 'hotel' => $this->invoice->hotel,
                 'bookings' => $this->invoice->bookings,
-                'customMessage' => $this->customMessage,
+                'reference' => $this->invoice->reference,
+                'roomSummary' => $this->invoice->bookings->count() . ' ' .
+                    $this->invoice->bookings->map(function ($b) {
+                        return strtoupper(optional($b->bookable->type)->name ?? ($b->type ?? 'ROOM'));
+                    })->unique()->implode(', ') . ' Room(s)',
+                'checked_in' => $this->invoice->checked_in,
+                'checked_out' => $this->invoice->checked_out,
+                'customMessage' => $this->customMessage ?? null,
             ]);
     }
 }

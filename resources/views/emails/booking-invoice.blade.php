@@ -93,12 +93,29 @@
                     </td>
                 </tr>
                 <tr>
+                    <th align="left">Details</th>
+                    <td>
+                        @php
+                            $details = $bookings
+                                ->map(function ($b) {
+                                    if ($b->type === 'room') {
+                                        return $b->bookable->number ?? ($b->bookable->name ?? '-');
+                                    } else {
+                                        return $b->bookable->name ?? '-';
+                                    }
+                                })
+                                ->implode(', ');
+                        @endphp
+                        {{ $details }}
+                    </td>
+                </tr>
+                <tr>
                     <th align="left">Check-in</th>
                     <td>
                         @if (isset($checked_in))
                             {{ $checked_in }}
                         @else
-                            {{ optional($bookings->first())->checked_in ? $bookings->first()->checked_in->format('D d M, Y') : '-' }}
+                            {{ $invoice->checked_in->format('D d M, Y') }}
                         @endif
                     </td>
                 </tr>
@@ -108,7 +125,7 @@
                         @if (isset($checked_out))
                             {{ $checked_out }}
                         @else
-                            {{ optional($bookings->first())->checked_out ? $bookings->first()->checked_out->format('D d M, Y') : '-' }}
+                            {{ $invoice->checked_out->format('D d M, Y') }}
                         @endif
                     </td>
                 </tr>
@@ -123,42 +140,8 @@
             </tbody>
         </table>
 
-        <table width="100%" cellpadding="8" cellspacing="0" border="1"
-            style="border-collapse:collapse;margin-top:20px;">
-            <thead style="background:#f1f1f1;">
-                <tr>
-                    <th>Room/Hall</th>
-                    <th>Type</th>
-                    <th>Check-in</th>
-                    <th>Check-out</th>
-                    <th>Guests</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($bookings as $booking)
-                    <tr>
-                        <td>
-                            @if ($booking->type === 'room')
-                                {{ $booking->bookable->number ?? ($booking->bookable->name ?? '-') }}
-                            @else
-                                {{ $booking->bookable->name ?? '-' }}
-                            @endif
-                        </td>
-                        <td>{{ strtoupper($booking->type) }}</td>
-                        <td>{{ $booking->checked_in->format('D d M, Y') }}</td>
-                        <td>{{ $booking->checked_out->format('D d M, Y') }}</td>
-                        <td>
-                            @if (property_exists($booking, 'guests') && $booking->guests)
-                                {{ $booking->guests }}
-                            @else
-                                -
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <p>If you have any questions, please contact the hotel directly.</p>
+        <p>If you have any questions, please contact us via <a
+                href="mailto:support@9jahotel.com">support@9jahotel.com</a> .</p>
         <p>Thank you for choosing us!</p>
         <div class="footer">
             &copy; {{ date('Y') }} 9jahotel. All rights reserved.
