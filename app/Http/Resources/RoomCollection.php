@@ -40,7 +40,7 @@ class RoomCollection extends ResourceCollection
                 return [
                     'id' => $item->id,
                     'number' => $item->number,
-                    'price' => $item->getPrice(),
+                    'price' => $item->type?->price1,
                     'type' => $item->type?->name,
                     'status' => roomStatus($item, $this->extraData),
                     'character' => $item->character,
