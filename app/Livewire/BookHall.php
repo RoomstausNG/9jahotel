@@ -156,6 +156,15 @@ class BookHall extends Component implements HasForms
 
     public function createBooking($hall, $data, $customer): Booking
     {
+        // Prevent duplicate booking for the same hall and invoice
+        $existing = Booking::where('bookable_id', $hall->id)
+            ->where('booking_invoice_id', $data['booking_invoice_id'])
+            ->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
         return Booking::create([
             'bookable_id' => $hall->id,
             'bookable_type' => 'App\\Models\\Hall',

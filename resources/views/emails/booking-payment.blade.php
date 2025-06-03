@@ -70,23 +70,23 @@
                 <td>{{ $hotel->name }}</td>
             </tr>
             <tr>
-                <th>Date</th>
+                <th>Date Booked</th>
                 <td>{{ $invoice->created_at->format('F j, Y') }}</td>
             </tr>
             <tr>
                 <th>Check-In Date</th>
                 <td>
-                    @if(isset($bookings) && count($bookings))
-                        {{ $bookings[0]->check_in ?? '' }}
-                    @endif
+                    {{-- @if (isset($bookings) && count($bookings)) --}}
+                    {{ $invoice->checked_in ?? '' }}
+                    {{-- @endif --}}
                 </td>
             </tr>
             <tr>
                 <th>Check-Out Date</th>
                 <td>
-                    @if(isset($bookings) && count($bookings))
-                        {{ $bookings[0]->check_out ?? '' }}
-                    @endif
+                    {{-- @if (isset($bookings) && count($bookings)) --}}
+                    {{ $invoice->checked_out ?? '' }}
+                    {{-- @endif --}}
                 </td>
             </tr>
         </table>

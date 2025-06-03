@@ -156,9 +156,18 @@ cancellation with or without notice by the Hotel.',
 
     public function createBooking($room, $data, $customer): Booking
     {
+        // Prevent duplicate booking for the same room and invoice
+        $existing = Booking::where('bookable_id', $room->id)
+            ->where('booking_invoice_id', $data['booking_invoice_id'])
+            ->first();
+
+        if ($existing) {
+            return $existing;
+        }
+
         return Booking::create([
             'bookable_id' => $room->id,
-            'bookable_type' => 'App\Models\Room',
+            'bookable_type' => 'App\\Models\\Room',
             'type' => 'room',
             'booking_invoice_id' => $data['booking_invoice_id'],
             'discount' => $data['discount'],

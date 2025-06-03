@@ -173,17 +173,13 @@ class Booking extends Model
 
             // notifications
             Notification::send($booking->customer, (new GuestBookingNotification($booking, $booking->bookable, $booking->status))->delay($delay->addSeconds(3)));
-            Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(5)));
+            // Notification::send($booking->hotel, (new HotelBookingNotification($booking))->delay($delay->addSeconds(5)));
         });
 
         self::updated(function ($booking) {
             // $booking->bookable()->update(['status' => $booking->status]);
 
-            if ($booking->bookable_type == 'App\Models\Room') {
-                $booking->statuses()->update(['status' => $booking->status]);
-            } else {
-                $booking->statuses()->update(['status' => $booking->status]);
-            }
+            $booking->statuses()->update(['status' => $booking->status]);
 
             // update the company balnce to pay
             if ($booking->customer->business_id) {

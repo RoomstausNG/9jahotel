@@ -184,17 +184,19 @@ class OpayCallbackController extends Controller
                 'payed_on' => now()
             ]);
             $bookingInvoice->loadCount('bookings'); // Convert to actual amount if needed
-            // Update all associated bookings
-            $updatedBookings = Booking::where('booking_invoice_id', $bookingInvoice->id)
-                ->update([
+            // Update all associated bookings (status sync handled in Booking observer/event)
+            $bookings = Booking::where('booking_invoice_id', $bookingInvoice->id)->get();
+            foreach ($bookings as $booking) {
+                $booking->update([
                     'status' => 'paid',
                     'amount_paid' => (int) ($bookingInvoice->amount / $bookingInvoice->bookings_count),
                 ]);
+            }
 
             Log::info('Payment successfully processed', [
                 'reference' => $reference,
                 'booking_invoice_id' => $bookingInvoice->id,
-                'updated_bookings' => $updatedBookings,
+                'updated_bookings' => $bookingInvoice,
                 'amount' => $bookingInvoice->amount
             ]);
 
@@ -336,8 +338,15 @@ class OpayCallbackController extends Controller
                     'payment_method' => 'opay'
                 ]);
 
-                Booking::where('booking_invoice_id', $bookingInvoice->id)
-                    ->update(['status' => 'paid', 'date_paid' => now()]);
+                // Update all child bookings and their status relations
+                $bookings = Booking::where('booking_invoice_id', $bookingInvoice->id)->get();
+                foreach ($bookings as $booking) {
+                    $booking->update(['status' => 'paid', 'date_paid' => now()]);
+                    // If Booking has a status() relation, update it as well
+                    if (method_exists($booking, 'status') && $booking->status()->exists()) {
+                        $booking->status()->update(['status' => 'paid']);
+                    }
+                }
 
                 Log::info('Webhook payment processed', ['reference' => $reference]);
             }
