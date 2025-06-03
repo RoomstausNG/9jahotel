@@ -13,15 +13,11 @@ class BookingInvoiceEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public BookingInvoice $invoice;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(BookingInvoice $invoice)
-    {
-        $this->invoice = $invoice;
-    }
+    public function __construct(public BookingInvoice $invoice, public string $customMessage) {}
 
     /**
      * Build the message.
@@ -35,6 +31,7 @@ class BookingInvoiceEmail extends Mailable implements ShouldQueue
                 'customer' => $this->invoice->customer,
                 'hotel' => $this->invoice->hotel,
                 'bookings' => $this->invoice->bookings,
+                'customMessage' => $this->customMessage,
             ]);
     }
 }

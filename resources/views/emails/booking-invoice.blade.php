@@ -48,36 +48,38 @@
         <h2>Booking Invoice</h2>
         <p>Hello {{ $customer->firstname }} {{ $customer->lastname }},</p>
         <p>Thank you for your booking via <strong>9jahotel</strong>.</p>
-        <ul>
-            <li><strong>Hotel:</strong> {{ $hotel->name }}</li>
-            <li><strong>Booking Reference:</strong> {{ $invoice->reference }}</li>
-            <li><strong>Status:</strong> {{ ucfirst($invoice->status) }}</li>
-            <li><strong>Total Amount:</strong> ₦{{ number_format($invoice->amount, 2) }}</li>
-            <li><strong>Booking Type:</strong>
-                @if ($bookings->first() && $bookings->first()->type === 'room')
-                    Room
-                @else
-                    Hall
-                @endif
-            </li>
-            @if ($bookings->first() && $bookings->first()->type === 'room')
-                <li><strong>Number of Rooms:</strong> {{ $bookings->count() }}</li>
-                <li><strong>Number of Nights:</strong>
-                    @php
-                        $first = $bookings->first();
-                        $nights = $first
-                            ? \Carbon\Carbon::parse($first->checked_in)->diffInDays(
-                                \Carbon\Carbon::parse($first->checked_out),
-                            )
-                            : 1;
-                    @endphp
-                    {{ $nights }}
-                </li>
-            @else
-                <li><strong>Hall Name:</strong> {{ $bookings->first() ? $bookings->first()->bookable->name : '' }}</li>
-                <li><strong>Event Date:</strong> {{ $bookings->first() ? $bookings->first()->checked_in : '' }}</li>
-            @endif
-        </ul>
+        @if (isset($customMessage) && $customMessage)
+            <p style="white-space: pre-line;">{!! nl2br(e($customMessage)) !!}</p>
+        @endif
+        <table width="100%" cellpadding="8" cellspacing="0" border="1"
+            style="border-collapse:collapse;margin-top:20px;">
+            <thead style="background:#f1f1f1;">
+                <tr>
+                    <th>Room/Hall</th>
+                    <th>Type</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Guests</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($bookings as $booking)
+                    <tr>
+                        <td>
+                            @if ($booking->type === 'room')
+                                {{ $booking->bookable->number ?? ($booking->bookable->name ?? '-') }}
+                            @else
+                                {{ $booking->bookable->name ?? '-' }}
+                            @endif
+                        </td>
+                        <td>{{ strtoupper($booking->type) }}</td>
+                        <td>{{ $booking->checked_in }}</td>
+                        <td>{{ $booking->checked_out }}</td>
+                        <td>{{ $booking->guests ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
         <p>If you have any questions, please contact the hotel directly.</p>
         <p>Thank you for choosing us!</p>
         <div class="footer">
