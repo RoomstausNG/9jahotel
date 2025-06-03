@@ -90,15 +90,17 @@
                             <span>Refundable</span>
                         </div>
 
-                        <div class="flex w-full md:max-w-max flex-col justify-center items-center">
-                            <button wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
-                                data-tooltip-target="guarantee"
-                                class="relative block font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100  border-primary animate ">
-                                Instant Pay
-                                {{ formatAsNaira($nonRefundablePrice * $days) }}
-                            </button>
-                            <span>(Non-Refundable)</span>
-                        </div>
+                        @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null)
+                            <div class="flex w-full md:max-w-max flex-col justify-center items-center">
+                                <button wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
+                                    data-tooltip-target="guarantee"
+                                    class="relative block font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                    Instant Pay
+                                    {{ formatAsNaira($nonRefundablePrice * $days) }}
+                                </button>
+                                <span>(Non-Refundable)</span>
+                            </div>
+                        @endif
                         <div class=" w-full md:max-w-max">
                             <button data-tooltip-placement="top" data-tooltip-target="not-guarantee"
                                 wire:click="addBooking('payAtTheHotel')" type="button"
