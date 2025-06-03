@@ -73,9 +73,8 @@
                             @endif
                         </td>
                         <td>{{ strtoupper($booking->type) }}</td>
-                        <td>{{ $booking->checked_in }}</td>
-                        <td>{{ $booking->checked_out }}</td>
-                        <td>{{ $booking->guests ?? '-' }}</td>
+                        <td>{{ $booking->checked_in->format('D d M, Y') }}</td>
+                        <td>{{ $booking->checked_out->format('D d M, Y') }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -68,7 +68,7 @@ class BookingInvoice extends Model
 
 
             // Normalize payment type to one of three options: 'PayAtHotel', 'PayNow', 'NonRefundable'
-            $rawType = $invoice->payment_type ?? 'PayAtHotel';
+            $rawType = $invoice->type ?? 'PayAtHotel';
             $normalizedType = match (strtolower(str_replace(['-', '_', ' '], '', $rawType))) {
                 'payathotel' => 'PayAtHotel',
                 'paynow', 'online' => 'PayNow',
