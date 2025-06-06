@@ -51,13 +51,16 @@ class RefundRequest extends Component
         ]);
         $data = [
             'invoice' => $this->invoice,
+            'hotel' => $this->invoice->hotel,
             'refund' => $refund,
             'bank_name' => $this->bank_name,
             'account_no' => $this->account_no,
             'account_name' => $this->account_name,
             'reason' => $reasonText,
         ];
-        Mail::to('refund@9jahotel.com')->queue(new \App\Mail\RefundRequestMail($data));
+        Mail::to('refund@9jahotel.com')
+            ->cc('bowofadeoyerinde@gmail.com')
+            ->queue(new \App\Mail\RefundRequestMail($data));
         session()->flash('success', 'Your refund request has been submitted.');
 
         Notification::make()

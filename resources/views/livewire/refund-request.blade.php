@@ -79,7 +79,7 @@
                 <form wire:submit="submit" class="space-y-6">
                     <div>
                         <label class="block text-gray-700 mb-1">Why are you cancelling the booking?</label>
-                        <select wire:model="reason"
+                        <select wire:model.live="reason"
                             class="bg-green-50 border border-primary-200 rounded w-full px-4 py-2 text-lg appearance-none"
                             required>
                             <option value="">Select</option>
