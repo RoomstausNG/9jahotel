@@ -7,7 +7,8 @@
             <div style="margin-top: 8px; font-size: 1.1rem; opacity: 0.95;">Reference:
                 <strong>{{ $data['invoice']->reference }}</strong>
             </div>
-            <div style="margin-top: 4px; font-size: 1rem;">Status: <strong>{{ $data['refund']->status ?? '-' }}</strong>
+            <div style="margin-top: 4px; font-size: 1rem;">Refund Status:
+                <strong>{{ $data['refund']->status ?? '-' }}</strong>
             </div>
         </div>
         <div style="padding: 28px 24px 10px 24px;">
@@ -16,7 +17,7 @@
             <table style="width: 100%; font-size: 1rem; margin-bottom: 18px;">
                 <tr>
                     <td style="padding: 4px 0; color: #222;"><strong>Hotel:</strong></td>
-                    <td style="padding: 4px 0; color: #444;">{{ $data['invoice']->customer->hotel_name ?? '-' }}</td>
+                    <td style="padding: 4px 0; color: #444;">{{ $data['invoice']->hotel->name }}</td>
                 </tr>
                 <tr>
                     <td style="padding: 4px 0; color: #222;"><strong>Customer:</strong></td>
