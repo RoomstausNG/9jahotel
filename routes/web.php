@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-
+use App\Livewire\PayNow;
 use App\Livewire\BookHall;
 use App\Livewire\BookRoom;
 use App\Livewire\Register;
@@ -37,6 +37,9 @@ use App\Http\Controllers\OpayCallbackController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// PayNow payment route with route model binding
+Route::get('/paynow/{invoice:reference}', PayNow::class)->name('paynow');
 
 
 // Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
