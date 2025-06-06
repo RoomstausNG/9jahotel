@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('account_no');
             $table->string('account_name');
             $table->string('reason');
+            $table->integer('amount_refunded')->nullable();
             $table->string('other_reason')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();

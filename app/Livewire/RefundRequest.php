@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\BookingInvoice;
 use Illuminate\Support\Facades\Mail;
@@ -25,10 +25,11 @@ class RefundRequest extends Component
         'other_reason' => 'nullable|string|max:255',
     ];
 
-    // public function mount($reference)
-    // {
-    //     $this->invoice = BookingInvoice::where('reference', $reference)->with('bookings', 'customer')->firstOrFail();
-    // }
+    public function mount()
+    {
+        // $this->invoice = BookingInvoice::where('reference', $reference)->with('bookings', 'customer')->firstOrFail();
+        $this->account_name = $this->invoice->customer->name;
+    }
 
     public function submit()
     {

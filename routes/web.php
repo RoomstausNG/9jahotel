@@ -18,13 +18,14 @@ use App\Livewire\SearchResult;
 use App\Models\BookingInvoice;
 use App\Livewire\BookingHistory;
 use App\Livewire\OpayPaymentForm;
+use App\Http\Livewire\RefundRequest;
 use App\Livewire\ForgotPasswordPage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
+use App\Livewire\RefundRequest as RRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use App\Http\Controllers\OpayCallbackController;
-use App\Http\Livewire\RefundRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -116,7 +117,7 @@ Route::get('/booking/success', function () {
     return view('booking.success');
 })->name('booking.success');
 
-Route::get("/booking/refund/{invoice:reference}", RefundRequest::class)->name('booking.refund');
+Route::get("/booking/refund/{invoice:reference}", RRequest::class)->name('booking.refund');
 
 Route::get('/booking/failed', function () {
     return view('booking.failed');
