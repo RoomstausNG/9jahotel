@@ -42,6 +42,10 @@ use App\Http\Controllers\OpayCallbackController;
 Route::get('/paynow/{invoice:reference}', PayNow::class)->name('paynow');
 
 
+use App\Livewire\CancelBooking;
+// Booking cancellation route
+Route::get('/cancel/{invoice}', CancelBooking::class)->name('cancel.booking');
+
 // Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
