@@ -100,6 +100,9 @@ class RefundRequest extends Component
         'Jaiz Bank',
         'Keystone Bank',
         'Kuda Bank',
+        'Moniepoint',
+        'Opay',
+        'Palmpay',
         'Parallex Bank',
         'Polaris Bank',
         'PremiumTrust Bank',
@@ -112,6 +115,7 @@ class RefundRequest extends Component
         'Union Bank',
         'United Bank for Africa',
         'Unity Bank',
+        'VDM',
         'Wema Bank',
         'Zenith Bank',
     ];
