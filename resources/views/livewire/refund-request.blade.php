@@ -41,7 +41,7 @@
             <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
                 <div class="mb-2 md:mb-0">
                     <span class="block text-gray-500 text-sm">Guest</span>
-                    <span class="font-bold text-lg">{{ $invoice->customer->adults ?? '1 Adult' }}</span>
+                    <span class="font-bold text-lg">{{ $invoice->customer->guest ?? '1 Adult' }}</span>
                 </div>
                 <div class="mb-2 md:mb-0">
                     <span class="block text-gray-500 text-sm">Room Number(s)</span>
