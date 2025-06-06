@@ -71,6 +71,13 @@ class RefundRequest extends Component
                 $this->invoice
             ));
 
+        // update booking
+        $this->invoice->update(['status' => 'cancelled']);
+        $this->invoice->bookings->each(function ($booking) {
+            $booking->update(['status' => 'cancelled']);
+        });
+
+
         session()->flash('success', 'Your refund request has been submitted.');
 
         Notification::make()
