@@ -65,7 +65,7 @@ class BookingInvoice extends Model
 
         self::created(function ($invoice) {
             // Determine email type
-            $type = $invoice->type ?? 'paynow';
+            $type = $invoice->type;
             $mailClass = null;
             switch (strtolower($type)) {
                 case 'paynow':

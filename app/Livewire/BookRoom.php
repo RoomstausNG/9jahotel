@@ -79,23 +79,24 @@ class BookRoom extends Component implements HasForms
             $data['checked_in'] = Session::get('checkin');
             $data['checked_out'] = Session::get('checkout');
             if ($type == 'NonRefundable') {
-                $data['type'] = "NonRefundable";
                 $data['discount'] = $this->category->hotel->non_refundable_price;
                 $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->non_refundable_price);
                 $this->due = calculateRemainingAmount($this->category->price1 * $days * count($this->checked), $this->category->hotel->non_refundable_price);
             } else {
-                $data['type'] = 'PayNow';
+
                 $data['discount'] = $this->category->hotel->online_price;
                 $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->online_price);
                 $this->due = calculateRemainingAmount($this->category->price1 * $days * count($this->checked), $this->category->hotel->online_price);
             }
+
+            $data['type'] = $type;
 
             // booking invoice
             $invoice = BookingInvoice::create([
                 'customer_id' => $customer->id,
                 'hotel_id' => $this->category->hotel_id,
                 'amount' => $this->due,
-                'type' => $data['type'] ?? 'PayAtHotel',
+                'type' => $data['type'],
                 'status' => 'unpaid',
                 'checked_in' => $data['checked_in'], // ensure checkin is saved
                 'checked_out' => $data['checked_out'], // ensure checkout is saved
