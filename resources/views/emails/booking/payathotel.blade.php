@@ -53,7 +53,7 @@
                     here</a>. If your travel plans change, be assured that you will be entitled to refund of payment
                 already made within 12 hours of cancellation. Cancellation is still possible after your first night stay
                 if you do not love the accommodation. A token may be charged for refund processing. For more details on
-                refundable bookings, see <a href="https://9jahotel.com/terms-and-condition"
+                refundable bookings, see <a href="{{ route('terms') }}"
                     style="color:#0066cc;">https://9jahotel.com/terms-and-condition</a>
             </span>
         </div>
