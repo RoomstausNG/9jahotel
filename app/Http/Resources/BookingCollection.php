@@ -23,7 +23,7 @@ class BookingCollection extends ResourceCollection
                     'due' => $item->due,
                     'checked_in' => $item->checked_in->format('d M, Y'),
                     'checked_out' => $item->checked_out->format('d M, Y'),
-                    // 'Room Info' => $item->type == 'room' ? strtoupper($item->bookable->number . ' ' . $item->bookable->type->name . ' (' . $item->bookable->price . ')') : strtoupper($item->bookable->name . ' (' . $item->bookable->price . ')'),
+                    // 'Room Info' => $item->type == 'room' ? strtoupper($item->bookable->number . ' ' . $item->ibookable->type?->name . ' (' . $item->bookable->price . ')') : strtoupper($item->bookable->name . ' (' . $item->bookable->price . ')'),
                     // 'discount' => $item->discount,
                     'status' => $item->status,
                     'customer' => ucfirst($item->customer->firstname . " " . $item->customer->lastname),

@@ -37,6 +37,23 @@ class BookingInvoice extends Model
     }
 
 
+    /**
+     * Send payment confirmation emails to customer and hotel
+     */
+    public function sendPaymentEmails()
+    {
+        // Customer email
+        if ($this->customer && $this->customer->email) {
+            Mail::to($this->customer->email)
+                ->queue(new \App\Mail\PaymentConfirmationCustomerMail($this));
+        }
+
+        // Hotel email (fallback to hotel email, or admin if not set)
+        $hotelEmail = $this->hotel->email ?? 'info@9jahotel.com';
+        Mail::to($hotelEmail)
+            ->queue(new \App\Mail\PaymentConfirmationHotelMail($this));
+    }
+
 
     public function customer(): BelongsTo
     {

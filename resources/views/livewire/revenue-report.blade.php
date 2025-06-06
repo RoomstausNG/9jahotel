@@ -291,7 +291,7 @@
                                     </td>
 
                                     <td class="px-4 py-2 uppercase nowrap">
-                                        {{ $reserv->bookable->number . ' ' . $reserv->bookable->type->name . ' (' . formatAsNaira($reserv->bookable->price) . ')' }}
+                                        {{ $reserv->bookable->number . ' ' . $reserv->ibookable->type?->name . ' (' . formatAsNaira($reserv->bookable->price) . ')' }}
                                     </td>
 
                                     <td class="px-4 py-2 text-sm">

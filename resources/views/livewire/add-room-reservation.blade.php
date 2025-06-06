@@ -39,7 +39,7 @@
                             </tr>
                             <tr class="w-full">
                                 <td class="px-2">Room Type:</td>
-                                <td class="px-2 uppercase">{{ $booking->bookable->type->name }}</td>
+                                <td class="px-2 uppercase">{{ bookable->type?->name }}</td>
                             </tr>
                             <tr class="w-full">
                                 <td class="px-2">Room Number:</td>

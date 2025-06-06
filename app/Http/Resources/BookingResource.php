@@ -18,7 +18,7 @@ class BookingResource extends JsonResource
             'id' => $this->id,
             'code' => $this->code,
             'type' => $this->type,
-            'Booked Item' => $this->type == 'room' ? strtoupper($this->bookable->type->name . " " . $this->bookable->number) : strtoupper($this->bookable->name),
+            'Booked Item' => $this->type == 'room' ? strtoupper($this->ibookable->type?->name . " " . $this->bookable->number) : strtoupper($this->bookable->name),
             'price' => $this->bookable->price,
             'due' => $this->due,
             'amount_paid' => $this->amount_paid,
