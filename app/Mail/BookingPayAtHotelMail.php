@@ -9,19 +9,19 @@ use Illuminate\Queue\SerializesModels;
 
 class BookingPayAtHotelMail extends Mailable
 {
-  use Queueable, SerializesModels;
+    use Queueable, SerializesModels;
 
-  public BookingInvoice $invoice;
+    public BookingInvoice $invoice;
 
-  public function __construct(BookingInvoice $invoice)
-  {
-    $this->invoice = $invoice;
-  }
+    public function __construct(BookingInvoice $invoice)
+    {
+        $this->invoice = $invoice;
+    }
 
-  public function build()
-  {
-    return $this->subject('Your Booking Confirmation - Pay at Hotel')
-      ->view('emails.booking.payathotel')
-      ->with(['invoice' => $this->invoice]);
-  }
+    public function build()
+    {
+        return $this->subject('Your Booking Confirmation - Pay at Hotel')
+            ->view('emails.booking.payathotel')
+            ->with(['invoice' => $this->invoice]);
+    }
 }
