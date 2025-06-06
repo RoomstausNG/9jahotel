@@ -19,8 +19,8 @@
                         </svg>
                         <span>{{ $invoice->hotel->address ?? 'Address' }}</span>
                     </div>
-                    <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded text-base">(Standard
-                        Category)</span>
+                    <span
+                        class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded text-base">{{ $invoice->bookings->first()->bookable->type?->name . ' Room' ?? $invoice->bookings->first()->bookable->name }}</span>
                 </div>
                 <div class="mt-4 md:mt-0 md:ml-6">
                     <img src="{{ getCloudinaryUrl($invoice->hotel->background_image) }}"
@@ -64,10 +64,15 @@
         <!-- Refund Form -->
         @php
             $canRefund = $invoice->status === 'paid' && $invoice->checked_in->gt(now()->addHours(48));
+            $refundApplied = $invoice->refund()->exists();
         @endphp
         <div class="bg-white shadow-lg px-8 py-8">
             <h3 class="text-2xl font-semibold mb-6 text-primary-700">Cancel Booking</h3>
-            @if ($canRefund)
+            @if ($refundApplied)
+                <div class="bg-red-100 text-red-800 p-4 rounded text-center mb-4">
+                    Refund has already been applied for this booking.
+                </div>
+            @elseif ($canRefund)
                 @if (session()->has('success'))
                     <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
                 @endif

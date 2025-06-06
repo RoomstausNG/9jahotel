@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\BookingInvoice;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -29,6 +30,11 @@ class RefundRequest extends Component
     {
         // $this->invoice = BookingInvoice::where('reference', $reference)->with('bookings', 'customer')->firstOrFail();
         $this->account_name = $this->invoice->customer->name;
+        $this->invoice->load([
+            'bookings.bookable',
+            'customer',
+            'hotel'
+        ]);
     }
 
     public function submit()
@@ -53,6 +59,13 @@ class RefundRequest extends Component
         ];
         Mail::to('refund@9jahotel.com')->queue(new \App\Mail\RefundRequestMail($data));
         session()->flash('success', 'Your refund request has been submitted.');
+
+        Notification::make()
+            ->title('Refund Request Submitted')
+            ->body('Your refund request has been successfully submitted.')
+            ->success()
+            ->send();
+        return redirect('/');
     }
 
     public array $cancelReasons = [
