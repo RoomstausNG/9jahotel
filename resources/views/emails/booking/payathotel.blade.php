@@ -48,8 +48,8 @@
                 This booking has been received by the hotel. This is an <b>unsecured reservation</b> and may be
                 subjected to random cancellation by the hotel. At 9jahotel.com, we wanted you to avoid possible
                 disappointments during your travel, we will therefore suggest you make payment for this booking to
-                confirm your travel itinerary to the hotel. To pay for this booking now, <a href="{{ route('') }}"
-                    style="color:#d60000;">click
+                confirm your travel itinerary to the hotel. To pay for this booking now, <a
+                    href="{{ route('paynow', $invoice->reference) }}" style="color:#d60000;">click
                     here</a>. If your travel plans change, be assured that you will be entitled to refund of payment
                 already made within 12 hours of cancellation. Cancellation is still possible after your first night stay
                 if you do not love the accommodation. A token may be charged for refund processing. For more details on
