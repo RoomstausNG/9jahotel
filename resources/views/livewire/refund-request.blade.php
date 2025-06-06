@@ -63,8 +63,15 @@
 
         <!-- Refund Form -->
         @php
-            $canRefund = $invoice->status === 'paid' && $invoice->checked_in->gt(now()->addHours(48));
             $refundApplied = $invoice->refund()->exists();
+            $isPaid = $invoice->status === 'paid';
+            $checkin = $invoice->checked_in;
+            $checkout = $invoice->checked_out;
+            $now = now();
+            // Calculate hours from now to check-in (positive if in future)
+            $hoursToCheckin = $now->diffInHours($checkin, false);
+            // Check if check-out date has passed (before today)
+            $checkoutPassed = $checkout->lt($now->startOfDay());
         @endphp
         <div class="bg-white shadow-lg px-8 py-8">
             <h3 class="text-2xl font-semibold mb-6 text-primary-700">Cancel Booking</h3>
@@ -72,7 +79,22 @@
                 <div class="bg-red-100 text-red-800 p-4 rounded text-center mb-4">
                     Refund has already been applied for this booking.
                 </div>
-            @elseif ($canRefund)
+            @elseif (!$isPaid)
+                <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center mb-4">
+                    Refunds can only be requested for bookings that are <b>paid</b>.
+                </div>
+            @elseif ($checkoutPassed)
+                <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center mb-4">
+                    Refunds can only be requested before the check-out date.
+                </div>
+            @else
+                @if ($hoursToCheckin < 48)
+                    <div class="bg-orange-100 text-orange-800 p-4 rounded text-center mb-4">
+                        If you cancel this booking, you will receive full refund less 10% charge for processing. Your
+                        refund will be sent to the same account you specified within 12 hours of completing the refund
+                        process.
+                    </div>
+                @endif
                 @if (session()->has('success'))
                     <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
                 @endif
@@ -136,11 +158,6 @@
                     <button type="submit"
                         class="w-full bg-primary-700 hover:bg-primary-800 text-white text-base font-semibold py-2 rounded transition">Submit</button>
                 </form>
-            @else
-                <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center">
-                    Refunds can only be requested for bookings that are <b>paid</b> and where check-in is more than 48
-                    hours from now.
-                </div>
             @endif
         </div>
     </div>

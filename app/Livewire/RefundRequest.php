@@ -58,9 +58,19 @@ class RefundRequest extends Component
             'account_name' => $this->account_name,
             'reason' => $reasonText,
         ];
+        // Send to admin
         Mail::to('refund@9jahotel.com')
             ->cc('bowofadeoyerinde@gmail.com')
             ->queue(new \App\Mail\RefundRequestMail($data));
+
+        // Send confirmation to customer
+        Mail::to($this->invoice->customer->email)
+            ->queue(new \App\Mail\RefundConfirmationMail(
+                $this->invoice->customer,
+                $this->invoice->hotel,
+                $this->invoice
+            ));
+
         session()->flash('success', 'Your refund request has been submitted.');
 
         Notification::make()
