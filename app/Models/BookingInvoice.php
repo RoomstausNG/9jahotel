@@ -71,12 +71,25 @@ class BookingInvoice extends Model
         parent::booted();
 
         self::creating(function ($invoice) {
+            // Get 3 digits from hotel code (numbers only, pad if needed)
+            $hotelCode = isset($invoice->hotel) && isset($invoice->hotel->code) ? preg_replace('/\D/', '', $invoice->hotel->code) : '000';
+            $hotelCode = str_pad(substr($hotelCode, 0, 3), 3, '0', STR_PAD_RIGHT);
+
+            // Get 3 random digits from current time (e.g. seconds + microseconds)
+            $micro = (string) microtime(true);
+            $micro = preg_replace('/\D/', '', $micro); // remove non-digits
+            $randTime = substr($micro, -6, 3); // take 3 digits from the last 6 digits
+            if (strlen($randTime) < 3) {
+                $randTime = str_pad($randTime, 3, '0');
+            }
+
+            $prefix = '9JA' . $hotelCode . $randTime;
             $invoice->reference = strtoupper(IdGenerator::generate([
                 'table' => 'booking_invoices',
                 'field' => 'reference',
                 'length' => 12,
                 'reset_on_prefix_change' => true,
-                'prefix' => 'RE9A' . date('d')
+                'prefix' => $prefix
             ]));
         });
 
