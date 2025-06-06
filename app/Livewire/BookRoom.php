@@ -78,7 +78,7 @@ class BookRoom extends Component implements HasForms
 
             $data['checked_in'] = Session::get('checkin');
             $data['checked_out'] = Session::get('checkout');
-            if ($type == 'non-refundable') {
+            if ($type == 'NonRefundable') {
                 $data['type'] = "NonRefundable";
                 $data['discount'] = $this->category->hotel->non_refundable_price;
                 $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->non_refundable_price);
@@ -118,7 +118,7 @@ class BookRoom extends Component implements HasForms
         // // update the due amount
         // $booking = $this->calculateDue($created, $$this->category);
 
-        if ($type == 'payAtTheHotel') {
+        if ($type == 'PayAtHotel') {
             $details = [
                 'text' => 'Please check your email for confirmation
 Kindly note that UNPAID Bookings are subject to

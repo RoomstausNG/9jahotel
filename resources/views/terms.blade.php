@@ -245,7 +245,7 @@
                 <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500 mb-4">
                     <p>Unless otherwise specified during check-out for your booking or otherwise permitted by our
                         policies or terms, reservations made on 9jahotel.com are cancellable and refundable <span
-                            class="font-bold">EXCEPT when you choose a non-refundable reservation</span>. You can only
+                            class="font-bold">EXCEPT when you choose a NonRefundable reservation</span>. You can only
                         cancel your booking up to 48 hours before check-in. If you cancel your reservation before
                         check-in but after the grace period has expired, 9jahotel.com will charge and remit to the hotel
                         the equivalent of your first night payment and make remaining refunds to your specified account.

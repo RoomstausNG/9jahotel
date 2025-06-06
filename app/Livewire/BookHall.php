@@ -71,7 +71,7 @@ class BookHall extends Component implements HasForms
 
             $data['checked_in'] = Session::get('checkin');
             $data['checked_out'] = Session::get('checkout');
-            if ($type == 'non-refundable') {
+            if ($type == 'NonRefundable') {
                 $data['discount'] = $this->hall->hotel->non_refundable_price;
                 $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
                 $this->due = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
@@ -103,7 +103,7 @@ class BookHall extends Component implements HasForms
             $this->associateCustomer($customer->id);
         }
 
-        if ($type == 'payAtTheHotel') {
+        if ($type == 'PayAtHotel') {
             $details = [
                 'text' => 'Please check your email for confirmation\nKindly note that UNPAID Bookings are subject to\ncancellation with or without notice by the Hotel.',
                 'title' => 'Your Booking is Received!'

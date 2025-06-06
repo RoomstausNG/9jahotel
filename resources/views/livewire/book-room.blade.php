@@ -135,7 +135,7 @@
                             <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
                                 x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                 data-tooltip-placement="top" data-tooltip-target="guarantee"
-                                wire:click="addBooking('online')" type="button"
+                                wire:click="addBooking('PayNow')" type="button"
                                 class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full">
                                 Reserve & Pay Now ( {{ formatAsNaira($discountedPrice * $days * count($checked)) }})
                             </button>
@@ -146,20 +146,20 @@
                                 <button x-data="{ disabled: false }" x-bind:disabled="disabled"
                                     x-on:click="disabled = true"
                                     x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
-                                    wire:click="addBooking('non-refundable')" data-tooltip-placement="top"
+                                    wire:click="addBooking('NonRefundable')" data-tooltip-placement="top"
                                     data-tooltip-target="guarantee"
                                     class="relative block font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100  border-primary animate ">
                                     Instant Pay
                                     {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
                                 </button>
-                                <span>(Non-Refundable)</span>
+                                <span>(NonRefundable)</span>
                             </div>
                         @endif
                         <div class="w-full md:max-w-max">
                             <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
                                 x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                 data-tooltip-placement="top" data-tooltip-target="not-guarantee"
-                                wire:click="addBooking('payAtTheHotel')" type="button"
+                                wire:click="addBooking('PayAtHotel')" type="button"
                                 class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">
                                 Pay on arrival ({{ formatAsNaira($discountedPrice * $days * count($checked)) }})
                             </button>
@@ -167,7 +167,7 @@
                     </div>
 
                     {{-- <div class="flex items-center justify-center -pt-8 p-0">
-                        <button wire:click="addBooking('non-refundable')"
+                        <button wire:click="addBooking('NonRefundable')"
                             class="relative block font-bold w-full p-3 px-6 max-w-max text-white bg-red-600 border rounded-md hover:bg-red-700 animate ">Save
                             More! Pay NON REFUNDABLE
                             <span class="text-xl font-bold">
