@@ -36,9 +36,15 @@ class BookingInvoice extends Model
     }
 
 
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function refund()
+    {
+        return $this->hasOne(Refund::class);
     }
 
 

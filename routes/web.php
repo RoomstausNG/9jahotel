@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use App\Http\Controllers\OpayCallbackController;
+use App\Http\Livewire\RefundRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,8 @@ Route::get('/opay/return/{reference?}', [OpayCallbackController::class, 'handleG
 Route::get('/booking/success', function () {
     return view('booking.success');
 })->name('booking.success');
+
+Route::get("/booking/refund/{invoice:reference}", RefundRequest::class)->name('booking.refund');
 
 Route::get('/booking/failed', function () {
     return view('booking.failed');
