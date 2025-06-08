@@ -72,6 +72,7 @@
             $hoursToCheckin = $now->diffInHours($checkin, false);
             // Check if check-out date has passed (before today)
             $checkoutPassed = $checkout->lt($now->startOfDay());
+            $checkinPassed = $checkin->lt($now->startOfDay());
         @endphp
         <div class="bg-white shadow-lg px-8 py-8">
             <h3 class="text-2xl font-semibold mb-6 text-primary-700">Cancel Booking</h3>
@@ -83,81 +84,91 @@
                 <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center mb-4">
                     Refunds can only be requested for bookings that are <b>paid</b>.
                 </div>
-            @elseif ($checkoutPassed)
-                <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center mb-4">
-                    Refunds can only be requested before the check-out date.
+            @elseif ($checkinPassed || $checkoutPassed)
+                <div class="bg-red-100 text-red-800 p-4 rounded text-center mb-4">
+                    Refunds cannot be requested for bookings that have already checked in or checked out.
                 </div>
             @else
-                @if ($hoursToCheckin < 48)
+                @if (session()->has('success'))
+                    <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
+                @endif
+
+                @if ($hoursToCheckin > 48)
+
                     <div class="bg-orange-100 text-orange-800 p-4 rounded text-center mb-4">
                         If you cancel this booking, you will receive full refund less 10% charge for processing. Your
                         refund will be sent to the same account you specified within 12 hours of completing the refund
                         process.
                     </div>
-                @endif
-                @if (session()->has('success'))
-                    <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
-                @endif
-                <form wire:submit="submit" class="space-y-6">
-                    <div>
-                        <label class="block text-gray-700 mb-1">Why are you cancelling the booking?</label>
-                        <select wire:model.live="reason"
-                            class="bg-green-50 border border-primary-200 rounded w-full px-4 py-2 text-lg appearance-none"
-                            required>
-                            <option value="">Select</option>
-                            @foreach ($cancelReasons as $creason)
-                                <option value="{{ strtolower($creason) }}">
-                                    {{ $creason }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('reason')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    @if ($reason === 'other')
+                    <form wire:submit="submit" class="space-y-6">
                         <div>
-                            <label class="block text-gray-700 mb-1">Please specify</label>
-                            <input type="text" wire:model.defer="other_reason"
-                                class="bg-green-50 border border-primary-200 rounded w-full p-4 text-lg" />
-                            @error('other_reason')
+                            <label class="block text-gray-700 mb-1">Why are you cancelling the booking?</label>
+                            <select wire:model.live="reason"
+                                class="bg-green-50 border border-primary-200 rounded w-full px-4 py-2 text-lg appearance-none"
+                                required>
+                                <option value="">Select</option>
+                                @foreach ($cancelReasons as $creason)
+                                    <option value="{{ strtolower($creason) }}">
+                                        {{ $creason }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('reason')
                                 <span class="text-red-600 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
-                    @endif
-                    <div>
-                        <label class="block text-gray-700 mb-1">Account Number</label>
-                        <input type="text" wire:model.defer="account_no"
-                            class="bg-green-50 border border-primary-200 rounded w-full px-4 py-2 text-lg" required />
-                        @error('account_no')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-1 text-sm">Bank Name</label>
-                        <select wire:model="bank_name"
-                            class="bg-green-50 border border-primary-200 rounded w-full p-2 text-base appearance-none"
-                            required>
-                            <option value="">Select Bank</option>
-                            @foreach ($nigeriaBanks as $bank)
-                                <option value="{{ $bank }}">{{ $bank }}</option>
-                            @endforeach
-                        </select>
-                        @error('bank_name')
-                            <span class="text-red-600 text-xs">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 mb-1 text-sm">Account Name</label>
-                        <input type="text" wire:model.defer="account_name"
-                            class="bg-gray-100 border border-gray-200 rounded w-full p-2 text-base" required readonly />
-                        @error('account_name')
-                            <span class="text-red-600 text-xs">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-primary-700 hover:bg-primary-800 text-white text-base font-semibold py-2 rounded transition">Submit</button>
-                </form>
+                        @if ($reason === 'other')
+                            <div>
+                                <label class="block text-gray-700 mb-1">Please specify</label>
+                                <input type="text" wire:model.defer="other_reason"
+                                    class="bg-green-50 border border-primary-200 rounded w-full p-4 text-lg" />
+                                @error('other_reason')
+                                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+                        <div>
+                            <label class="block text-gray-700 mb-1">Account Number</label>
+                            <input type="text" wire:model.defer="account_no"
+                                class="bg-green-50 border border-primary-200 rounded w-full px-4 py-2 text-lg"
+                                required />
+                            @error('account_no')
+                                <span class="text-red-600 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1 text-sm">Bank Name</label>
+                            <select wire:model="bank_name"
+                                class="bg-green-50 border border-primary-200 rounded w-full p-2 text-base appearance-none"
+                                required>
+                                <option value="">Select Bank</option>
+                                @foreach ($nigeriaBanks as $bank)
+                                    <option value="{{ $bank }}">{{ $bank }}</option>
+                                @endforeach
+                            </select>
+                            @error('bank_name')
+                                <span class="text-red-600 text-xs">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1 text-sm">Account Name</label>
+                            <input type="text" wire:model.defer="account_name"
+                                class="bg-gray-100 border border-gray-200 rounded w-full p-2 text-base" required
+                                readonly />
+                            @error('account_name')
+                                <span class="text-red-600 text-xs">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-primary-700 hover:bg-primary-800 text-white text-base font-semibold py-2 rounded transition">Submit</button>
+                    </form>
+                @else
+                    <p class="-6 rounded-lg text-xl font-semibold italic text-warning-500">
+                        This booking can no longer be cancelled online, please call <a href="tel:+234700700242"
+                            class="font-bold text-primary">0700 700 2424</a> for further assistance or email <a
+                            href="mailto:refund@9jahotel.com" class="">refund@9jahotel.com</a>
+                    </p>
+                @endif
             @endif
         </div>
     </div>
