@@ -163,7 +163,7 @@ class BookingResource extends Resource
                             foreach ($hotel_staff as $staff) {
                                 Notification::make()
                                     ->title("Success! Booking cancelled successfully")
-                                    ->body("The booking with reference {$record->reference} has been cancelled by 9Jahotel")
+                                    ->body("The booking with reference {$record->reference} has been cancelled by 9jahotel")
                                     ->danger()
                                     ->sendToDatabase($staff);
                             }

@@ -169,7 +169,7 @@ class HotelResource extends Resource
                     ->hiddenOn('create')
                     ->default('active'),
                 Forms\Components\Select::make('type')
-                    ->options(['both' => 'Both', '9jahotel' => '9jaHotel'])
+                    ->options(['both' => 'Both', '9jahotel' => '9jahotel'])
                     ->default('active'),
                 Forms\Components\DatePicker::make('renew')
                     ->hiddenOn('create'),

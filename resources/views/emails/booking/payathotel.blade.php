@@ -1,6 +1,6 @@
 <div style="font-family: Arial, sans-serif; background: #fff; padding: 0; margin: 0;">
     <div style="text-align:center; padding: 24px 0 8px 0;">
-        <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jaHotel Logo" style="height: 60px;">
+        <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jahotel Logo" style="height: 60px;">
     </div>
     <div style="max-width: 650px; margin: 0 auto; background: #fff; padding: 32px;">
         <h1 style="color: #d60000; text-align: center; font-size: 2rem; margin-bottom: 0.5rem;">Enjoy your stay at

@@ -90,7 +90,7 @@
         </div>
         <div
             style="background: #f0fdfa; color: #009999; text-align: center; padding: 18px 24px; font-size: 1rem; border-top: 1px solid #e0e7ef;">
-            <strong>9jaHotel Refund Desk</strong><br>
+            <strong>9jahotel Refund Desk</strong><br>
             <span style="font-size: 0.95rem; color: #009999;">This is an automated notification. Please review and
                 process the refund request promptly.</span>
         </div>

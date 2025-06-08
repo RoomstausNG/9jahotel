@@ -99,13 +99,14 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            <img src="https://9jahotel.com/img/9jahotel_logo.png" alt="9jaHotel Logo">
+            <img src="https://9jahotel.com/img/9jahotel_logo.png" alt="9jahotel Logo">
             <h1>Refund Request Received</h1>
         </div>
         <div class="email-body">
             <p>Dear {{ $customer->name }},</p>
             <p>We have received your refund request for your booking at <strong>{{ $hotel->name }}</strong> (Reference:
-                <strong>{{ $invoice->reference }}</strong>).</p>
+                <strong>{{ $invoice->reference }}</strong>).
+            </p>
             <p>Our customer care team is processing your request and your refund will be sent to the specified account
                 within 12 hours of completing the refund process.</p>
             <p>If you have any questions, please reply to this email or contact our support team.</p>
@@ -118,11 +119,11 @@
                     <li><strong>Amount Paid:</strong> ₦{{ number_format($invoice->amount) }}</li>
                 </ul>
             </div>
-            <p>Thank you for choosing 9jaHotel.</p>
-            <p style="margin-top: 32px;">Best regards,<br>9jaHotel Customer Care</p>
+            <p>Thank you for choosing 9jahotel.</p>
+            <p style="margin-top: 32px;">Best regards,<br>9jahotel Customer Care</p>
         </div>
         <div class="email-footer">
-            &copy; {{ date('Y') }} 9jaHotel. All rights reserved.
+            &copy; {{ date('Y') }} 9jahotel. All rights reserved.
         </div>
     </div>
 </body>

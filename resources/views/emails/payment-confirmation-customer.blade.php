@@ -1,6 +1,6 @@
 <div style="font-family: Arial, sans-serif; background: #fff; padding: 0; margin: 0;">
     <div style="text-align:center; padding: 24px 0 8px 0;">
-        <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jaHotel Logo" style="height: 60px;">
+        <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jahotel Logo" style="height: 60px;">
     </div>
     <div style="max-width: 650px; margin: 0 auto; background: #fff; padding: 32px;">
         <h1 style="color: #009999; text-align: center; font-size: 2rem; margin-bottom: 0.5rem;">Payment Confirmation</h1>
@@ -62,11 +62,11 @@
         </div>
         <div style="margin-top: 24px; font-size: 1rem;">
             If you have any questions, please contact our support team or reply to this email.<br><br>
-            Thank you for choosing 9jaHotel!
+            Thank you for choosing 9jahotel!
         </div>
         <div style="margin-top: 32px; color: #888; font-size: 0.95rem; text-align: right;">
             Best regards,<br>
-            9jaHotel Team
+            9jahotel Team
         </div>
     </div>
 </div>

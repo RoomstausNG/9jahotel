@@ -5,7 +5,8 @@
             <h2 style="margin: 0; font-size: 2rem; font-weight: bold; letter-spacing: 1px;">Your Booking Has Been
                 Cancelled</h2>
             <div style="margin-top: 8px; font-size: 1.1rem; opacity: 0.95;">Reference:
-                <strong>{{ $invoice->reference }}</strong></div>
+                <strong>{{ $invoice->reference }}</strong>
+            </div>
         </div>
         <div style="padding: 28px 24px 10px 24px;">
             <h3 style="color: #d60000; font-size: 1.2rem; margin-bottom: 8px; margin-top: 0;">Hotel Details</h3>
@@ -55,7 +56,7 @@
         </div>
         <div
             style="background: #fbeaea; color: #d60000; text-align: center; padding: 18px 24px; font-size: 1rem; border-top: 1px solid #e0e7ef;">
-            <strong>9jaHotel Customer Care</strong><br>
+            <strong>9jahotel Customer Care</strong><br>
             <span style="font-size: 0.95rem; color: #d60000;">This is an automated notification. Your booking has been
                 cancelled as requested.</span>
         </div>
