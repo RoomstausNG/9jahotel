@@ -91,6 +91,9 @@ class BookHall extends Component implements HasForms
                 'checked_out' => $data['checked_out'], // ensure checkout is saved
             ]);
 
+            // Calculate and save commission amounts
+            $invoice->calculateAndSaveCommission();
+
             $data['booking_invoice_id'] = $invoice->id;
 
             // create bookings

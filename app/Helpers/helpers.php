@@ -345,6 +345,30 @@ function calculateRemainingAmount($originalNumber, $percentage)
     return $remainingAmount;
 }
 
+/**
+ * Calculate commission amount based on total amount and percentage
+ *
+ * @param float $totalAmount The total booking amount
+ * @param float $percentage The commission percentage
+ * @return float The calculated commission amount
+ */
+function calculateCommissionAmount($totalAmount, $percentage)
+{
+    return ($percentage / 100) * $totalAmount;
+}
+
+/**
+ * Calculate hotel payable amount (total amount minus commission)
+ *
+ * @param float $totalAmount The total booking amount
+ * @param float $commissionAmount The commission amount
+ * @return float The amount payable to the hotel
+ */
+function calculateHotelPayable($totalAmount, $commissionAmount)
+{
+    return $totalAmount - $commissionAmount;
+}
+
 function getDatesFromRange($startDate, $endDate): array
 {
     $dates = [];

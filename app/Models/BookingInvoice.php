@@ -116,4 +116,77 @@ class BookingInvoice extends Model
             }
         });
     }
+
+    /**
+     * Calculate and save commission amount and hotel payable based on booking amount
+     *
+     * @return void
+     */
+    public function calculateAndSaveCommission()
+    {
+        // Load hotel relationship if not already loaded
+        if (!$this->relationLoaded('hotel') && $this->hotel_id) {
+            $this->load('hotel');
+        }
+
+        // Skip calculation if no hotel or amount
+        if (!$this->hotel || !$this->amount) {
+            return;
+        }
+
+        // Get the commission percentage from hotel (default to 10% if not set)
+        $percentage = $this->hotel->percentage_charge ?? 10;
+
+        // Calculate commission amount
+        $commissionAmount = ($percentage / 100) * $this->amount;
+
+        // Calculate hotel payable (total amount minus commission)
+        $hotelPayable = $this->amount - $commissionAmount;
+
+        // Update the fields
+        $this->update([
+            'commission_amount' => round($commissionAmount),
+            'hotel_payable' => round($hotelPayable)
+        ]);
+    }
+
+    /**
+     * Get the commission percentage from the hotel
+     *
+     * @return float
+     */
+    public function getCommissionPercentage()
+    {
+        return $this->hotel?->percentage_charge ?? 10;
+    }
+
+    /**
+     * Calculate commission amount without saving
+     *
+     * @return float
+     */
+    public function calculateCommissionAmount()
+    {
+        if (!$this->amount) {
+            return 0;
+        }
+
+        $percentage = $this->getCommissionPercentage();
+        return ($percentage / 100) * $this->amount;
+    }
+
+    /**
+     * Calculate hotel payable amount without saving
+     *
+     * @return float
+     */
+    public function calculateHotelPayable()
+    {
+        if (!$this->amount) {
+            return 0;
+        }
+
+        $commissionAmount = $this->calculateCommissionAmount();
+        return $this->amount - $commissionAmount;
+    }
 }

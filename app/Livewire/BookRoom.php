@@ -102,11 +102,18 @@ class BookRoom extends Component implements HasForms
                 'checked_out' => $data['checked_out'], // ensure checkout is saved
             ]);
 
+            // Calculate and save commission amounts
+            $invoice->calculateAndSaveCommission();
+
             $data['booking_invoice_id'] = $invoice->id;
 
+            // Set the per-room due amount (total amount divided by number of rooms)
+            $perRoomDue = $data['due']; // This is already calculated per room above
+            
             // create bookings
             foreach ($rooms as $room) {
                 $data['bookable_id'] = $room->id;
+                $data['individual_due'] = $perRoomDue; // Use per-room amount for individual bookings
                 $created = $this->createBooking($room, $data, $customer);
             }
 
@@ -180,7 +187,7 @@ cancellation with or without notice by the Hotel.',
             'status' => 'unpaid',
             'agent_id' => null,
             'via' => '9jahotel',
-            'due' => $data['due'],
+            'due' => $data['individual_due'] ?? $data['due'], // Use individual due if available
             'hotel_id' => $room->hotel_id,
             'customer_id' => $customer->id
         ]);
