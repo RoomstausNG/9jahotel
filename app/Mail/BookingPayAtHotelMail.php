@@ -20,7 +20,7 @@ class BookingPayAtHotelMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your Booking Confirmation - Pay at Hotel')
+        return $this->subject('Your Booking Confirmation - Unpaid')
             ->view('emails.booking.payathotel')
             ->with(['invoice' => $this->invoice]);
     }

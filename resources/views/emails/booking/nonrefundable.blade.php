@@ -46,8 +46,8 @@
             <span style="font-size: 0.98rem;">
                 Your booking is final and cannot be refunded or changed. This is a discounted booking and cannot be
                 modified, cancelled or refunded. If you cancel, you will not receive any refund. For more details on
-                NonRefundable bookings, see <a href="https://9jahotel.com/terms-and-condition"
-                    style="color:#0066cc;">https://9jahotel.com/terms-and-condition</a>
+                NonRefundable bookings, see <a href="{{ route('terms') }}"
+                    style="color:#0066cc;">{{ route('terms') }}</a>
             </span>
         </div>
         <div style="margin-top: 32px; text-align: center; color: #d60000; font-style: italic; font-size: 1.1rem;">

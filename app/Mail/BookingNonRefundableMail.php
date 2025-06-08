@@ -20,7 +20,7 @@ class BookingNonRefundableMail extends Mailable
 
   public function build()
   {
-    return $this->subject('Your Booking Confirmation - NonRefundable')
+    return $this->subject('Your Booking Confirmation - Non Refundable')
       ->view('emails.booking.nonrefundable')
       ->with(['invoice' => $this->invoice]);
   }

@@ -54,7 +54,7 @@
                 already made within 12 hours of cancellation. Cancellation is still possible after your first night stay
                 if you do not love the accommodation. A token may be charged for refund processing. For more details on
                 refundable bookings, see <a href="{{ route('terms') }}"
-                    style="color:#0066cc;">https://9jahotel.com/terms-and-condition</a>
+                    style="color:#0066cc;">{{ route('terms') }}</a>
             </span>
         </div>
         <div style="margin-top: 16px; color:#d60000;">

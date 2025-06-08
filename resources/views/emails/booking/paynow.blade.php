@@ -50,8 +50,7 @@
                 cancelling this booking after the allowed period. If you cancel this booking, you will receive full
                 refund less 10% charge for processing. Your refund will be sent to the same account you specified within
                 12 hours of completing the refund process. For more details on refundable bookings, see <a
-                    href="https://9jahotel.com/terms-and-condition"
-                    style="color:#0066cc;">https://9jahotel.com/terms-and-condition</a>
+                    href="{{ route('terms') }}" style="color:#0066cc;">{{ route('terms') }}</a>
             </span>
         </div>
         <div style="margin-top: 16px; color:#d60000;">
