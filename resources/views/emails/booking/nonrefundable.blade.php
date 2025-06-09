@@ -15,7 +15,7 @@
         <div style="display: flex; gap: 24px; align-items: flex-start;">
             <img src="{{ getCloudinaryUrl($invoice->hotel->background_image) ?? 'https://9jahotel.com/default-hotel.jpg' }}"
                 alt="Hotel Image" style="width: 220px; height: 150px; object-fit: cover; border-radius: 8px;">
-            <div style="flex:1; border: 1px solid #222; border-radius: 8px; padding: 12px 18px;">
+            <div style="flex:1;  border-radius: 8px; padding: 12px 18px; font-size: 18px;">
                 <div style="font-weight: bold; text-align: center;">*** NON REFUNDABLE BOOKING ***</div>
                 <div style="font-weight: bold;">{{ $invoice->hotel->name }}</div>
                 <div>{{ $invoice->hotel->address }}</div>
