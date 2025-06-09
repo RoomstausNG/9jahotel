@@ -14,6 +14,17 @@ class PaymentMethodSeeder extends Seeder
     {
         $paymentMethods = [
             [
+                'name' => 'Paystack',
+                'code' => 'paystack',
+                'description' => 'Pay with Paystack',
+                'is_active' => true,
+                'config' => json_encode([
+                    'public_key' => config('paystack.publicKey'),
+                    'secret_key' => config('paystack.secretKey'),
+                    'payment_url' => config('paystack.paymentUrl'),
+                ])
+            ],
+            [
                 'name' => 'OPay',
                 'code' => 'opay',
                 'description' => 'Pay with OPay',
@@ -25,17 +36,7 @@ class PaymentMethodSeeder extends Seeder
                     'merchant_id' => config('opay.merchant_id'),
                 ])
             ],
-            [
-                'name' => 'Paystack',
-                'code' => 'paystack',
-                'description' => 'Pay with Paystack',
-                'is_active' => true,
-                'config' => json_encode([
-                    'public_key' => config('paystack.publicKey'),
-                    'secret_key' => config('paystack.secretKey'),
-                    'payment_url' => config('paystack.paymentUrl'),
-                ])
-            ]
+
         ];
 
         foreach ($paymentMethods as $method) {
