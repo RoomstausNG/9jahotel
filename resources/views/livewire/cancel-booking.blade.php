@@ -42,8 +42,7 @@
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Guest</span>
-                        <span
-                            class="font-bold text-lg">{{ $invoice->customer ? $invoice->customer->firstname . ' ' . $invoice->customer->lastname : '1 Adult' }}</span>
+                        <span class="font-bold text-lg">{{ $invoice->customer->name ?? '1 Adult' }}</span>
                     </div>
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Room Number(s)</span>
@@ -52,6 +51,19 @@
                                 $rooms = collect($invoice->bookings)->pluck('bookable.number')->filter()->implode(', ');
                             @endphp
                             {{ $rooms ?: 'N/A' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-4 mb-4">
+                    <div class="mb-2 md:mb-0">
+                        <span class="block text-gray-500 text-sm">Booking Status</span>
+                        <span
+                            class="font-bold text-lg
+                            @if ($invoice->status == 'paid') text-green-600
+                            @elseif($invoice->status == 'cancelled') text-red-600
+                            @elseif($invoice->status == 'unpaid') text-yellow-600
+                            @else text-gray-600 @endif">
+                            {{ ucfirst($invoice->status ?? 'Pending') }}
                         </span>
                     </div>
                 </div>
