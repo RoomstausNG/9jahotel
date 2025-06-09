@@ -183,6 +183,12 @@ class OpayCallbackController extends Controller
                 'status' => 'paid',
                 'payed_on' => now()
             ]);
+
+            // Calculate and save commission amounts
+            if (method_exists($bookingInvoice, 'calculateAndSaveCommission')) {
+                $bookingInvoice->calculateAndSaveCommission();
+            }
+
             $bookingInvoice->loadCount('bookings'); // Convert to actual amount if needed
             // Update all associated bookings (status sync handled in Booking observer/event)
             $bookings = Booking::where('booking_invoice_id', $bookingInvoice->id)->get();

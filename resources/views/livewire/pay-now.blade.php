@@ -90,15 +90,8 @@
         @if (session('error'))
             <div class="bg-red-100 text-red-700 p-2 rounded mb-4 text-center font-medium">{{ session('error') }}</div>
         @endif
-        @if ($invoice->status === 'paid')
-            <div class="mt-6 flex justify-center">
-                <button type="button" disabled
-                    class="bg-gray-200 text-gray-500 px-8 py-3 rounded-lg font-bold text-lg shadow cursor-not-allowed opacity-60">
-                    Paid
-                </button>
-            </div>
-        @else
-            <form wire:submit.prevent="pay" class="mt-6 flex justify-center">
+        @if ($invoice->status === 'unpaid')
+            <form wire:submit="pay" class="mt-6 flex justify-center">
                 <button type="submit" x-data="{ loading: false }" x-bind:disabled="loading" x-on:click="loading = true"
                     :class="loading ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' :
                         'text-green-600 bg-white hover:bg-green-50'"

@@ -79,10 +79,10 @@ class OpayService
                 $responseData = $response->json();
 
                 if ($responseData['code'] === '00000') {
-                    Log::info('OPay Express Checkout created successfully', [
-                        'reference' => $paymentData['reference'],
-                        'cashier_url' => $responseData['data']['cashierUrl']
-                    ]);
+                    // Log::info('OPay Express Checkout created successfully', [
+                    //     'reference' => $paymentData['reference'],
+                    //     'cashier_url' => $responseData['data']['cashierUrl']
+                    // ]);
 
                     return [
                         'status' => 'success',
