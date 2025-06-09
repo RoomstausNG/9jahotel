@@ -54,13 +54,30 @@
                     @endforeach
                 </tbody>
             </table>
-            <div style="margin-bottom: 18px;">
-                <strong>Total Paid:</strong> <span
-                    style="color: #009999; font-size: 1.1rem;">₦{{ number_format($data['original_amount'] ?? ($data['invoice']->amount ?? 0)) }}</span>
-            </div>
-            <div style="margin-bottom: 18px;">
-                <strong>Refund Amount (10% processing fee deducted):</strong> <span
-                    style="color: #009999; font-size: 1.1rem;">₦{{ number_format($data['refund_amount'] ?? ($data['invoice']->amount * 0.9 ?? 0)) }}</span>
+            <div
+                style="margin-bottom: 18px; padding: 16px; background-color: #f0fdfa; border-radius: 6px; border-left: 4px solid #009999;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Original Amount
+                                Paid:</strong></td>
+                        <td
+                            style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right; font-weight: bold;">
+                            ₦{{ number_format($data['original_amount'] ?? ($data['invoice']->amount ?? 0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #777;">Processing Fee (10%):
+                        </td>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right; color: #777;">
+                            ₦{{ number_format(($data['original_amount'] ?? $data['invoice']->amount) * 0.1) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #009999;"><strong>Refund Amount:</strong></td>
+                        <td
+                            style="padding: 8px 0; text-align: right; color: #009999; font-weight: bold; font-size: 1.1em;">
+                            ₦{{ number_format($data['refund_amount'] ?? ($data['original_amount'] ?? $data['invoice']->amount) * 0.9) }}
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <h3 style="color: #009999; font-size: 1.2rem; margin-bottom: 8px; margin-top: 24px;">Refund Request Details

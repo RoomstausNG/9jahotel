@@ -116,10 +116,31 @@
                     <li><strong>Hotel:</strong> {{ $hotel->name }}</li>
                     <li><strong>Check-in:</strong> {{ $invoice->checked_in->format('M d, Y') }}</li>
                     <li><strong>Check-out:</strong> {{ $invoice->checked_out->format('M d, Y') }}</li>
-                    <li><strong>Original Amount Paid:</strong> ₦{{ number_format($invoice->amount) }}</li>
-                    <li><strong>Refund Amount:</strong> ₦{{ number_format($refundAmount ?? $invoice->amount * 0.9) }}
-                        (10% processing fee deducted)</li>
                 </ul>
+                <div
+                    style="margin-top: 16px; padding: 16px; background-color: #f5f5f5; border-radius: 6px; border-left: 4px solid #ff9500;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Original Amount
+                                    Paid:</strong></td>
+                            <td
+                                style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right; font-weight: bold;">
+                                ₦{{ number_format($invoice->amount) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #777;">Processing Fee
+                                (10%):</td>
+                            <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right; color: #777;">
+                                ₦{{ number_format($invoice->amount * 0.1) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #008000;"><strong>Refund Amount:</strong></td>
+                            <td
+                                style="padding: 8px 0; text-align: right; color: #008000; font-weight: bold; font-size: 1.1em;">
+                                ₦{{ number_format($refundAmount ?? $invoice->amount * 0.9) }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <p>Thank you for choosing 9jahotel.</p>
             <p style="margin-top: 32px;">Best regards,<br>9jahotel Customer Care</p>
