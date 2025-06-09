@@ -50,7 +50,7 @@ Route::get('/cancel/{invoice}', CancelBooking::class)->name('cancel.booking');
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
 Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
-Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
+// Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
 Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
 Route::get('/support', [PageController::class, 'support'])->name('support');
 
@@ -107,7 +107,7 @@ Route::view("/cookies", 'cookies');
 Route::view("/affiliate", 'affiliate');
 Route::view("/privacy-statement", 'privacy-statement')->name('privacy');
 Route::view("/content", 'content');
-Route::view("/terms-and-condition", 'terms');
+Route::view("/terms-and-condition", 'terms')->name('terms');
 
 Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:customers');
 
