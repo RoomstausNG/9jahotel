@@ -116,7 +116,9 @@
                     <li><strong>Hotel:</strong> {{ $hotel->name }}</li>
                     <li><strong>Check-in:</strong> {{ $invoice->checked_in->format('M d, Y') }}</li>
                     <li><strong>Check-out:</strong> {{ $invoice->checked_out->format('M d, Y') }}</li>
-                    <li><strong>Amount Paid:</strong> ₦{{ number_format($invoice->amount) }}</li>
+                    <li><strong>Original Amount Paid:</strong> ₦{{ number_format($invoice->amount) }}</li>
+                    <li><strong>Refund Amount:</strong> ₦{{ number_format($refundAmount ?? $invoice->amount * 0.9) }}
+                        (10% processing fee deducted)</li>
                 </ul>
             </div>
             <p>Thank you for choosing 9jahotel.</p>

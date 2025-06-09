@@ -13,15 +13,17 @@ class RefundConfirmationMail extends Mailable
   public $customer;
   public $hotel;
   public $invoice;
+  public $refundAmount;
 
   /**
    * Create a new message instance.
    */
-  public function __construct($customer, $hotel, $invoice)
+  public function __construct($customer, $hotel, $invoice, $refundAmount = null)
   {
     $this->customer = $customer;
     $this->hotel = $hotel;
     $this->invoice = $invoice;
+    $this->refundAmount = $refundAmount;
   }
 
   /**

@@ -56,7 +56,11 @@
             </table>
             <div style="margin-bottom: 18px;">
                 <strong>Total Paid:</strong> <span
-                    style="color: #009999; font-size: 1.1rem;">₦{{ number_format($data['invoice']->amount ?? 0) }}</span>
+                    style="color: #009999; font-size: 1.1rem;">₦{{ number_format($data['original_amount'] ?? ($data['invoice']->amount ?? 0)) }}</span>
+            </div>
+            <div style="margin-bottom: 18px;">
+                <strong>Refund Amount (10% processing fee deducted):</strong> <span
+                    style="color: #009999; font-size: 1.1rem;">₦{{ number_format($data['refund_amount'] ?? ($data['invoice']->amount * 0.9 ?? 0)) }}</span>
             </div>
 
             <h3 style="color: #009999; font-size: 1.2rem; margin-bottom: 8px; margin-top: 24px;">Refund Request Details

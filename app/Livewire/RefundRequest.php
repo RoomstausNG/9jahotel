@@ -41,14 +41,21 @@ class RefundRequest extends Component
     {
         $this->validate();
         $reasonText = $this->reason === 'other' ? $this->other_reason : $this->reason;
+
+        // Calculate refund amount (90% of the original amount)
+        $originalAmount = $this->invoice->amount;
+        $refundAmount = (int)($originalAmount * 0.9); // 10% less for processing fee
+
         $refund = $this->invoice->refund()->create([
             'bank_name' => $this->bank_name,
             'account_no' => $this->account_no,
             'account_name' => $this->account_name,
             'reason' => $this->reason,
             'other_reason' => $this->other_reason,
+            'amount_refunded' => $refundAmount,
             'status' => 'pending',
         ]);
+
         $data = [
             'invoice' => $this->invoice,
             'hotel' => $this->invoice->hotel,
@@ -57,6 +64,8 @@ class RefundRequest extends Component
             'account_no' => $this->account_no,
             'account_name' => $this->account_name,
             'reason' => $reasonText,
+            'refund_amount' => $refundAmount,
+            'original_amount' => $originalAmount,
         ];
         // Send to admin
         Mail::to('refund@9jahotel.com')
@@ -68,7 +77,8 @@ class RefundRequest extends Component
             ->queue(new \App\Mail\RefundConfirmationMail(
                 $this->invoice->customer,
                 $this->invoice->hotel,
-                $this->invoice
+                $this->invoice,
+                $refundAmount
             ));
 
         // update booking

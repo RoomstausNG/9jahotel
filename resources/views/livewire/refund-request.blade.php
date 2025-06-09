@@ -100,9 +100,12 @@
 
                 @if ($canCancelOnline && !$checkinPassed && !$checkoutPassed)
                     <div class="bg-orange-100 text-orange-800 p-4 rounded text-center mb-4">
-                        If you cancel this booking, you will receive full refund less 10% charge for processing. Your
-                        refund will be sent to the same account you specified within 12 hours of completing the refund
-                        process.
+                        If you cancel this booking, you will receive a refund of
+                        <strong>₦{{ number_format($invoice->amount * 0.9) }}</strong>
+                        (10% processing fee of ₦{{ number_format($invoice->amount * 0.1) }} deducted from original
+                        amount of ₦{{ number_format($invoice->amount) }}).
+                        Your refund will be sent to the account you specify below within 12 hours of completing the
+                        refund process.
                     </div>
                     <form wire:submit="submit" class="space-y-6">
                         <div>
