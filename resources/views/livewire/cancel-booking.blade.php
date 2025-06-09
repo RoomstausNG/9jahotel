@@ -22,21 +22,28 @@
                             alt="{{ $invoice->hotel->name }}" class="w-40 h-24 object-cover shadow rounded">
                     </div>
                 </div>
+                <div class="mb-4 pb-4 border-b">
+                    <span class="block text-gray-500 text-sm">Booking Reference</span>
+                    <span class="font-bold text-lg text-primary-700">{{ $invoice->reference }}</span>
+                </div>
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-4 mb-4">
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Check In</span>
-                        <span class="font-bold text-lg">{{ $invoice->checked_in->format('M. jS Y') }}</span>
+                        <span
+                            class="font-bold text-lg">{{ $invoice->checked_in ? $invoice->checked_in->format('M. jS Y') : 'N/A' }}</span>
                     </div>
                     <div class="hidden md:block border-l h-8 mx-6"></div>
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Check Out</span>
-                        <span class="font-bold text-lg">{{ $invoice->checked_out->format('M. jS Y') }}</span>
+                        <span
+                            class="font-bold text-lg">{{ $invoice->checked_out ? $invoice->checked_out->format('M. jS Y') : 'N/A' }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Guest</span>
-                        <span class="font-bold text-lg">{{ $invoice->customer->guest ?? '1 Adult' }}</span>
+                        <span
+                            class="font-bold text-lg">{{ $invoice->customer ? $invoice->customer->firstname . ' ' . $invoice->customer->lastname : '1 Adult' }}</span>
                     </div>
                     <div class="mb-2 md:mb-0">
                         <span class="block text-gray-500 text-sm">Room Number(s)</span>

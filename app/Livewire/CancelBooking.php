@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
+use Livewire\Attributes\Layout;
 
 class CancelBooking extends Component
 {
@@ -62,8 +63,12 @@ class CancelBooking extends Component
             ->body('The booking has been cancelled and notifications sent.')
             ->success()
             ->send();
+
+        sleep(3);
+        return redirect('/');
     }
 
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         $cancelReasons = [
