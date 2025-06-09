@@ -16,6 +16,7 @@ use App\Livewire\GroupBooking;
 use App\Livewire\HotelDetails;
 use App\Livewire\SearchResult;
 use App\Models\BookingInvoice;
+use App\Livewire\CancelBooking;
 use App\Livewire\BookingHistory;
 use App\Livewire\OpayPaymentForm;
 use App\Http\Livewire\RefundRequest;
@@ -25,7 +26,6 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\PageController;
 use App\Livewire\RefundRequest as RRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
-use App\Http\Controllers\OpayCallbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +42,8 @@ use App\Http\Controllers\OpayCallbackController;
 Route::get('/paynow/{invoice:reference}', PayNow::class)->name('paynow');
 
 
-use App\Livewire\CancelBooking;
+use App\Http\Controllers\OpayCallbackController;
+use App\Http\Controllers\PaystackCallbackController;
 // Booking cancellation route
 Route::get('/cancel/{invoice:reference}', CancelBooking::class)->name('cancel.booking');
 
@@ -115,9 +116,13 @@ Route::get('/favorites', Favorites::class)->name('favorites')->middleware('auth:
 Route::get('/profile', \App\Livewire\Profile::class)->name('profile')->middleware('auth:customers');
 Route::get('/bookings', BookingHistory::class)->name('bookings')->middleware('auth:customers');
 
+// OPay payment routes
 Route::post('/opay/callback', [OpayCallbackController::class, 'handleGatewayCallback'])->name('opay.callback');
-
 Route::get('/opay/return/{reference?}', [OpayCallbackController::class, 'handleGatewayReturn'])->name('opay.return');
+
+// Paystack payment routes
+Route::get('/paystack/callback', [PaystackCallbackController::class, 'handleGatewayCallback'])->name('paystack.callback');
+Route::get('/paystack/return/{reference?}', [PaystackCallbackController::class, 'handleGatewayReturn'])->name('paystack.return');
 
 // Success and failure routes for payment callback redirects
 Route::get('/booking/success', function () {

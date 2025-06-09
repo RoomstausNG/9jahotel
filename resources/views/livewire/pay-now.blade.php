@@ -91,15 +91,38 @@
             <div class="bg-red-100 text-red-700 p-2 rounded mb-4 text-center font-medium">{{ session('error') }}</div>
         @endif
         @if ($invoice->status === 'unpaid')
-            <form wire:submit="pay" class="mt-6 flex justify-center">
-                <button type="submit" x-data="{ loading: false }" x-bind:disabled="loading" x-on:click="loading = true"
-                    :class="loading ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' :
-                        'text-green-600 bg-white hover:bg-green-50'"
-                    class="text-green-600 bg-white px-8 py-3 rounded-lg font-bold text-lg shadow transition">
-                    <span x-show="!loading">Pay Now</span>
-                    <span x-show="loading">Processing...</span>
-                </button>
-            </form>
+            <div class="bg-white shadow-lg px-8 py-8 mb-6">
+                <h3 class="text-xl font-semibold mb-4">Select Payment Method</h3>
+
+                @if (count($paymentMethods) > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        @foreach ($paymentMethods as $method)
+                            <label
+                                class="flex items-center p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary-500 bg-primary-50' : 'border-gray-200' }}">
+                                <input type="radio" wire:model.live="selectedPaymentMethod"
+                                    value="{{ $method->code }}" class="mr-2 text-primary-600">
+                                <div>
+                                    <div class="font-medium">{{ $method->name }}</div>
+                                    <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-red-500 mb-4">No payment methods available</div>
+                @endif
+
+                <div class="flex justify-center">
+                    <button wire:click="payNow" x-data="{ loading: false }" x-bind:disabled="loading"
+                        x-on:click="loading = true"
+                        :class="loading ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' :
+                            'text-green-600 bg-white hover:bg-green-50'"
+                        class="text-green-600 bg-white border border-green-600 px-8 py-3 rounded-lg font-bold text-lg shadow transition">
+                        <span x-show="!loading">Pay Now (₦{{ number_format($invoice->amount) }})</span>
+                        <span x-show="loading">Processing...</span>
+                    </button>
+                </div>
+            </div>
         @endif
     </div>
 </div>

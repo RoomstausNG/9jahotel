@@ -68,11 +68,20 @@
             $checkin = $invoice->checked_in;
             $checkout = $invoice->checked_out;
             $now = now();
-            // Calculate hours from now to check-in (positive if in future)
-            $hoursToCheckin = $now->diffInHours($checkin, false);
+
+            // Calculate time to check-in
+            // Set check-in time to noon (12:00 PM) on check-in day
+            $checkinNoon = $checkin->copy()->setTime(12, 0, 0);
+
+            // Calculate hours from now to check-in at noon (positive if in future)
+            $hoursToCheckin = $now->diffInHours($checkinNoon, false);
+
             // Check if check-out date has passed (before today)
             $checkoutPassed = $checkout->lt($now->startOfDay());
             $checkinPassed = $checkin->lt($now->startOfDay());
+
+            // Check if booking is more than 48 hours away from check-in at noon
+            $canCancelOnline = $hoursToCheckin >= 48;
         @endphp
         <div class="bg-white shadow-lg px-8 py-8">
             <h3 class="text-2xl font-semibold mb-6 text-primary-700">Cancel Booking</h3>
@@ -84,17 +93,12 @@
                 <div class="bg-yellow-100 text-yellow-800 p-4 rounded text-center mb-4">
                     Refunds can only be requested for bookings that are <b>paid</b>.
                 </div>
-            @elseif ($checkinPassed || $checkoutPassed)
-                <div class="bg-red-100 text-red-800 p-4 rounded text-center mb-4">
-                    Refunds cannot be requested for bookings that have already checked in or checked out.
-                </div>
             @else
                 @if (session()->has('success'))
                     <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
                 @endif
 
-                @if ($hoursToCheckin > 48)
-
+                @if ($canCancelOnline && !$checkinPassed && !$checkoutPassed)
                     <div class="bg-orange-100 text-orange-800 p-4 rounded text-center mb-4">
                         If you cancel this booking, you will receive full refund less 10% charge for processing. Your
                         refund will be sent to the same account you specified within 12 hours of completing the refund
@@ -163,7 +167,7 @@
                             class="w-full bg-primary-700 hover:bg-primary-800 text-white text-base font-semibold py-2 rounded transition">Submit</button>
                     </form>
                 @else
-                    <p class="-6 rounded-lg text-xl font-semibold italic text-warning-500">
+                    <p class="rounded-lg text-xl font-semibold italic text-warning-500">
                         This booking can no longer be cancelled online, please call <a href="tel:+234700700242"
                             class="font-bold text-primary">0700 700 2424</a> for further assistance or email <a
                             href="mailto:refund@9jahotel.com" class="">refund@9jahotel.com</a>

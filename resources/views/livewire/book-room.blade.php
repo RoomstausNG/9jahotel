@@ -129,6 +129,26 @@
 
                         </div>
                     @endif
+
+                    @if (count($paymentMethods) > 0)
+                        <div class="w-full p-4 space-y-4">
+                            <h2 class="font-medium text-lg">Select Payment Method</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach ($paymentMethods as $method)
+                                    <label
+                                        class="flex items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
+                                        <input type="radio" wire:model.live="selectedPaymentMethod"
+                                            value="{{ $method->code }}" class="mr-2 text-primary">
+                                        <div>
+                                            <div class="font-medium">{{ $method->name }}</div>
+                                            <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <div
                         class="flex items-center flex-wrap md:items-start flex-col md:flex-row justify-center gap-8 pt-8 w-full mx-auto">
                         <div class="flex flex-col justify-center items-center w-full md:max-w-max">

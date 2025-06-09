@@ -20,6 +20,9 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Redirect;
+use App\Services\PaymentGatewayService;
+use App\Models\PaymentMethod;
+use App\Services\PaystackService;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -34,6 +37,9 @@ class BookRoom extends Component implements HasForms
 
     public $firstname, $lastname, $email, $phone;
     public ?array $checked = [];
+
+    public $paymentMethods = [];
+    public $selectedPaymentMethod;
 
     public function form(Form $form): Form
     {
@@ -78,6 +84,8 @@ class BookRoom extends Component implements HasForms
 
             $data['checked_in'] = Session::get('checkin');
             $data['checked_out'] = Session::get('checkout');
+            $data['payment_method'] = $this->selectedPaymentMethod; // Store selected payment method
+
             if ($type == 'NonRefundable') {
                 $data['discount'] = $this->category->hotel->non_refundable_price;
                 $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->non_refundable_price);
@@ -98,6 +106,7 @@ class BookRoom extends Component implements HasForms
                 'amount' => $this->due,
                 'type' => $data['type'],
                 'status' => 'unpaid',
+                'payment_method' => $this->selectedPaymentMethod, // Store selected payment method
                 'checked_in' => $data['checked_in'], // ensure checkin is saved
                 'checked_out' => $data['checked_out'], // ensure checkout is saved
             ]);
@@ -188,41 +197,51 @@ cancellation with or without notice by the Hotel.',
             'customer_id' => $customer->id
         ]);
     }
-
-
     public function payforBooking(BookingInvoice $booking)
     {
         $reference = $booking->reference;
+
+        // Get active payment methods
+        $paymentGatewayService = new PaymentGatewayService();
+
+        // Use the payment method stored in the booking, or default to the selected one
+        $selectedPaymentMethod = $booking->payment_method ?? $this->selectedPaymentMethod ?? 'opay';
 
         $paymentData = [
             'reference' => strtoupper($reference),
             'amount' => $booking->amount,
             'currency' => 'NGN',
-            'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.return', $reference),
+            'callback_url' => route($selectedPaymentMethod . '.callback'),
+            'return_url' => route($selectedPaymentMethod . '.return', $reference),
             'country' => 'NG',
             'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
             'customer_email' => $booking->customer->email,
             'customer_phone' => $booking->customer->phone ?? '',
             'product_name' => 'Hotel Booking - ' . ucfirst($booking->hotel->name),
             'product_description' => 'Booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $reference . ')',
-            // Optional: Add payment method if you want to specify one
-            // 'pay_method' => 'BankCard', // or other supported methods
         ];
 
         try {
-            $opayService = new OpayService();
-            $response = $opayService->createExpressCheckout($paymentData);
+            $response = $paymentGatewayService->processPayment($selectedPaymentMethod, $paymentData);
 
-            if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+            if ($response['status'] === 'success') {
                 Cache::put($reference, $booking->reference, now()->addMinutes(30));
-                return redirect()->away($response['cashier_url']);
+
+                // Redirect based on payment method
+                if ($selectedPaymentMethod === 'opay' && isset($response['cashier_url'])) {
+                    return redirect()->away($response['cashier_url']);
+                } elseif ($selectedPaymentMethod === 'paystack' && isset($response['authorization_url'])) {
+                    return redirect()->away($response['authorization_url']);
+                } else {
+                    throw new \Exception('Payment URL not found in response');
+                }
             } else {
-                throw new \Exception('Failed to get OPay cashier URL.');
+                throw new \Exception('Failed to initialize payment');
             }
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('OPay payment initiation failed', [
+            \Log::error('Payment initiation failed', [
+                'payment_method' => $selectedPaymentMethod,
                 'booking_id' => $booking->id,
                 'reference' => $booking->reference,
                 'error' => $e->getMessage()
@@ -333,10 +352,15 @@ cancellation with or without notice by the Hotel.',
         }
     }
 
-    public  function mount()
+    public  function mount($id = null)
     {
         $this->category->load('rooms');
         $this->hotel = $this->category->hotel;
+
+        // Load available payment methods
+        $paymentGatewayService = new PaymentGatewayService();
+        $this->paymentMethods = $paymentGatewayService->getActivePaymentMethods();
+        $this->selectedPaymentMethod = $this->paymentMethods->first()->code ?? 'opay';
     }
 
     #[Layout('components.layouts.frontend')]

@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'MyRoomStatus'),
+    'name' => env('APP_NAME', '9jahotel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -179,6 +179,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Unicodeveloper\Paystack\PaystackServiceProvider::class,
         CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class,
+        Unicodeveloper\Paystack\PaystackServiceProvider::class
         // Triverla\LaravelOpay\OpayServiceProvider::class
     ])->toArray(),
 
@@ -194,9 +195,9 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        // 'Example' => App\Facades\Example::class, 
 
-        // 'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
+        'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
         // 'Opay' => Triverla\LaravelOPay\Facades\Opay::class,
     ])->toArray(),
 

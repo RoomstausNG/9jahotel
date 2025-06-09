@@ -71,69 +71,6 @@ class OpayCallbackController extends Controller
         //     ->with('success', 'Payment successful. Thank you for your booking!');
     }
 
-    // public function handleGatewayCallback(Request $request)
-    // {
-    //     $opayService = new OpayService();
-    //     $reference = $request->query('reference'); // OPay typically returns reference in query params
-
-    //     if ($reference) {
-    //         try {
-    //             $paymentDetails = $opayService->verifyPayment($reference);
-
-    //             Log::info('Payment verification initiated', [
-    //                 'reference' => $reference,
-    //                 'payment_details' => $paymentDetails
-    //             ]);
-
-    //             if ($paymentDetails['status'] === 'success' && $paymentDetails['payment_status'] === 'SUCCESS') {
-    //                 // Payment was successful, update your invoice
-    //                 $bookingInvoice = BookingInvoice::where('reference', $reference)->first();
-    //                 if ($bookingInvoice) {
-    //                     // Update the invoice and associated bookings
-    //                     $bookingInvoice->update(['status' => 'paid', 'date_paid' => now()]);
-
-    //                     // Update all associated bookings
-    //                     Booking::where('booking_invoice_id', $bookingInvoice->id)
-    //                         ->update(['status' => 'paid', 'date_paid' => now()]);
-
-    //                     Log::info('Payment successful', [
-    //                         'reference' => $reference,
-    //                         'booking_invoice_id' => $bookingInvoice->id
-    //                     ]);
-    //                 }
-
-    //                 // Redirect to a success page with flash message
-    //                 return redirect()->route('booking.success')
-    //                     ->with('success', 'Payment successful for booking ' . $reference);
-    //             } else {
-    //                 Log::error('Payment verification failed', [
-    //                     'reference' => $reference,
-    //                     'payment_details' => $paymentDetails ?? "nothing returned"
-    //                 ]);
-
-    //                 // Redirect to a failure page with flash message
-    //                 return redirect()->route('booking.failed')
-    //                     ->with('error', 'Payment verification failed for booking ' . $reference);
-    //             }
-    //         } catch (\Exception $e) {
-    //             Log::error('Payment verification error', [
-    //                 'reference' => $reference,
-    //                 'error' => $e->getMessage()
-    //             ]);
-
-    //             // Redirect to a failure page with flash message
-    //             return redirect()->route('booking.failed')
-    //                 ->with('error', 'Error verifying payment: ' . $e->getMessage());
-    //         }
-    //     } else {
-    //         Log::error('Payment callback without reference');
-
-    //         // Redirect to a failure page with flash message
-    //         return redirect()->route('booking.failed')
-    //             ->with('error', 'Payment reference not found in callback.');
-    //     }
-    // }
-
     /**
      * Check if payment is successful based on OPay response
      *

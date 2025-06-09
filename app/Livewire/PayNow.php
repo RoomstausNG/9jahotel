@@ -6,24 +6,38 @@ use Livewire\Component;
 use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Livewire\Attributes\Layout;
+use App\Services\PaymentGatewayService;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
 class PayNow extends Component
 {
     public BookingInvoice $invoice;
+    public $selectedPaymentMethod;
+    public $paymentMethods;
+
+    public function mount()
+    {
+        $paymentGatewayService = new PaymentGatewayService();
+        $this->paymentMethods = $paymentGatewayService->getActivePaymentMethods();
+        $this->selectedPaymentMethod = $this->paymentMethods->first()->code ?? 'opay';
+    }
 
     public function payNow()
     {
         $booking = $this->invoice;
         $reference = $booking->reference;
 
+        // Get payment method code
+        $paymentMethodCode = $this->selectedPaymentMethod;
+
         $paymentData = [
             'reference' => strtoupper($reference),
             'amount' => $booking->amount,
             'currency' => 'NGN',
-            'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.return', $reference),
+            'callback_url' => route($paymentMethodCode . '.callback'),
+            'return_url' => route($paymentMethodCode . '.return', $reference),
             'country' => 'NG',
             'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
             'customer_email' => $booking->customer->email,
@@ -32,28 +46,34 @@ class PayNow extends Component
             'product_description' => 'Booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $reference . ')',
         ];
 
-        dd($paymentData);
-
         try {
-            $opayService = new OpayService();
-            $response = $opayService->createExpressCheckout($paymentData);
+            $paymentGatewayService = new PaymentGatewayService();
+            $response = $paymentGatewayService->processPayment($paymentMethodCode, $paymentData);
 
-            dd($response);
-
-            Log::info('OPay payment initiation response', [
+            Log::info('Payment initiation response', [
+                'payment_method' => $paymentMethodCode,
                 'reference' => $reference,
                 'response' => $response
             ]);
 
-            if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+            if ($response['status'] === 'success') {
                 Cache::put($reference, $booking->reference, now()->addMinutes(30));
-                return redirect()->away($response['cashier_url']);
+
+                // Redirect based on payment method
+                if ($paymentMethodCode === 'opay' && isset($response['cashier_url'])) {
+                    return redirect()->away($response['cashier_url']);
+                } elseif ($paymentMethodCode === 'paystack' && isset($response['authorization_url'])) {
+                    return redirect()->away($response['authorization_url']);
+                } else {
+                    throw new \Exception('Payment URL not found in response');
+                }
             } else {
-                throw new \Exception('Failed to get OPay cashier URL.');
+                throw new \Exception('Failed to initialize payment');
             }
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('OPay payment initiation failed', [
+            \Log::error('Payment initiation failed', [
+                'payment_method' => $paymentMethodCode,
                 'booking_id' => $booking->id,
                 'reference' => $booking->reference,
                 'error' => $e->getMessage()
@@ -75,6 +95,7 @@ class PayNow extends Component
     {
         return view('livewire.pay-now', [
             'invoice' => $this->invoice,
+            'paymentMethods' => $this->paymentMethods,
         ]);
     }
 }
