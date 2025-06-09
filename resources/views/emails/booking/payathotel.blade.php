@@ -58,7 +58,7 @@
             </span>
         </div>
         <div style="margin-top: 16px; color:#d60000;">
-            <a href="https://9jahotel.com/cancel?ref={{ $invoice->reference }}" style="color:#d60000;">Click here</a>
+            <a href="{{ route('cancel.booking', $invoice->reference) }}" style="color:#d60000;">Click here</a>
             to cancel this booking.
         </div>
         <div style="margin-top: 32px; text-align: center; color: #d60000; font-style: italic; font-size: 1.1rem;">
