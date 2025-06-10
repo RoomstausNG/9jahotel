@@ -133,20 +133,21 @@
                     @if (count($paymentMethods) > 0)
                         <div class="w-full p-4 space-y-4">
                             <h2 class="font-medium text-lg">Select Payment Method</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex gap-8 justify-between items-center">
                                 @foreach ($paymentMethods as $method)
                                     <label
-                                        class="flex items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
+                                        class="flex w-full md:w-[45%] lg:w-[30%] items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
                                         <input type="radio" wire:model.live="selectedPaymentMethod"
                                             value="{{ $method->code }}" class="mr-2 text-primary">
                                         <div class="flex items-center">
-                                            @if(in_array($method->code, ['paystack', 'opay']))
-                                                <img src="{{ asset('img/'.$method->code.'.png') }}" alt="{{ $method->name }}" class="h-8 mr-2">
+                                            @if (in_array($method->code, ['paystack', 'opay']))
+                                                <img src="{{ asset('img/' . $method->code . '.png') }}"
+                                                    alt="{{ $method->name }}" class="h-8 mr-2">
                                             @endif
-                                            <div>
+                                            {{-- <div>
                                                 <div class="font-medium">{{ $method->name }}</div>
                                                 <div class="text-sm text-gray-600">{{ $method->description }}</div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </label>
                                 @endforeach
@@ -161,7 +162,7 @@
                                 x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                 data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('PayNow')" type="button"
-                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full">
+                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full flex items-center justify-center">
                                 Reserve & Pay Now ( {{ formatAsNaira($discountedPrice * $days * count($checked)) }})
                             </button>
                             <span>Refundable</span>
@@ -173,7 +174,7 @@
                                     x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                     wire:click="addBooking('NonRefundable')" data-tooltip-placement="top"
                                     data-tooltip-target="guarantee"
-                                    class="relative block font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                    class="relative block font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100 border-primary animate flex items-center justify-center">
                                     Instant Pay
                                     {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
                                 </button>

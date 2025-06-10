@@ -86,7 +86,7 @@
                                 x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                 data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('PayNow')" type="button"
-                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full">
+                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full flex items-center justify-center">
                                 Reserve & Pay Now ( {{ formatAsNaira($discountedPrice * $days) }})
                             </button>
                             <span>Refundable</span>
@@ -99,7 +99,7 @@
                                     x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
                                     wire:click="addBooking('NonRefundable')" data-tooltip-placement="top"
                                     data-tooltip-target="guarantee"
-                                    class="relative block font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100  border-primary animate ">
+                                    class="relative flex items-center justify-center font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100 border-primary animate">
                                     Instant Pay
                                     {{ formatAsNaira($nonRefundablePrice * $days) }}
                                 </button>

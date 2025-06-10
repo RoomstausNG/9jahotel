@@ -103,8 +103,8 @@
                                     value="{{ $method->code }}" class="mr-2 text-primary-600">
                                 <div class="flex items-center">
                                     @if (in_array($method->code, ['paystack', 'opay']))
-                                        <img src="{{ asset('img/' . $method->code . '.png') }}" alt="{{ $method->name }}"
-                                            class="h-8 mr-2">
+                                        <img src="{{ asset('img/' . $method->code . '.png') }}"
+                                            alt="{{ $method->name }}" class="h-8 mr-2">
                                     @endif
                                     <div>
                                         <div class="font-medium">{{ $method->name }}</div>
@@ -124,10 +124,6 @@
                         :class="loading ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' :
                             'text-green-600 bg-white hover:bg-green-50'"
                         class="text-green-600 bg-white border border-green-600 px-8 py-3 rounded-lg font-bold text-lg shadow transition flex items-center">
-                        @if (in_array($selectedPaymentMethod, ['paystack', 'opay']))
-                            <img src="{{ asset('img/' . $selectedPaymentMethod . '.png') }}"
-                                alt="Pay with {{ $selectedPaymentMethod }}" class="h-8 mr-2">
-                        @endif
                         <span x-show="!loading">Pay Now (₦{{ number_format($invoice->amount) }})</span>
                         <span x-show="loading">Processing...</span>
                     </button>
