@@ -65,7 +65,7 @@
                         <h2 class="text-lg font-semibold mb-2">Hall Details</h2>
                         <p><span class="font-medium">Name:</span> {{ $hall->name }}</p>
                         <p><span class="font-medium">Capacity:</span> {{ $hall->capacity }}</p>
-                        <p><span class="font-medium">Description:</span> {{ $hall->description }}</p>
+                        <p><span class="font-medium">Description:</span> {!! $hall->description !!}</p>
                         <p><span class="font-medium">Status:</span> {{ ucfirst($hall->status) }}</p>
                     </div>
                 </div>

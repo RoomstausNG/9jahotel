@@ -13,8 +13,10 @@ use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Filament\Forms\Components;
 use Livewire\Attributes\Layout;
-use App\Services\PaymentGatewayService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
+use App\Services\PaymentGatewayService;
 use Illuminate\Support\Facades\Session;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -220,7 +222,7 @@ class BookHall extends Component implements HasForms
             }
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('OPay payment initiation failed', [
+            Log::error('OPay payment initiation failed', [
                 'booking_id' => $booking->id,
                 'reference' => $booking->reference,
                 'error' => $e->getMessage()
