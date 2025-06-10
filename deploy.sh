@@ -51,16 +51,20 @@ php artisan optimize
 
 # Update and restart supervisor
 echo "🔄 Updating supervisor configuration..."
-sudo supervisorctl update
-
-echo "🔄 Reloading supervisor..."
-sudo supervisorctl reload
-
-echo "🔄 Restarting all supervisor processes..."
-sudo supervisorctl restart all
+if command -v supervisorctl &> /dev/null; then
+    sudo supervisorctl update || echo "Warning: Failed to update supervisor, continuing..."
+    
+    echo "🔄 Reloading supervisor..."
+    sudo supervisorctl reload || echo "Warning: Failed to reload supervisor, continuing..."
+    
+    echo "🔄 Restarting all supervisor processes..."
+    sudo supervisorctl restart all || echo "Warning: Failed to restart supervisor processes, continuing..."
+else
+    echo "⚠️ Supervisorctl not found, skipping supervisor commands"
+fi
 
 # Restart Octane
 echo "🚀 Starting Octane server..."
-php artisan octane:start --watch
+php artisan octane:start --watch || echo "Warning: Failed to start Octane, please check manually"
 
 echo "✅ Deployment completed successfully!"
