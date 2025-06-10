@@ -193,48 +193,93 @@ class BookHall extends Component implements HasForms
 
     public function payforBooking(BookingInvoice $booking)
     {
-
         $reference = $booking->reference;
 
-        $paymentData = [
-            'reference' => strtoupper($booking->reference),
-            'amount' => $booking->amount, // Remove * 100 as OPay expects actual amount
-            'currency' => 'NGN',
-            'callback_url' => route('opay.callback'),
-            'return_url' => route('opay.return', $reference), // Use separate return URL for user redirects
-            'country' => 'NG',
-            'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
-            'customer_email' => $booking->customer->email,
-            'customer_phone' => $booking->customer->phone ?? '', // Add phone if available
-            'product_name' => 'Hall Booking - ' . ucfirst($booking->hotel->name),
-            'product_description' => 'Hall booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $booking->reference . ')',
-        ];
+        // Check which payment method is selected
+        if ($this->selectedPaymentMethod === 'paystack') {
+            // Handle Paystack payment
+            try {
+                $data = [
+                    'email' => $booking->customer->email,
+                    'amount' => $booking->amount * 100, // Paystack expects amount in kobo (100 times the naira value)
+                    'reference' => $booking->reference,
+                    'callback_url' => route('paystack.callback'),
+                    'metadata' => [
+                        'custom_fields' => [
+                            [
+                                'display_name' => 'Invoice ID',
+                                'variable_name' => 'invoice_id',
+                                'value' => $booking->id
+                            ],
+                            [
+                                'display_name' => 'Customer',
+                                'variable_name' => 'customer_id',
+                                'value' => $booking->customer->id
+                            ]
+                        ]
+                    ]
+                ];
 
-        try {
-            $opayService = new OpayService();
-            $response = $opayService->createExpressCheckout($paymentData);
+                $authorizationUrl = Paystack::getAuthorizationUrl($data)->redirectNow();
+                return $authorizationUrl;
+            } catch (\Exception $e) {
+                // Log the error for debugging
+                Log::error('Paystack payment initiation failed', [
+                    'booking_id' => $booking->id,
+                    'reference' => $booking->reference,
+                    'error' => $e->getMessage()
+                ]);
 
-            if ($response['status'] === 'success' && isset($response['cashier_url'])) {
-                Cache::put($reference, $booking->reference, now()->addMinutes(30));
-                return redirect()->away($response['cashier_url']);
-            } else {
-                throw new \Exception('Failed to get OPay cashier URL.');
+                $details = [
+                    'icon' => 'error',
+                    'text' => $e->getMessage(),
+                    'title' => 'Payment Failed'
+                ];
+
+                return $this->dispatch('swal:success', details: sweetAlert(...$details));
             }
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            Log::error('OPay payment initiation failed', [
-                'booking_id' => $booking->id,
-                'reference' => $booking->reference,
-                'error' => $e->getMessage()
-            ]);
-
-            $details = [
-                'icon' => 'error',
-                'text' => $e->getMessage(),
-                'title' => 'Payment Failed'
+        } else {
+            // Default to Opay payment
+            $paymentData = [
+                'reference' => strtoupper($booking->reference),
+                'amount' => $booking->amount, // Opay expects actual amount
+                'currency' => 'NGN',
+                'callback_url' => route('opay.callback'),
+                'return_url' => route('opay.return', $reference), // Use separate return URL for user redirects
+                'country' => 'NG',
+                'customer_name' => $booking->customer->firstname . ' ' . $booking->customer->lastname,
+                'customer_email' => $booking->customer->email,
+                'customer_phone' => $booking->customer->phone ?? '', // Add phone if available
+                'product_name' => 'Hall Booking - ' . ucfirst($booking->hotel->name),
+                'product_description' => 'Hall booking payment for ' . ucfirst($booking->hotel->name) . ' (Ref: ' . $booking->reference . ')',
             ];
 
-            return $this->dispatch('swal:success', details: sweetAlert(...$details));
+            try {
+                $opayService = new OpayService();
+                $response = $opayService->createExpressCheckout($paymentData);
+
+                if ($response['status'] === 'success' && isset($response['cashier_url'])) {
+                    Cache::put($reference, $booking->reference, now()->addMinutes(30));
+                    return redirect()->away($response['cashier_url']);
+                } else {
+                    throw new \Exception('Failed to get OPay cashier URL.');
+                }
+            } catch (\Exception $e) {
+                // Log the error for debugging
+                Log::error('OPay payment initiation failed', [
+                    'booking_id' => $booking->id,
+                    'reference' => $booking->reference,
+                    'error' => $e->getMessage()
+                ]);
+
+                $details = [
+                    'icon' => 'error',
+                    'text' => $e->getMessage(),
+                    'title' => 'Payment Failed'
+                ];
+
+                return $this->dispatch('swal:success', details: sweetAlert(...$details));
+            }
         }
     }
 
