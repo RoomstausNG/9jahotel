@@ -49,7 +49,7 @@ Route::get('/cancel/{invoice:reference}', CancelBooking::class)->name('cancel.bo
 
 // Route::get('/payment/{reference?}', OpayPaymentForm::class)->name('payment.opay');
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
-Route::get('/', [PageController::class, 'homepage'])->middleware('page-cache');
+Route::get('/', [PageController::class, 'homepage']);
 Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState'])->name('hotels.state');
 // Route::get('/terms-of-service', [PageController::class, 'term'])->name('terms');
 Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
@@ -73,10 +73,10 @@ Route::get('/hotel/rooms/{category}', BookRoom::class)->name('bookroom');
 Route::get('/hotel/halls/{hall}', BookHall::class)->name('bookhall');
 Route::get('/signup/hotel', CreateHotel::class)->name('hotel.create');
 
-Route::get("/login", LoginPage::class)->name('login')->middleware('page-cache');
-Route::get("/register", Register::class)->name('register')->middleware('page-cache');
-Route::get('/signup', SignupPage::class)->name('signup')->middleware('page-cache');
-Route::get('/forgot-password', ForgotPasswordPage::class)->name('password.request')->middleware('page-cache');
+Route::get("/login", LoginPage::class)->name('login');
+Route::get("/register", Register::class)->name('register');
+Route::get('/signup', SignupPage::class)->name('signup');
+Route::get('/forgot-password', ForgotPasswordPage::class)->name('password.request');
 
 Route::get('/session-debug', function () {
     return response()->json([
