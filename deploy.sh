@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Wakalor Deployment Script
+# 9jahotel Deployment Script
 # Created: June 10, 2025
 # Purpose: Deploy updates to production server, run migrations and restart Octane
 
-echo "🚀 Starting deployment process for Wakalor..."
+echo "🚀 Starting deployment process for 9jahotel..."
 
 # Stop the Octane server
 echo "⏱️ Stopping Octane server..."
@@ -19,6 +19,11 @@ git clean -fd
 # Install/update dependencies
 echo "📦 Updating composer dependencies..."
 composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+# Set proper directory permissions
+echo "🔒 Setting directory permissions..."
+chmod -R 777 storage bootstrap/cache
+chown -R 777 storage bootstrap/cache
 
 # Clear all caches
 echo "🧹 Clearing application caches..."
