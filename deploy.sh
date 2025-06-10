@@ -23,7 +23,6 @@ composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev
 # Set proper directory permissions
 echo "🔒 Setting directory permissions..."
 chmod -R 777 storage bootstrap/cache
-chown -R 777 storage bootstrap/cache
 
 # Clear all caches
 echo "🧹 Clearing application caches..."
