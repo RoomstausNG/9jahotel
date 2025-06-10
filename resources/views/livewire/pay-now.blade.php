@@ -106,10 +106,10 @@
                                         <img src="{{ asset('img/' . $method->code . '.png') }}"
                                             alt="{{ $method->name }}" class="h-8 mr-2">
                                     @endif
-                                    <div>
+                                    {{-- <div>
                                         <div class="font-medium">{{ $method->name }}</div>
                                         <div class="text-sm text-gray-600">{{ $method->description }}</div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </label>
                         @endforeach
