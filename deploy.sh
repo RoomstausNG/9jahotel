@@ -52,10 +52,10 @@ php artisan optimize
 echo "🔄 Updating supervisor configuration..."
 if command -v supervisorctl &> /dev/null; then
     sudo supervisorctl update || echo "Warning: Failed to update supervisor, continuing..."
-    
+
     echo "🔄 Reloading supervisor..."
     sudo supervisorctl reload || echo "Warning: Failed to reload supervisor, continuing..."
-    
+
     echo "🔄 Restarting all supervisor processes..."
     sudo supervisorctl restart all || echo "Warning: Failed to restart supervisor processes, continuing..."
 else

@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Hotel;
-use App\Services\CacheResponseService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HotelObserver implements ShouldQueue
@@ -13,8 +12,7 @@ class HotelObserver implements ShouldQueue
    */
   public function created(Hotel $hotel): void
   {
-    CacheResponseService::clearHotelCache();
-    CacheResponseService::clearHomepageCache();
+    // Cache handling removed
   }
 
   /**
@@ -22,8 +20,7 @@ class HotelObserver implements ShouldQueue
    */
   public function updated(Hotel $hotel): void
   {
-    CacheResponseService::clearHotelCache($hotel->id);
-    CacheResponseService::clearHomepageCache();
+    // Cache handling removed
   }
 
   /**
@@ -31,8 +28,7 @@ class HotelObserver implements ShouldQueue
    */
   public function deleted(Hotel $hotel): void
   {
-    CacheResponseService::clearHotelCache($hotel->id);
-    CacheResponseService::clearHomepageCache();
+    // Cache handling removed
   }
 
   /**
@@ -40,8 +36,7 @@ class HotelObserver implements ShouldQueue
    */
   public function restored(Hotel $hotel): void
   {
-    CacheResponseService::clearHotelCache($hotel->id);
-    CacheResponseService::clearHomepageCache();
+    // Cache handling removed
   }
 
   /**
@@ -49,7 +44,6 @@ class HotelObserver implements ShouldQueue
    */
   public function forceDeleted(Hotel $hotel): void
   {
-    CacheResponseService::clearHotelCache($hotel->id);
-    CacheResponseService::clearHomepageCache();
+    // Cache handling removed
   }
 }

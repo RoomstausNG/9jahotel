@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\CreditPayment;
-use App\Services\CacheResponseService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CreditPaymentObserver implements ShouldQueue
@@ -13,12 +12,7 @@ class CreditPaymentObserver implements ShouldQueue
    */
   public function created(CreditPayment $creditPayment): void
   {
-    CacheResponseService::clearPaymentCache();
-
-    // Clear hotel cache if hotel_id is available
-    if ($creditPayment->hotel_id) {
-      CacheResponseService::clearHotelCache($creditPayment->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -26,12 +20,7 @@ class CreditPaymentObserver implements ShouldQueue
    */
   public function updated(CreditPayment $creditPayment): void
   {
-    CacheResponseService::clearPaymentCache();
-
-    // Clear hotel cache if hotel_id is available
-    if ($creditPayment->hotel_id) {
-      CacheResponseService::clearHotelCache($creditPayment->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -39,12 +28,7 @@ class CreditPaymentObserver implements ShouldQueue
    */
   public function deleted(CreditPayment $creditPayment): void
   {
-    CacheResponseService::clearPaymentCache();
-
-    // Clear hotel cache if hotel_id is available
-    if ($creditPayment->hotel_id) {
-      CacheResponseService::clearHotelCache($creditPayment->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -52,12 +36,7 @@ class CreditPaymentObserver implements ShouldQueue
    */
   public function restored(CreditPayment $creditPayment): void
   {
-    CacheResponseService::clearPaymentCache();
-
-    // Clear hotel cache if hotel_id is available
-    if ($creditPayment->hotel_id) {
-      CacheResponseService::clearHotelCache($creditPayment->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -65,11 +44,6 @@ class CreditPaymentObserver implements ShouldQueue
    */
   public function forceDeleted(CreditPayment $creditPayment): void
   {
-    CacheResponseService::clearPaymentCache();
-
-    // Clear hotel cache if hotel_id is available
-    if ($creditPayment->hotel_id) {
-      CacheResponseService::clearHotelCache($creditPayment->hotel_id);
-    }
+    // Cache handling removed
   }
 }
