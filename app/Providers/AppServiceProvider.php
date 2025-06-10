@@ -2,10 +2,20 @@
 
 namespace App\Providers;
 
+use App\Models\Room;
+use App\Models\Hotel;
+use App\Models\Booking;
+use App\Models\CreditPayment;
+use App\Models\BookingInvoice;
+use App\Observers\RoomObserver;
+use App\Observers\HotelObserver;
+use App\Observers\BookingObserver;
 use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\CreditPaymentObserver;
+use App\Observers\BookingInvoiceObserver;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             Schema::defaultStringLength(191);
         }
+
+        // Register model observers for response cache invalidation
+        $this->registerObservers();
 
         FilamentAsset::register([
             Css::make('db', __DIR__ . '/../../resources/css/dashboard.css'),
@@ -60,5 +73,32 @@ class AppServiceProvider extends ServiceProvider
 
         //return without wrapper
         JsonResource::withoutWrapping();
+    }
+
+    /**
+     * Register observers for model events to handle cache invalidation
+     */
+    private function registerObservers(): void
+    {
+        // Check if the models exist before registering observers
+        if (class_exists(Hotel::class)) {
+            Hotel::observe(HotelObserver::class);
+        }
+
+        if (class_exists(Room::class)) {
+            Room::observe(RoomObserver::class);
+        }
+
+        if (class_exists(Booking::class)) {
+            Booking::observe(BookingObserver::class);
+        }
+
+        if (class_exists(BookingInvoice::class)) {
+            BookingInvoice::observe(BookingInvoiceObserver::class);
+        }
+
+        if (class_exists(CreditPayment::class)) {
+            CreditPayment::observe(CreditPaymentObserver::class);
+        }
     }
 }

@@ -13,22 +13,22 @@ return [
      *  You can provide your own class given that it implements the
      *  CacheProfile interface.
      */
-    'cache_profile' => Spatie\ResponseCache\CacheProfiles\CacheAllSuccessfulGetRequests::class,
+    'cache_profile' => App\CacheProfiles\HotelBookingCacheProfile::class,
 
     /*
      *  Optionally, you can specify a header that will force a cache bypass.
      *  This can be useful to monitor the performance of your application.
      */
     'cache_bypass_header' => [
-        'name' => env('CACHE_BYPASS_HEADER_NAME', null),
-        'value' => env('CACHE_BYPASS_HEADER_VALUE', null),
+        'name' => env('CACHE_BYPASS_HEADER_NAME', 'X-Cache-Bypass'),
+        'value' => env('CACHE_BYPASS_HEADER_VALUE', 'true'),
     ],
 
     /*
      * When using the default CacheRequestFilter this setting controls the
      * default number of seconds responses must be cached.
      */
-    'cache_lifetime_in_seconds' => (int) env('RESPONSE_CACHE_LIFETIME', 60 * 60 * 24 * 7),
+    'cache_lifetime_in_seconds' => (int) env('RESPONSE_CACHE_LIFETIME', 60 * 60 * 24), // Default to 1 day for hotel booking
 
     /*
      * This setting determines if a http header named with the cache time
@@ -62,7 +62,7 @@ return [
      * requests. This can be the name of any store that is
      * configured in app/config/cache.php
      */
-    'cache_store' => env('RESPONSE_CACHE_DRIVER', 'file'),
+    'cache_store' => env('RESPONSE_CACHE_DRIVER', env('CACHE_DRIVER', 'file')),
 
     /*
      * Here you may define replacers that dynamically replace content from the response.

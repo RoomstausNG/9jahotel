@@ -139,9 +139,14 @@
                                         class="flex items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
                                         <input type="radio" wire:model.live="selectedPaymentMethod"
                                             value="{{ $method->code }}" class="mr-2 text-primary">
-                                        <div>
-                                            <div class="font-medium">{{ $method->name }}</div>
-                                            <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                        <div class="flex items-center">
+                                            @if(in_array($method->code, ['paystack', 'opay']))
+                                                <img src="{{ asset('img/'.$method->code.'.png') }}" alt="{{ $method->name }}" class="h-8 mr-2">
+                                            @endif
+                                            <div>
+                                                <div class="font-medium">{{ $method->name }}</div>
+                                                <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                            </div>
                                         </div>
                                     </label>
                                 @endforeach

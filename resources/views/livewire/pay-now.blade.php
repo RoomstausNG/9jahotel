@@ -101,9 +101,15 @@
                                 class="flex items-center p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary-500 bg-primary-50' : 'border-gray-200' }}">
                                 <input type="radio" wire:model.live="selectedPaymentMethod"
                                     value="{{ $method->code }}" class="mr-2 text-primary-600">
-                                <div>
-                                    <div class="font-medium">{{ $method->name }}</div>
-                                    <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                <div class="flex items-center">
+                                    @if (in_array($method->code, ['paystack', 'opay']))
+                                        <img src="{{ asset('img/' . $method->code . '.png') }}" alt="{{ $method->name }}"
+                                            class="h-8 mr-2">
+                                    @endif
+                                    <div>
+                                        <div class="font-medium">{{ $method->name }}</div>
+                                        <div class="text-sm text-gray-600">{{ $method->description }}</div>
+                                    </div>
                                 </div>
                             </label>
                         @endforeach
@@ -117,7 +123,11 @@
                         x-on:click="loading = true"
                         :class="loading ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' :
                             'text-green-600 bg-white hover:bg-green-50'"
-                        class="text-green-600 bg-white border border-green-600 px-8 py-3 rounded-lg font-bold text-lg shadow transition">
+                        class="text-green-600 bg-white border border-green-600 px-8 py-3 rounded-lg font-bold text-lg shadow transition flex items-center">
+                        @if (in_array($selectedPaymentMethod, ['paystack', 'opay']))
+                            <img src="{{ asset('img/' . $selectedPaymentMethod . '.png') }}"
+                                alt="Pay with {{ $selectedPaymentMethod }}" class="h-8 mr-2">
+                        @endif
                         <span x-show="!loading">Pay Now (₦{{ number_format($invoice->amount) }})</span>
                         <span x-show="loading">Processing...</span>
                     </button>
