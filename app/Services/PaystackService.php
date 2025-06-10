@@ -31,7 +31,7 @@ class PaystackService
     {
         try {
             $data = [
-                'amount' => ($paymentData['amount'] / 100) + 20, // Convert to kobo
+                'amount' => $paymentData['amount'] * 100, // Convert to kobo
                 'reference' => $paymentData['reference'],
                 'email' => $paymentData['customer_email'],
                 'callback_url' => $paymentData['callback_url'],
