@@ -28,8 +28,9 @@ jobs:
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache && chmod +x deploy.sh
 
-      - name: Directory Permissions
-        run: chown -R 777 storage bootstrap/cache
+      # Remove this step as it's causing permissions errors
+      # - name: Directory Permissions
+      #   run: chown -R 777 storage bootstrap/cache
 
       - name: Clear Config
         run: php artisan config:clear
