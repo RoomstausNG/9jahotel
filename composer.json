@@ -31,7 +31,6 @@
         "mokhosh/filament-rating": "^1.4",
         "nnjeim/world": "^1.1",
         "pxlrbt/filament-activity-log": "^1.1",
-        "silber/page-cache": "^1.0",
         "spatie/laravel-image-optimizer": "^1.8",
         "spatie/laravel-medialibrary": "^10.0.0",
         "spatie/laravel-permission": "^6.3",

@@ -54,8 +54,8 @@ jobs:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: ${{ secrets.CONTABO_HOST }}
+          username: ${{ secrets.CONTABO_USERNAME }}
           port: "22"
-          key: ${{ secrets.PRIVATE_KEY }}
+          key: ${{ secrets.CONTABO_PRIVATE_KEY }}
           script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
