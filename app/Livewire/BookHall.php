@@ -9,11 +9,11 @@ use Livewire\Component;
 use App\Models\Customer;
 use Filament\Forms\Form;
 use Livewire\Attributes\On;
-use Silber\PageCache\Cache;
 use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Filament\Forms\Components;
 use Livewire\Attributes\Layout;
+use App\Services\PaymentGatewayService;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Session;
 use Unicodeveloper\Paystack\Facades\Paystack;
@@ -27,6 +27,10 @@ class BookHall extends Component implements HasForms
     public $hotel;
 
     public $due;
+
+    public $paymentMethods = [];
+
+    public $selectedPaymentMethod = 'opay';
 
     public $firstname, $lastname, $email, $phone;
 
@@ -263,6 +267,11 @@ class BookHall extends Component implements HasForms
     public function mount()
     {
         $this->hotel = $this->hall->hotel;
+
+        // Load payment methods
+        $paymentGatewayService = new PaymentGatewayService();
+        $this->paymentMethods = $paymentGatewayService->getActivePaymentMethods();
+        $this->selectedPaymentMethod = $this->paymentMethods->first()->code ?? 'opay';
     }
 
     #[Layout('components.layouts.frontend')]

@@ -80,6 +80,27 @@
                             {{ $this->form }}
                         </div>
                     @endif
+
+                    @if (count($paymentMethods) > 0)
+                        <div class="w-full p-4 space-y-4">
+                            <h2 class="font-medium text-lg">Select Payment Method</h2>
+                            <div class="flex justify-between gap-8 flex-col md:flex-row">
+                                @foreach ($paymentMethods as $method)
+                                    <label
+                                        class="flex w-full items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
+                                        <input type="radio" wire:model.live="selectedPaymentMethod"
+                                            value="{{ $method->code }}" class="mr-2 text-primary">
+                                        <div class="flex items-center">
+                                            @if (in_array($method->code, ['paystack', 'opay']))
+                                                <img src="{{ asset('img/' . $method->code . '.png') }}"
+                                                    alt="{{ $method->name }}" class="h-8 mr-2">
+                                            @endif
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                     <div class="flex flex-col md:flex-row flex-wrap gap-8 mx-auto justify-center pt-8 w-full">
                         <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                             <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
