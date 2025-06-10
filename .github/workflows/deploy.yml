@@ -57,5 +57,5 @@ jobs:
           host: ${{ secrets.CONTABO_HOST }}
           username: ${{ secrets.CONTABO_USERNAME }}
           port: "22"
-          key: ${{ secrets.CONTABO_PRIVATE_KEY }}
+          key: ${{ secrets.CONTABO_KEY }}
           script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
