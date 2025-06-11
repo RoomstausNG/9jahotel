@@ -31,7 +31,7 @@ class CategoryResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
-                    ->optimize('webp')
+
                     ->disk('cloudinary')->visibility('private')
                     ->directory('supply_category')
                     ->image()

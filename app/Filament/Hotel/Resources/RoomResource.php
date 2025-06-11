@@ -105,7 +105,7 @@ class RoomResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->imageEditor()
                     ->disk('cloudinary')->visibility('private')
-                    ->optimize('webp')
+
                     ->directory('rooms')
                     ->image()
                     ->columnSpanFull(),

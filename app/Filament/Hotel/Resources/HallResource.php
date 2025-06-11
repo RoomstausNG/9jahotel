@@ -45,7 +45,7 @@ class HallResource extends Resource
                 Forms\Components\RichEditor::make('description')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
-                    ->optimize('webp')
+
                     ->disk('cloudinary')
                     ->visibility('private')
                     ->directory('hall')

@@ -50,7 +50,7 @@ class SupplierResource extends Resource
                     ->disk('cloudinary')->visibility('private')
                     ->directory('suppliers')
                     ->image()
-                    ->optimize('webp')
+
                     ->imageEditor()
                     ->required(),
                 Forms\Components\Textarea::make('description')

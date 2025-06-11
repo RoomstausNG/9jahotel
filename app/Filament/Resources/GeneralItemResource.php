@@ -33,7 +33,7 @@ class GeneralItemResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->disk('cloudinary')->visibility('private')
                     ->directory('items')
-                    ->optimize('webp')
+
                     ->image()
                     ->required()
                     ->imageEditor()

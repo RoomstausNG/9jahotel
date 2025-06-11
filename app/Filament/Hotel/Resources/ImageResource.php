@@ -42,7 +42,7 @@ class ImageResource extends Resource
                     ->minSize(100)
                     ->maxSize(2048)
                     ->panelLayout('grid')
-                    ->optimize('webp')
+
                     ->disk('cloudinary')->visibility('private')
                     ->directory('background')
                     ->columnSpanFull(),

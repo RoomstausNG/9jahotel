@@ -65,7 +65,7 @@ class ItemsRelationManager extends RelationManager
                             ->required()
                             ->disk('cloudinary')
                             ->directory('items')
-                            ->optimize('webp')
+
                             ->image()
                             ->imageEditor()
                             ->imageCropAspectRatio('1:1')

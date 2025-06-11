@@ -54,7 +54,7 @@ class HallsRelationManager extends RelationManager
                             ->schema([
                                 Forms\Components\FileUpload::make('image')
                                     ->label("Main Hall Image")
-                                    ->optimize('webp')
+
                                     ->disk('cloudinary')
                                     ->required()
                                     ->directory('hall')
@@ -68,7 +68,7 @@ class HallsRelationManager extends RelationManager
                                     ->schema([
                                         Forms\Components\FileUpload::make('url')
                                             ->image()
-                                            ->optimize('webp')
+
                                             ->disk('cloudinary')
                                             // ->visibility('private')
                                             ->directory('hall_images')

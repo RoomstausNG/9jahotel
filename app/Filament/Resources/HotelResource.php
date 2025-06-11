@@ -42,7 +42,7 @@ class HotelResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('logo')
                     ->image()
-                    ->optimize('webp')
+
                     ->disk('cloudinary')->visibility('private')
                     ->imageEditor()
                     ->required()

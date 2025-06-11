@@ -142,7 +142,7 @@ class RoomCategoryRelationManager extends RelationManager
                                         ->disk('cloudinary')->visibility('private')
                                         ->directory('room')
                                         ->imageEditor()
-                                        ->optimize('webp')
+
                                         ->image(),
                                 ])
                                 ->columns(4)
