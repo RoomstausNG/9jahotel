@@ -54,6 +54,21 @@ class Room extends Model implements HasMedia
         return ($this->type->weekend_price || $this->type->weekend_price > 0) && $this->isWeekend($currentDate, ucfirst($this->type->weekend_start_day), ucfirst($this->type->weekend_end_day));
     }
 
+    public function status($date): string
+    {
+        $roomSt = $this->statuses()->where('date', $date)->orderByDesc('id')->first();
+
+        // return $roomSt ? $roomSt->status : 'available';
+        if (in_array($this->status, ['dirty', 'repair', 'occupied'])) {
+            return $this->status;
+        } elseif ($this->bookings()->exists() && $this->statuses()->where('date', $date)->orderByDesc('id')->first()) {
+            return $roomSt->status;
+        } else {
+            return $roomSt?->status ?? 'available';
+            // return 'available';
+        }
+    }
+
     private function isWeekend($date = null, $startDay, $endDay)
     {
         // If $date is not provided, default to today's date

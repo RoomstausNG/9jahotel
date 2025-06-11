@@ -15,6 +15,7 @@ use App\Models\BookingInvoice;
 use App\Rules\DefaultPasswordRule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\HallResource;
+use App\Http\Resources\RoomResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -257,7 +258,23 @@ class MobileHotelController extends Controller
     {
         $request->validate(['date' => ['required', 'date']]);
         $rooms = Room::with('hotel')->where('hotel_id', $request->user()->hotel_id)->get();
-        return $this->successResponse(new RoomCollection($rooms, $request->date), $request->date ? 'Room status for ' . $request->date : 'Rooms without date');
+
+        $transformedRooms = $rooms->map(function ($room) use ($request) {
+            return [
+                'id' => $room->id,
+                'number' => $room->number,
+                'walk_in_price' => $room->getPrice(),
+                'online_price' => calculateRemainingAmount($room->type->price1, $room->hotel->online_price),
+                'type' => $room->type?->name,
+                'is_available' => $room->status($request->date),
+                'character' => $room->character,
+                'floor' => $room->floor->name . " floor",
+                'bed_type' => $room->bed_type,
+                'status' => $room->status,
+                'image' => getCloudinaryUrl($room->image)
+            ];
+        });
+        return $this->successResponse(new RoomResource($transformedRooms), $request->date ? 'Room status for ' . $request->date : 'Rooms without date');
     }
 
     public function halls(Request $request)
