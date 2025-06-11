@@ -315,7 +315,7 @@ class MobileHotelController extends Controller
             'to' => ['required', 'date', 'after:from']
         ]);
         $dates = getDateRange($data['from'], $data['to']);
-        $room->update(['status' => 'occupied']);
+        $room->update(['status' => 'paid']);
         foreach ($dates as $date) {
             $room->statuses()->firstOrCreate(
                 [
@@ -323,7 +323,7 @@ class MobileHotelController extends Controller
                     'date' => $date,
                 ],
                 [
-                    'status' => 'occupied', // Attributes to set if a new record is created
+                    'status' => 'paid', // Attributes to set if a new record is created
                 ]
             );
         }
@@ -348,7 +348,7 @@ class MobileHotelController extends Controller
             'to' => ['required', 'date', 'after:from']
         ]);
         $dates = getDateRange($data['from'], $data['to']);
-        $hall->update(['status' => 'occupied']);
+        $hall->update(['status' => 'paid']);
         foreach ($dates as $date) {
             $hall->statuses()->firstOrCreate(
                 [
@@ -356,7 +356,7 @@ class MobileHotelController extends Controller
                     'date' => $date,
                 ],
                 [
-                    'status' => 'occupied', // Attributes to set if a new record is created
+                    'status' => 'paid', // Attributes to set if a new record is created
                 ]
             );
         }
