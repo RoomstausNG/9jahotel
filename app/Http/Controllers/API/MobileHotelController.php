@@ -274,7 +274,7 @@ class MobileHotelController extends Controller
                 'image' => getCloudinaryUrl($room->image)
             ];
         });
-        return $this->successResponse(new RoomResource($transformedRooms), $request->date ? 'Room status for ' . $request->date : 'Rooms without date');
+        return $this->successResponse(["rooms" => new RoomResource($transformedRooms)], $request->date ? 'Room status for ' . $request->date : 'Rooms without date');
     }
 
     public function halls(Request $request)

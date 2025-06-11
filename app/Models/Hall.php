@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongToHotel;
 use App\Traits\HasManyBookings;
 use App\Models\Scopes\HotelScope;
+use App\Traits\BookingStatus;
 use App\Traits\HasManyImage;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // #[ScopedBy(HotelScope::class)]
 class Hall extends Model implements HasMedia
 {
-    use HasFactory, BelongToHotel, HasManyBookings, HasManyImage, InteractsWithMedia;
+    use HasFactory, BelongToHotel, HasManyBookings, BookingStatus, HasManyImage, InteractsWithMedia;
     protected $guarded = [];
 
     protected $casts = [

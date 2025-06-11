@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongToHotel;
 use App\Traits\HasManyBookings;
 use App\Models\Scopes\HotelScope;
+use App\Traits\BookingStatus;
 use App\Traits\HasManyImage;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // #[ScopedBy(HotelScope::class)]
 class Room extends Model implements HasMedia
 {
-    use HasFactory, BelongToHotel, HasManyBookings, HasManyImage, InteractsWithMedia;
+    use HasFactory, BelongToHotel, HasManyBookings, HasManyImage, BookingStatus, InteractsWithMedia;
     protected $guarded = [];
 
     protected $casts = [
@@ -54,20 +55,6 @@ class Room extends Model implements HasMedia
         return ($this->type->weekend_price || $this->type->weekend_price > 0) && $this->isWeekend($currentDate, ucfirst($this->type->weekend_start_day), ucfirst($this->type->weekend_end_day));
     }
 
-    public function status($date): string
-    {
-        $roomSt = $this->statuses()->where('date', $date)->orderByDesc('id')->first();
-
-        // return $roomSt ? $roomSt->status : 'available';
-        if (in_array($this->status, ['dirty', 'repair', 'occupied'])) {
-            return $this->status;
-        } elseif ($this->bookings()->exists() && $this->statuses()->where('date', $date)->orderByDesc('id')->first()) {
-            return $roomSt->status;
-        } else {
-            return $roomSt?->status ?? 'available';
-            // return 'available';
-        }
-    }
 
     private function isWeekend($date = null, $startDay, $endDay)
     {

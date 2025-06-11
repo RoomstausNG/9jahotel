@@ -33,15 +33,16 @@ class HallCollection extends ResourceCollection
         // ];
 
         return [
-            'rooms' => $this->collection->transform(function ($item) {
+            'halls' => $this->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => $item->price,
-                    'status' => roomStatus($item, $this->extraData),
+                    'status' => $item->status($this->extraData),
                     'capacity' => $item->capacity,
                     'description' => $item->description,
-                    'date' => $this->extraData
+                    'iamge' => getCloudinaryUrl($item->image),
+                    // 'date' => $this->extraData
                 ];
             })
         ];
