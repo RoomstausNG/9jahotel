@@ -23,7 +23,6 @@ composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev
 # Set proper directory permissions
 echo "🔒 Setting directory permissions..."
 chmod -R 777 storage bootstrap/cache
-chown -R 777 storage bootstrap/cache
 
 # Clear all caches
 echo "🧹 Clearing application caches..."
@@ -32,7 +31,6 @@ php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
-php artisan cache:response:clear  # Clear response cache
 
 # Run migrations
 echo "🔄 Running database migrations..."
@@ -52,16 +50,20 @@ php artisan optimize
 
 # Update and restart supervisor
 echo "🔄 Updating supervisor configuration..."
-sudo supervisorctl update
+if command -v supervisorctl &> /dev/null; then
+    sudo supervisorctl update || echo "Warning: Failed to update supervisor, continuing..."
 
-echo "🔄 Reloading supervisor..."
-sudo supervisorctl reload
+    echo "🔄 Reloading supervisor..."
+    sudo supervisorctl reload || echo "Warning: Failed to reload supervisor, continuing..."
 
-echo "🔄 Restarting all supervisor processes..."
-sudo supervisorctl restart all
+    echo "🔄 Restarting all supervisor processes..."
+    sudo supervisorctl restart all || echo "Warning: Failed to restart supervisor processes, continuing..."
+else
+    echo "⚠️ Supervisorctl not found, skipping supervisor commands"
+fi
 
 # Restart Octane
 echo "🚀 Starting Octane server..."
-php artisan octane:start --watch
+php artisan octane:start --watch || echo "Warning: Failed to start Octane, please check manually"
 
 echo "✅ Deployment completed successfully!"

@@ -28,8 +28,9 @@ jobs:
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache && chmod +x deploy.sh
 
-      - name: Directory Permissions
-        run: chown -R 777 storage bootstrap/cache
+      # Remove this step as it's causing permissions errors
+      # - name: Directory Permissions
+      #   run: chown -R 777 storage bootstrap/cache
 
       - name: Clear Config
         run: php artisan config:clear
@@ -51,11 +52,21 @@ jobs:
       - name: Shut Down serve
         run: php artisan down
 
+      - name: Test SSH connection
+        run: |
+          echo "Testing SSH connection to server..."
+          # Print out some debug info but mask the actual host
+          echo "Connecting to host (masked): ${{ secrets.CONTABO_HOST != '' && '***' || 'CONTABO_HOST not set' }}"
+          echo "Using username: ${{ secrets.CONTABO_USERNAME != '' && secrets.CONTABO_USERNAME || 'CONTABO_USERNAME not set' }}"
+          echo "SSH key provided: ${{ secrets.CONTABO_KEY != '' && 'Yes' || 'No' }}"
+
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.CONTABO_HOST }}
           username: ${{ secrets.CONTABO_USERNAME }}
           port: "22"
-          key: ${{ secrets.CONTABO_PRIVATE_KEY }}
+          key: ${{ secrets.CONTABO_KEY }}
           script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
+          debug: true
+          timeout: 120s

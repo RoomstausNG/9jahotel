@@ -54,7 +54,7 @@ class Room extends Model implements HasMedia
         return ($this->type->weekend_price || $this->type->weekend_price > 0) && $this->isWeekend($currentDate, ucfirst($this->type->weekend_start_day), ucfirst($this->type->weekend_end_day));
     }
 
-    private function isWeekend($date = null, $startDay, $endDay)
+    private function isWeekend($startDay, $endDay, $date = null)
     {
         // If $date is not provided, default to today's date
         if (!$date) {

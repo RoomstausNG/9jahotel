@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Booking;
-use App\Services\CacheResponseService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class BookingObserver implements ShouldQueue
@@ -13,16 +12,7 @@ class BookingObserver implements ShouldQueue
    */
   public function created(Booking $booking): void
   {
-    CacheResponseService::clearBookingCache();
-
-    // Clear cache for the related hotel and room
-    if ($booking->bookable_type === 'App\Models\Room' && $booking->bookable_id) {
-      CacheResponseService::clearRoomCache($booking->bookable_id);
-    }
-
-    if ($booking->hotel_id) {
-      CacheResponseService::clearHotelCache($booking->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -30,16 +20,7 @@ class BookingObserver implements ShouldQueue
    */
   public function updated(Booking $booking): void
   {
-    CacheResponseService::clearBookingCache($booking->id);
-
-    // Clear cache for the related hotel and room
-    if ($booking->bookable_type === 'App\Models\Room' && $booking->bookable_id) {
-      CacheResponseService::clearRoomCache($booking->bookable_id);
-    }
-
-    if ($booking->hotel_id) {
-      CacheResponseService::clearHotelCache($booking->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -47,16 +28,7 @@ class BookingObserver implements ShouldQueue
    */
   public function deleted(Booking $booking): void
   {
-    CacheResponseService::clearBookingCache($booking->id);
-
-    // Clear cache for the related hotel and room
-    if ($booking->bookable_type === 'App\Models\Room' && $booking->bookable_id) {
-      CacheResponseService::clearRoomCache($booking->bookable_id);
-    }
-
-    if ($booking->hotel_id) {
-      CacheResponseService::clearHotelCache($booking->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -64,16 +36,7 @@ class BookingObserver implements ShouldQueue
    */
   public function restored(Booking $booking): void
   {
-    CacheResponseService::clearBookingCache($booking->id);
-
-    // Clear cache for the related hotel and room
-    if ($booking->bookable_type === 'App\Models\Room' && $booking->bookable_id) {
-      CacheResponseService::clearRoomCache($booking->bookable_id);
-    }
-
-    if ($booking->hotel_id) {
-      CacheResponseService::clearHotelCache($booking->hotel_id);
-    }
+    // Cache handling removed
   }
 
   /**
@@ -81,15 +44,6 @@ class BookingObserver implements ShouldQueue
    */
   public function forceDeleted(Booking $booking): void
   {
-    CacheResponseService::clearBookingCache($booking->id);
-
-    // Clear cache for the related hotel and room
-    if ($booking->bookable_type === 'App\Models\Room' && $booking->bookable_id) {
-      CacheResponseService::clearRoomCache($booking->bookable_id);
-    }
-
-    if ($booking->hotel_id) {
-      CacheResponseService::clearHotelCache($booking->hotel_id);
-    }
+    // Cache handling removed
   }
 }

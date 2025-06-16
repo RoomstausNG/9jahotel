@@ -34,7 +34,6 @@
         "spatie/laravel-image-optimizer": "^1.8",
         "spatie/laravel-medialibrary": "^10.0.0",
         "spatie/laravel-permission": "^6.3",
-        "spatie/laravel-responsecache": "^7.7",
         "spiral/roadrunner-cli": "^2.6.0",
         "spiral/roadrunner-http": "^3.3.0",
         "unicodeveloper/laravel-paystack": "^1.2"

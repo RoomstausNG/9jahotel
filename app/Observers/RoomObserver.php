@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\Room;
-use App\Services\CacheResponseService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class RoomObserver implements ShouldQueue
@@ -13,8 +12,7 @@ class RoomObserver implements ShouldQueue
    */
   public function created(Room $room): void
   {
-    CacheResponseService::clearRoomCache();
-    CacheResponseService::clearHotelCache($room->hotel_id);
+    // Cache handling removed
   }
 
   /**
@@ -22,8 +20,7 @@ class RoomObserver implements ShouldQueue
    */
   public function updated(Room $room): void
   {
-    CacheResponseService::clearRoomCache($room->id);
-    CacheResponseService::clearHotelCache($room->hotel_id);
+    // Cache handling removed
   }
 
   /**
@@ -31,8 +28,7 @@ class RoomObserver implements ShouldQueue
    */
   public function deleted(Room $room): void
   {
-    CacheResponseService::clearRoomCache($room->id);
-    CacheResponseService::clearHotelCache($room->hotel_id);
+    // Cache handling removed
   }
 
   /**
@@ -40,8 +36,7 @@ class RoomObserver implements ShouldQueue
    */
   public function restored(Room $room): void
   {
-    CacheResponseService::clearRoomCache($room->id);
-    CacheResponseService::clearHotelCache($room->hotel_id);
+    // Cache handling removed
   }
 
   /**
@@ -49,7 +44,6 @@ class RoomObserver implements ShouldQueue
    */
   public function forceDeleted(Room $room): void
   {
-    CacheResponseService::clearRoomCache($room->id);
-    CacheResponseService::clearHotelCache($room->hotel_id);
+    // Cache handling removed
   }
 }
