@@ -40,7 +40,7 @@ class BookRoom extends Component implements HasForms
 
     public $paymentMethods = [];
     public $selectedPaymentMethod;
-    
+
     public $checkinDate;
     public $checkoutDate;
 
@@ -359,7 +359,7 @@ cancellation with or without notice by the Hotel.',
     {
         $this->checkinDate = Session::get('checkin');
         $this->checkoutDate = Session::get('checkout');
-        
+
         $this->category->load('rooms');
         $this->hotel = $this->category->hotel;
 
