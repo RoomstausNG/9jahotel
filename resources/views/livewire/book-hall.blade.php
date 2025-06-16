@@ -32,14 +32,36 @@
                             <span class="text-sm">Hall Name</span>
                             <span class="text-sm font-bold uppercase">{{ $hall->name }}</span>
                         </p>
-                        <p class="flex items-center justify-between">
+                        <div class="flex items-center justify-between" x-data="{ editingCheckin: false }">
                             <span class="text-sm">Checkin</span>
-                            <span class="text-sm font-bold">{{ getDateR(Session::get('checkin')) }}</span>
-                        </p>
-                        <p class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span x-show="!editingCheckin" @click="editingCheckin = true" 
+                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
+                                    {{ getDateR(Session::get('checkin')) }}
+                                </span>
+                                <input x-show="editingCheckin" 
+                                       type="date" 
+                                       wire:model.live="checkinDate"
+                                       @blur="editingCheckin = false"
+                                       @keydown.enter="editingCheckin = false"
+                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between" x-data="{ editingCheckout: false }">
                             <span class="text-sm">Checkout</span>
-                            <span class="text-sm font-bold">{{ getDateR(Session::get('checkout')) }}</span>
-                        </p>
+                            <div class="flex items-center">
+                                <span x-show="!editingCheckout" @click="editingCheckout = true"
+                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
+                                    {{ getDateR(Session::get('checkout')) }}
+                                </span>
+                                <input x-show="editingCheckout" 
+                                       type="date" 
+                                       wire:model.live="checkoutDate"
+                                       @blur="editingCheckout = false"
+                                       @keydown.enter="editingCheckout = false"
+                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
+                            </div>
+                        </div>
                     </div>
 
                     <p class="flex justify-end px-4 py-[2px] max-w-max border bg-white font-medium">
