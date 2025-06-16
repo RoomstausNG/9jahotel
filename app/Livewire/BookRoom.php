@@ -41,6 +41,9 @@ class BookRoom extends Component implements HasForms
     public $paymentMethods = [];
     public $selectedPaymentMethod;
 
+    public $checkinDate;
+    public $checkoutDate;
+
     public function form(Form $form): Form
     {
         return $form
@@ -354,6 +357,9 @@ cancellation with or without notice by the Hotel.',
 
     public  function mount($id = null)
     {
+        $this->checkinDate = Session::get('checkin');
+        $this->checkoutDate = Session::get('checkout');
+
         $this->category->load('rooms');
         $this->hotel = $this->category->hotel;
 

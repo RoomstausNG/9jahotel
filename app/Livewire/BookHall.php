@@ -36,6 +36,21 @@ class BookHall extends Component implements HasForms
 
     public $firstname, $lastname, $email, $phone;
 
+    public $checkinDate;
+    public $checkoutDate;
+
+    public function updatedCheckinDate($value)
+    {
+        Session::put('checkin', $value);
+        $this->checkinDate = $value;
+    }
+
+    public function updatedCheckoutDate($value)
+    {
+        Session::put('checkout', $value);
+        $this->checkoutDate = $value;
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -313,12 +328,15 @@ class BookHall extends Component implements HasForms
 
     public function mount()
     {
+        $this->checkinDate = Session::get('checkin');
+        $this->checkoutDate = Session::get('checkout');
+
         $this->hotel = $this->hall->hotel;
 
         // Load payment methods
         $paymentGatewayService = new PaymentGatewayService();
         $this->paymentMethods = $paymentGatewayService->getActivePaymentMethods();
-        $this->selectedPaymentMethod = $this->paymentMethods->first()->code ?? 'opay';
+        $this->selectedPaymentMethod = $this->paymentMethods->first()->code;
     }
 
     #[Layout('components.layouts.frontend')]
