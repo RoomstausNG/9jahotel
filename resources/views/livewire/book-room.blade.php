@@ -43,36 +43,6 @@
                             <span class="text-sm">Room Category</span>
                             <span class="text-sm font-bold uppercase">{{ $category->name }}</span>
                         </p>
-<<<<<<< HEAD
-                        <div class="flex items-center justify-between" x-data="{ editingCheckin: false }">
-                            <span class="text-sm">Checkin</span>
-                            <div class="flex items-center">
-                                <span x-show="!editingCheckin" @click="editingCheckin = true" 
-                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
-                                    {{ getDateR(Session::get('checkin')) }}
-                                </span>
-                                <input x-show="editingCheckin" 
-                                       type="date" 
-                                       wire:model.live="checkinDate"
-                                       @blur="editingCheckin = false"
-                                       @keydown.enter="editingCheckin = false"
-                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between" x-data="{ editingCheckout: false }">
-                            <span class="text-sm">Checkout</span>
-                            <div class="flex items-center">
-                                <span x-show="!editingCheckout" @click="editingCheckout = true"
-                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
-                                    {{ getDateR(Session::get('checkout')) }}
-                                </span>
-                                <input x-show="editingCheckout" 
-                                       type="date" 
-                                       wire:model.live="checkoutDate"
-                                       @blur="editingCheckout = false"
-                                       @keydown.enter="editingCheckout = false"
-                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
-=======
                         <div class="flex items-center justify-between">
                             <span class="text-sm">Checkin</span>
                             <div class="editable-date-container" data-date-type="checkin">
@@ -104,7 +74,6 @@
                                         d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                                         clip-rule="evenodd"></path>
                                 </svg>
->>>>>>> 827d24c3 (date edit)
                             </div>
                         </div>
                         <p class="flex items-center justify-between">
@@ -386,7 +355,7 @@
                 if (dates.checkin) {
                     const checkinDate = new Date(dates.checkin);
                     document.getElementById('checkin-display').textContent = checkinDate.toLocaleDateString(
-                    'en-GB');
+                        'en-GB');
                     document.getElementById('checkin-input').value = dates.checkin;
                 }
                 if (dates.checkout) {
