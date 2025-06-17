@@ -21,6 +21,7 @@
 
     @filamentStyles
     @vite(['resources/css/app.css', 'resources/sass/main.scss'])
+    <link rel="stylesheet" href="{{ asset('css/editable-dates.css') }}">
 </head>
 
 <body class="antialiased">

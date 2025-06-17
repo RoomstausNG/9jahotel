@@ -355,6 +355,13 @@ cancellation with or without notice by the Hotel.',
         }
     }
 
+    public function refreshBookingData()
+    {
+        // This method will be called from the frontend to refresh the component
+        // when dates are updated, ensuring calculations are current
+        $this->dispatch('$refresh');
+    }
+
     public  function mount($id = null)
     {
         $this->checkinDate = Session::get('checkin');

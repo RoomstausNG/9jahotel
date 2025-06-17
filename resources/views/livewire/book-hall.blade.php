@@ -32,6 +32,7 @@
                             <span class="text-sm">Hall Name</span>
                             <span class="text-sm font-bold uppercase">{{ $hall->name }}</span>
                         </p>
+<<<<<<< HEAD
                         <div class="flex items-center justify-between" x-data="{ editingCheckin: false }">
                             <span class="text-sm">Checkin</span>
                             <div class="flex items-center">
@@ -60,6 +61,39 @@
                                        @blur="editingCheckout = false"
                                        @keydown.enter="editingCheckout = false"
                                        class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
+=======
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Checkin</span>
+                            <div class="editable-date-container" data-date-type="checkin">
+                                <span
+                                    class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
+                                    id="checkin-display">{{ getDateR(Session::get('checkin')) }}</span>
+                                <input type="date" class="hidden date-input" id="checkin-input"
+                                    value="{{ Session::get('checkin') }}" min="{{ date('Y-m-d') }}">
+                                <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Checkout</span>
+                            <div class="editable-date-container" data-date-type="checkout">
+                                <span
+                                    class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
+                                    id="checkout-display">{{ getDateR(Session::get('checkout')) }}</span>
+                                <input type="date" class="hidden date-input" id="checkout-input"
+                                    value="{{ Session::get('checkout') }}"
+                                    min="{{ Session::get('checkin') ?: date('Y-m-d') }}">
+                                <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+>>>>>>> 827d24c3 (date edit)
                             </div>
                         </div>
                     </div>
@@ -178,6 +212,152 @@
                     location.reload();
                 }, 10000);
             });
+        });
+
+        // Editable dates functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinContainer = document.querySelector('[data-date-type="checkin"]');
+            const checkoutContainer = document.querySelector('[data-date-type="checkout"]');
+
+            function initializeDateEditor(container, dateType) {
+                const display = container.querySelector('.editable-date');
+                const input = container.querySelector('.date-input');
+                const icon = container.querySelector('svg');
+
+                // Show input when clicking on display or icon
+                [display, icon].forEach(element => {
+                    element.addEventListener('click', function() {
+                        display.classList.add('hidden');
+                        input.classList.remove('hidden');
+                        input.focus();
+                    });
+                });
+
+                // Handle date changes
+                input.addEventListener('change', function() {
+                    updateSession(dateType, this.value);
+                });
+
+                // Hide input on blur or enter
+                input.addEventListener('blur', hideInput);
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        hideInput();
+                    }
+                });
+
+                function hideInput() {
+                    input.classList.add('hidden');
+                    display.classList.remove('hidden');
+                }
+            }
+
+            function updateSession(key, value) {
+                // Add loading state
+                const container = document.querySelector(`[data-date-type="${key}"]`);
+                container.classList.add('date-updating');
+
+                fetch('{{ route('session.update-booking-dates') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            key: key,
+                            value: value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        container.classList.remove('date-updating');
+
+                        if (data.status === 'success') {
+                            // Update displays with formatted dates
+                            updateDateDisplays(data.data);
+                            updateMinDates(data.data);
+
+                            // Show success feedback
+                            showFeedback('Date updated successfully!', 'success');
+
+                            // Reload page to refresh calculations
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 800);
+                        } else {
+                            showFeedback(data.message || 'Error updating date', 'error');
+                            // Revert input value
+                            loadDatesFromSession();
+                        }
+                    })
+                    .catch(error => {
+                        container.classList.remove('date-updating');
+                        console.error('Error:', error);
+                        showFeedback('Error updating date', 'error');
+                        loadDatesFromSession();
+                    });
+            }
+
+            function showFeedback(message, type) {
+                // Remove existing feedback
+                const existingFeedback = document.querySelector('.date-feedback');
+                if (existingFeedback) {
+                    existingFeedback.remove();
+                }
+
+                // Create feedback element
+                const feedback = document.createElement('div');
+                feedback.className =
+                    `date-feedback fixed top-4 right-4 px-4 py-2 rounded z-50 ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+                feedback.textContent = message;
+                document.body.appendChild(feedback);
+
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    feedback.remove();
+                }, 3000);
+            }
+
+            function updateDateDisplays(dates) {
+                if (dates.checkin) {
+                    const checkinDate = new Date(dates.checkin);
+                    document.getElementById('checkin-display').textContent = checkinDate.toLocaleDateString(
+                    'en-GB');
+                    document.getElementById('checkin-input').value = dates.checkin;
+                }
+                if (dates.checkout) {
+                    const checkoutDate = new Date(dates.checkout);
+                    document.getElementById('checkout-display').textContent = checkoutDate.toLocaleDateString(
+                        'en-GB');
+                    document.getElementById('checkout-input').value = dates.checkout;
+                }
+            }
+
+            function updateMinDates(dates) {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('checkin-input').min = today;
+
+                if (dates.checkin) {
+                    document.getElementById('checkout-input').min = dates.checkin;
+                }
+            }
+
+            function loadDatesFromSession() {
+                fetch('{{ route('session.get-booking-dates') }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateDateDisplays(data);
+                        updateMinDates(data);
+                    })
+                    .catch(error => console.error('Error loading session dates:', error));
+            }
+
+            // Initialize both date editors
+            if (checkinContainer) initializeDateEditor(checkinContainer, 'checkin');
+            if (checkoutContainer) initializeDateEditor(checkoutContainer, 'checkout');
+
+            // Load initial dates
+            loadDatesFromSession();
         });
     </script>
 

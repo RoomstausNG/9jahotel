@@ -339,6 +339,13 @@ class BookHall extends Component implements HasForms
         $this->selectedPaymentMethod = $this->paymentMethods->first()->code;
     }
 
+    public function refreshBookingData()
+    {
+        // This method will be called from the frontend to refresh the component
+        // when dates are updated, ensuring calculations are current
+        $this->dispatch('$refresh');
+    }
+
     #[Layout('components.layouts.frontend')]
     public function render()
     {

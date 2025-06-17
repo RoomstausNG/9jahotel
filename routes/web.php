@@ -44,6 +44,12 @@ Route::get('/paynow/{invoice:reference}', PayNow::class)->name('paynow');
 
 use App\Http\Controllers\OpayCallbackController;
 use App\Http\Controllers\PaystackCallbackController;
+use App\Http\Controllers\SessionController;
+
+// Session management routes for booking dates
+Route::post('/session/update-booking-dates', [SessionController::class, 'updateBookingDates'])->name('session.update-booking-dates');
+Route::get('/session/get-booking-dates', [SessionController::class, 'getBookingDates'])->name('session.get-booking-dates');
+
 // Booking cancellation route
 Route::get('/cancel/{invoice:reference}', CancelBooking::class)->name('cancel.booking');
 

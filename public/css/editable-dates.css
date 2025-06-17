@@ -1,0 +1,134 @@
+/* Editable Date Styles */
+.editable-date-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.editable-date {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  border-style: dashed !important;
+}
+
+.editable-date:hover {
+  background: #e9ecef;
+  border-color: #007bff !important;
+  border-style: solid !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.15);
+}
+
+.editable-date:hover::after {
+  content: "Click to edit";
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0.9;
+}
+
+.editable-date:hover+svg {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+.date-input {
+  padding: 4px 8px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.date-input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.editable-date-container svg {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.editable-date-container:hover svg {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+/* Add a small edit icon overlay */
+.editable-date-container::before {
+  content: "✏";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.editable-date-container:hover::before {
+  opacity: 1;
+}
+
+/* Loading state */
+.date-updating {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.date-updating::after {
+  content: "Updating...";
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffc107;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .editable-date {
+    font-size: 12px;
+    padding: 2px 6px;
+  }
+
+  .editable-date-container svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .editable-date-container::before {
+    width: 10px;
+    height: 10px;
+    font-size: 6px;
+  }
+}
