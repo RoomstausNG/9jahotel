@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Traits\BelongToHotel;
+use App\Jobs\CreateTransactionJob;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -122,35 +124,14 @@ class BookingInvoice extends Model
             }
             // Call the transaction API to create a transaction for this invoice, only if not PayAtHotel
             if (strtolower($invoice->type) !== 'payathotel') {
-                try {
-                    $response = Http::post(config('app.url') . '/api/v1/transactions', [
-                        'booking_reference' => $invoice->reference,
-                        'amount' => (int) $invoice->hotel_payable,
-                        'payment_method' => $invoice->payment_method ?? 'wallet',
-                    ]);
-                } catch (\Exception $e) {
-                    Log::info(
-                        'Failed to create transaction for invoice ' . $invoice->reference,
-                        [
-                            'error' => $e->getMessage(),
-                            'invoice_id' => $invoice->reference
-                        ]
-                    );
-                }
+                Bus::dispatch(new CreateTransactionJob($invoice));
             }
         });
         self::updated(function ($invoice) {
             if ($invoice->transaction && $invoice->transaction->status == "cancelled") {
-                try {
-                    Http::patch(url('/api/v1/transactions/' . $invoice->transaction->reference . '/status'), [
-                        'status' => $invoice->status
-                    ]);
-                } catch (\Exception $e) {
-                    Log::info('Failed to create transaction for invoice ' . $invoice->reference, [
-                        'error' => $e->getMessage(),
-                        'invoice_id' => $invoice->reference,
-                    ]);
-                }
+                $invoice->transaction()->update([
+                    'status' => $invoice->status
+                ]);
             }
         });
     }
