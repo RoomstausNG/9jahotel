@@ -62,10 +62,10 @@ class PaystackService
                 $responseData = $response->json();
 
                 if ($responseData['status']) {
-                    Log::info('Paystack transaction initialized successfully', [
-                        'reference' => $paymentData['reference'],
-                        'auth_url' => $responseData['data']['authorization_url']
-                    ]);
+                    // Log::info('Paystack transaction initialized successfully', [
+                    //     'reference' => $paymentData['reference'],
+                    //     'auth_url' => $responseData['data']['authorization_url']
+                    // ]);
 
                     return [
                         'status' => 'success',
@@ -114,10 +114,10 @@ class PaystackService
             $paymentDetails = Paystack::getPaymentData();
 
             if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
-                Log::info('Paystack payment verification successful', [
-                    'reference' => $reference,
-                    'status' => $paymentDetails['data']['status']
-                ]);
+                // Log::info('Paystack payment verification successful', [
+                //     'reference' => $reference,
+                //     'status' => $paymentDetails['data']['status']
+                // ]);
 
                 return [
                     'status' => 'success',
@@ -127,10 +127,10 @@ class PaystackService
                     'reference' => $paymentDetails['data']['reference']
                 ];
             } else {
-                Log::error('Paystack payment verification failed', [
-                    'reference' => $reference,
-                    'error' => $paymentDetails['message'] ?? 'Unknown error'
-                ]);
+                // Log::error('Paystack payment verification failed', [
+                //     'reference' => $reference,
+                //     'error' => $paymentDetails['message'] ?? 'Unknown error'
+                // ]);
 
                 throw new Exception($paymentDetails['message'] ?? 'Payment verification failed');
             }
@@ -164,10 +164,10 @@ class PaystackService
                 $responseData = $response->json();
 
                 if ($responseData['status'] && $responseData['data']['status'] === 'success') {
-                    Log::info('Paystack payment verification successful', [
-                        'reference' => $reference,
-                        'status' => $responseData['data']['status']
-                    ]);
+                    // Log::info('Paystack payment verification successful', [
+                    //     'reference' => $reference,
+                    //     'status' => $responseData['data']['status']
+                    // ]);
 
                     return [
                         'status' => 'success',
@@ -177,18 +177,18 @@ class PaystackService
                         'reference' => $responseData['data']['reference']
                     ];
                 } else {
-                    Log::error('Paystack payment verification failed', [
-                        'reference' => $reference,
-                        'error' => $responseData['message'] ?? 'Unknown error'
-                    ]);
+                    // Log::error('Paystack payment verification failed', [
+                    //     'reference' => $reference,
+                    //     'error' => $responseData['message'] ?? 'Unknown error'
+                    // ]);
 
                     throw new Exception($responseData['message'] ?? 'Payment verification failed');
                 }
             } else {
-                Log::error('Paystack verification API request failed', [
-                    'status' => $response->status(),
-                    'response' => $response->body()
-                ]);
+                // Log::error('Paystack verification API request failed', [
+                //     'status' => $response->status(),
+                //     'response' => $response->body()
+                // ]);
 
                 throw new Exception('Failed to connect to Paystack API for verification');
             }

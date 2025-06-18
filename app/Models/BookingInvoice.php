@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use App\Traits\BelongToHotel;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -127,7 +128,10 @@ class BookingInvoice extends Model
                     'payment_method' => $invoice->payment_method ?? 'wallet',
                 ]);
             } catch (\Exception $e) {
-                // Log or handle error
+                Log::info('Failed to create transaction for invoice ' . $invoice->reference, [
+                    'error' => $e->getMessage(),
+                    'invoice_id' => $invoice->reference,
+                ]);
             }
         });
         self::updated(function ($invoice) {
@@ -137,7 +141,10 @@ class BookingInvoice extends Model
                         'status' => $invoice->status
                     ]);
                 } catch (\Exception $e) {
-                    // Log or handle error
+                    Log::info('Failed to create transaction for invoice ' . $invoice->reference, [
+                        'error' => $e->getMessage(),
+                        'invoice_id' => $invoice->reference,
+                    ]);
                 }
             }
         });
