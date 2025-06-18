@@ -14,16 +14,17 @@ class CreateTransactionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public $bookingInvoiceId, public $amount, public $paymentMethod) {}
+    public function __construct(public $bookingInvoice) {}
 
     public function handle()
     {
         $reference = date('Y') . '-' . date('md') . '-' . time();
         Transaction::create([
-            'booking_invoice_id' => $this->bookingInvoiceId,
-            'amount' => $this->amount,
-            'payment_method' => $this->paymentMethod,
+            'booking_invoice_id' => $this->bookingInvoice->id,
+            'amount' => $this->bookingInvoice->hotel_payable,
+            'payment_method' => $this->bookingInvoice->payment_method ?? 'wallet',
             'reference' => $reference,
+            'hotel_id' => $this->bookingInvoice->hotel_id,
             'status' => 'pending',
         ]);
     }

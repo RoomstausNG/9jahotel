@@ -25,7 +25,7 @@ class TransactionController extends Controller
         $bookingInvoice = BookingInvoice::where('reference', $request->booking_reference)->firstOrFail();
 
         // Queue the transaction creation
-        Bus::dispatch(new CreateTransactionJob($bookingInvoice->id, $request->amount, $request->payment_method));
+        Bus::dispatch(new CreateTransactionJob($bookingInvoice));
 
         return response()->json(['message' => 'Transaction creation queued.'], 202);
     }
