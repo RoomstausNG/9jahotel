@@ -120,24 +120,29 @@ class BookingInvoice extends Model
                 Mail::to($invoice->customer->email)
                     ->queue(new $mailClass($invoice));
             }
-            // Call the transaction API to create a transaction for this invoice
-            try {
-                $response = Http::post(url('/api/transactions'), [
-                    'booking_reference' => $invoice->reference,
-                    'amount' => (int) $invoice->hotel_payable,
-                    'payment_method' => $invoice->payment_method ?? 'wallet',
-                ]);
-            } catch (\Exception $e) {
-                Log::info('Failed to create transaction for invoice ' . $invoice->reference, [
-                    'error' => $e->getMessage(),
-                    'invoice_id' => $invoice->reference,
-                ]);
+            // Call the transaction API to create a transaction for this invoice, only if not PayAtHotel
+            if (strtolower($invoice->type) !== 'payathotel') {
+                try {
+                    $response = Http::post(config('app.url') . '/api/v1/transactions', [
+                        'booking_reference' => $invoice->reference,
+                        'amount' => (int) $invoice->hotel_payable,
+                        'payment_method' => $invoice->payment_method ?? 'wallet',
+                    ]);
+                } catch (\Exception $e) {
+                    Log::info(
+                        'Failed to create transaction for invoice ' . $invoice->reference,
+                        [
+                            'error' => $e->getMessage(),
+                            'invoice_id' => $invoice->reference
+                        ]
+                    );
+                }
             }
         });
         self::updated(function ($invoice) {
-            if ($invoice->transaction) {
+            if ($invoice->transaction && $invoice->transaction->status == "cancelled") {
                 try {
-                    Http::patch(url('/api/transactions/' . $invoice->transaction->reference . '/status'), [
+                    Http::patch(url('/api/v1/transactions/' . $invoice->transaction->reference . '/status'), [
                         'status' => $invoice->status
                     ]);
                 } catch (\Exception $e) {

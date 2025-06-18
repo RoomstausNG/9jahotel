@@ -18,7 +18,7 @@ class CreateTransactionJob implements ShouldQueue
 
     public function handle()
     {
-        $reference = date('Y') . '-' . date('md') . '-' . time();
+        $reference = date('Y') . time();
         Transaction::create([
             'booking_invoice_id' => $this->bookingInvoice->id,
             'amount' => $this->bookingInvoice->hotel_payable,
