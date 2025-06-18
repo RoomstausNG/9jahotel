@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\BelongToHotel;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,6 +66,10 @@ class BookingInvoice extends Model
         return $this->hasOne(Refund::class);
     }
 
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class, 'booking_invoice_id');
+    }
 
     public static function booted()
     {
@@ -113,6 +118,27 @@ class BookingInvoice extends Model
             if ($mailClass && $invoice->customer && $invoice->customer->email) {
                 Mail::to($invoice->customer->email)
                     ->queue(new $mailClass($invoice));
+            }
+            // Call the transaction API to create a transaction for this invoice
+            try {
+                $response = Http::post(url('/api/transactions'), [
+                    'booking_reference' => $invoice->reference,
+                    'amount' => $invoice->amount,
+                    'payment_method' => $invoice->payment_method ?? 'wallet',
+                ]);
+            } catch (\Exception $e) {
+                // Log or handle error
+            }
+        });
+        self::updated(function ($invoice) {
+            if ($invoice->transaction) {
+                try {
+                    Http::patch(url('/api/transactions/' . $invoice->transaction->reference . '/status'), [
+                        'status' => $invoice->status
+                    ]);
+                } catch (\Exception $e) {
+                    // Log or handle error
+                }
             }
         });
     }

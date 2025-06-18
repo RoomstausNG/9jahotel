@@ -9,6 +9,7 @@ use App\Http\Controllers\API\HotelController;
 use App\Http\Controllers\API\RatingController;
 use App\Http\Controllers\API\MobileAuthController;
 use App\Http\Controllers\FrontendApiController;
+use App\Http\Controllers\API\TransactionController;
 use App\Http\Resources\CustomerResource;
 
 /*
@@ -73,3 +74,8 @@ Route::middleware('auth:customer')->get('/customer', function (Request $request)
 //     // book a room
 //     Route::post('/{room:id}/reserve', [FrontendApiController::class, 'bookARoom']);
 // });
+
+
+// API routes for transactions
+Route::post('/transactions', [TransactionController::class, 'store']);
+Route::patch('/transactions/{reference}/status', [TransactionController::class, 'updateStatus']);
