@@ -447,7 +447,8 @@
                                                                             Your booking with
                                                                             <strong>{{ ucfirst($booking->hotel->name) }}</strong>
                                                                             is
-                                                                            unconfirmed and not gurantee. <br> Please
+                                                                            unconfirmed and not guranted.
+                                                                            <br> Please
                                                                             make payment of
                                                                             {{ formatAsNaira($booking->due) }} to
                                                                             immediately confirm your booking and
@@ -479,7 +480,7 @@
                                                                             <td>
                                                                                 <span>{{ calculateDateDifferenceInDays($booking->checked_in, $booking->checked_out) .
                                                                                     ' nights 1
-                                                                                                                                                                    Room' }}</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Room' }}</span>
                                                                                 <span>{{ strtoupper(
                                                                                     $booking->bookable_type == 'App\Models\Room' ? $ibookable->type?->name . ' ' . $bookable->number : $bookable->name,
                                                                                 ) }}</span>
@@ -488,13 +489,13 @@
                                                                         <tr>
                                                                             <td style="width: 200px">Check-in</td>
                                                                             <td>{{ $booking->checked_in->format('D d, M,
-                                                                                                                                                            Y') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Y') }}
                                                                                 (12:00 - 16:00)</td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td style="width: 200px">Check-out</td>
                                                                             <td>{{ $booking->checked_out->format('D d,
-                                                                                                                                                            M, Y') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            M, Y') }}
                                                                                 (03:00 - 12:00)</td>
                                                                         </tr>
 
@@ -520,7 +521,7 @@
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">
                                                                         The hotel reserves the right to change your
-                                                                        seleccted room to a room in same or higher
+                                                                        selected room to a room in the same or higher
                                                                         category for your comfort in the rare case of
                                                                         your selected room being unavailable.
                                                                     </p>
