@@ -1,4 +1,5 @@
 <?php
+
 use App\Models\Hotel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,8 +14,11 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignIdFor(Hotel::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->string('code')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->json('config')->nullable(); // For storing gateway-specific configuration
             $table->timestamps();
         });
     }
