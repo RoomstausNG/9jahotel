@@ -42,18 +42,40 @@ class PaymentMethodResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Action::make('enable')
                     ->label('Enable')
                     ->icon('heroicon-o-check')
                     ->visible(fn($record) => !$record->is_active)
-                    ->action(fn($record) => $record->update(['is_active' => true])),
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['is_active' => true]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Payment method enabled successfully.')
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('disable')
                     ->label('Disable')
                     ->icon('heroicon-o-x-mark')
                     ->color('danger')
                     ->visible(fn($record) => $record->is_active)
-                    ->action(fn($record) => $record->update(['is_active' => false])),
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['is_active' => false]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Payment method disabled successfully.')
+                            ->success()
+                            ->send();
+                    }),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()
+                    ->label('Add Payment Method')
+                    ->icon('heroicon-o-plus')
+                    ->modalHeading('Create Payment Method')
+                    ->successNotificationTitle('Payment method created successfully!'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
