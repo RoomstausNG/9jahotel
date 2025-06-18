@@ -18,6 +18,11 @@ class CreateTransactionJob implements ShouldQueue
 
     public function handle()
     {
+        // Ensure hotel_payable is calculated and saved
+        if (method_exists($this->bookingInvoice, 'calculateAndSaveCommission')) {
+            $this->bookingInvoice->calculateAndSaveCommission();
+            $this->bookingInvoice->refresh(); // Get latest values
+        }
         $reference = date('Y') . time();
         Transaction::create([
             'booking_invoice_id' => $this->bookingInvoice->id,
