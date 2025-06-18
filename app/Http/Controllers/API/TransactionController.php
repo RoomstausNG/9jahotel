@@ -24,6 +24,12 @@ class TransactionController extends Controller
 
         $bookingInvoice = BookingInvoice::where('reference', $request->booking_reference)->firstOrFail();
 
+        // Ensure hotel_payable is set before dispatching the job
+        if (method_exists($bookingInvoice, 'calculateAndSaveCommission')) {
+            $bookingInvoice->calculateAndSaveCommission();
+            $bookingInvoice->refresh(); // Ensure latest values
+        }
+
         // Queue the transaction creation
         Bus::dispatch(new CreateTransactionJob($bookingInvoice));
 
