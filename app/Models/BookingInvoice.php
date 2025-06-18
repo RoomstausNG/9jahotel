@@ -123,7 +123,7 @@ class BookingInvoice extends Model
             try {
                 $response = Http::post(url('/api/transactions'), [
                     'booking_reference' => $invoice->reference,
-                    'amount' => $invoice->amount,
+                    'amount' => $invoice->hotel_payable,
                     'payment_method' => $invoice->payment_method ?? 'wallet',
                 ]);
             } catch (\Exception $e) {
