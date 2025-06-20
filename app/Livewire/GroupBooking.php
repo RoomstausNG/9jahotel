@@ -113,7 +113,7 @@ class GroupBooking extends Component implements HasForms
                                         ->get()
                                         ->mapWithKeys(
                                             fn($city) =>
-                                            [$city->id => "{$city->name} ({$city->hotels_count} hotels)"]
+                                            [$city->id => "{$city->name} "]
                                         );
 
                                     return $citiesWithHotels;

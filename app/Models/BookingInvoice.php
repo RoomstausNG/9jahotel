@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Traits\BelongToHotel;
 use App\Jobs\CreateTransactionJob;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
