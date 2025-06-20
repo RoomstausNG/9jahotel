@@ -9,3 +9,8 @@
         @apply text-lg font-medium;
     }
 }
+
+.alpine-loading [x-cloak],
+[x-cloak] {
+    display: none !important;
+}
