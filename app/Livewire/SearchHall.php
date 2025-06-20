@@ -45,8 +45,7 @@ class SearchHall extends Component implements HasForms
                     ->searchable()
                     ->preload()
                     ->default(Session::get('city'))
-                    ->native(false)
-                    ->columnSpan(2),
+                    ->native(false),
                 Components\Select::make('capacity')
                     ->label('Required Capacity')
                     ->options([
@@ -80,7 +79,7 @@ class SearchHall extends Component implements HasForms
                 //     class="px-6 py-2 mx-auto my-3 font-medium text-white rounded bg-primary hover:bg-secondary hover:text-black max-w-max">Submit</button>'))
                 // ->columnSpanFull(),
 
-            ])->columns(5);
+            ])->columns(4);
         // ->statePath('data');
     }
 
