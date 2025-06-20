@@ -62,10 +62,10 @@
                 <a href="group-booking" class="px-8 text-center  md:px-12 py-3 inline-block hover:bg-primary">Group
                     Bookings</a>
             </div>
-            <div x-show="tab == 'room'" class="w-full max-w-6xl" [x-cloak]>
+            <div x-show="tab == 'room'" class="w-full max-w-6xl">
                 @livewire('search-city')
             </div>
-            <div x-show="tab == 'hall'" class="w-full max-w-6xl" [x-cloak]>
+            <div x-show="tab == 'hall'" class="w-full max-w-6xl" x-cloak>
                 @livewire('search-hall')
             </div>
         </div>

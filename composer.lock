@@ -1,7 +1,6 @@
 {
     "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file locks the dependencies of your project to a known,"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "234798bd9fa3350e5ba680fc3ad2d343",
@@ -13748,10 +13747,9 @@
                     "email": "sebastian@phpunit.de"
                 }
             ],
-            "description": "Snapshotting of global state",
-            "homepage": "https://www.github.com/sebastianbergmann/global-state",
+            "description": "Snapshotting of global,"homepage": "https://www.github.com/sebastianbergmann/global-state",
             "keywords": [
-                "global state"
+                "global
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/global-state/issues",
