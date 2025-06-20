@@ -123,9 +123,8 @@ class BookingInvoice extends Model
                     ->queue(new $mailClass($invoice));
             }
             // Call the transaction API to create a transaction for this invoice, only if not PayAtHotel
-            if (strtolower($invoice->type) !== 'payathotel') {
-                Bus::dispatch(new CreateTransactionJob($invoice));
-            }
+
+            Bus::dispatch(new CreateTransactionJob($invoice));
         });
         self::updated(function ($invoice) {
             if ($invoice->transaction && $invoice->transaction->status == "cancelled") {
