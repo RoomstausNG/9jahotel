@@ -464,18 +464,18 @@
                                                                     </p>
                                                                 </td>
                                                             </tr>
-                                                            <tr style="border-collapse:collapse">
+                                                            {{-- <tr style="border-collapse:collapse">
                                                                 <td align="center"
                                                                     style="Margin:0;padding-left:10px;padding-right:10px;padding-top:35px;padding-bottom:35px">
                                                                     <span class="es-button-border"
                                                                         style="border-style:solid;border-color:#FFA73B;background:#fa7800;border-width:1px;display:inline-block;border-radius:45px;width:auto"><a
-                                                                            href="{{ env('APP_URL') . '/hotel/login' }}"
+                                                                            href="https:"
                                                                             class="es-button es-button-1"
                                                                             target="_blank"
                                                                             style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;border-style:solid;border-color:#fa7800;border-width:15px 30px;display:inline-block;background:#fa7800;border-radius:45px;font-family:verdana, geneva, sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center">
                                                                             Login Here</a></span>
                                                                 </td>
-                                                            </tr>
+                                                            </tr> --}}
                                                             <tr style="border-collapse:collapse">
                                                                 <td class="es-m-txt-l" align="left"
                                                                     style="Margin:0;padding-top:20px;padding-left:30px;padding-right:30px;padding-bottom:40px">

@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'MyRoomStatus'),
+    'name' => env('APP_NAME', "9jahotel.com"),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://myroomstatus.com'),
+    'url' => env('APP_URL', 'https://9jahotel.com'),
 
     'asset_url' => env('ASSET_URL'),
 
