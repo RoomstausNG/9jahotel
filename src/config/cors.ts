@@ -41,7 +41,7 @@ export const corsConfig = {
   /**
    * Allowed HTTP methods for CORS requests
    */
-  allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedMethods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
 
   /**
    * Allowed headers for CORS requests
@@ -55,8 +55,8 @@ export const corsConfig = {
     "Origin",
     "Cache-Control",
     "X-File-Name",
-    "X-Device-Type", // Custom header for mobile app identification
-    "X-App-Version", // Custom header for app version tracking
+    "X-Device-Type",
+    "X-App-Version",
   ],
 
   /**
