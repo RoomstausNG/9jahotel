@@ -5,6 +5,7 @@ import "dotenv/config";
 import "./config/env";
 
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { PORT } from "./config/constants";
@@ -16,8 +17,35 @@ import { redis } from "./config/redis";
 import { hostname } from "os";
 import bookingRoutes from "./routes/booking-routes";
 import { EmailService } from "./services/EmailService";
+import { corsConfig } from "./config/cors";
 
 const app = new Hono().basePath("/api");
+
+// CORS configuration for mobile app support
+app.use(
+  "*",
+  cors({
+    origin: (origin, c) => {
+      // For development, allow all origins
+      if (process.env.NODE_ENV === "development") {
+        return origin || "*";
+      }
+
+      // Use the CORS configuration helper
+      if (corsConfig.isOriginAllowed(origin)) {
+        return origin || "*";
+      }
+
+      // Default to allowing the request for mobile apps
+      return origin || "*";
+    },
+    allowMethods: corsConfig.allowedMethods,
+    allowHeaders: corsConfig.allowedHeaders,
+    exposeHeaders: corsConfig.exposedHeaders,
+    credentials: corsConfig.credentials,
+    maxAge: corsConfig.maxAge,
+  })
+);
 
 // use Global errors handlers
 app.use(errorHandler);
