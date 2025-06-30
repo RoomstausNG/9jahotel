@@ -174,9 +174,3 @@ class User extends Authenticatable implements FilamentUser, HasName
         // ->orwhereHas('department', fn (Builder $query) => $query->where('name', 'LIKE', trim($filter)));
     }
 }
-            ->where('username', 'LIKE', trim($filter));
-        // ->orWhere('firstname', 'LIKE', trim($filter))
-        // ->orWhere('lastname', 'LIKE', trim($filter))
-        // ->orwhereHas('department', fn (Builder $query) => $query->where('name', 'LIKE', trim($filter)));
-    }
-}
