@@ -46,8 +46,31 @@ class BookingInvoice extends Model
     {
         // Customer email
         if ($this->customer && $this->customer->email) {
+            // Send payment confirmation to customer
             Mail::to($this->customer->email)
                 ->queue(new \App\Mail\PaymentConfirmationCustomerMail($this));
+
+            // For non-PayAtHotel bookings, also send the booking confirmation email
+            // since it wasn't sent at creation time
+            if (strtolower($this->type) !== 'payathotel') {
+                $mailClass = null;
+
+                switch (strtolower($this->type)) {
+                    case 'paynow':
+                        $mailClass = \App\Mail\BookingPayNowMail::class;
+                        break;
+                    case 'nonrefundable':
+                        $mailClass = \App\Mail\BookingNonRefundableMail::class;
+                        break;
+                    default:
+                        $mailClass = \App\Mail\BookingPayNowMail::class;
+                }
+
+                if ($mailClass) {
+                    Mail::to($this->customer->email)
+                        ->queue(new $mailClass($this));
+                }
+            }
         }
 
         // Hotel email (fallback to hotel email, or admin if not set)
@@ -102,25 +125,15 @@ class BookingInvoice extends Model
         self::created(function ($invoice) {
             // Determine email type
             $type = $invoice->type;
-            $mailClass = null;
-            switch (strtolower($type)) {
-                case 'paynow':
-                    $mailClass = \App\Mail\BookingPayNowMail::class;
-                    break;
-                case 'payathotel':
-                    $mailClass = \App\Mail\BookingPayAtHotelMail::class;
-                    break;
-                case 'nonrefundable':
-                    $mailClass = \App\Mail\BookingNonRefundableMail::class;
-                    break;
-                default:
-                    $mailClass = \App\Mail\BookingPayNowMail::class;
-            }
-            if ($mailClass && $invoice->customer && $invoice->customer->email) {
+
+            // Only send PayAtHotel emails immediately
+            // Other types will be sent after payment confirmation
+            if (strtolower($type) === 'payathotel' && $invoice->customer && $invoice->customer->email) {
                 Mail::to($invoice->customer->email)
-                    ->queue(new $mailClass($invoice));
+                    ->queue(new \App\Mail\BookingPayAtHotelMail($invoice));
             }
 
+            // Always create the transaction
             Bus::dispatch(new CreateTransactionJob($invoice));
         });
         self::updated(function ($invoice) {

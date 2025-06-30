@@ -1,10 +1,13 @@
 <div style="font-family: Arial, sans-serif; background: #fff; padding: 0; margin: 0;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('emails.responsive-email-styles')
+
     <div style="text-align:center; padding: 24px 0 8px 0;">
         <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jahotel Logo" style="height: 60px;">
     </div>
-    <div style="max-width: 650px; margin: 0 auto; background: #fff; padding: 32px;">
-        <h1 style="color: #009999; text-align: center; font-size: 2rem; margin-bottom: 0.5rem;">Payment Confirmation</h1>
-        <div style="text-align: center; font-size: 1.2rem; margin-bottom: 1.5rem;">
+    <div class="email-container">
+        <h1 style="color: #009999;">Payment Confirmation</h1>
+        <div class="thank-you">
             Dear <b>{{ $customer->name }}</b>,<br>
             We are pleased to confirm that your payment for your booking at <b>{{ $hotel->name }}</b> has been received
             successfully.

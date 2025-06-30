@@ -30,12 +30,15 @@
 
         .details {
             margin: 24px 0;
+            border-collapse: collapse;
+            width: 100%;
         }
 
         .details th,
         .details td {
             padding: 8px 12px;
             text-align: left;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .details th {
@@ -46,6 +49,62 @@
             margin-top: 32px;
             font-size: 0.95em;
             color: #64748b;
+        }
+
+        /* Mobile Responsive Styles */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                margin: 20px 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                padding: 20px !important;
+            }
+
+            h1 {
+                font-size: 24px !important;
+            }
+
+            /* Convert tables to blocks on mobile */
+            .details,
+            .details thead,
+            .details tbody,
+            .details th,
+            .details td,
+            .details tr {
+                display: block !important;
+            }
+
+            .details thead tr {
+                position: absolute !important;
+                top: -9999px !important;
+                left: -9999px !important;
+            }
+
+            .details tr {
+                margin-bottom: 15px !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+
+            .details td {
+                border: none !important;
+                position: relative !important;
+                padding-left: 50% !important;
+                text-align: right !important;
+                min-height: 30px !important;
+                border-bottom: 1px solid #f1f5f9 !important;
+            }
+
+            .details td:before {
+                position: absolute !important;
+                top: 8px !important;
+                left: 8px !important;
+                width: 45% !important;
+                padding-right: 10px !important;
+                white-space: nowrap !important;
+                font-weight: bold !important;
+                text-align: left !important;
+            }
         }
     </style>
 </head>

@@ -1,12 +1,14 @@
 <div style="font-family: Arial, sans-serif; background: #fff; padding: 0; margin: 0;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('emails.responsive-email-styles')
+
     <div style="text-align:center; padding: 24px 0 8px 0;">
         <img src="{{ asset('img/9jahotel_logo.png') }}" alt="9jahotel Logo" style="height: 60px;">
     </div>
-    <div style="max-width: 650px; margin: 0 auto; background: #fff; padding: 32px;">
-        <h1 style="color: #d60000; text-align: center; font-size: 2rem; margin-bottom: 0.5rem;">Enjoy your stay at
-            {{ $invoice->hotel->name }}</h1>
-        <div style="text-align: center; font-size: 1.2rem; margin-bottom: 1.5rem;">
-            Booking number is <span style="color: #d60000; font-weight: bold;">{{ $invoice->reference }}</span>
+    <div class="email-container">
+        <h1>Enjoy your stay at {{ $invoice->hotel->name }}</h1>
+        <div class="booking-number">
+            Booking number is <span>{{ $invoice->reference }}</span>
         </div>
         <div style="text-align: center; margin-bottom: 1.5rem;">
             Thank you <b style="text-transform:uppercase">{{ $invoice->customer->name }}</b>! Your booking at <span
