@@ -120,7 +120,6 @@ class BookingInvoice extends Model
                 Mail::to($invoice->customer->email)
                     ->queue(new $mailClass($invoice));
             }
-            // Call the transaction API to create a transaction for this invoice, only if not PayAtHotel
 
             Bus::dispatch(new CreateTransactionJob($invoice));
         });
