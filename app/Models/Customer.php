@@ -8,6 +8,7 @@ use App\Traits\HasManyRating;
 use Nnjeim\World\Models\City;
 use App\Traits\HasManyFavourite;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // #[ScopedBy([HotelScope::class])]
 class Customer extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasManyFavourite, HasManyRating, Notifiable, BelongToHotel;
+    use HasApiTokens, HasRoles, HasFactory, HasManyFavourite, HasManyRating, Notifiable, BelongToHotel;
     protected $guarded = ['bookable_id', 'discount', 'mode_of_payment', 'bookable_type',  'checked_in', 'checked_out', 'amount_paid'];
 
     protected $hidden = [

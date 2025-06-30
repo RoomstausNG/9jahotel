@@ -29,7 +29,7 @@
             @this.on('swal:success', (event) => {
                 Swal.fire(event.details)
                 setTimeout(() => {
-                    location.href = "{{ route('filament.hotel.auth.login') }}";
+                    location.href = "https://dashboard.9jahotel.com/hotel/login";
                 }, 10000);
             });
         });
