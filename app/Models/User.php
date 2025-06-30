@@ -13,6 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Collection;
 use Filament\Models\Contracts\HasName;
 use Spatie\Permission\Traits\HasRoles;
+use App\Jobs\AssignUserRoleAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -132,15 +133,8 @@ class User extends Authenticatable implements FilamentUser, HasName
         self::created(function ($user) {
             $user->profile()->create();
 
-            // attach role when created
-            $user->assignRole($user->current_role);
-
-            $permissions = $user->getPermissionsViaRoles();
-            if (count($permissions) > 0) {
-                foreach ($permissions as $permission) {
-                    $user->givePermissionTo($permission->name);
-                }
-            }
+            // Dispatch job to assign roles and permissions
+            AssignUserRoleAndPermissions::dispatch($user);
         });
     }
 
@@ -174,6 +168,12 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $query
             ->where('hotel_id', auth()->user()->hotel_id)
             ->where('current_role', '!=', 'super-admin')
+            ->where('username', 'LIKE', trim($filter));
+        // ->orWhere('firstname', 'LIKE', trim($filter))
+        // ->orWhere('lastname', 'LIKE', trim($filter))
+        // ->orwhereHas('department', fn (Builder $query) => $query->where('name', 'LIKE', trim($filter)));
+    }
+}
             ->where('username', 'LIKE', trim($filter));
         // ->orWhere('firstname', 'LIKE', trim($filter))
         // ->orWhere('lastname', 'LIKE', trim($filter))

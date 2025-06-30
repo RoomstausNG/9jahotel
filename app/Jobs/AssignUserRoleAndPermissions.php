@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
+class AssignUserRoleAndPermissions implements ShouldQueue
+{
+  use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+  protected $user;
+
+  /**
+   * Create a new job instance.
+   */
+  public function __construct(User $user)
+  {
+    $this->user = $user;
+  }
+
+  /**
+   * Execute the job.
+   */
+  public function handle(): void
+  {
+    // Attach role when created
+    $this->user->assignRole($this->user->current_role);
+
+    $permissions = $this->user->getPermissionsViaRoles();
+    if (count($permissions) > 0) {
+      foreach ($permissions as $permission) {
+        $this->user->givePermissionTo($permission->name);
+      }
+    }
+  }
+}
