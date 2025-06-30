@@ -21,40 +21,28 @@ class PaystackCallbackController extends Controller
      *
      * @param Request $request
      * @return RedirectResponse
-     */
-    public function handleGatewayCallback(Request $request)
+     */    public function handleGatewayCallback(Request $request)
     {
-        Log::info('Paystack callback received', $request->all());
-
         // Get the reference from the request or Paystack facade
         $paymentDetails = Paystack::getPaymentData();
         $reference = $paymentDetails['data']['reference'] ?? $request->reference;
 
         if (!$reference) {
-            Log::error('Paystack callback: No reference provided');
             return redirect()->route('booking.failed')
                 ->with('error', 'Payment reference not found in callback.');
         }
 
         try {
-            Log::info('Paystack payment verification result', [
-                'reference' => $reference,
-                'payment_details' => $paymentDetails
-            ]);
+            // Convert Paystack response to array if needed
+            $paymentDetailsArray = is_array($paymentDetails) ? $paymentDetails : (array)$paymentDetails;
 
             // Check if payment was successful
-            if ($this->isPaymentSuccessful($paymentDetails)) {
+            if ($this->isPaymentSuccessful($paymentDetailsArray)) {
                 return $this->handleSuccessfulPayment($reference);
             } else {
-                return $this->handleFailedPayment($reference, $paymentDetails);
+                return $this->handleFailedPayment($reference, $paymentDetailsArray);
             }
         } catch (Exception $e) {
-            Log::error('Paystack payment verification error', [
-                'reference' => $reference,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
             return redirect()->route('booking.failed')
                 ->with('error', 'Error verifying payment: ' . $e->getMessage());
         }
@@ -62,8 +50,6 @@ class PaystackCallbackController extends Controller
 
     public function handleGatewayReturn(Request $request, $reference = null)
     {
-        Log::info('Paystack return received', $request->all());
-
         $reference = $reference ?? $request->reference;
 
         if (!$reference) {
@@ -104,14 +90,12 @@ class PaystackCallbackController extends Controller
             $bookingInvoice = BookingInvoice::where('reference', $reference)->first();
 
             if (!$bookingInvoice) {
-                Log::error('Booking invoice not found', ['reference' => $reference]);
                 return redirect()->route('booking.failed')
                     ->with('error', 'Booking not found for reference: ' . $reference);
             }
 
             // Check if already processed to avoid duplicate processing
             if ($bookingInvoice->status === 'paid') {
-                Log::info('Payment already processed', ['reference' => $reference]);
                 return redirect()->route('booking.success')
                     ->with('success', 'Payment already confirmed for booking ' . $reference);
             }
@@ -137,32 +121,17 @@ class PaystackCallbackController extends Controller
                 ]);
             }
 
-            Log::info('Payment successfully processed', [
-                'reference' => $reference,
-                'booking_invoice_id' => $bookingInvoice->id
-            ]);
-
             // Send payment confirmation emails
             try {
                 $bookingInvoice->sendPaymentEmails();
-                Log::info('Payment confirmation emails sent', ['reference' => $reference]);
             } catch (Exception $e) {
-                Log::warning('Failed to send payment emails', [
-                    'reference' => $reference,
-                    'error' => $e->getMessage()
-                ]);
+                // Failed to send emails, but payment was successful, so continue
             }
 
             // Redirect to success page
             return redirect()->route('booking.success')
                 ->with('success', 'Payment successful for booking ' . $reference);
         } catch (Exception $e) {
-            Log::error('Error processing successful payment', [
-                'reference' => $reference,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
             return redirect()->route('booking.failed')
                 ->with('error', 'Error processing payment: ' . $e->getMessage());
         }
@@ -177,11 +146,6 @@ class PaystackCallbackController extends Controller
      */
     private function handleFailedPayment(string $reference, array $paymentDetails): RedirectResponse
     {
-        Log::error('Payment verification failed', [
-            'reference' => $reference,
-            'payment_details' => $paymentDetails
-        ]);
-
         return redirect()->route('booking.failed')
             ->with('error', 'Payment verification failed for booking ' . $reference);
     }

@@ -57,14 +57,18 @@ class BookRoom extends Component implements HasForms
                 Components\TextInput::make('email')
                     // ->unique(table: Customer::class)
                     ->label('Email address')
+                    ->email()
                     ->required()
                     ->validationMessages([
-                        'unique' => 'The :attribute has already been registered, kindly login to proceed',
+                        'unique' => 'The :attribute has already been registered as customer, kindly login to proceed',
                     ]),
                 Components\TextInput::make('phone')
                     ->unique()
                     ->label('Phone Number')
-                    ->required(),
+                    ->required()
+                    ->validationMessages([
+                        'unique' => 'The :attribute has already been registered as customer, kindly login to proceed',
+                    ]),
             ])->columns(2);
         // ->statePath('data');
     }

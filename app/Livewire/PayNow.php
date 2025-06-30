@@ -50,12 +50,6 @@ class PayNow extends Component
             $paymentGatewayService = new PaymentGatewayService();
             $response = $paymentGatewayService->processPayment($paymentMethodCode, $paymentData);
 
-            Log::info('Payment initiation response', [
-                'payment_method' => $paymentMethodCode,
-                'reference' => $reference,
-                'response' => $response
-            ]);
-
             if ($response['status'] === 'success') {
                 Cache::put($reference, $booking->reference, now()->addMinutes(30));
 
@@ -71,14 +65,6 @@ class PayNow extends Component
                 throw new \Exception('Failed to initialize payment');
             }
         } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Payment initiation failed', [
-                'payment_method' => $paymentMethodCode,
-                'booking_id' => $booking->id,
-                'reference' => $booking->reference,
-                'error' => $e->getMessage()
-            ]);
-
             // Show error using sweet alert (consistent with BookRoom)
             $details = [
                 'icon' => 'error',
