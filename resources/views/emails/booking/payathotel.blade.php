@@ -33,14 +33,14 @@
                         style="color:#d60000;">{{ $invoice->bookings->pluck('bookable.number')->implode(', ') }}</span>
                 </div>
                 <div>Booked by: <span style="color:#d60000;">{{ $invoice->customer->name }}</span></div>
-                <div>Amount Paid: <span style="color:#d60000;">₦{{ number_format($invoice->amount, 2) }}</span></div>
+                <div>Amount Paid: <span style="color:#d60000;">₦0.00</span></div>
             </div>
             <div>
                 <div>Check-Out<br><span
                         style="color:#d60000; font-weight:bold;">{{ $invoice->checked_out->format('l, F j, Y') }}</span><br>By
                     or Before 11.00AM</div>
                 <div style="margin-top: 12px;">Amount Due on Arrival at Hotel: <span
-                        style="color:#d60000; font-weight:bold;">₦{{ number_format($invoice->amount_due, 2) }}</span>
+                        style="color:#d60000; font-weight:bold;">₦{{ number_format($invoice->amount, 2) }}</span>
                 </div>
             </div>
         </div>
