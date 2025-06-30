@@ -33,6 +33,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable implements FilamentUser, HasName
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable, BelongToHotel;
+
+    /**
+     * The guard that the model should use for authentication.
+     *
+     * @var string
+     */
+    protected $guard_name = 'web';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -123,9 +131,6 @@ class User extends Authenticatable implements FilamentUser, HasName
         // create profile for every user created
         self::created(function ($user) {
             $user->profile()->create();
-            // $user->username = $user->update([
-            //     'username' =>  IdGenerator::generate(['table' => 'users', 'field' => 'username', 'length' => 8, 'reset_on_prefix_change' => true, 'prefix' => substr($user->hotel->code, 0, 3) . date('y')])
-            // ]);
 
             // attach role when created
             $user->assignRole($user->current_role);
