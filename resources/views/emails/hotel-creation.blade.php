@@ -398,16 +398,17 @@
                                                                     <h1
                                                                         style="Margin:0;line-height:38px;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:25px;font-style:normal;font-weight:medium;color:#111111">
                                                                         Welcome!
-                                                                        <span class="">{{ ucfirst($user->firstname . ' '
-                                                                            . $user->lastname) }}</span>
+                                                                        <span
+                                                                            class="">{{ ucfirst($user->firstname . ' ' . $user->lastname) }}</span>
                                                                     </h1>
                                                                 </td>
                                                             </tr>
                                                             <tr style="border-collapse:collapse">
                                                                 <td bgcolor="#ffffff" align="center"
                                                                     style="Margin:0;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%" cellspacing="0"
-                                                                        cellpadding="0" border="0" role="presentation"
+                                                                    <table width="100%" height="100%"
+                                                                        cellspacing="0" cellpadding="0"
+                                                                        border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td
@@ -446,7 +447,8 @@
                                                             width="100%" cellspacing="0" cellpadding="0"
                                                             bgcolor="#ffffff" role="presentation">
                                                             <tr style="border-collapse:collapse">
-                                                                <td class="es-m-txt-l" bgcolor="#ffffff" align="left"
+                                                                <td class="es-m-txt-l" bgcolor="#ffffff"
+                                                                    align="left"
                                                                     style="Margin:0;padding-top:20px;padding-bottom:20px;padding-left:30px;padding-right:30px">
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">
@@ -454,11 +456,25 @@
                                                                         hotel code is
                                                                         {{ strtoupper($user->hotel->code) }}, and your
                                                                         admin username is
-                                                                        {{ $user->username }}. Log in using your hotel
-                                                                        code and username together with password you
-                                                                        used when creating the account.
-                                                                        To start
-                                                                        managing your hotel and listing rooms.</p>
+                                                                        {{ $user->username }}.
+                                                                    </p>
+                                                                    <p
+                                                                        style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px;margin-top:15px;">
+                                                                        You can log in to <a
+                                                                            href="https://9jahotel.com">9jahotel.com</a>
+                                                                        using the email address ({{ $user->email }})
+                                                                        and password you used during registration to
+                                                                        start managing your hotel and listing rooms.
+                                                                    </p>
+                                                                    <p
+                                                                        style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px;margin-top:15px;">
+                                                                        Additionally, your username and hotel code can
+                                                                        be used to login to <a
+                                                                            href="https://myroomstatus.com">myroomstatus.com</a>
+                                                                        as a paid subscription service. Please visit the
+                                                                        website for more information and inquiries about
+                                                                        this additional service.
+                                                                    </p>
                                                                 </td>
                                                             </tr>
                                                             <tr style="border-collapse:collapse">
@@ -516,8 +532,9 @@
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
                                                                     style="Margin:0;padding-top:10px;padding-bottom:20px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                    <table width="100%" height="100%" cellspacing="0"
-                                                                        cellpadding="0" border="0" role="presentation"
+                                                                    <table width="100%" height="100%"
+                                                                        cellspacing="0" cellpadding="0"
+                                                                        border="0" role="presentation"
                                                                         style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                         <tr style="border-collapse:collapse">
                                                                             <td

@@ -7,15 +7,10 @@ use App\Models\Hotel;
 use App\Models\Booking;
 use App\Models\CreditPayment;
 use App\Models\BookingInvoice;
-use App\Observers\RoomObserver;
-use App\Observers\HotelObserver;
-use App\Observers\BookingObserver;
 use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use App\Observers\CreditPaymentObserver;
-use App\Observers\BookingInvoiceObserver;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -80,25 +75,6 @@ class AppServiceProvider extends ServiceProvider
      */
     private function registerObservers(): void
     {
-        // Check if the models exist before registering observers
-        if (class_exists(Hotel::class)) {
-            Hotel::observe(HotelObserver::class);
-        }
-
-        if (class_exists(Room::class)) {
-            Room::observe(RoomObserver::class);
-        }
-
-        if (class_exists(Booking::class)) {
-            Booking::observe(BookingObserver::class);
-        }
-
-        if (class_exists(BookingInvoice::class)) {
-            BookingInvoice::observe(BookingInvoiceObserver::class);
-        }
-
-        if (class_exists(CreditPayment::class)) {
-            CreditPayment::observe(CreditPaymentObserver::class);
-        }
+        // All observers have been removed as they weren't performing any operations
     }
 }
