@@ -35,8 +35,9 @@ class SearchCity extends Component implements HasForms
                             ->orderBy('name')
                             ->get()
                             ->mapWithKeys(
-                                fn($city) =>
-                                [$city->id => "{$city->name}, {$city->state->name}]
+                                fn($city) => [
+                                    $city->id => "{$city->name}, {$city->state->name}"
+                                ]
                             );
 
                         return $citiesWithHotels;
