@@ -39,8 +39,8 @@
 
                             </div>
                             <h3 class="text-lg font-medium text-primary-700">Phone Number</h3>
-                            <p class="text-sm md:text-base">+234 811 111 0790</p>
-                            <p class="text-sm md:text-base">+234 814 395 390</p>
+                            <p class="text-sm md:text-base">+0700 700 2424</p>
+                            {{-- <p class="text-sm md:text-base">+234 814 395 390</p> --}}
                         </div>
 
                         {{-- Email --}}
