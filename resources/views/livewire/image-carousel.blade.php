@@ -5,18 +5,23 @@
             'imgSrc' => 'https://9jahotel.com/img/logo.jpeg',
             'imgAlt' => 'Default hotel image',
         ];
-        $gridImages = array_slice($slides, 1, 4);
+        // For the grid, show up to 4 more images after the main image
+        $gridImages = [];
+        $gridIndexes = [];
         $defaultGrid = [
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
         ];
-        // Fill grid with defaults if not enough images
-        $gridImages = array_pad($gridImages, 4, null);
-        foreach ($gridImages as $k => $img) {
-            if (!$img) {
-                $gridImages[$k] = $defaultGrid[$k];
+        // Only take up to 4 images after the main image, but keep their real indexes
+        for ($i = 1; $i <= 4; $i++) {
+            if (isset($slides[$i])) {
+                $gridImages[] = $slides[$i];
+                $gridIndexes[] = $i; // real index in $slides
+            } else {
+                $gridImages[] = $defaultGrid[$i - 1];
+                $gridIndexes[] = null; // no real image
             }
         }
         $imageCount = count($slides);
@@ -103,7 +108,7 @@
             @foreach ($gridImages as $i => $img)
                 <img src="{{ $img['imgSrc'] }}" alt="{{ $img['imgAlt'] }}"
                     class="w-full h-full aspect-square object-cover rounded @if ($i == 3) rounded-br-lg @endif @if ($i == 1) rounded-tr-lg @endif cursor-pointer"
-                    @click="$dispatch('open-carousel', { startSlide: {{ $i + 2 }} })">
+                    @if ($gridIndexes[$i] !== null) @click="$dispatch('open-carousel', { startSlide: {{ $gridIndexes[$i] + 1 }} })" @endif>
             @endforeach
             @if (!empty($showAllPhotos) && $showAllPhotos)
                 <button class="absolute bottom-3 right-3 z-30 bg-white/80 px-4 py-2 rounded shadow"
