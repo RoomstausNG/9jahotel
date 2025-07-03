@@ -23,11 +23,11 @@ class ManageBookings extends ManageRecords
     {
         return [
             'all' => Tab::make("All Bookings")
-                ->badge(myHotel()->bookingInvoices()->count()),
+                ->badge(myHotel()?->bookingInvoices()->count() || 0),
             'today' => Tab::make("Today's Bookings")
                 // ->tooltip(today())
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('created_at', today()))
-                ->badge(myHotel()->bookingInvoices()->whereDate('created_at', today())->count()),
+                ->badge(myHotel()?->bookingInvoices()->whereDate('created_at', today())->count() || 0),
         ];
     }
 
