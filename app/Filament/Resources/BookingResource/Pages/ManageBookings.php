@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BookingResource\Pages;
 
 use Filament\Actions;
+use App\Models\BookingInvoice;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\BookingResource;
@@ -23,11 +24,11 @@ class ManageBookings extends ManageRecords
     {
         return [
             'all' => Tab::make("All Bookings")
-                ->badge(myHotel()?->bookingInvoices()->count() || 0),
+                ->badge(BookingInvoice::count() || 0),
             'today' => Tab::make("Today's Bookings")
                 // ->tooltip(today())
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('created_at', today()))
-                ->badge(myHotel()?->bookingInvoices()->whereDate('created_at', today())->count() || 0),
+                ->badge(BookingInvoice::whereDate('created_at', today())->count() || 0),
         ];
     }
 
