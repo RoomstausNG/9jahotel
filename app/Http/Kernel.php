@@ -72,7 +72,7 @@ class Kernel extends HttpKernel
         'customer' => CustomerMiddleware::class,
         'hotel' => HotelMiddleware::class,
         'back-office' => BackOfficeMiddleware::class,
-        'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
+        // 'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class, // Commented out - package not installed
         // 'page-cache' => \Silber\PageCache\Middleware\CacheResponse::class,
     ];
 }
