@@ -30,9 +30,17 @@ export class HotelService {
     cityId: number,
     page: number,
     perPage: number,
-    searchKey: string = ""
+    searchKey: string = "",
+    sortBy?: string,
+    sortOrder?: string,
+    minPrice?: number,
+    maxPrice?: number
   ) {
-    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}`;
+    const sortParam = sortBy ? `${sortBy}:${sortOrder || 'asc'}` : 'name:asc';
+    const priceParam = (minPrice !== undefined || maxPrice !== undefined) 
+      ? `min:${minPrice || 0}:max:${maxPrice || 0}` 
+      : '';
+    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}`;
   }
 
   private async invalidateCityHotelCache(cityId: number): Promise<void> {
@@ -50,14 +58,24 @@ export class HotelService {
     checkOut: string,
     page: number,
     perPage: number,
-    search?: string
+    search?: string,
+    sortBy?: 'room_lowest_price' | 'star_rating' | 'distance' | 'name',
+    sortOrder?: 'asc' | 'desc',
+    minPrice?: number,
+    maxPrice?: number,
+    userLatitude?: number,
+    userLongitude?: number
   ) {
     const searchKey = search?.toLowerCase().trim() || "";
     const cacheKey = this.getListHotelsCacheKey(
       cityId,
       page,
       perPage,
-      searchKey
+      searchKey,
+      sortBy,
+      sortOrder,
+      minPrice,
+      maxPrice
     );
 
     try {
@@ -100,6 +118,26 @@ export class HotelService {
       );
     }
 
+    // Add price filtering conditions
+    if (minPrice !== undefined && minPrice > 0) {
+      conditions.push(sql`${hotels.room_lowest_price} >= ${minPrice}`);
+    }
+
+    if (maxPrice !== undefined && maxPrice > 0) {
+      conditions.push(sql`${hotels.room_lowest_price} <= ${maxPrice}`);
+    }
+
+    // Calculate distance if user coordinates are provided
+    const distanceCalculation = userLatitude && userLongitude
+      ? sql<number>`(
+          6371 * acos(
+            cos(radians(${userLatitude})) * cos(radians(${hotels.latitude})) *
+            cos(radians(${hotels.longitude}) - radians(${userLongitude})) +
+            sin(radians(${userLatitude})) * sin(radians(${hotels.latitude}))
+          )
+        )`.as("distance")
+      : sql<number>`0`.as("distance");
+
     let query = db
       .select({
         id: hotels.id,
@@ -121,6 +159,7 @@ export class HotelService {
         reviewCount: sql<number>`COUNT(ratings.id)`.as("reviewCount"),
         averageRating: sql<number>`AVG(ratings.number)`.as("averageRating"),
         starRating: hotels.star_rating,
+        distance: distanceCalculation,
         isFavourite: sql<boolean>`false`.as("isFavourite"),
       })
       .from(hotels)
@@ -141,10 +180,44 @@ export class HotelService {
         hotels.star_rating,
         cities.id,
         cities.name
-      )
-      .orderBy(hotels.name)
-      .limit(perPage)
-      .offset(offset);
+      );
+
+    // Add sorting
+    const orderDirection = sortOrder === 'desc' ? 'desc' : 'asc';
+    
+    switch (sortBy) {
+      case 'room_lowest_price':
+        query = orderDirection === 'asc' 
+          ? query.orderBy(hotels.room_lowest_price)
+          : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
+        break;
+      case 'star_rating':
+        query = orderDirection === 'asc'
+          ? query.orderBy(hotels.star_rating)
+          : query.orderBy(sql`${hotels.star_rating} DESC`);
+        break;
+      case 'distance':
+        if (userLatitude && userLongitude) {
+          query = orderDirection === 'asc'
+            ? query.orderBy(sql`distance`)
+            : query.orderBy(sql`distance DESC`);
+        } else {
+          // Fallback to name if no coordinates provided
+          query = query.orderBy(hotels.name);
+        }
+        break;
+      case 'name':
+        query = orderDirection === 'asc'
+          ? query.orderBy(hotels.name)
+          : query.orderBy(sql`${hotels.name} DESC`);
+        break;
+      default:
+        // Default sorting by name
+        query = query.orderBy(hotels.name);
+        break;
+    }
+
+    query = query.limit(perPage).offset(offset);
 
     const results = await query;
 
@@ -239,7 +312,7 @@ export class HotelService {
       .from(hotels)
       .innerJoin(cities, eq(hotels.city_id, cities.id))
       // Removed joins for ratings, customers, images from this main query
-      .where(eq(hotels.code, hotelId)) // Assuming you want to find by code based on hotelId being string
+      .where(and(eq(hotels.code, hotelId), eq(hotels.status, "active"))) // Only show active hotels
       .limit(1);
 
     // Execute query
@@ -268,8 +341,8 @@ export class HotelService {
         );
       const fetchedImages = await imagesQuery;
       imageUrls = fetchedImages
-        .map((img) => img.url)
-        .filter((url): url is string => url !== null); // Get non-null URLs
+        .map((img: any) => img.url)
+        .filter((url: any): url is string => url !== null); // Get non-null URLs
     } catch (error) {
       console.error("Error fetching hotel images:", error);
       // Proceed without images or handle error
@@ -386,7 +459,7 @@ export class HotelService {
     const hotelResult = await db
       .select({ id: hotels.id })
       .from(hotels)
-      .where(eq(hotels.code, hotelCode))
+      .where(and(eq(hotels.code, hotelCode), eq(hotels.status, "active"))) // Only show active hotels
       .limit(1);
 
     if (!hotelResult || hotelResult.length === 0) {
@@ -437,7 +510,7 @@ export class HotelService {
       )
       .orderBy(types.name);
 
-    const typesWithAvailability = typesWithAvailabilityRaw.map((type) => {
+    const typesWithAvailability = typesWithAvailabilityRaw.map((type: any) => {
       let imageList: string[] = [];
 
       if (Array.isArray(type.images)) {
@@ -494,6 +567,7 @@ export class HotelService {
       .where(
         and(
           eq(rooms.type_id, typeId),
+          eq(hotels.status, "active"), // Only show rooms from active hotels
           notInArray(rooms.status, ["occupied", "repair", "damage"]), // Added 'damage' back based on previous context
           sql`NOT EXISTS (
             SELECT 1 FROM ${bookings} as b
@@ -520,7 +594,11 @@ export class HotelService {
     perPage: number,
     search: string | undefined,
     checkIn?: string,
-    checkOut?: string
+    checkOut?: string,
+    sortBy?: 'room_lowest_price' | 'star_rating' | 'distance' | 'name',
+    sortOrder?: 'asc' | 'desc',
+    minPrice?: number,
+    maxPrice?: number
   ) {
     if (!latitude || !longitude) return;
 
@@ -562,6 +640,24 @@ export class HotelService {
         )`
         : undefined;
 
+    // Price filtering
+    const priceFilters = [];
+    if (minPrice !== undefined && minPrice > 0) {
+      priceFilters.push(sql`${hotels.room_lowest_price} >= ${minPrice}`);
+    }
+    if (maxPrice !== undefined && maxPrice > 0) {
+      priceFilters.push(sql`${hotels.room_lowest_price} <= ${maxPrice}`);
+    }
+
+    // Combine all filters
+    const allFilters = [
+      baseDistanceFilter,
+      eq(hotels.status, "active"), // Only show active hotels
+      availabilityFilter,
+      searchFilter,
+      ...priceFilters
+    ].filter(Boolean);
+
     // Result query
     let query = db
       .select({
@@ -570,6 +666,10 @@ export class HotelService {
         address: hotels.address,
         status: hotels.status,
         starRating: hotels.star_rating,
+        roomPrice: hotels.room_lowest_price,
+        hallPrice: hotels.hall_lowest_price,
+        onlinePercentage: hotels.online_price,
+        nonRefundablePercentage: hotels.non_refundable_price,
         image: hotels.background_image,
         distance: distanceSql.as("distance"),
         isFavourite: customerId
@@ -581,10 +681,37 @@ export class HotelService {
           : sql<boolean>`false`.as("isFavourite"),
       })
       .from(hotels)
-      .where(and(baseDistanceFilter, availabilityFilter, searchFilter))
-      .orderBy(sql`distance`)
-      .limit(perPage)
-      .offset(offset);
+      .where(and(...allFilters));
+
+    // Add sorting
+    const orderDirection = sortOrder === 'desc' ? 'desc' : 'asc';
+    
+    switch (sortBy) {
+      case 'room_lowest_price':
+        query = orderDirection === 'asc' 
+          ? query.orderBy(hotels.room_lowest_price)
+          : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
+        break;
+      case 'star_rating':
+        query = orderDirection === 'asc'
+          ? query.orderBy(hotels.star_rating)
+          : query.orderBy(sql`${hotels.star_rating} DESC`);
+        break;
+      case 'name':
+        query = orderDirection === 'asc'
+          ? query.orderBy(hotels.name)
+          : query.orderBy(sql`${hotels.name} DESC`);
+        break;
+      case 'distance':
+      default:
+        // Default sorting by distance (closest first)
+        query = orderDirection === 'asc'
+          ? query.orderBy(sql`distance`)
+          : query.orderBy(sql`distance DESC`);
+        break;
+    }
+
+    query = query.limit(perPage).offset(offset);
 
     const results = await query;
 
@@ -592,7 +719,7 @@ export class HotelService {
     const countQuery = db
       .select({ count: sql<number>`COUNT(*)` })
       .from(hotels)
-      .where(and(baseDistanceFilter, availabilityFilter, searchFilter));
+      .where(and(...allFilters));
 
     const total = await countQuery;
 
@@ -673,7 +800,7 @@ export class HotelService {
       .from(favourites)
       .innerJoin(hotels, eq(favourites.hotel_id, hotels.id))
       .leftJoin(ratings, eq(hotels.id, ratings.hotel_id))
-      .where(eq(favourites.customer_id, customerId))
+      .where(and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))) // Only show active hotels
       .groupBy(hotels.id)
       .orderBy(hotels.name)
       .limit(perPage)
@@ -710,13 +837,18 @@ export class HotelService {
   // --- End of new function ---
 
   async toggleHotelFavourite(customerId: number, hotelId: number) {
-    // Fetch the city_id for cache invalidation
+    // First, verify the hotel exists and is active
     const hotelInfo = await db
       .select({ cityId: hotels.city_id })
       .from(hotels)
-      .where(eq(hotels.id, hotelId))
+      .where(and(eq(hotels.id, hotelId), eq(hotels.status, "active"))) // Only allow favouriting active hotels
       .limit(1);
-    const cityId = hotelInfo.length > 0 ? hotelInfo[0].cityId : null;
+    
+    if (hotelInfo.length === 0) {
+      throw new Error("Hotel not found or not active");
+    }
+    
+    const cityId = hotelInfo[0].cityId;
 
     // Check if favourite already exists using correct column name
     const existing = await db

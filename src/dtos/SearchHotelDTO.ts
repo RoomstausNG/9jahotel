@@ -29,10 +29,40 @@ export const SearchHotelByCityDTO = z
     page: z.coerce.number().min(1).default(1),
     perpage: z.coerce.number().min(1).max(100).default(24),
     search: z.string().optional().default(""),
+    
+    // Sorting parameters
+    sortBy: z.enum(['room_lowest_price', 'star_rating', 'distance', 'name']).optional(),
+    sortOrder: z.enum(['asc', 'desc']).default('asc'),
+    
+    // Price filtering parameters
+    minPrice: z.coerce.number().min(0).optional(),
+    maxPrice: z.coerce.number().min(0).optional(),
+    
+    // Coordinates for distance sorting
+    latitude: z.coerce.number().min(-90).max(90).optional(),
+    longitude: z.coerce.number().min(-180).max(180).optional(),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date",
     path: ["checkOut"],
+  })
+  .refine((data) => {
+    if (data.minPrice !== undefined && data.maxPrice !== undefined) {
+      return data.minPrice <= data.maxPrice;
+    }
+    return true;
+  }, {
+    message: "Minimum price cannot be greater than maximum price",
+    path: ["maxPrice"],
+  })
+  .refine((data) => {
+    if (data.sortBy === 'distance') {
+      return data.latitude !== undefined && data.longitude !== undefined;
+    }
+    return true;
+  }, {
+    message: "Latitude and longitude are required when sorting by distance",
+    path: ["sortBy"],
   });
 
 export const SearchHotelTypeDTO = z
@@ -79,8 +109,17 @@ export const NearbyHotelDTO = z
       .min(1, "Distance must be at least 1 km")
       .default(10),
     page: z.coerce.number().min(1).default(1),
-    perpage: z.coerce.number().min(1).max(100).default(10),
+    perpage: z.coerce.number().min(1).max(100).default(24), // Updated default to match city search
     search: z.string().optional().default(""),
+    
+    // Sorting parameters
+    sortBy: z.enum(['room_lowest_price', 'star_rating', 'distance', 'name']).optional(),
+    sortOrder: z.enum(['asc', 'desc']).default('asc'),
+    
+    // Price filtering parameters
+    minPrice: z.coerce.number().min(0).optional(),
+    maxPrice: z.coerce.number().min(0).optional(),
+    
     checkIn: z.coerce
       .date({
         errorMap: (issue, ctx) => ({
@@ -98,4 +137,13 @@ export const NearbyHotelDTO = z
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date",
     path: ["checkOut"], // Attach the error specifically to the checkOut field
+  })
+  .refine((data) => {
+    if (data.minPrice !== undefined && data.maxPrice !== undefined) {
+      return data.minPrice <= data.maxPrice;
+    }
+    return true;
+  }, {
+    message: "Minimum price cannot be greater than maximum price",
+    path: ["maxPrice"],
   });

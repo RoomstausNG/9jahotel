@@ -6,8 +6,10 @@ import { ApiResponse } from "../utils/ApiResponse";
 import {
   SearchHotelByCityDTO,
   SearchHotelTypeDTO,
+  NearbyHotelDTO,
 } from "../dtos/SearchHotelDTO"; // Import the DTO
 import { z } from "zod";
+import { customerSchema } from "../validators/customer-schema";
 
 @injectable()
 export class HotelController {
@@ -18,9 +20,20 @@ export class HotelController {
       const { cityId } = c.req.valid("param");
 
       const data = c.req.query();
-      // Destructure the validated data
-      const { checkIn, checkOut, page, perpage, search } =
-        await SearchHotelByCityDTO.parseAsync(data);
+      // Destructure the validated data including new parameters
+      const { 
+        checkIn, 
+        checkOut, 
+        page, 
+        perpage, 
+        search,
+        sortBy,
+        sortOrder,
+        minPrice,
+        maxPrice,
+        latitude,
+        longitude
+      } = await SearchHotelByCityDTO.parseAsync(data);
 
       const hotels = await this.hotelService.listHotelsByCity(
         cityId,
@@ -28,7 +41,13 @@ export class HotelController {
         checkOut.toISOString(),
         page,
         perpage,
-        search
+        search,
+        sortBy,
+        sortOrder,
+        minPrice,
+        maxPrice,
+        latitude,
+        longitude
       );
 
       return ApiResponse.success(
@@ -36,6 +55,11 @@ export class HotelController {
         "Hotels for city fetched successfully"
       );
     } catch (error: any) {
+      // Handle Zod validation errors
+      if (error.name === 'ZodError') {
+        return ApiResponse.failure("Validation error", 400, error.flatten().fieldErrors);
+      }
+      
       // Handle potential service errors
       return ApiResponse.failure(
         error.message || "Failed to fetch hotels",
@@ -46,41 +70,47 @@ export class HotelController {
 
   async searchNearbyHotels(c: Context) {
     try {
-      const lat = parseFloat(c.req.query("lat") || "0");
-      const long = parseFloat(c.req.query("long") || "0");
-      const page = parseInt(c.req.query("page") || "1");
-      const perPage = parseInt(c.req.query("perpage") || "10");
-      const search = c.req.query("search") || "";
-      const checkIn = c.req.query("checkIn");
-      const checkOut = c.req.query("checkOut");
+      const data = c.req.query();
+      // Use the NearbyHotelDTO for validation
+      const { 
+        lat, 
+        long, 
+        page, 
+        perpage, 
+        search, 
+        checkIn, 
+        checkOut,
+        sortBy,
+        sortOrder,
+        minPrice,
+        maxPrice
+      } = await NearbyHotelDTO.parseAsync(data);
+
       const customerId = c.get("user")?.id || null;
-
-      if (!lat || !long) {
-        return ApiResponse.failure("Location coordinates are required", 400);
-      }
-
-      // Validate dates if provided
-      if ((checkIn && !checkOut) || (!checkIn && checkOut)) {
-        return ApiResponse.failure(
-          "Both check-in and check-out dates must be provided",
-          400
-        );
-      }
 
       const hotels = await this.hotelService.searchHotelsNearby(
         customerId,
         lat,
         long,
         page,
-        perPage,
+        perpage,
         search,
-        checkIn,
-        checkOut
+        checkIn?.toISOString(),
+        checkOut?.toISOString(),
+        sortBy,
+        sortOrder,
+        minPrice,
+        maxPrice
       );
 
       return ApiResponse.success(hotels, "Hotels fetched successfully");
     } catch (error: any) {
-      return ApiResponse.failure(error.message, 500);
+      // Handle Zod validation errors
+      if (error.name === 'ZodError') {
+        return ApiResponse.failure("Validation error", 400, error.flatten().fieldErrors);
+      }
+      
+      return ApiResponse.failure(error.message || "Failed to fetch nearby hotels", 500);
     }
   }
 
@@ -221,7 +251,7 @@ export class HotelController {
         `Room booked successfully with booking code ${booking.code}`,
         201
       );
-    } catch (error: Error) {
+    } catch (error: any) {
       if (error.message) {
         return ApiResponse.failure("Validation error", 400, error.message);
       }
