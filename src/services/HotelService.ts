@@ -36,10 +36,11 @@ export class HotelService {
     minPrice?: number,
     maxPrice?: number
   ) {
-    const sortParam = sortBy ? `${sortBy}:${sortOrder || 'asc'}` : 'name:asc';
-    const priceParam = (minPrice !== undefined || maxPrice !== undefined) 
-      ? `min:${minPrice || 0}:max:${maxPrice || 0}` 
-      : '';
+    const sortParam = sortBy ? `${sortBy}:${sortOrder || "asc"}` : "name:asc";
+    const priceParam =
+      minPrice !== undefined || maxPrice !== undefined
+        ? `min:${minPrice || 0}:max:${maxPrice || 0}`
+        : "";
     return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}`;
   }
 
@@ -59,8 +60,8 @@ export class HotelService {
     page: number,
     perPage: number,
     search?: string,
-    sortBy?: 'room_lowest_price' | 'star_rating' | 'distance' | 'name',
-    sortOrder?: 'asc' | 'desc',
+    sortBy?: "room_lowest_price" | "star_rating" | "distance" | "name",
+    sortOrder?: "asc" | "desc",
     minPrice?: number,
     maxPrice?: number,
     userLatitude?: number,
@@ -128,15 +129,16 @@ export class HotelService {
     }
 
     // Calculate distance if user coordinates are provided
-    const distanceCalculation = userLatitude && userLongitude
-      ? sql<number>`(
+    const distanceCalculation =
+      userLatitude && userLongitude
+        ? sql<number>`(
           6371 * acos(
             cos(radians(${userLatitude})) * cos(radians(${hotels.latitude})) *
             cos(radians(${hotels.longitude}) - radians(${userLongitude})) +
             sin(radians(${userLatitude})) * sin(radians(${hotels.latitude}))
           )
         )`.as("distance")
-      : sql<number>`0`.as("distance");
+        : sql<number>`0`.as("distance");
 
     let query = db
       .select({
@@ -183,33 +185,37 @@ export class HotelService {
       );
 
     // Add sorting
-    const orderDirection = sortOrder === 'desc' ? 'desc' : 'asc';
-    
+    const orderDirection = sortOrder === "desc" ? "desc" : "asc";
+
     switch (sortBy) {
-      case 'room_lowest_price':
-        query = orderDirection === 'asc' 
-          ? query.orderBy(hotels.room_lowest_price)
-          : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
+      case "room_lowest_price":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.room_lowest_price)
+            : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
         break;
-      case 'star_rating':
-        query = orderDirection === 'asc'
-          ? query.orderBy(hotels.star_rating)
-          : query.orderBy(sql`${hotels.star_rating} DESC`);
+      case "star_rating":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.star_rating)
+            : query.orderBy(sql`${hotels.star_rating} DESC`);
         break;
-      case 'distance':
+      case "distance":
         if (userLatitude && userLongitude) {
-          query = orderDirection === 'asc'
-            ? query.orderBy(sql`distance`)
-            : query.orderBy(sql`distance DESC`);
+          query =
+            orderDirection === "asc"
+              ? query.orderBy(sql`distance`)
+              : query.orderBy(sql`distance DESC`);
         } else {
           // Fallback to name if no coordinates provided
           query = query.orderBy(hotels.name);
         }
         break;
-      case 'name':
-        query = orderDirection === 'asc'
-          ? query.orderBy(hotels.name)
-          : query.orderBy(sql`${hotels.name} DESC`);
+      case "name":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.name)
+            : query.orderBy(sql`${hotels.name} DESC`);
         break;
       default:
         // Default sorting by name
@@ -595,8 +601,8 @@ export class HotelService {
     search: string | undefined,
     checkIn?: string,
     checkOut?: string,
-    sortBy?: 'room_lowest_price' | 'star_rating' | 'distance' | 'name',
-    sortOrder?: 'asc' | 'desc',
+    sortBy?: "room_lowest_price" | "star_rating" | "distance" | "name",
+    sortOrder?: "asc" | "desc",
     minPrice?: number,
     maxPrice?: number
   ) {
@@ -655,7 +661,7 @@ export class HotelService {
       eq(hotels.status, "active"), // Only show active hotels
       availabilityFilter,
       searchFilter,
-      ...priceFilters
+      ...priceFilters,
     ].filter(Boolean);
 
     // Result query
@@ -684,30 +690,34 @@ export class HotelService {
       .where(and(...allFilters));
 
     // Add sorting
-    const orderDirection = sortOrder === 'desc' ? 'desc' : 'asc';
-    
+    const orderDirection = sortOrder === "desc" ? "desc" : "asc";
+
     switch (sortBy) {
-      case 'room_lowest_price':
-        query = orderDirection === 'asc' 
-          ? query.orderBy(hotels.room_lowest_price)
-          : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
+      case "room_lowest_price":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.room_lowest_price)
+            : query.orderBy(sql`${hotels.room_lowest_price} DESC`);
         break;
-      case 'star_rating':
-        query = orderDirection === 'asc'
-          ? query.orderBy(hotels.star_rating)
-          : query.orderBy(sql`${hotels.star_rating} DESC`);
+      case "star_rating":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.star_rating)
+            : query.orderBy(sql`${hotels.star_rating} DESC`);
         break;
-      case 'name':
-        query = orderDirection === 'asc'
-          ? query.orderBy(hotels.name)
-          : query.orderBy(sql`${hotels.name} DESC`);
+      case "name":
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(hotels.name)
+            : query.orderBy(sql`${hotels.name} DESC`);
         break;
-      case 'distance':
+      case "distance":
       default:
         // Default sorting by distance (closest first)
-        query = orderDirection === 'asc'
-          ? query.orderBy(sql`distance`)
-          : query.orderBy(sql`distance DESC`);
+        query =
+          orderDirection === "asc"
+            ? query.orderBy(sql`distance`)
+            : query.orderBy(sql`distance DESC`);
         break;
     }
 
@@ -800,17 +810,22 @@ export class HotelService {
       .from(favourites)
       .innerJoin(hotels, eq(favourites.hotel_id, hotels.id))
       .leftJoin(ratings, eq(hotels.id, ratings.hotel_id))
-      .where(and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))) // Only show active hotels
+      .where(
+        and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))
+      ) // Only show active hotels
       .groupBy(hotels.id)
       .orderBy(hotels.name)
       .limit(perPage)
       .offset(offset);
 
-    // Get total count of favourite hotels for the customer
+    // Get total count of favourite hotels for the customer (only active hotels)
     const total = await db
       .select({ count: sql<number>`COUNT(*)` })
       .from(favourites)
-      .where(eq(favourites.customer_id, customerId));
+      .innerJoin(hotels, eq(favourites.hotel_id, hotels.id))
+      .where(
+        and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))
+      );
 
     const responseData = HotelResource.toCollection(
       results,
@@ -843,11 +858,11 @@ export class HotelService {
       .from(hotels)
       .where(and(eq(hotels.id, hotelId), eq(hotels.status, "active"))) // Only allow favouriting active hotels
       .limit(1);
-    
+
     if (hotelInfo.length === 0) {
       throw new Error("Hotel not found or not active");
     }
-    
+
     const cityId = hotelInfo[0].cityId;
 
     // Check if favourite already exists using correct column name
@@ -882,13 +897,7 @@ export class HotelService {
 
     // Invalidate relevant caches
     const invalidationPromises = [];
-    if (cityId !== null) {
-      invalidationPromises.push(this.invalidateCityHotelCache(cityId));
-    } else {
-      console.warn(
-        `Could not find cityId for hotel ${hotelId} to invalidate city cache.`
-      );
-    }
+    invalidationPromises.push(this.invalidateCityHotelCache(cityId));
     // Always invalidate the user's favourites cache
     invalidationPromises.push(this.invalidateFavouritesCache(customerId));
 
@@ -942,7 +951,7 @@ export class HotelService {
         .from(rooms)
         .innerJoin(hotels, eq(rooms.hotel_id, hotels.id))
         .innerJoin(types, eq(rooms.type_id, types.id))
-        .where(eq(rooms.id, roomId))
+        .where(and(eq(rooms.id, roomId), eq(hotels.status, "active"))) // Only show rooms from active hotels
         .limit(1);
 
       if (!result || result.length === 0) {

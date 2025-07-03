@@ -21,18 +21,18 @@ export class HotelController {
 
       const data = c.req.query();
       // Destructure the validated data including new parameters
-      const { 
-        checkIn, 
-        checkOut, 
-        page, 
-        perpage, 
+      const {
+        checkIn,
+        checkOut,
+        page,
+        perpage,
         search,
         sortBy,
         sortOrder,
         minPrice,
         maxPrice,
         latitude,
-        longitude
+        longitude,
       } = await SearchHotelByCityDTO.parseAsync(data);
 
       const hotels = await this.hotelService.listHotelsByCity(
@@ -56,10 +56,14 @@ export class HotelController {
       );
     } catch (error: any) {
       // Handle Zod validation errors
-      if (error.name === 'ZodError') {
-        return ApiResponse.failure("Validation error", 400, error.flatten().fieldErrors);
+      if (error.name === "ZodError") {
+        return ApiResponse.failure(
+          "Validation error",
+          400,
+          error.flatten().fieldErrors
+        );
       }
-      
+
       // Handle potential service errors
       return ApiResponse.failure(
         error.message || "Failed to fetch hotels",
@@ -72,18 +76,18 @@ export class HotelController {
     try {
       const data = c.req.query();
       // Use the NearbyHotelDTO for validation
-      const { 
-        lat, 
-        long, 
-        page, 
-        perpage, 
-        search, 
-        checkIn, 
+      const {
+        lat,
+        long,
+        page,
+        perpage,
+        search,
+        checkIn,
         checkOut,
         sortBy,
         sortOrder,
         minPrice,
-        maxPrice
+        maxPrice,
       } = await NearbyHotelDTO.parseAsync(data);
 
       const customerId = c.get("user")?.id || null;
@@ -106,11 +110,18 @@ export class HotelController {
       return ApiResponse.success(hotels, "Hotels fetched successfully");
     } catch (error: any) {
       // Handle Zod validation errors
-      if (error.name === 'ZodError') {
-        return ApiResponse.failure("Validation error", 400, error.flatten().fieldErrors);
+      if (error.name === "ZodError") {
+        return ApiResponse.failure(
+          "Validation error",
+          400,
+          error.flatten().fieldErrors
+        );
       }
-      
-      return ApiResponse.failure(error.message || "Failed to fetch nearby hotels", 500);
+
+      return ApiResponse.failure(
+        error.message || "Failed to fetch nearby hotels",
+        500
+      );
     }
   }
 

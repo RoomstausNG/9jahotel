@@ -2,10 +2,19 @@
 
 ## Updated Features
 
-### 1. **Sorting Options**
+### 1. **Active Status Enforcement**
+
+- **ALL hotel queries now enforce active status filtering**
+- Only hotels with `status = "active"` are displayed across all endpoints
+- This includes: city search, nearby search, hotel details, room types, favorites, etc.
+- Inactive hotels are completely filtered out from all API responses
+
+### 2. **Sorting Options**
+
 - `sortBy`: Sort hotels by specific fields
+
   - `room_lowest_price`: Sort by room price
-  - `star_rating`: Sort by hotel star rating  
+  - `star_rating`: Sort by hotel star rating
   - `distance`: Sort by distance from user location
   - `name`: Sort by hotel name (default)
 
@@ -13,16 +22,19 @@
   - `asc`: Ascending order (default)
   - `desc`: Descending order
 
-### 2. **Price Filtering**
+### 3. **Price Filtering**
+
 - `minPrice`: Minimum room price filter (optional)
 - `maxPrice`: Maximum room price filter (optional)
 - Based on `room_lowest_price` column
 
-### 3. **Custom Pagination**
+### 4. **Custom Pagination**
+
 - `perpage`: Number of results per page (1-100, default: 24)
 - Replaces fixed pagination limits
 
-### 4. **Distance Sorting**
+### 5. **Distance Sorting**
+
 - Requires `latitude` and `longitude` parameters
 - Calculates distance from user location
 - Returns hotels sorted by proximity
@@ -30,26 +42,31 @@
 ## API Examples
 
 ### Basic City Search with Sorting
+
 ```
 GET /api/hotels/city/1?checkIn=2025-07-10&checkOut=2025-07-15&sortBy=room_lowest_price&sortOrder=asc
 ```
 
 ### Price Range Filtering
+
 ```
 GET /api/hotels/city/1?checkIn=2025-07-10&checkOut=2025-07-15&minPrice=5000&maxPrice=20000
 ```
 
 ### Distance-based Sorting
+
 ```
 GET /api/hotels/city/1?checkIn=2025-07-10&checkOut=2025-07-15&sortBy=distance&latitude=6.5244&longitude=3.3792
 ```
 
 ### Custom Pagination
+
 ```
 GET /api/hotels/city/1?checkIn=2025-07-10&checkOut=2025-07-15&page=1&perpage=50
 ```
 
 ### Combined Parameters
+
 ```
 GET /api/hotels/city/1?checkIn=2025-07-10&checkOut=2025-07-15&sortBy=star_rating&sortOrder=desc&minPrice=10000&maxPrice=50000&perpage=20
 ```
@@ -91,23 +108,33 @@ The response includes the distance field when user coordinates are provided:
 
 ## Validation Rules
 
-1. **Date Validation**:
+1. **Active Status Enforcement**:
+
+   - All hotel queries automatically filter by `status = "active"`
+   - Inactive hotels are never displayed in search results
+   - Hotel validation (e.g., for favorites) only accepts active hotels
+
+2. **Date Validation**:
+
    - `checkIn` must not be in the past
    - `checkOut` must be after `checkIn`
 
-2. **Price Validation**:
+3. **Price Validation**:
+
    - `minPrice` and `maxPrice` must be ≥ 0
    - `minPrice` cannot be greater than `maxPrice`
 
-3. **Pagination Validation**:
+4. **Pagination Validation**:
+
    - `page` must be ≥ 1
    - `perpage` must be between 1 and 100
 
-4. **Distance Sorting**:
+5. **Distance Sorting**:
+
    - Requires both `latitude` and `longitude`
    - Coordinates must be within valid ranges
 
-5. **Sorting Validation**:
+6. **Sorting Validation**:
    - `sortBy` must be one of the allowed values
    - `sortOrder` must be 'asc' or 'desc'
 
@@ -122,6 +149,7 @@ GET /api/hotels/nearby?lat=6.5244&long=3.3792&checkIn=2025-07-10&checkOut=2025-0
 ## Caching
 
 The system automatically caches results based on all parameters to improve performance. Cache keys include:
+
 - City ID
 - Pagination settings
 - Search terms
