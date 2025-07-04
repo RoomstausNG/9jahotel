@@ -13,7 +13,8 @@ export class CityResource {
     // Default resource shape
     const resource = {
       id: city.id,
-      name: `${city.name}, ${city.state} state  (${city.hotel} hotels)`,
+      name: `${city.name}, ${city.state}`,
+      // name: `${city.name}, ${city.state} state  (${city.hotel} hotels)`,
     };
 
     // If specific fields are requested, filter to only those fields
