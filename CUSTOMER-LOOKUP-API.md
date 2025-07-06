@@ -27,30 +27,16 @@ This is the main endpoint for checking if a customer exists by email or phone nu
   "message": "Customer found successfully",
   "data": {
     "id": 1,
-    "firstname": "John",
-    "lastname": "Doe",
-    "name": "John Doe",
+    "firstName": "John",
+    "lastName": "Doe",
+    "userName": "johndoe",
     "email": "customer@example.com",
     "phone": "+2348123456789",
-    "gender": "male",
-    "date_of_birth": "1990-01-01",
     "avatar": "https://example.com/avatar.jpg",
-    "address": "123 Main St",
-    "city_id": 1,
-    "state_id": 1,
-    "country_id": 1,
-    "nationality": "Nigerian",
-    "nok_name": "Jane Doe",
-    "nok_phone": "+2348987654321",
-    "nok_email": "jane@example.com",
-    "id_type": "NIN",
-    "id_number": "12345678901",
-    "referral_code": "REF123",
-    "location": null,
-    "latitude": null,
-    "longitude": null,
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z"
+    "designation": null,
+    "departmentId": null,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
   }
 }
 ```

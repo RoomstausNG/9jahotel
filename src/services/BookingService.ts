@@ -206,7 +206,7 @@ export class BookingService {
         );
         if (existingCustomer) {
           console.log(`Found existing customer by email: ${existingCustomer.id}`);
-          return existingCustomer.id;
+          return Number(existingCustomer.id);
         }
       }
 
@@ -217,7 +217,7 @@ export class BookingService {
         );
         if (existingCustomer) {
           console.log(`Found existing customer by phone: ${existingCustomer.id}`);
-          return existingCustomer.id;
+          return Number(existingCustomer.id);
         }
       }
 
