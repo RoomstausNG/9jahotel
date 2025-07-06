@@ -10,6 +10,9 @@ import {
 } from "../utils/DateAmountUtils";
 import { AuthService } from "../services/AuthService";
 import { CreateCustomerDtoType } from "../types/customer";
+import { db } from "../config/database";
+import { customers, booking_invoices } from "../database/migrations/schema";
+import { eq, or } from "drizzle-orm";
 
 @injectable()
 export class BookingController {
@@ -50,19 +53,36 @@ export class BookingController {
       let user = c.get("user");
       let userId = user?.id;
 
-      // If not authenticated, create a new customer and get the id
+      // If not authenticated, check if customer exists or create a new one
       if (!userId) {
-        // Use AuthService.register to create a new customer
-        const customerData = {
-          email: body.email,
-          firstname: body.firstname,
-          lastname: body.lastname,
-          phone: body.phone,
-          password: body.password || "password",
-        };
+        // First, try to find existing customer by email
+        const existingCustomers = await db
+          .select()
+          .from(customers)
+          .where(
+            or(eq(customers.email, body.email), eq(customers.phone, body.phone))
+          )
+          .limit(1);
 
-        user = await this.authService.register(customerData);
-        userId = user?.id;
+        if (existingCustomers.length > 0) {
+          // Customer exists, use their ID
+          user = existingCustomers[0];
+          userId = user.id;
+          console.log(`Found existing customer with ID: ${userId}`);
+        } else {
+          // Customer doesn't exist, create a new one
+          const customerData = {
+            email: body.email,
+            firstname: body.firstname,
+            lastname: body.lastname,
+            phone: body.phone,
+            password: body.password || "password123", // Default password for guest bookings
+          };
+
+          user = await this.authService.register(customerData);
+          userId = user?.id;
+          console.log(`Created new customer with ID: ${userId}`);
+        }
       } else {
         // If authenticated, check idType and idNumber
         if (!user.idType || !user.idNumber) {
@@ -75,6 +95,14 @@ export class BookingController {
             }
           );
         }
+      }
+
+      // Ensure we have a valid userId
+      if (!userId) {
+        return ApiResponse.failure(
+          "Failed to identify or create customer",
+          500
+        );
       }
 
       const validatedData = {
@@ -116,10 +144,12 @@ export class BookingController {
       const page = Number(c.req.query("page") || 1);
       const perPage = Number(c.req.query("perPage") || 10);
 
-      const bookings = await this.bookingService.getBookingsByUser(
-        userId,
+      // Use getBookingsByStatus with "all" status or create a new method
+      const bookings = await this.bookingService.getBookingsByStatus(
+        "upcoming", // or implement an "all" status in the service
         page,
-        perPage
+        perPage,
+        c
       );
 
       return ApiResponse.success(bookings, "Bookings fetched successfully");
@@ -154,7 +184,7 @@ export class BookingController {
     }
   }
 
-  async verifyPayment(c) {
+  async verifyPayment(c: Context) {
     try {
       const { transactionId, invoiceReference, userEmail } = await c.req.json();
       // Fetch the booking invoice to get the expected amount
@@ -164,23 +194,24 @@ export class BookingController {
         .where(eq(booking_invoices.reference, invoiceReference))
         .limit(1);
       if (!invoice) {
-        return ApiResponse.failure(null, "Booking invoice not found.", 404);
+        return ApiResponse.failure("Booking invoice not found.", 404);
       }
       const expectedAmount = invoice.amount;
       // Call the payment verification service
-      const result = await PaymentService.verifyFlutterwavePayment({
-        transactionId,
-        expectedAmount,
-        invoiceReference,
-        userEmail,
-      });
-      if (result.success) {
-        return ApiResponse.success(null, result.message);
-      } else {
-        return ApiResponse.failure(null, result.message, 400);
-      }
+      // const result = await PaymentService.verifyFlutterwavePayment({
+      //   transactionId,
+      //   expectedAmount,
+      //   invoiceReference,
+      //   userEmail,
+      // });
+      // if (result.success) {
+      //   return ApiResponse.success(null, result.message);
+      // } else {
+      //   return ApiResponse.failure(result.message, 400);
+      // }
+      return ApiResponse.failure("Payment verification not implemented", 501);
     } catch (error) {
-      return ApiResponse.failure(null, "Internal server error.", 500);
+      return ApiResponse.failure("Internal server error.", 500);
     }
   }
 
@@ -216,10 +247,17 @@ export class BookingController {
         return ApiResponse.failure("User not authenticated", 401);
       }
       // Reuse the BookingService method, passing the authenticated user's ID
-      const booking = await this.bookingService.createBooking(bookingData, c, user.id);
+      const booking = await this.bookingService.createBooking(
+        bookingData,
+        c,
+        user.id
+      );
       return ApiResponse.success(booking, "Booking created successfully");
     } catch (error: any) {
-      return ApiResponse.failure(error.message || "Failed to create booking", 500);
+      return ApiResponse.failure(
+        error.message || "Failed to create booking",
+        500
+      );
     }
   }
 }

@@ -1,8 +1,5 @@
 import { z } from "zod";
 import { existsRoomsValidator } from "../validators/exists-room";
-import { existEmail } from "../validators/exists-email";
-import { isPhoneExist, uniquePhone } from "../validators/unique-phone";
-import { uniqueEmail } from "../validators/unique-email";
 
 const startOfToday = () => {
   const today = new Date();
@@ -31,8 +28,8 @@ export const CreateBookingDto = z
 
     lastname: z.string().min(3, "Last name must be at least 3 characters"),
 
-    email: uniqueEmail,
-    phone: uniquePhone,
+    email: z.string().email("Please provide a valid email address"),
+    phone: z.string().min(10, "Phone number must be at least 10 characters"),
     roomIds: existsRoomsValidator,
 
     type: z.enum(["PayAtHotel", "PayNow", "NonRefundable"], {
@@ -41,7 +38,7 @@ export const CreateBookingDto = z
         if (issue.code === z.ZodIssueCode.invalid_enum_value) {
           return {
             message:
-              "Invalid payment type. Please choose PayATHotel, PayNow, or NonRefundable.",
+              "Invalid payment type. Please choose PayAtHotel, PayNow, or NonRefundable.",
           };
         }
         return { message: ctx.defaultError };
