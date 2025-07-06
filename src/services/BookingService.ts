@@ -19,6 +19,7 @@ import { or, gt, and, lte } from "drizzle-orm";
 import { Context } from "hono";
 import { AuthService } from "./AuthService";
 import { getToken } from "../utils/getToken";
+import { queueBookingEmails } from "../jobs/email-queue";
 
 @injectable()
 export class BookingService {
@@ -94,7 +95,7 @@ export class BookingService {
         );
       });
 
-      // Send confirmation email after successful booking
+      // Queue confirmation emails after successful booking (non-blocking)
       try {
         const customerName =
           bookingData.firstname && bookingData.lastname
@@ -108,8 +109,8 @@ export class BookingService {
         const checkOut = bookingData.checkOut;
         const guestEmail = bookingData.email;
 
-        // Send email to guest
-        await this.emailService.sendTemplateEmail({
+        // Prepare guest email
+        const guestEmailJob = {
           to: guestEmail,
           subject: "Your Reservation is Confirmed",
           templateName: "guestBooking",
@@ -125,11 +126,12 @@ export class BookingService {
             bookedBy: customerName,
             totalRooms: numberOfRooms,
           },
-        });
+        };
 
-        // Send email to hotel
+        // Prepare hotel email (if hotel has email)
+        let hotelEmailJob = undefined;
         if (hotel.email) {
-          await this.emailService.sendTemplateEmail({
+          hotelEmailJob = {
             to: hotel.email,
             subject: "New Reservation Received",
             templateName: "hotelBooking",
@@ -138,7 +140,7 @@ export class BookingService {
               customerName,
               bookingAmount,
               numberOfRooms,
-              roomCategory, // now uppercase
+              roomCategory,
               bookingReference,
               checkIn,
               checkOut,
@@ -146,10 +148,20 @@ export class BookingService {
               totalRooms: numberOfRooms,
               guestEmail,
             },
-          });
+          };
         }
+
+        // Queue both emails (non-blocking)
+        await queueBookingEmails(guestEmailJob, hotelEmailJob);
+        console.log(
+          `📧 Booking confirmation emails queued for booking ${reference}`
+        );
       } catch (emailError) {
-        console.error("Failed to send booking confirmation email:", emailError);
+        console.error(
+          "Failed to queue booking confirmation emails:",
+          emailError
+        );
+        // Don't throw error - booking was successful, just email queueing failed
       }
 
       // Clear bookings status caches for this user
@@ -337,7 +349,7 @@ export class BookingService {
     if (status === "completed") {
       whereClause = and(
         eq(booking_invoices.customer_id, userId),
-        gt(booking_invoices.checked_in, today)
+        gt(booking_invoices.checked_in, today.toISOString())
       );
     } else if (status === "cancelled") {
       whereClause = and(
@@ -347,7 +359,7 @@ export class BookingService {
     } else if (status === "upcoming") {
       whereClause = and(
         eq(booking_invoices.customer_id, userId),
-        lte(booking_invoices.checked_in, today)
+        lte(booking_invoices.checked_in, today.toISOString())
       );
     } else {
       throw new Error("Invalid status");

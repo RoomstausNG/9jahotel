@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import * as path from "path";
 import * as Handlebars from "handlebars";
 import { env } from "../config/env";
+import { queueTemplateEmail } from "../jobs/email-queue";
 
 interface EmailOptions {
   to: string;
@@ -78,6 +79,18 @@ export class EmailService {
         }`
       );
     }
+  }
+
+  /**
+   * Queues an email to be sent asynchronously (recommended for better performance)
+   * @param options Email options including template name and context
+   * @returns Promise resolving when email is added to queue
+   */
+  async queueTemplateEmail(options: EmailOptions) {
+    await queueTemplateEmail(options);
+    console.log(
+      `📧 Email queued for ${options.to} with template ${options.templateName}`
+    );
   }
 
   /**

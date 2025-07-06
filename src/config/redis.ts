@@ -1,8 +1,8 @@
 import { Redis } from "ioredis";
 import { env } from "./env";
 
-// Configure Redis client
-export const redis = new Redis({
+// Redis configuration object for reuse
+const redisConfig = {
   host: env("REDIS_HOST", "redis"), // Use "redis" for Docker Compose
   port: Number(env("REDIS_PORT", "6379")),
   password: env("REDIS_PASSWORD", ""), // Leave empty if no auth
@@ -17,14 +17,14 @@ export const redis = new Redis({
   enableOfflineQueue: false, // Fail commands immediately when offline (optional, safer)
 
   // Retry strategy for reconnections
-  retryStrategy: (times) => {
+  retryStrategy: (times: number) => {
     const delay = Math.min(times * 100, 3000); // Exponential backoff, up to 3s
     console.warn(`Retrying Redis connection in ${delay}ms (attempt ${times})`);
     return delay;
   },
 
   // When encountering certain errors
-  reconnectOnError: (err) => {
+  reconnectOnError: (err: Error) => {
     const targetErrors = ["READONLY", "ECONNRESET", "ETIMEDOUT"];
     if (targetErrors.some((e) => err.message.includes(e))) {
       console.warn(`Redis reconnecting after error: ${err.message}`);
@@ -32,7 +32,10 @@ export const redis = new Redis({
     }
     return false;
   },
-});
+};
+
+// Configure Redis client
+export const redis = new Redis(redisConfig);
 
 // Redis events
 redis.on("connect", () => {
@@ -54,3 +57,14 @@ redis.on("close", () => {
 redis.on("reconnecting", () => {
   console.warn("♻️  Attempting to reconnect to Redis...");
 });
+
+// Export Redis configuration for BullMQ (with proper connection setup)
+export const redisConnection = {
+  host: env("REDIS_HOST", "redis"),
+  port: Number(env("REDIS_PORT", "6379")),
+  password: env("REDIS_PASSWORD", ""),
+  db: Number(env("REDIS_DB", "0")),
+  maxRetriesPerRequest: null, // BullMQ recommendation
+  enableReadyCheck: false, // BullMQ recommendation
+  maxmemoryPolicy: "noeviction", // BullMQ recommendation
+};

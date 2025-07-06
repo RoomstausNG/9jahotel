@@ -18,6 +18,8 @@ import { hostname } from "os";
 import bookingRoutes from "./routes/booking-routes";
 import { EmailService } from "./services/EmailService";
 import { corsConfig } from "./config/cors";
+// Import email worker to start it
+import "./jobs/email-processor";
 
 const app = new Hono().basePath("/api");
 
