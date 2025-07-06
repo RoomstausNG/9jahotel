@@ -39,6 +39,9 @@ container
   .bind<BookingController>(BookingController)
   .toSelf()
   .inSingletonScope();
-container.bind<CustomerController>(CustomerController).toSelf().inSingletonScope();
+container
+  .bind<CustomerController>(CustomerController)
+  .toSelf()
+  .inSingletonScope();
 
 export { container };

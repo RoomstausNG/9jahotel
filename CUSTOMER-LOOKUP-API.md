@@ -1,16 +1,19 @@
 # Customer Lookup API Documentation
 
 ## Overview
+
 This document describes the customer lookup endpoints that allow checking if a customer exists by email or phone number. These endpoints are **not protected by authentication middleware** and can be called publicly.
 
 ## Endpoints
 
 ### 1. Check Customer Exists (Primary Endpoint)
+
 **POST** `/api/customers/check-exists`
 
 This is the main endpoint for checking if a customer exists by email or phone number.
 
 #### Request Body
+
 ```json
 {
   "identifier": "customer@example.com"
@@ -18,9 +21,11 @@ This is the main endpoint for checking if a customer exists by email or phone nu
 ```
 
 #### Parameters
+
 - `identifier` (string, required): Email address or phone number to search for
 
 #### Response - Customer Found (200 OK)
+
 ```json
 {
   "success": true,
@@ -42,6 +47,7 @@ This is the main endpoint for checking if a customer exists by email or phone nu
 ```
 
 #### Response - Customer Not Found (404 Not Found)
+
 ```json
 {
   "success": false,
@@ -51,6 +57,7 @@ This is the main endpoint for checking if a customer exists by email or phone nu
 ```
 
 #### Response - Invalid Input (400 Bad Request)
+
 ```json
 {
   "success": false,
@@ -60,73 +67,84 @@ This is the main endpoint for checking if a customer exists by email or phone nu
 ```
 
 ### 2. Find Customer by Email (Alternative Endpoint)
+
 **GET** `/api/customers/find-by-email?email=customer@example.com`
 
 #### Query Parameters
+
 - `email` (string, required): Email address to search for
 
 #### Response
+
 Same as the primary endpoint above.
 
 ### 3. Find Customer by Phone (Alternative Endpoint)
+
 **GET** `/api/customers/find-by-phone?phone=%2B2348123456789`
 
 #### Query Parameters
+
 - `phone` (string, required): Phone number to search for (URL encoded)
 
 #### Response
+
 Same as the primary endpoint above.
 
 ### 4. Get Customer by ID (Protected Endpoint)
+
 **GET** `/api/customers/{id}`
 
 #### Path Parameters
+
 - `id` (integer, required): Customer ID
 
 #### Response
+
 Same customer data structure as above.
 
 ## Usage Examples
 
 ### JavaScript/TypeScript
+
 ```javascript
 // Using fetch API
 async function checkCustomerExists(identifier) {
   try {
-    const response = await fetch('/api/customers/check-exists', {
-      method: 'POST',
+    const response = await fetch("/api/customers/check-exists", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        identifier: identifier
+        identifier: identifier,
       }),
     });
 
     const result = await response.json();
-    
+
     if (response.ok) {
-      console.log('Customer found:', result.data);
+      console.log("Customer found:", result.data);
       return result.data;
     } else {
-      console.log('Customer not found');
+      console.log("Customer not found");
       return null;
     }
   } catch (error) {
-    console.error('Error checking customer:', error);
+    console.error("Error checking customer:", error);
     return null;
   }
 }
 
 // Usage
-const customer = await checkCustomerExists('customer@example.com');
+const customer = await checkCustomerExists("customer@example.com");
 if (customer) {
-  console.log('Customer ID:', customer.id);
-  console.log('Customer Name:', customer.name);
+  console.log("Customer ID:", customer.id);
+  console.log("Customer Name:", customer.name);
 }
 ```
 
 ### cURL Examples
+
 ```bash
 # Check customer exists by email
 curl -X POST http://localhost:3000/api/customers/check-exists \
@@ -154,29 +172,30 @@ The customer lookup endpoints are designed to work seamlessly with the booking s
 3. **If customer doesn't exist**, create a new customer first, then use the new ID for the booking
 
 ### Example Integration Flow
+
 ```javascript
 async function createBookingWithCustomerLookup(bookingData) {
   // Step 1: Check if customer exists
   const existingCustomer = await checkCustomerExists(bookingData.email);
-  
+
   let customerId;
   if (existingCustomer) {
     // Use existing customer
     customerId = existingCustomer.id;
-    console.log('Using existing customer:', existingCustomer.name);
+    console.log("Using existing customer:", existingCustomer.name);
   } else {
     // Create new customer
     const newCustomer = await createCustomer(bookingData);
     customerId = newCustomer.id;
-    console.log('Created new customer:', newCustomer.name);
+    console.log("Created new customer:", newCustomer.name);
   }
-  
+
   // Step 2: Create booking with customer ID
   const booking = await createBooking({
     ...bookingData,
-    customerId: customerId
+    customerId: customerId,
   });
-  
+
   return booking;
 }
 ```
@@ -186,6 +205,7 @@ async function createBookingWithCustomerLookup(bookingData) {
 All endpoints return consistent error responses:
 
 ### Validation Errors (400 Bad Request)
+
 ```json
 {
   "success": false,
@@ -195,6 +215,7 @@ All endpoints return consistent error responses:
 ```
 
 ### Not Found Errors (404 Not Found)
+
 ```json
 {
   "success": false,
@@ -204,6 +225,7 @@ All endpoints return consistent error responses:
 ```
 
 ### Server Errors (500 Internal Server Error)
+
 ```json
 {
   "success": false,
@@ -235,6 +257,7 @@ node test-customer-lookup.js
 ```
 
 The test script will:
+
 - Test customer lookup by email
 - Test customer lookup by phone
 - Test input validation
@@ -251,6 +274,7 @@ The test script will:
 ## Rate Limiting Recommendations
 
 For production use, consider implementing rate limiting:
+
 - **Per IP**: 100 requests per minute
 - **Per identifier**: 10 requests per minute for the same email/phone
 - **Global**: 1000 requests per minute across all endpoints

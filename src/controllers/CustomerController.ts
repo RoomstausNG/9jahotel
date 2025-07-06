@@ -5,7 +5,9 @@ import { ApiResponse } from "../utils/ApiResponse";
 
 @injectable()
 export class CustomerController {
-  constructor(@inject(CustomerService) private customerService: CustomerService) {}
+  constructor(
+    @inject(CustomerService) private customerService: CustomerService
+  ) {}
 
   /**
    * Check if a customer exists by email or phone
@@ -40,10 +42,7 @@ export class CustomerController {
         return ApiResponse.failure("Customer not found", 404);
       }
 
-      return ApiResponse.success(
-        customer,
-        "Customer found successfully"
-      );
+      return ApiResponse.success(customer, "Customer found successfully");
     } catch (error: any) {
       console.error("Error checking customer exists:", error);
       return ApiResponse.failure(

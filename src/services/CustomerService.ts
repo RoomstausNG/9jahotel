@@ -16,7 +16,7 @@ export class CustomerService {
     try {
       // Clean the identifier (remove spaces, special chars for phone)
       const cleanIdentifier = identifier.trim();
-      
+
       // Search for customer by email or phone
       const customer = await db
         .select()
