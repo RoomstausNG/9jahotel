@@ -33,7 +33,7 @@ export class BookingResource {
             code: booking.hotel.code,
             email: booking.hotel.email,
             address: booking.hotel.address,
-            phone: booking.hotel.phone,
+            phone: booking.hotel.telephone,
             backgroundImage: booking.hotel.background_image
               ? getCloudinaryImage(booking.hotel.background_image)
               : null,
