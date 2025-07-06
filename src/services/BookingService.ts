@@ -20,10 +20,14 @@ import { Context } from "hono";
 import { AuthService } from "./AuthService";
 import { getToken } from "../utils/getToken";
 import { queueBookingEmails } from "../jobs/email-queue";
+import { CustomerService } from "./CustomerService";
 
 @injectable()
 export class BookingService {
-  constructor(@inject(EmailService) private emailService: EmailService) {}
+  constructor(
+    @inject(EmailService) private emailService: EmailService,
+    @inject(CustomerService) private customerService: CustomerService
+  ) {}
   async createBooking(bookingData: any, c: Context, userId?: number) {
     let hotel: any;
     try {
@@ -185,6 +189,67 @@ export class BookingService {
     } catch (error: any) {
       console.error("Error creating booking:", error);
       throw new Error(error.message || "Failed to create booking");
+    }
+  }
+
+  /**
+   * Find existing customer by email or phone, or create a new one
+   * @param customerData - Customer data from booking request
+   * @returns Customer ID
+   */
+  async findOrCreateCustomer(customerData: any): Promise<number> {
+    try {
+      // Try to find existing customer by email first
+      if (customerData.email) {
+        const existingCustomer = await this.customerService.findCustomerByEmail(
+          customerData.email
+        );
+        if (existingCustomer) {
+          console.log(`Found existing customer by email: ${existingCustomer.id}`);
+          return existingCustomer.id;
+        }
+      }
+
+      // Try to find existing customer by phone
+      if (customerData.phone) {
+        const existingCustomer = await this.customerService.findCustomerByPhone(
+          customerData.phone
+        );
+        if (existingCustomer) {
+          console.log(`Found existing customer by phone: ${existingCustomer.id}`);
+          return existingCustomer.id;
+        }
+      }
+
+      // Customer doesn't exist, create a new one
+      console.log("Creating new customer for booking");
+      const newCustomer = await db.insert(customers).values({
+        firstname: customerData.firstname || "Guest",
+        lastname: customerData.lastname || "User",
+        email: customerData.email || null,
+        phone: customerData.phone || null,
+        gender: customerData.gender || null,
+        address: customerData.address || null,
+        date_of_birth: customerData.date_of_birth || null,
+        city_id: customerData.city_id || null,
+        state_id: customerData.state_id || null,
+        country_id: customerData.country_id || null,
+        nationality: customerData.nationality || null,
+        token_version: 0,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+
+      const customerId = newCustomer[0]?.insertId || newCustomer[0]?.id;
+      if (!customerId) {
+        throw new Error("Failed to create customer");
+      }
+
+      console.log(`Created new customer: ${customerId}`);
+      return Number(customerId);
+    } catch (error: any) {
+      console.error("Error finding or creating customer:", error);
+      throw new Error("Failed to find or create customer");
     }
   }
 

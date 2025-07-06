@@ -16,6 +16,7 @@ import hotelRoutes from "./routes/hotel-routes";
 import { redis } from "./config/redis";
 import { hostname } from "os";
 import bookingRoutes from "./routes/booking-routes";
+import { customerRoutes } from "./routes/customer-routes";
 import { EmailService } from "./services/EmailService";
 import { corsConfig } from "./config/cors";
 // Import email worker to start it
@@ -71,6 +72,9 @@ app.get("/", (c) => {
 app.route("/bookings", bookingRoutes);
 
 app.route("/", hotelRoutes);
+
+// customer endpoint (public, not guarded by auth)
+app.route("/customers", customerRoutes);
 
 app.get("/clear-caches", (c) => {
   const done = redis.flushall();
