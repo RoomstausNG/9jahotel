@@ -31,6 +31,9 @@ export class BookingResource {
             id: booking.hotel.id,
             name: booking.hotel.name,
             code: booking.hotel.code,
+            email: booking.hotel.email,
+            address: booking.hotel.address,
+            phone: booking.hotel.phone,
             backgroundImage: booking.hotel.background_image
               ? getCloudinaryImage(booking.hotel.background_image)
               : null,
