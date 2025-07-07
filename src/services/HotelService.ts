@@ -100,7 +100,11 @@ export class HotelService {
 
     const offset = (page - 1) * perPage;
 
-    let conditions = [eq(hotels.city_id, cityId), eq(hotels.status, "active")];
+    let conditions = [
+      eq(hotels.city_id, cityId),
+      eq(hotels.status, "active"),
+      sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
+    ];
 
     // If dates are provided, check availability for those dates
     if (checkIn && checkOut) {
@@ -338,7 +342,13 @@ export class HotelService {
       .from(hotels)
       .innerJoin(cities, eq(hotels.city_id, cities.id))
       // Removed joins for ratings, customers, images from this main query
-      .where(and(eq(hotels.code, hotelId), eq(hotels.status, "active"))) // Only show active hotels
+      .where(
+        and(
+          eq(hotels.code, hotelId),
+          eq(hotels.status, "active"),
+          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
+        )
+      ) // Only show active hotels with valid prices
       .limit(1);
 
     // Execute query
@@ -485,7 +495,13 @@ export class HotelService {
     const hotelResult = await db
       .select({ id: hotels.id })
       .from(hotels)
-      .where(and(eq(hotels.code, hotelCode), eq(hotels.status, "active"))) // Only show active hotels
+      .where(
+        and(
+          eq(hotels.code, hotelCode),
+          eq(hotels.status, "active"),
+          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
+        )
+      ) // Only show active hotels with valid prices
       .limit(1);
 
     if (!hotelResult || hotelResult.length === 0) {
@@ -594,6 +610,7 @@ export class HotelService {
         and(
           eq(rooms.type_id, typeId),
           eq(hotels.status, "active"), // Only show rooms from active hotels
+          sql`${hotels.room_lowest_price} > 0`, // Only show rooms from hotels with valid room prices
           notInArray(rooms.status, ["occupied", "repair", "damage"]), // Added 'damage' back based on previous context
           sql`NOT EXISTS (
             SELECT 1 FROM ${bookings} as b
@@ -679,6 +696,7 @@ export class HotelService {
     const allFilters = [
       baseDistanceFilter,
       eq(hotels.status, "active"), // Only show active hotels
+      sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
       availabilityFilter,
       searchFilter,
       ...priceFilters,
@@ -831,20 +849,28 @@ export class HotelService {
       .innerJoin(hotels, eq(favourites.hotel_id, hotels.id))
       .leftJoin(ratings, eq(hotels.id, ratings.hotel_id))
       .where(
-        and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))
-      ) // Only show active hotels
+        and(
+          eq(favourites.customer_id, customerId),
+          eq(hotels.status, "active"),
+          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
+        )
+      ) // Only show active hotels with valid prices
       .groupBy(hotels.id)
       .orderBy(hotels.name)
       .limit(perPage)
       .offset(offset);
 
-    // Get total count of favourite hotels for the customer (only active hotels)
+    // Get total count of favourite hotels for the customer (only active hotels with valid prices)
     const total = await db
       .select({ count: sql<number>`COUNT(*)` })
       .from(favourites)
       .innerJoin(hotels, eq(favourites.hotel_id, hotels.id))
       .where(
-        and(eq(favourites.customer_id, customerId), eq(hotels.status, "active"))
+        and(
+          eq(favourites.customer_id, customerId),
+          eq(hotels.status, "active"),
+          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
+        )
       );
 
     const responseData = HotelResource.toCollection(
@@ -872,15 +898,21 @@ export class HotelService {
   // --- End of new function ---
 
   async toggleHotelFavourite(customerId: number, hotelId: number) {
-    // First, verify the hotel exists and is active
+    // First, verify the hotel exists, is active, and has valid pricing
     const hotelInfo = await db
       .select({ cityId: hotels.city_id })
       .from(hotels)
-      .where(and(eq(hotels.id, hotelId), eq(hotels.status, "active"))) // Only allow favouriting active hotels
+      .where(
+        and(
+          eq(hotels.id, hotelId),
+          eq(hotels.status, "active"),
+          sql`${hotels.room_lowest_price} > 0` // Only allow favouriting hotels with valid room prices
+        )
+      ) // Only allow favouriting active hotels with valid prices
       .limit(1);
 
     if (hotelInfo.length === 0) {
-      throw new Error("Hotel not found or not active");
+      throw new Error("Hotel not found, not active, or has invalid pricing");
     }
 
     const cityId = hotelInfo[0].cityId;
@@ -971,7 +1003,13 @@ export class HotelService {
         .from(rooms)
         .innerJoin(hotels, eq(rooms.hotel_id, hotels.id))
         .innerJoin(types, eq(rooms.type_id, types.id))
-        .where(and(eq(rooms.id, roomId), eq(hotels.status, "active"))) // Only show rooms from active hotels
+        .where(
+          and(
+            eq(rooms.id, roomId),
+            eq(hotels.status, "active"),
+            sql`${hotels.room_lowest_price} > 0` // Only show rooms from hotels with valid room prices
+          )
+        ) // Only show rooms from active hotels
         .limit(1);
 
       if (!result || result.length === 0) {
