@@ -43,7 +43,10 @@ export class HotelService {
       minPrice !== undefined || maxPrice !== undefined
         ? `min:${minPrice || 0}:max:${maxPrice || 0}`
         : "";
-    const dateParam = checkIn && checkOut ? `checkin:${checkIn}:checkout:${checkOut}` : "nodates";
+    const dateParam =
+      checkIn && checkOut
+        ? `checkin:${checkIn}:checkout:${checkOut}`
+        : "nodates";
     return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}:dates:${dateParam}`;
   }
 

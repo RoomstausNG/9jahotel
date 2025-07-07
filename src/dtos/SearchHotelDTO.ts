@@ -19,14 +19,13 @@ export const SearchHotelByCityDTO = z
         }),
       })
       // Add min validation to ensure check-in date is not in the past
-      .min(startOfToday(), { message: "Check-in date cannot be in the past." })
-      .optional(),
+      .min(startOfToday(), { message: "Check-in date cannot be in the past." }),
 
     checkOut: z.coerce.date({
       errorMap: (issue, ctx) => ({
         message: "Invalid check-out date format. Please provide a valid date.",
       }),
-    }).optional(),
+    }),
     page: z.coerce.number().min(1).default(1),
     perpage: z.coerce.number().min(1).max(100).default(24),
     search: z.string().optional().default(""),
@@ -45,24 +44,28 @@ export const SearchHotelByCityDTO = z
     latitude: z.coerce.number().min(-90).max(90).optional(),
     longitude: z.coerce.number().min(-180).max(180).optional(),
   })
-  .refine((data) => {
-    // If both dates are provided, checkOut must be after checkIn
-    if (data.checkIn && data.checkOut) {
-      return data.checkOut > data.checkIn;
+  .refine(
+    (data) => {
+      // If both dates are provided, checkOut must be after checkIn
+      if (data.checkIn && data.checkOut) {
+        return data.checkOut > data.checkIn;
+      }
+      // If only one date is provided, that's invalid
+      if (data.checkIn && !data.checkOut) {
+        return false;
+      }
+      if (!data.checkIn && data.checkOut) {
+        return false;
+      }
+      // If neither date is provided, that's valid
+      return true;
+    },
+    {
+      message:
+        "Either provide both check-in and check-out dates (with check-out after check-in), or provide neither",
+      path: ["checkOut"],
     }
-    // If only one date is provided, that's invalid
-    if (data.checkIn && !data.checkOut) {
-      return false;
-    }
-    if (!data.checkIn && data.checkOut) {
-      return false;
-    }
-    // If neither date is provided, that's valid
-    return true;
-  }, {
-    message: "Either provide both check-in and check-out dates (with check-out after check-in), or provide neither",
-    path: ["checkOut"],
-  })
+  )
   .refine(
     (data) => {
       if (data.minPrice !== undefined && data.maxPrice !== undefined) {

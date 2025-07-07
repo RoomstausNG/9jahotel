@@ -3,6 +3,13 @@ import { z } from "zod";
 import { hotels } from "../database/migrations/schema";
 import { db } from "../config/database";
 
+// Helper function to get the start of today
+const startOfToday = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to midnight
+  return today;
+};
+
 export const NearbyHotelDTO = z
   .object({
     lat: z.coerce
@@ -20,21 +27,45 @@ export const NearbyHotelDTO = z
     page: z.coerce.number().min(1).default(1),
     perpage: z.coerce.number().min(1).max(100).default(10),
     search: z.string().optional().default(""),
-    checkIn: z.coerce.date({
-      errorMap: (issue, ctx) => ({
-        message: "Invalid check-in date format. Please provide a valid date.",
-      }),
-    }),
-    checkOut: z.coerce.date({
-      errorMap: (issue, ctx) => ({
-        message: "Invalid check-out date format. Please provide a valid date.",
-      }),
-    }),
+    checkIn: z.coerce
+      .date({
+        errorMap: (issue, ctx) => ({
+          message: "Invalid check-in date format. Please provide a valid date.",
+        }),
+      })
+      .min(startOfToday(), { message: "Check-in date cannot be in the past." })
+      .optional(),
+    checkOut: z.coerce
+      .date({
+        errorMap: (issue, ctx) => ({
+          message:
+            "Invalid check-out date format. Please provide a valid date.",
+        }),
+      })
+      .optional(),
   })
-  .refine((data) => data.checkOut > data.checkIn, {
-    message: "Check-out date must be after check-in date",
-    path: ["checkOut"], // Attach the error specifically to the checkOut field
-  });
+  .refine(
+    (data) => {
+      // If both dates are provided, checkOut must be after checkIn
+      if (data.checkIn && data.checkOut) {
+        return data.checkOut > data.checkIn;
+      }
+      // If only one date is provided, that's invalid
+      if (data.checkIn && !data.checkOut) {
+        return false;
+      }
+      if (!data.checkIn && data.checkOut) {
+        return false;
+      }
+      // If neither date is provided, that's valid
+      return true;
+    },
+    {
+      message:
+        "Either provide both check-in and check-out dates (with check-out after check-in), or provide neither",
+      path: ["checkOut"],
+    }
+  );
 
 export const HotelCodeDTO = z.object({
   code: z.string().refine(isHotelExist, "No hotel with the privided code"),
