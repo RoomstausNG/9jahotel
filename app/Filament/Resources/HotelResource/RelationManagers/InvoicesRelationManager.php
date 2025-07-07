@@ -9,6 +9,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\Package;
 use Forms\Components\Datepicker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,25 +25,26 @@ class InvoicesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('subscription')
-                    ->default('annually')
-                    ->options([
-                        'monthly' => 'Monthly',
-                        'annually' => 'Annually',
-                    ])->live()
+                    ->label('Package')
+                    ->options(function () {
+                        return Package::all()->pluck('name', 'name')->toArray();
+                    })
+                    ->default(function () {
+                        return Package::first()?->name ?? 'annually';
+                    })
+                    ->live()
                     ->afterStateUpdated(function (Set $set, Get $get) {
-                        $set('amount', match ($get('subscription')) {
-                            'monthly' => 15000,
-                            'annually' => 99995,
-                        });
-                        // $set('to', match ($get('subscription')) {
-                        //     'monthly' => Carbon::parse($get('from'))->addMonth(),
-                        //     'annually' => Carbon::parse($get('from'))->addYear(),
-                        // });
+                        $package = Package::where('name', $get('subscription'))->first();
+                        if ($package) {
+                            $set('amount', $package->amount);
+                        }
                     }),
                 Forms\Components\TextInput::make('amount')
                     ->prefix('NGN')
                     ->required()
-                    ->default(99995)
+                    ->default(function () {
+                        return Package::first()?->amount ?? 99995;
+                    })
                     ->extraAttributes(['class' => 'cursor-not-allowed bg-gray-300'])
                     ->readonly()
                     ->live(),
@@ -55,9 +57,17 @@ class InvoicesRelationManager extends RelationManager
                     ->required()
                     ->live()
                     ->default(function (Get $get) {
-                        return match ($get('subscription')) {
-                            'monthly' => Carbon::parse($get('from'))->addMonth(),
-                            'annually' => Carbon::parse($get('from'))->addYear(),
+                        $subscription = $get('subscription');
+                        $from = $get('from');
+
+                        if (!$from) {
+                            $from = today();
+                        }
+
+                        return match ($subscription) {
+                            'monthly' => Carbon::parse($from)->addMonth(),
+                            'annually' => Carbon::parse($from)->addYear(),
+                            default => Carbon::parse($from)->addYear(),
                         };
                     })
                     ->dehydrated(false),
