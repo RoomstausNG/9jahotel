@@ -4,24 +4,24 @@ namespace App\Filament\Pages;
 
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Tables\Table;
 use App\Models\Hotel;
 use App\Models\Package;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Filament\Tables\Table;
 use Filament\Actions\Action;
-use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
 
 
 class HotelSettings extends Page implements HasForms, HasTable
 {
-    use InteractsWithForms;
-    use InteractsWithTable;
+    use InteractsWithForms, InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static string $view = 'filament.pages.hotel-settings';
@@ -133,12 +133,13 @@ class HotelSettings extends Page implements HasForms, HasTable
         try {
             $data = $this->getForm('hotelForm')->getState();
 
-            // Update all hotels with the new pricing settings
-            $updatedCount = Hotel::query()->update([
-                'online_price' => $data['online_price'],
-                'non_refundable_price' => $data['non_refundable_price'],
-            ]);
-
+            $updatedCount = DB::transaction(function () use ($data) {
+                return Hotel::query()->withTrashed()->update([
+                    'online_price' => $data['online_price'],
+                    'non_refundable_price' => $data['non_refundable_price'],
+                    'updated_at' => now(),
+                ]);
+            });
             Notification::make()
                 ->title('Hotel settings updated successfully')
                 ->success()
