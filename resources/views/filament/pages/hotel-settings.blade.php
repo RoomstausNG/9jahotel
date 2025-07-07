@@ -11,11 +11,14 @@
                 </p>
             </div>
             <div class="p-6">
-                {{ $this->hotelForm }}
+                <x-filament-panels::form wire:submit="saveHotelSettings">
+                    {{ $this->getForm('hotelForm') }}
+
+                    <x-filament-panels::form.actions :actions="$this->getHotelFormActions()" />
+                </x-filament-panels::form>
             </div>
         </div>
-
-        <!-- Package Settings Form -->
+        <!-- Package Settings Table -->
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">
@@ -26,7 +29,7 @@
                 </p>
             </div>
             <div class="p-6">
-                {{ $this->packageForm }}
+                {{ $this->table }}
             </div>
         </div>
     </div>
