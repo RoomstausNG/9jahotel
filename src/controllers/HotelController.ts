@@ -37,10 +37,10 @@ export class HotelController {
 
       const hotels = await this.hotelService.listHotelsByCity(
         cityId,
-        checkIn.toISOString(),
-        checkOut.toISOString(),
         page,
         perpage,
+        checkIn ? checkIn.toISOString() : undefined,
+        checkOut ? checkOut.toISOString() : undefined,
         search,
         sortBy,
         sortOrder,

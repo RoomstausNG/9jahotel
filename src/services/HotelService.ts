@@ -34,14 +34,17 @@ export class HotelService {
     sortBy?: string,
     sortOrder?: string,
     minPrice?: number,
-    maxPrice?: number
+    maxPrice?: number,
+    checkIn?: string,
+    checkOut?: string
   ) {
     const sortParam = sortBy ? `${sortBy}:${sortOrder || "asc"}` : "name:asc";
     const priceParam =
       minPrice !== undefined || maxPrice !== undefined
         ? `min:${minPrice || 0}:max:${maxPrice || 0}`
         : "";
-    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}`;
+    const dateParam = checkIn && checkOut ? `checkin:${checkIn}:checkout:${checkOut}` : "nodates";
+    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}:dates:${dateParam}`;
   }
 
   private async invalidateCityHotelCache(cityId: number): Promise<void> {
@@ -55,10 +58,10 @@ export class HotelService {
 
   async listHotelsByCity(
     cityId: number,
-    checkIn: string,
-    checkOut: string,
     page: number,
     perPage: number,
+    checkIn?: string,
+    checkOut?: string,
     search?: string,
     sortBy?: "room_lowest_price" | "star_rating" | "distance" | "name",
     sortOrder?: "asc" | "desc",
@@ -76,7 +79,9 @@ export class HotelService {
       sortBy,
       sortOrder,
       minPrice,
-      maxPrice
+      maxPrice,
+      checkIn,
+      checkOut
     );
 
     try {
@@ -94,24 +99,36 @@ export class HotelService {
 
     let conditions = [eq(hotels.city_id, cityId), eq(hotels.status, "active")];
 
-    conditions.push(sql`
-    EXISTS (
-      SELECT 1 FROM rooms
-      LEFT JOIN bookings
-        ON rooms.id = bookings.bookable_id
-       AND bookings.bookable_type = 'App\\Models\\Room'
-      WHERE rooms.hotel_id = ${hotels.id}
-        AND rooms.status NOT IN ('occupied', 'repair')
-        AND NOT EXISTS (
-          SELECT 1 FROM bookings
-          WHERE bookings.bookable_id = rooms.id
-            AND bookings.bookable_type = 'App\\Models\\Room'
-            AND bookings.status IN ('paid', 'unpaid', 'checkedin', 'checkedout')
-            AND bookings.checked_in < ${checkOut}
-            AND bookings.checked_out > ${checkIn}
-        )
-    )
-  `);
+    // If dates are provided, check availability for those dates
+    if (checkIn && checkOut) {
+      conditions.push(sql`
+      EXISTS (
+        SELECT 1 FROM rooms
+        LEFT JOIN bookings
+          ON rooms.id = bookings.bookable_id
+         AND bookings.bookable_type = 'App\\Models\\Room'
+        WHERE rooms.hotel_id = ${hotels.id}
+          AND rooms.status NOT IN ('occupied', 'repair')
+          AND NOT EXISTS (
+            SELECT 1 FROM bookings
+            WHERE bookings.bookable_id = rooms.id
+              AND bookings.bookable_type = 'App\\Models\\Room'
+              AND bookings.status IN ('paid', 'unpaid', 'checkedin', 'checkedout')
+              AND bookings.checked_in < ${checkOut}
+              AND bookings.checked_out > ${checkIn}
+          )
+      )
+    `);
+    } else {
+      // If no dates provided, just check that the hotel has available rooms
+      conditions.push(sql`
+      EXISTS (
+        SELECT 1 FROM rooms
+        WHERE rooms.hotel_id = ${hotels.id}
+          AND rooms.status NOT IN ('occupied', 'repair')
+      )
+    `);
+    }
 
     if (searchKey) {
       conditions.push(
