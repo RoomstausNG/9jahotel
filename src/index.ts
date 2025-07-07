@@ -116,8 +116,8 @@ app.get("/test-email", async (c) => {
 });
 
 // Not found errorHandler
-app.all("*", (c) => {
-  return ApiResponse.failure("Resource Not Found", 404);
+app.notFound((c) => {
+  return ApiResponse.failure("Resource/Endpoint Not Found", 404);
 });
 
 export default {
