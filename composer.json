@@ -21,6 +21,7 @@
         "jantinnerezo/livewire-alert": "^3.0",
         "jenssegers/agent": "^2.6",
         "kreait/firebase-php": "^7.19",
+        "kreait/laravel-firebase": "^5.10",
         "laravel/fortify": "^1.19",
         "laravel/framework": "^10.10",
         "laravel/octane": "^2.8",
