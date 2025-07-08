@@ -81,7 +81,12 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 
     public function getFilamentName(): string
     {
-        return "{$this->firstname} {$this->lastname}";
+        return Str::title("{$this->firstname} {$this->lastname}");
+    }
+
+    public function getNameAttribute(): string
+    {
+        return Str::title("{$this->firstname} {$this->lastname}");
     }
 
     protected $guarded = ['password_confirmation'];
@@ -154,7 +159,6 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
 
             // sending login details
             Mail::to($user)->later(now()->addSeconds(5), new RegistrationEmail($user));
-
         });
 
         self::updating(function ($user) {

@@ -1,0 +1,187 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\CouponResource\Pages;
+use App\Filament\Resources\CouponResource\RelationManagers;
+use App\Models\Coupon;
+use App\Jobs\SendCouponEmail;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
+
+class CouponResource extends Resource
+{
+    protected static ?string $model = Coupon::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('code')
+                    ->required()
+                    ->maxLength(12),
+                Forms\Components\TextInput::make('percent')
+                    ->required()
+                    ->maxValue(10)
+                    ->numeric(),
+                Forms\Components\Select::make('type')
+                    ->required()
+                    ->options([
+                        'regular' => 'Regular',
+                        'new_user' => 'New User',
+                        'marketer' => 'Marketer',
+                        'agent' => 'Agent',
+                        'user' => 'User',
+                    ]),
+                Forms\Components\DatePicker::make('valid_from')
+                    ->required(),
+                Forms\Components\DatePicker::make('valid_till')
+                    ->required(),
+                Forms\Components\TextInput::make('limit_usage')
+                    ->numeric()
+                    ->default(-1)
+                    ->helperText('Use -1 for unlimited usage.'),
+                Forms\Components\TextInput::make('highest_value')
+                    ->numeric()
+                    ->required()
+                    ->helperText('The maximum discount amount that can be applied, even if the percentage is higher.'),
+                Forms\Components\Select::make('owner_id')
+                    ->relationship(
+                        name: 'owner',
+                        titleAttribute: 'firstname',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereHas('roles', fn(Builder $query) => $query->whereIn('name', ['agent', 'marketer']))
+                    )
+                    ->getOptionLabelFromRecordUsing(fn(User $record) => Str::title("{$record->firstname} {$record->lastname}"))
+                    ->native(false)
+                    ->searchable()
+                    ->helperText('Does this coupon belong to a specific agent or marketer?'),
+                Forms\Components\Toggle::make('status')
+                    ->required(),
+                Forms\Components\Select::make('hotel_id')
+                    ->relationship('hotel', 'name')
+                    ->searchable()
+                    ->native(false)
+                    ->helperText('Is this coupon associated with a particular hotel?'),
+            ])->columns(3);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('code')
+                    ->searchable()
+                    ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+                Tables\Columns\TextColumn::make('percent')
+                    ->numeric()
+                    ->sortable()
+                    ->suffix('%'),
+                Tables\Columns\TextColumn::make('type')
+                    ->searchable()
+                    ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+                Tables\Columns\TextColumn::make('valid_from')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('valid_till')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('usage_count')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('send_to_all_customers')
+                        ->label('Send to all Customers')
+                        ->icon('heroicon-o-paper-airplane')
+                        ->action(function (Collection $records, array $data) {
+                            $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
+                            
+                            foreach ($records as $coupon) {
+                                foreach ($customers as $customer) {
+                                    SendCouponEmail::dispatch($coupon, $data['message'], $customer->email);
+                                }
+                            }
+                            
+                            Notification::make()
+                                ->title('Coupons sent successfully!')
+                                ->body('Coupon emails have been queued for all customers.')
+                                ->success()
+                                ->send();
+                        })
+                        ->form([
+                            Forms\Components\Textarea::make('message')
+                                ->required()
+                                ->default('Enjoy a discount on your next purchase with this coupon!')
+                                ->rows(4),
+                        ]),
+                    Tables\Actions\BulkAction::make('send_to_emails')
+                        ->label('Send to Emails')
+                        ->icon('heroicon-o-envelope')
+                        ->action(function (Collection $records, array $data) {
+                            $emails = array_map('trim', explode(',', $data['emails']));
+                            
+                            foreach ($records as $coupon) {
+                                foreach ($emails as $email) {
+                                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                        SendCouponEmail::dispatch($coupon, $data['message'], $email);
+                                    }
+                                }
+                            }
+                            
+                            Notification::make()
+                                ->title('Coupons sent successfully!')
+                                ->body('Coupon emails have been queued for the specified email addresses.')
+                                ->success()
+                                ->send();
+                        })
+                        ->form([
+                            Forms\Components\Textarea::make('emails')
+                                ->required()
+                                ->helperText('Enter a comma-separated list of email addresses.')
+                                ->rows(3),
+                            Forms\Components\Textarea::make('message')
+                                ->required()
+                                ->default('Enjoy a discount on your next purchase with this coupon!')
+                                ->rows(4),
+                        ]),
+                ]),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManageCoupons::route('/'),
+        ];
+    }
+}
