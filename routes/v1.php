@@ -12,6 +12,7 @@ use App\Http\Controllers\API\HotelController;
 use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\V1\FavouriteController;
 use App\Http\Controllers\API\MobileAuthController;
+use App\Http\Controllers\Api\BookingNotificationController as NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,19 @@ use App\Http\Controllers\API\MobileAuthController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+// Public endpoints (protected by API key)
+Route::middleware(['api.key'])->group(function () {
+    Route::post('/bookings/notify', [NotificationController::class, 'notifyNewBooking']);
+});
+
+// Authenticated endpoints (for Flutter app)
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/hotels/{hotel}/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
+    Route::post('/hotels/{hotel}/notifications/mark-read', [NotificationController::class, 'markAllAsRead']);
+    Route::get('/notifications/{notification}', [NotificationController::class, 'getNotificationDetails']);
+    Route::post('/user/fcm-token', [NotificationController::class, 'updateFcmToken']);
+});
 
 Route::middleware('auth:customer')->get('/profile', function (Request $request) {
     return new CustomerResource(Auth::guard('customer')->user());

@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verified-otp' => \App\Http\Middleware\OtpMiddleware::class,
+        'api.key' => \App\Http\Middleware\ApiKeyAuth::class,
         'expired' => \App\Http\Middleware\RenewalMiddleware::class,
         'customer' => CustomerMiddleware::class,
         'hotel' => HotelMiddleware::class,

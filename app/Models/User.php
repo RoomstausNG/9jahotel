@@ -112,6 +112,7 @@ class User extends Authenticatable implements FilamentUser, HasName, HasAvatar
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
         'password' => 'hashed',
+        'fcm_token' => 'string',
     ];
 
     // public function getDefaultTenant(Panel $panel): ?Model

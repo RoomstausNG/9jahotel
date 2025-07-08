@@ -198,4 +198,14 @@ return [
         // 'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Key
+    |--------------------------------------------------------------------------
+    |
+    | This value is the API key used for the BookingNotification API
+    |
+    */
+    'api_key' => env('API_KEY', 'default-api-key'),
+
 ];
