@@ -125,14 +125,15 @@ class CouponResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()
-                        ->label('View'),
+                        ->label('View Coupon'),
                     Tables\Actions\EditAction::make()
-                        ->label('Edit'),
+                        ->label('Edit Coupon'),
                     Tables\Actions\ActionGroup::make([
                         Tables\Actions\Action::make('send_to_all_customers')
-                            ->label('All Customers')
+                            ->label('Send to All Customers')
                             ->icon('heroicon-o-paper-airplane')
                             ->color('success')
+                            ->tooltip('Send this coupon to all registered customers')
                             ->action(function (Coupon $record, array $data) {
                                 $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
                                 $adminUserId = auth()->id();
@@ -151,14 +152,16 @@ class CouponResource extends Resource
                             })
                             ->form([
                                 Forms\Components\Textarea::make('message')
+                                    ->label('Custom Message')
                                     ->required()
                                     ->default('Enjoy a discount on your next purchase with this coupon!')
                                     ->rows(4),
                             ]),
                         Tables\Actions\Action::make('send_to_emails')
-                            ->label('Email List')
+                            ->label('Send to Specific Emails')
                             ->icon('heroicon-o-envelope')
                             ->color('info')
+                            ->tooltip('Send this coupon to specific email addresses')
                             ->action(function (Coupon $record, array $data) {
                                 $emails = array_map('trim', explode(',', $data['emails']));
                                 $adminUserId = auth()->id();
@@ -179,46 +182,52 @@ class CouponResource extends Resource
                             })
                             ->form([
                                 Forms\Components\Textarea::make('emails')
+                                    ->label('Email Addresses')
                                     ->required()
                                     ->helperText('Enter a comma-separated list of email addresses.')
                                     ->rows(3),
                                 Forms\Components\Textarea::make('message')
+                                    ->label('Custom Message')
                                     ->required()
                                     ->default('Enjoy a discount on your next purchase with this coupon!')
                                     ->rows(4),
                             ]),
                     ])
-                    ->label('Send Email')
+                    ->label('📧 Email Actions')
                     ->icon('heroicon-o-envelope')
                     ->color('primary'),
                     Tables\Actions\ActionGroup::make([
                         Tables\Actions\ExportAction::make()
-                            ->label('Export')
+                            ->label('Export Coupon')
+                            ->tooltip('Export this coupon to Excel/CSV')
                             ->exporter(CouponExporter::class),
                         Tables\Actions\Action::make('print')
-                            ->label('Print')
+                            ->label('Print Coupon')
                             ->icon('heroicon-o-printer')
                             ->color('gray')
-                            ->url(fn (Coupon $record): string => route('coupon.print', $record))
+                            ->tooltip('Print this coupon')
+                            ->url(fn(Coupon $record): string => route('coupon.print', $record))
                             ->openUrlInNewTab(),
                     ])
-                    ->label('Export & Print')
+                    ->label('📄 Export & Print')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('warning'),
                     Tables\Actions\DeleteAction::make()
-                        ->label('Delete'),
+                        ->label('Delete Coupon')
+                        ->tooltip('Delete this coupon'),
                 ])
-                ->label('Actions')
+                ->label('⚡ Actions')
                 ->icon('heroicon-o-ellipsis-vertical')
                 ->size('sm')
-                ->color('gray'),
-            ])
-            ->bulkActions([
+                ->color('gray')
+                ->button(),
+            ])            ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkActionGroup::make([
                         Tables\Actions\BulkAction::make('send_to_all_customers')
-                            ->label('Send to all Customers')
+                            ->label('📧 Send to All Customers')
                             ->icon('heroicon-o-paper-airplane')
+                            ->color('success')
                             ->action(function (Collection $records, array $data) {
                                 $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
                                 $adminUserId = auth()->id();
@@ -239,13 +248,15 @@ class CouponResource extends Resource
                             })
                             ->form([
                                 Forms\Components\Textarea::make('message')
+                                    ->label('Custom Message')
                                     ->required()
                                     ->default('Enjoy a discount on your next purchase with this coupon!')
                                     ->rows(4),
                             ]),
                         Tables\Actions\BulkAction::make('send_to_emails')
-                            ->label('Send to Emails')
+                            ->label('📧 Send to Specific Emails')
                             ->icon('heroicon-o-envelope')
+                            ->color('info')
                             ->action(function (Collection $records, array $data) {
                                 $emails = array_map('trim', explode(',', $data['emails']));
                                 $adminUserId = auth()->id();
@@ -268,28 +279,32 @@ class CouponResource extends Resource
                             })
                             ->form([
                                 Forms\Components\Textarea::make('emails')
+                                    ->label('Email Addresses')
                                     ->required()
                                     ->helperText('Enter a comma-separated list of email addresses.')
                                     ->rows(3),
                                 Forms\Components\Textarea::make('message')
+                                    ->label('Custom Message')
                                     ->required()
                                     ->default('Enjoy a discount on your next purchase with this coupon!')
                                     ->rows(4),
                             ]),
                     ])
-                    ->label('Send Emails')
+                    ->label('📧 Email Actions')
                     ->icon('heroicon-o-envelope')
                     ->color('primary'),
                     Tables\Actions\BulkActionGroup::make([
                         Tables\Actions\ExportBulkAction::make()
+                            ->label('📄 Export Selected')
                             ->exporter(CouponExporter::class),
                     ])
-                    ->label('Export & Print')
+                    ->label('📄 Export & Print')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('warning'),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->label('🗑️ Delete Selected'),
                 ])
-                ->label('Bulk Actions')
+                ->label('⚡ Bulk Actions')
                 ->icon('heroicon-o-bars-3-bottom-left'),
             ]);
     }
