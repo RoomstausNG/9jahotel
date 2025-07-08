@@ -1,0 +1,24 @@
+<x-mail::message>
+    # New Invoice: {{ $invoice->reference }}
+
+    Dear {{ $hotel->name }},
+
+    A new invoice has been created for your account.
+
+    **Invoice Details:**
+    - Reference: {{ $invoice->reference }}
+    - Amount: {{ number_format($invoice->amount) }} NGN
+    - Subscription: {{ $invoice->subscription }}
+    - Valid From: {{ $invoice->from->format('M d, Y') }}
+    - Valid To: {{ $invoice->to->format('M d, Y') }}
+    - Description: {{ $invoice->description }}
+
+    <x-mail::button :url="$paymentUrl">
+        Make Payment
+    </x-mail::button>
+
+    Please make your payment before the due date to ensure uninterrupted service.
+
+    Thank you,<br>
+    {{ config('app.name') }}
+</x-mail::message>

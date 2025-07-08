@@ -10,11 +10,16 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Package;
+use App\Models\Invoice;
+use App\Models\Hotel;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Forms\Components\Datepicker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Cloudinary\Transformation\Argument\Text\FontWeight;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Notifications\Notification;
 
 class InvoicesRelationManager extends RelationManager
 {
@@ -118,13 +123,45 @@ class InvoicesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->successNotificationTitle("Invoice Created successfully"),
+                    ->successNotificationTitle("Invoice Created successfully")
+                    ->after(function (Model $record) {
+                        $hotel = $this->getOwnerRecord();
+
+                        // Queue the email notification
+                        Mail::to($hotel->email)
+                            ->queue(new \App\Mail\InvoiceCreated($record, $hotel));
+
+                        // Also send a notification in the UI
+                        Notification::make()
+                            ->title('Invoice Email Sent')
+                            ->body("An email notification has been sent to {$hotel->email}")
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->hidden(fn(Model $state) => $state->status == 'paid')
                     ->successNotificationTitle("Invoice updated successfully"),
                 Tables\Actions\DeleteAction::make()->hidden(fn(Model $state) => $state->status == 'paid')
                     ->successNotificationTitle("Invoice deleted successfully"),
+                Tables\Actions\Action::make('sendReminder')
+                    ->label('Send Reminder')
+                    ->icon('heroicon-o-envelope')
+                    ->color('warning')
+                    ->hidden(fn(Model $record) => $record->status == 'paid')
+                    ->action(function (Model $record) {
+                        $hotel = $this->getOwnerRecord();
+
+                        // Queue the reminder email
+                        Mail::to($hotel->email)
+                            ->queue(new \App\Mail\InvoicePaymentReminder($record, $hotel));
+
+                        Notification::make()
+                            ->title('Payment Reminder Sent')
+                            ->body("A payment reminder has been sent to {$hotel->email}")
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -27,6 +27,13 @@ use Unicodeveloper\Paystack\Facades\Paystack;
 
 
 Route::get('/successpayment/{reference?}', [PageController::class, 'success'])->name('payment.success');
+
+Route::get('/invoice/payment/{id}', function ($id) {
+    $invoice = \App\Models\Invoice::findOrFail($id);
+    // Redirect to the payment gateway or invoice payment page
+    return redirect('/successpayment/' . $invoice->reference);
+})->name('invoice.payment');
+
 Route::get('/', function () {
     return redirect('hotel/login');
 });
