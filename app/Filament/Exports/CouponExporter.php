@@ -16,19 +16,46 @@ class CouponExporter extends Exporter
         return [
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('code'),
-            ExportColumn::make('percent'),
-            ExportColumn::make('type'),
-            ExportColumn::make('valid_from'),
-            ExportColumn::make('valid_till'),
-            ExportColumn::make('limit_usage'),
-            ExportColumn::make('highest_value'),
-            ExportColumn::make('owner_id'),
-            ExportColumn::make('status'),
-            ExportColumn::make('usage_count'),
-            ExportColumn::make('hotel_id'),
-            ExportColumn::make('created_at'),
-            ExportColumn::make('updated_at'),
+            ExportColumn::make('code')
+                ->label('Coupon Code')
+                ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+            ExportColumn::make('percent')
+                ->label('Discount (%)')
+                ->suffix('%'),
+            ExportColumn::make('type')
+                ->label('Type')
+                ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+            ExportColumn::make('valid_from')
+                ->label('Valid From')
+                ->formatStateUsing(fn ($state): string => $state ? $state->format('M d, Y') : ''),
+            ExportColumn::make('valid_till')
+                ->label('Valid Until')
+                ->formatStateUsing(fn ($state): string => $state ? $state->format('M d, Y') : ''),
+            ExportColumn::make('limit_usage')
+                ->label('Usage Limit')
+                ->formatStateUsing(fn ($state): string => $state == -1 ? 'Unlimited' : (string) $state),
+            ExportColumn::make('highest_value')
+                ->label('Maximum Discount Amount')
+                ->formatStateUsing(fn ($state): string => $state ? '₦' . number_format($state, 2) : 'No limit'),
+            ExportColumn::make('owner.name')
+                ->label('Owner')
+                ->enabledByDefault(false),
+            ExportColumn::make('hotel.name')
+                ->label('Hotel')
+                ->enabledByDefault(false),
+            ExportColumn::make('status')
+                ->label('Status')
+                ->formatStateUsing(fn (bool $state): string => $state ? 'Active' : 'Inactive'),
+            ExportColumn::make('usage_count')
+                ->label('Times Used'),
+            ExportColumn::make('created_at')
+                ->label('Created At')
+                ->formatStateUsing(fn ($state): string => $state ? $state->format('M d, Y H:i') : '')
+                ->enabledByDefault(false),
+            ExportColumn::make('updated_at')
+                ->label('Updated At')
+                ->formatStateUsing(fn ($state): string => $state ? $state->format('M d, Y H:i') : '')
+                ->enabledByDefault(false),
         ];
     }
 

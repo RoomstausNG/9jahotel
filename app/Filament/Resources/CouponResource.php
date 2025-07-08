@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CouponResource\Pages;
 use App\Filament\Resources\CouponResource\RelationManagers;
 use App\Models\Coupon;
+use App\Filament\Exports\CouponExporter;
 use App\Jobs\SendCouponEmail;
 use App\Models\User;
 use Filament\Forms;
@@ -117,75 +118,175 @@ class CouponResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(CouponExporter::class),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('send_to_all_customers')
-                        ->label('Send to all Customers')
-                        ->icon('heroicon-o-paper-airplane')
-                        ->action(function (Collection $records, array $data) {
-                            $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
-                            $adminUserId = auth()->id();
-                            $totalEmails = 0;
+            ->actions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ActionGroup::make([
+                        Tables\Actions\Action::make('send_to_all_customers')
+                            ->label('Send to All Customers')
+                            ->icon('heroicon-o-paper-airplane')
+                            ->color('success')
+                            ->action(function (Coupon $record, array $data) {
+                                $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
+                                $adminUserId = auth()->id();
+                                $totalEmails = 0;
 
-                            foreach ($records as $coupon) {
                                 foreach ($customers as $customer) {
-                                    SendCouponEmail::dispatch($coupon, $data['message'], $customer->email, $adminUserId);
+                                    SendCouponEmail::dispatch($record, $data['message'], $customer->email, $adminUserId);
                                     $totalEmails++;
                                 }
-                            }
 
-                            Notification::make()
-                                ->title('Coupons Batch Started')
-                                ->body("Started sending {$totalEmails} coupon emails to all customers. You'll receive notifications for each email.")
-                                ->success()
-                                ->send();
-                        })
-                        ->form([
-                            Forms\Components\Textarea::make('message')
-                                ->required()
-                                ->default('Enjoy a discount on your next purchase with this coupon!')
-                                ->rows(4),
-                        ]),
-                    Tables\Actions\BulkAction::make('send_to_emails')
-                        ->label('Send to Emails')
-                        ->icon('heroicon-o-envelope')
-                        ->action(function (Collection $records, array $data) {
-                            $emails = array_map('trim', explode(',', $data['emails']));
-                            $adminUserId = auth()->id();
-                            $totalEmails = 0;
+                                Notification::make()
+                                    ->title('Coupon Sent to All Customers')
+                                    ->body("Started sending coupon {$record->code} to {$totalEmails} customers. You'll receive notifications for each email.")
+                                    ->success()
+                                    ->send();
+                            })
+                            ->form([
+                                Forms\Components\Textarea::make('message')
+                                    ->required()
+                                    ->default('Enjoy a discount on your next purchase with this coupon!')
+                                    ->rows(4),
+                            ]),
+                        Tables\Actions\Action::make('send_to_emails')
+                            ->label('Send to Emails')
+                            ->icon('heroicon-o-envelope')
+                            ->color('info')
+                            ->action(function (Coupon $record, array $data) {
+                                $emails = array_map('trim', explode(',', $data['emails']));
+                                $adminUserId = auth()->id();
+                                $totalEmails = 0;
 
-                            foreach ($records as $coupon) {
                                 foreach ($emails as $email) {
                                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                        SendCouponEmail::dispatch($coupon, $data['message'], $email, $adminUserId);
+                                        SendCouponEmail::dispatch($record, $data['message'], $email, $adminUserId);
                                         $totalEmails++;
                                     }
                                 }
-                            }
 
-                            Notification::make()
-                                ->title('Coupons Batch Started')
-                                ->body("Started sending {$totalEmails} coupon emails to specified addresses. You'll receive notifications for each email.")
-                                ->success()
-                                ->send();
-                        })
-                        ->form([
-                            Forms\Components\Textarea::make('emails')
-                                ->required()
-                                ->helperText('Enter a comma-separated list of email addresses.')
-                                ->rows(3),
-                            Forms\Components\Textarea::make('message')
-                                ->required()
-                                ->default('Enjoy a discount on your next purchase with this coupon!')
-                                ->rows(4),
-                        ]),
-                ]),
+                                Notification::make()
+                                    ->title('Coupon Sent to Email List')
+                                    ->body("Started sending coupon {$record->code} to {$totalEmails} email addresses. You'll receive notifications for each email.")
+                                    ->success()
+                                    ->send();
+                            })
+                            ->form([
+                                Forms\Components\Textarea::make('emails')
+                                    ->required()
+                                    ->helperText('Enter a comma-separated list of email addresses.')
+                                    ->rows(3),
+                                Forms\Components\Textarea::make('message')
+                                    ->required()
+                                    ->default('Enjoy a discount on your next purchase with this coupon!')
+                                    ->rows(4),
+                            ]),
+                    ])
+                    ->label('Send Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('primary'),
+                    Tables\Actions\ActionGroup::make([
+                        Tables\Actions\ExportAction::make()
+                            ->exporter(CouponExporter::class),
+                        Tables\Actions\Action::make('print')
+                            ->label('Print')
+                            ->icon('heroicon-o-printer')
+                            ->color('gray')
+                            ->url(fn (Coupon $record): string => route('coupon.print', $record))
+                            ->openUrlInNewTab(),
+                    ])
+                    ->label('Export & Print')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning'),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                ->label('Actions')
+                ->icon('heroicon-o-ellipsis-vertical')
+                ->size('sm')
+                ->color('gray'),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkActionGroup::make([
+                        Tables\Actions\BulkAction::make('send_to_all_customers')
+                            ->label('Send to all Customers')
+                            ->icon('heroicon-o-paper-airplane')
+                            ->action(function (Collection $records, array $data) {
+                                $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
+                                $adminUserId = auth()->id();
+                                $totalEmails = 0;
+
+                                foreach ($records as $coupon) {
+                                    foreach ($customers as $customer) {
+                                        SendCouponEmail::dispatch($coupon, $data['message'], $customer->email, $adminUserId);
+                                        $totalEmails++;
+                                    }
+                                }
+
+                                Notification::make()
+                                    ->title('Coupons Batch Started')
+                                    ->body("Started sending {$totalEmails} coupon emails to all customers. You'll receive notifications for each email.")
+                                    ->success()
+                                    ->send();
+                            })
+                            ->form([
+                                Forms\Components\Textarea::make('message')
+                                    ->required()
+                                    ->default('Enjoy a discount on your next purchase with this coupon!')
+                                    ->rows(4),
+                            ]),
+                        Tables\Actions\BulkAction::make('send_to_emails')
+                            ->label('Send to Emails')
+                            ->icon('heroicon-o-envelope')
+                            ->action(function (Collection $records, array $data) {
+                                $emails = array_map('trim', explode(',', $data['emails']));
+                                $adminUserId = auth()->id();
+                                $totalEmails = 0;
+
+                                foreach ($records as $coupon) {
+                                    foreach ($emails as $email) {
+                                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                            SendCouponEmail::dispatch($coupon, $data['message'], $email, $adminUserId);
+                                            $totalEmails++;
+                                        }
+                                    }
+                                }
+
+                                Notification::make()
+                                    ->title('Coupons Batch Started')
+                                    ->body("Started sending {$totalEmails} coupon emails to specified addresses. You'll receive notifications for each email.")
+                                    ->success()
+                                    ->send();
+                            })
+                            ->form([
+                                Forms\Components\Textarea::make('emails')
+                                    ->required()
+                                    ->helperText('Enter a comma-separated list of email addresses.')
+                                    ->rows(3),
+                                Forms\Components\Textarea::make('message')
+                                    ->required()
+                                    ->default('Enjoy a discount on your next purchase with this coupon!')
+                                    ->rows(4),
+                            ]),
+                    ])
+                    ->label('Send Emails')
+                    ->icon('heroicon-o-envelope')
+                    ->color('primary'),
+                    Tables\Actions\BulkActionGroup::make([
+                        Tables\Actions\ExportBulkAction::make()
+                            ->exporter(CouponExporter::class),
+                    ])
+                    ->label('Export & Print')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning'),
+                    Tables\Actions\DeleteBulkAction::make(),
+                ])
+                ->label('Bulk Actions')
+                ->icon('heroicon-o-bars-3-bottom-left'),
             ]);
     }
 

@@ -34,6 +34,10 @@ Route::get('/invoice/payment/{id}', function ($id) {
     return redirect('/successpayment/' . $invoice->reference);
 })->name('invoice.payment');
 
+Route::get('/coupon/print/{coupon}', function (\App\Models\Coupon $coupon) {
+    return view('print.coupon', compact('coupon'));
+})->name('coupon.print');
+
 Route::get('/', function () {
     return redirect('hotel/login');
 });
