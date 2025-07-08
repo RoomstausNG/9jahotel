@@ -66,13 +66,17 @@ class BookingNotificationController extends Controller
                 $notificationData
             );
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Notification sent successfully',
+            $data = [
                 'notification_id' => $notification->id,
                 'unread_count' => $unreadCount,
                 'fcm_result' => $fcmResult,
-            ], 201);
+            ];
+
+            return $this->successResponse(
+                $data,
+                "Notification sent successfully",
+                201
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
