@@ -124,11 +124,13 @@ class CouponResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->label('View'),
+                    Tables\Actions\EditAction::make()
+                        ->label('Edit'),
                     Tables\Actions\ActionGroup::make([
                         Tables\Actions\Action::make('send_to_all_customers')
-                            ->label('Send to All Customers')
+                            ->label('All Customers')
                             ->icon('heroicon-o-paper-airplane')
                             ->color('success')
                             ->action(function (Coupon $record, array $data) {
@@ -154,7 +156,7 @@ class CouponResource extends Resource
                                     ->rows(4),
                             ]),
                         Tables\Actions\Action::make('send_to_emails')
-                            ->label('Send to Emails')
+                            ->label('Email List')
                             ->icon('heroicon-o-envelope')
                             ->color('info')
                             ->action(function (Coupon $record, array $data) {
@@ -191,6 +193,7 @@ class CouponResource extends Resource
                     ->color('primary'),
                     Tables\Actions\ActionGroup::make([
                         Tables\Actions\ExportAction::make()
+                            ->label('Export')
                             ->exporter(CouponExporter::class),
                         Tables\Actions\Action::make('print')
                             ->label('Print')
@@ -202,7 +205,8 @@ class CouponResource extends Resource
                     ->label('Export & Print')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                        ->label('Delete'),
                 ])
                 ->label('Actions')
                 ->icon('heroicon-o-ellipsis-vertical')
