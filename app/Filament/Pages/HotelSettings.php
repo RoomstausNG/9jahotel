@@ -29,6 +29,11 @@ class HotelSettings extends Page implements HasForms, HasTable
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin', 'back-office']);
+    }
+
     public ?array $hotel_data = [];
 
     public function mount(): void

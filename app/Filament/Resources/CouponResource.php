@@ -24,6 +24,33 @@ class CouponResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Settings';
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin']);
+    }
+
+    public static function canView($record): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin']);
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()?->hasAnyRole(['super-admin', 'admin']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
