@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 class BookingNotificationController extends Controller
 {
 
+    use ApiResponse;
     public function __construct(private FCMService $fcmService) {}
 
     /**
@@ -141,10 +143,10 @@ class BookingNotificationController extends Controller
         $request->user()->update([
             'fcm_token' => $validated['fcm_token'],
         ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'FCM token updated successfully',
-        ]);
+        return $this->successResponse(
+            null,
+            "FCM token updated successfully"
+        );
     }
 
     /**
@@ -162,10 +164,11 @@ class BookingNotificationController extends Controller
             $notification->update(['is_read' => true]);
             $this->decrementUnreadCount($notification->hotel_id);
         }
-        return response()->json([
-            'success' => true,
+        $data = [
             'notification' => $notification,
-        ]);
+        ];
+
+        return $this->successResponse($data, 'Notification details retrieved successfully');
     }
 
     /**

@@ -9,19 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BookingNotification extends Model
 {
-    use HasFactory, SoftDeletes, BelongToHotel;
+    use HasFactory, BelongToHotel;
 
-    protected $fillable = [
-        'hotel_id',
-        'booking_id',
-        'guest_name',
-        'check_in',
-        'check_out',
-        'room_type',
-        'total_amount',
-        'source',
-        'is_read'
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'check_in' => 'date',

@@ -63,8 +63,8 @@ Route::post('/test-fcm', [App\Http\Controllers\Api\FCMTestController::class, 'te
 
 // Authenticated endpoints (for booking notifications)
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/hotels/{hotel}/notifications/unread-count', [BookingNotificationController::class, 'getUnreadCount']);
-    Route::post('/hotels/{hotel}/notifications/mark-read', [BookingNotificationController::class, 'markAllAsRead']);
+    Route::get('/{hotel}/notifications/unread-count', [BookingNotificationController::class, 'getUnreadCount']);
+    Route::post('/{hotel}/notifications/mark-read', [BookingNotificationController::class, 'markAllAsRead']);
     Route::get('/notifications/{notification}', [BookingNotificationController::class, 'getNotificationDetails']);
     Route::post('/user/fcm-token', [BookingNotificationController::class, 'updateFcmToken']);
 });
