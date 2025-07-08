@@ -19,6 +19,11 @@ class Coupon extends Model
         'deleted_at' => 'datetime',
         'valid_from' => 'date',
         'valid_till' => 'date',
+        'status' => 'boolean',
+    ];
+
+    protected $attributes = [
+        'status' => true,
     ];
 
     protected $fillable = [

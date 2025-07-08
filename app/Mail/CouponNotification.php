@@ -42,6 +42,11 @@ class CouponNotification extends Mailable
     {
         return new Content(
             markdown: 'emails.coupons.notification',
+            with: [
+                'coupon' => $this->coupon,
+                'message' => $this->message,
+                'recipientEmail' => $this->recipientEmail,
+            ],
         );
     }
 

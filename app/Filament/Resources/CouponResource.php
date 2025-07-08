@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CouponResource\Pages;
 use App\Filament\Resources\CouponResource\RelationManagers;
 use App\Models\Coupon;
-use App\Jobs\SendCouponBatchCompleteNotification;
 use App\Jobs\SendCouponEmail;
 use App\Models\User;
 use Filament\Forms;
@@ -42,8 +41,9 @@ class CouponResource extends Resource
                         'new_user' => 'New User',
                         'marketer' => 'Marketer',
                         'agent' => 'Agent',
-                        'user' => 'User',
-                    ]),
+                        'hotel' => 'Hotel',
+                    ])
+                    ->live(),
                 Forms\Components\DatePicker::make('valid_from')
                     ->required(),
                 Forms\Components\DatePicker::make('valid_till')
@@ -56,6 +56,12 @@ class CouponResource extends Resource
                     ->numeric()
                     ->required()
                     ->helperText('The maximum discount amount that can be applied, even if the percentage is higher.'),
+                Forms\Components\Select::make('hotel_id')
+                    ->relationship('hotel', 'name')
+                    ->searchable()
+                    ->native(false)
+                    ->helperText('Is this coupon associated with a particular hotel?')
+                    ->visible(fn(Forms\Get $get) => in_array($get('type'), ['hotel'])),
                 Forms\Components\Select::make('owner_id')
                     ->relationship(
                         name: 'owner',
@@ -65,14 +71,12 @@ class CouponResource extends Resource
                     ->getOptionLabelFromRecordUsing(fn(User $record) => Str::title("{$record->firstname} {$record->lastname}"))
                     ->native(false)
                     ->searchable()
-                    ->helperText('Does this coupon belong to a specific agent or marketer?'),
+                    ->helperText('Does this coupon belong to a specific agent or marketer?')
+                    ->visible(fn(Forms\Get $get) => in_array($get('type'), ['agent', 'marketer'])),
                 Forms\Components\Toggle::make('status')
-                    ->required(),
-                Forms\Components\Select::make('hotel_id')
-                    ->relationship('hotel', 'name')
-                    ->searchable()
-                    ->native(false)
-                    ->helperText('Is this coupon associated with a particular hotel?'),
+                    ->required()
+                    ->default(true)
+                    ->label('Active Status'),
             ])->columns(3);
     }
 
@@ -126,8 +130,8 @@ class CouponResource extends Resource
                         ->icon('heroicon-o-paper-airplane')
                         ->action(function (Collection $records, array $data) {
                             $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
-                            $totalEmails = 0;
                             $adminUserId = auth()->id();
+                            $totalEmails = 0;
 
                             foreach ($records as $coupon) {
                                 foreach ($customers as $customer) {
@@ -137,17 +141,10 @@ class CouponResource extends Resource
                             }
 
                             Notification::make()
-                                ->title('Coupons sent successfully!')
-                                ->body("Coupon emails have been queued for all customers. Total: {$totalEmails} emails.")
+                                ->title('Coupons Batch Started')
+                                ->body("Started sending {$totalEmails} coupon emails to all customers. You'll receive notifications for each email.")
                                 ->success()
                                 ->send();
-
-                            // Send initial notification about batch start
-                            Notification::make()
-                                ->title('Coupon Batch Started')
-                                ->body("Started sending {$totalEmails} coupon emails to all customers.")
-                                ->info()
-                                ->sendToDatabase(auth()->user());
                         })
                         ->form([
                             Forms\Components\Textarea::make('message')
@@ -160,8 +157,8 @@ class CouponResource extends Resource
                         ->icon('heroicon-o-envelope')
                         ->action(function (Collection $records, array $data) {
                             $emails = array_map('trim', explode(',', $data['emails']));
-                            $totalEmails = 0;
                             $adminUserId = auth()->id();
+                            $totalEmails = 0;
 
                             foreach ($records as $coupon) {
                                 foreach ($emails as $email) {
@@ -173,17 +170,10 @@ class CouponResource extends Resource
                             }
 
                             Notification::make()
-                                ->title('Coupons sent successfully!')
-                                ->body("Coupon emails have been queued for the specified email addresses. Total: {$totalEmails} emails.")
+                                ->title('Coupons Batch Started')
+                                ->body("Started sending {$totalEmails} coupon emails to specified addresses. You'll receive notifications for each email.")
                                 ->success()
                                 ->send();
-
-                            // Send initial notification about batch start
-                            Notification::make()
-                                ->title('Coupon Batch Started')
-                                ->body("Started sending {$totalEmails} coupon emails to specified addresses.")
-                                ->info()
-                                ->sendToDatabase(auth()->user());
                         })
                         ->form([
                             Forms\Components\Textarea::make('emails')
