@@ -13,9 +13,9 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
-    <x-mail::button :url="$paymentUrl">
+    {{-- <x-mail::button :url="$paymentUrl">
         Make Payment
-    </x-mail::button>
+    </x-mail::button> --}}
 
     Please make your payment before the due date to ensure uninterrupted service.
 

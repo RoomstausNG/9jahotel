@@ -47,7 +47,7 @@ class InvoiceCreated extends Mailable implements ShouldQueue
       with: [
         'invoice' => $this->invoice,
         'hotel' => $this->hotel,
-        'paymentUrl' => route('invoice.payment', $this->invoice->id),
+        'paymentUrl' => route('invoice.payment', ['id' => $this->invoice->id]),
       ],
     );
   }

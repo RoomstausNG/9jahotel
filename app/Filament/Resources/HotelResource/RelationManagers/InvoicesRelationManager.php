@@ -14,6 +14,7 @@ use App\Models\Invoice;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Log;
 use Forms\Components\Datepicker;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -122,21 +123,31 @@ class InvoicesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->successNotificationTitle("Invoice Created successfully")
+                Tables\Actions\CreateAction::make()->successNotificationTitle("Invoice Created successfully")
                     ->after(function (Model $record) {
-                        $hotel = $this->getOwnerRecord();
+                        try {
+                            $hotel = $this->getOwnerRecord();
 
-                        // Queue the email notification
-                        Mail::to($hotel->email)
-                            ->queue(new \App\Mail\InvoiceCreated($record, $hotel));
+                            // Queue the email notification
+                            Mail::to($hotel->email)
+                                ->queue(new \App\Mail\InvoiceCreated($record, $hotel));
 
-                        // Also send a notification in the UI
-                        Notification::make()
-                            ->title('Invoice Email Sent')
-                            ->body("An email notification has been sent to {$hotel->email}")
-                            ->success()
-                            ->send();
+                            // Also send a notification in the UI
+                            Notification::make()
+                                ->title('Invoice Email Sent')
+                                ->body("An email notification has been sent to {$hotel->email}")
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            // Log the error but don't stop the process
+                            Log::error("Failed to send invoice email: " . $e->getMessage());
+
+                            Notification::make()
+                                ->title('Warning')
+                                ->body("Invoice created but email notification failed. Please check system logs.")
+                                ->warning()
+                                ->send();
+                        }
                     }),
             ])
             ->actions([
@@ -148,19 +159,29 @@ class InvoicesRelationManager extends RelationManager
                     ->label('Send Reminder')
                     ->icon('heroicon-o-envelope')
                     ->color('warning')
-                    ->hidden(fn(Model $record) => $record->status == 'paid')
-                    ->action(function (Model $record) {
-                        $hotel = $this->getOwnerRecord();
+                    ->hidden(fn(Model $record) => $record->status == 'paid')->action(function (Model $record) {
+                        try {
+                            $hotel = $this->getOwnerRecord();
 
-                        // Queue the reminder email
-                        Mail::to($hotel->email)
-                            ->queue(new \App\Mail\InvoicePaymentReminder($record, $hotel));
+                            // Queue the reminder email
+                            Mail::to($hotel->email)
+                                ->queue(new \App\Mail\InvoicePaymentReminder($record, $hotel));
 
-                        Notification::make()
-                            ->title('Payment Reminder Sent')
-                            ->body("A payment reminder has been sent to {$hotel->email}")
-                            ->success()
-                            ->send();
+                            Notification::make()
+                                ->title('Payment Reminder Sent')
+                                ->body("A payment reminder has been sent to {$hotel->email}")
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            // Log the error but don't stop the process
+                            Log::error("Failed to send reminder email: " . $e->getMessage());
+
+                            Notification::make()
+                                ->title('Warning')
+                                ->body("Failed to send payment reminder. Please check system logs.")
+                                ->warning()
+                                ->send();
+                        }
                     }),
             ])
             ->bulkActions([
