@@ -81,14 +81,14 @@ class CouponResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('code')
                     ->searchable()
-                    ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+                    ->formatStateUsing(fn(string $state): string => strtoupper($state)),
                 Tables\Columns\TextColumn::make('percent')
                     ->numeric()
                     ->sortable()
                     ->suffix('%'),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable()
-                    ->formatStateUsing(fn (string $state): string => strtoupper($state)),
+                    ->formatStateUsing(fn(string $state): string => strtoupper($state)),
                 Tables\Columns\TextColumn::make('valid_from')
                     ->date()
                     ->sortable(),
@@ -125,13 +125,13 @@ class CouponResource extends Resource
                         ->icon('heroicon-o-paper-airplane')
                         ->action(function (Collection $records, array $data) {
                             $customers = User::whereHas('roles', fn($query) => $query->where('name', 'customer'))->get();
-                            
+
                             foreach ($records as $coupon) {
                                 foreach ($customers as $customer) {
                                     SendCouponEmail::dispatch($coupon, $data['message'], $customer->email);
                                 }
                             }
-                            
+
                             Notification::make()
                                 ->title('Coupons sent successfully!')
                                 ->body('Coupon emails have been queued for all customers.')
@@ -149,7 +149,7 @@ class CouponResource extends Resource
                         ->icon('heroicon-o-envelope')
                         ->action(function (Collection $records, array $data) {
                             $emails = array_map('trim', explode(',', $data['emails']));
-                            
+
                             foreach ($records as $coupon) {
                                 foreach ($emails as $email) {
                                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -157,7 +157,7 @@ class CouponResource extends Resource
                                     }
                                 }
                             }
-                            
+
                             Notification::make()
                                 ->title('Coupons sent successfully!')
                                 ->body('Coupon emails have been queued for the specified email addresses.')

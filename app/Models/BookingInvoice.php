@@ -41,6 +41,10 @@ class BookingInvoice extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
+    }
 
     public static function booted()
     {

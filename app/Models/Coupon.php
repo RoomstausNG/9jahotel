@@ -17,6 +17,8 @@ class Coupon extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'valid_from' => 'date',
+        'valid_till' => 'date',
     ];
 
     protected $fillable = [
@@ -38,8 +40,23 @@ class Coupon extends Model
         $this->attributes['code'] = Str::upper($value);
     }
 
+    public function setTypeAttribute($value)
+    {
+        $this->attributes['type'] = Str::upper($value);
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
+    }
+
+    public function bookingInvoices()
+    {
+        return $this->hasMany(BookingInvoice::class);
     }
 }
