@@ -193,9 +193,9 @@ class CouponResource extends Resource
                                     ->rows(4),
                             ]),
                     ])
-                    ->label('📧 Email Actions')
-                    ->icon('heroicon-o-envelope')
-                    ->color('primary'),
+                        ->label('📧 Email Actions')
+                        ->icon('heroicon-o-envelope')
+                        ->color('primary'),
                     Tables\Actions\ActionGroup::make([
                         Tables\Actions\ExportAction::make()
                             ->label('Export Coupon')
@@ -209,19 +209,19 @@ class CouponResource extends Resource
                             ->url(fn(Coupon $record): string => route('coupon.print', $record))
                             ->openUrlInNewTab(),
                     ])
-                    ->label('📄 Export & Print')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('warning'),
+                        ->label('📄 Export & Print')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning'),
                     Tables\Actions\DeleteAction::make()
                         ->label('Delete Coupon')
                         ->tooltip('Delete this coupon'),
                 ])
-                ->label('⚡ Actions')
-                ->icon('heroicon-o-ellipsis-vertical')
-                ->size('sm')
-                ->color('gray')
-                ->button(),
-            ])            ->bulkActions([
+                    ->label('⚡ Actions')
+                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->size('sm')
+                    ->color('gray')
+                    ->button(),
+            ])->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkActionGroup::make([
                         Tables\Actions\BulkAction::make('send_to_all_customers')
@@ -290,22 +290,22 @@ class CouponResource extends Resource
                                     ->rows(4),
                             ]),
                     ])
-                    ->label('📧 Email Actions')
-                    ->icon('heroicon-o-envelope')
-                    ->color('primary'),
+                        ->label('📧 Email Actions')
+                        ->icon('heroicon-o-envelope')
+                        ->color('primary'),
                     Tables\Actions\BulkActionGroup::make([
                         Tables\Actions\ExportBulkAction::make()
                             ->label('📄 Export Selected')
                             ->exporter(CouponExporter::class),
                     ])
-                    ->label('📄 Export & Print')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('warning'),
+                        ->label('📄 Export & Print')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning'),
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('🗑️ Delete Selected'),
                 ])
-                ->label('⚡ Bulk Actions')
-                ->icon('heroicon-o-bars-3-bottom-left'),
+                    ->label('⚡ Bulk Actions')
+                    ->icon('heroicon-o-bars-3-bottom-left'),
             ]);
     }
 
