@@ -9,6 +9,8 @@ use App\Models\Customer;
 use App\Traits\ApiResponse;
 use App\Rules\AvailableRule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\CompanyResource;
@@ -83,7 +85,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::with(['customer:id,firstname,lastname', 'bookable.type:id,name'])
             ->where('status', 'occupied')
-            ->whereHas('statuses', fn ($query) => $query->whereDate('date', '<=', now())->where('status', 'occupied'))
+            ->whereHas('statuses', fn($query) => $query->whereDate('date', '<=', now())->where('status', 'occupied'))
             ->get();
         return OccupiedResource::collection($bookings);
         // return $this->successResponse($bookings);
@@ -183,6 +185,8 @@ class BookingController extends Controller
 
 
             if ($created) {
+                // Send booking notification
+                $this->sendBookingNotification($created, $customer);
                 return $this->successResponse(new BookingResource($created), 'Room Booked successfully', 201);
             }
         } else {
@@ -205,6 +209,8 @@ class BookingController extends Controller
             $this->associateCustomer($customer->id);
 
             if ($created) {
+                // Send booking notification
+                $this->sendBookingNotification($created, $customer);
                 return $this->successResponse(new BookingResource($created), 'Room Booked successfully', 201);
             }
         }
@@ -297,6 +303,32 @@ class BookingController extends Controller
         $done = $booking->delete();
 
         return $this->successResponse(null, 'Booking deleted successfully', 200);
+    }
+
+    /**
+     * Send booking notification to hotel staff
+     */
+    private function sendBookingNotification(Booking $booking, Customer $customer)
+    {
+        try {
+            // Get current hotel
+            $hotel = myHotel();
+
+            // Make an HTTP request to our notification endpoint
+            \Illuminate\Support\Facades\Http::post(route('api.bookings.notify'), [
+                'hotel_id' => $hotel->id,
+                'booking_id' => $booking->id,
+                'guest_name' => $customer->firstname . ' ' . $customer->lastname,
+                'check_in' => $booking->checked_in,
+                'check_out' => $booking->checked_out,
+                'room_type' => $booking->bookable->type->name ?? 'Standard',
+                'total_amount' => $booking->due,
+                'source' => 'web_app',
+            ]);
+        } catch (\Exception $e) {
+            // Log the error but don't fail the booking
+            \Illuminate\Support\Facades\Log::error('Failed to send booking notification: ' . $e->getMessage());
+        }
     }
 
 

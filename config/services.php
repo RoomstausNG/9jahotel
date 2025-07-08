@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -35,4 +34,9 @@ return [
         'server_key' => env('FCM_SERVER_KEY'),
     ],
 
+    'firebase' => [
+        'credentials' => '/Users/fade_networker/Documents/projects/php/wakalor/storage/app/firebase/firebase-service-account.json',
+    ],
+
+    'booking_notify_api_key' => env('BOOKING_NOTIFY_API_KEY', 'default-notify-key-change-me'),
 ];
