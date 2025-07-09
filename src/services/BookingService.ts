@@ -21,6 +21,7 @@ import { AuthService } from "./AuthService";
 import { getToken } from "../utils/getToken";
 import { queueBookingEmails } from "../jobs/email-queue";
 import { CustomerService } from "./CustomerService";
+import axios from "axios";
 
 @injectable()
 export class BookingService {
@@ -165,7 +166,49 @@ export class BookingService {
           "Failed to queue booking confirmation emails:",
           emailError
         );
-        // Don't throw error - booking was successful, just email queueing failed
+      }
+
+      // Notify Wakalor dashboard of successful booking
+      try {
+        const guestName =
+          bookingData.firstname && bookingData.lastname
+            ? `${bookingData.firstname} ${bookingData.lastname}`
+            : bookingData.customerName || "Guest";
+
+        const notificationData = {
+          hotel_id: hotel.id,
+          booking_id: reference,
+          guest_name: guestName,
+          check_in: bookingData.checkIn,
+          check_out: bookingData.checkOut,
+          room_type: room.roomCategory.name,
+          total_amount: parseFloat(bookingData.total),
+          source: "web_app",
+        };
+
+        const response = await axios.post(
+          "https://dashboard.wakalor.com/api/v1_hotel/bookings/notify",
+          notificationData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            timeout: 10000, // 10 second timeout
+          }
+        );
+
+        if (response.status >= 200 && response.status < 300) {
+          console.log(
+            `✅ Successfully notified Wakalor dashboard for booking ${reference}`
+          );
+        } else {
+          console.error(
+            `❌ Failed to notify Wakalor dashboard for booking ${reference}. Status: ${response}`
+          );
+        }
+      } catch (notificationError) {
+        console.error("Failed to notify Wakalor dashboard:", notificationError);
+        // Don't throw error - booking was successful, just notification failed
       }
 
       // Clear bookings status caches for this user
