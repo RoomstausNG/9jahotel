@@ -45,7 +45,7 @@ class HotelPolicy
      */
     public function delete(User $user, Hotel $hotel): bool
     {
-        return $user->can('delete hotel') || $user->hasRole('super-admin');
+        return $user->can('delete hotel') || $user->hasRole(['super-admin', 'admin']);
     }
 
     /**
