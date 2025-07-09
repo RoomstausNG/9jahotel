@@ -13,7 +13,7 @@ class HotelPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('read hotel') || $user->hasRole('super-admin') || $user->hasRole('back-office');
+        return $user->can('read hotel') || $user->hasRole('super-admin') || $user->hasRole('back-office') || $user->hasRole('admin');
     }
 
     /**
@@ -45,7 +45,7 @@ class HotelPolicy
      */
     public function delete(User $user, Hotel $hotel): bool
     {
-        return $user->can('delete hotel') || $user->hasRole(['super-admin', 'admin']) || $user->current_role->name == 'super-admin' || $user->current_role->name == 'admin';
+        return $user->can('delete hotel') || $user->hasRole(['super-admin', 'admin']) || $user->current_role == 'super-admin' || $user->current_role == 'admin';
     }
 
     /**
