@@ -57,7 +57,7 @@ class Hotel extends Model implements HasMedia
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(CityCopy::class);
     }
 
     function bookingInvoices(): HasMany
