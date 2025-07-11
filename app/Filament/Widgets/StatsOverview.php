@@ -17,7 +17,7 @@ class StatsOverview extends BaseWidget
         $customers = Customer::distinct('phone')->count();
         return [
             Stat::make('Total Hotels', $total),
-            Stat::make('9jahotels Only', $nineja),
+            Stat::make('9jahotel Only', $nineja),
             Stat::make('Both', $total - $nineja),
             Stat::make('Active Hotels', $active),
             Stat::make('Inactive Hotels', $total - $active),

@@ -15,7 +15,7 @@ class HotelSeeder extends Seeder
     {
         for ($i = 0; $i < 1; $i++) {
             Hotel::create([
-                'name' => '9jahotels',
+                'name' => '9jahotel',
                 'telephone' => fake()->phoneNumber(),
                 'email' => fake()->companyEmail(),
                 'primary_color' => fake()->colorName(),

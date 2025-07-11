@@ -1,4 +1,6 @@
-<x-layouts.frontend>
+<x-layouts.frontend title="9jahotel | Search & Save on your bookings"
+    description="Find and book the best hotel deals in Nigeria. Compare prices, read reviews and save on your accommodation with 9jahotel."
+    keywords="hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel, hotel booking, cheap hotels, luxury hotels">
     {{-- linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), --}}
     <div class="w-full flex items-center justify-center bg-cover bg-center px-4 min-h-[620px] md:min-h-[850px] max-h-[1024px]"
         style="width: 100%; background:  url('/img/bg1.jpg'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; clip-path: ellipse(95% 100% at 50% 0%);">
@@ -178,5 +180,42 @@
                 class="w-full md:scale-125 lg:scale-150 md:-mb-24 lg:-mb-48 block lg:w-1/2 object-cover">
         </section>
     </div>
+
+    @push('scripts')
+        <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "9jahotel",
+    "url": "{{ url('/') }}",
+    "description": "Find and book the best hotel deals in Nigeria. Compare prices, read reviews and save on your accommodation with 9jahotel.",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ url('/hotels') }}?city={city}",
+        "query-input": "required name=city"
+    }
+}
+</script>
+        <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "9jahotel",
+    "url": "{{ url('/') }}",
+    "logo": "{{ asset('img/9jahotel_logo.png') }}",
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+234-000-0000",
+        "contactType": "customer service",
+        "availableLanguage": "English"
+    },
+    "sameAs": [
+        "https://www.facebook.com/9jahotel",
+        "https://www.instagram.com/9jahotel",
+        "https://twitter.com/9jahotel"
+    ]
+}
+</script>
+    @endpush
 
 </x-layouts.frontend>

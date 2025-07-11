@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Hotel extends Model implements HasMedia
 {
@@ -57,7 +58,7 @@ class Hotel extends Model implements HasMedia
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(CityCopy::class);
     }
 
     function bookingInvoices(): HasMany
@@ -206,6 +207,202 @@ class Hotel extends Model implements HasMedia
     public function scopeForSearchResults(Builder $query): Builder
     {
         return $query->select('hotels.*')->distinct();
+    }
+
+    /**
+     * Optimized scope for search results with ratings
+     */
+    public function scopeWithSearchOptimizations(Builder $query): Builder
+    {
+        return $query->select([
+            'hotels.*',
+            DB::raw('COALESCE(AVG(ratings.number), 0) as avg_rating'),
+            DB::raw('COUNT(ratings.id) as rating_count')
+        ])
+            ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+            ->groupBy('hotels.id');
+    }
+
+    /**
+     * Scope for filtering by multiple amenities efficiently
+     */
+    public function scopeWithAmenities(Builder $query, array $amenityIds): Builder
+    {
+        if (empty($amenityIds)) {
+            return $query;
+        }
+
+        foreach ($amenityIds as $amenityId) {
+            $query->whereExists(function ($subQuery) use ($amenityId) {
+                $subQuery->select(DB::raw(1))
+                    ->from('amenity_hotel')
+                    ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
+                    ->where('amenity_hotel.amenity_id', '=', $amenityId);
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for price range filtering
+     */
+    public function scopePriceRange(Builder $query, ?float $min = null, ?float $max = null): Builder
+    {
+        if ($min !== null) {
+            $query->where('room_lowest_price', '>=', $min);
+        }
+
+        if ($max !== null) {
+            $query->where('room_lowest_price', '<=', $max);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for city filtering with index usage
+     */
+    public function scopeInCity(Builder $query, int $cityId): Builder
+    {
+        return $query->where('city_id', $cityId);
+    }
+
+    /**
+     * Scope for hall price range filtering
+     */
+    public function scopeHallPriceRange(Builder $query, ?float $min = null, ?float $max = null): Builder
+    {
+        if ($min !== null) {
+            $query->where('hall_lowest_price', '>=', $min);
+        }
+
+        if ($max !== null) {
+            $query->where('hall_lowest_price', '<=', $max);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Optimized scope for search with all common needs
+     */
+    public function scopeOptimizedSearch(Builder $query, array $params = []): Builder
+    {
+        $query = $query->select([
+            'hotels.*',
+            DB::raw('COALESCE(AVG(ratings.number), 0) as avg_rating'),
+            DB::raw('COUNT(DISTINCT ratings.id) as rating_count')
+        ])
+            ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+            ->with(['city:id,name', 'amenities:id,name'])
+            ->groupBy('hotels.id');
+
+        // Apply city filter if provided
+        if (isset($params['city_id'])) {
+            $query->where('hotels.city_id', $params['city_id']);
+        }
+
+        // Apply name search if provided
+        if (isset($params['name']) && !empty($params['name'])) {
+            $query->where('hotels.name', 'LIKE', '%' . trim($params['name']) . '%');
+        }
+
+        // Apply price range if provided
+        if (isset($params['price_min']) && is_numeric($params['price_min'])) {
+            $query->where('hotels.room_lowest_price', '>=', floatval($params['price_min']));
+        }
+        if (isset($params['price_max']) && is_numeric($params['price_max'])) {
+            $query->where('hotels.room_lowest_price', '<=', floatval($params['price_max']));
+        }
+
+        // Apply amenity filters if provided
+        if (isset($params['amenities']) && is_array($params['amenities']) && !empty($params['amenities'])) {
+            foreach ($params['amenities'] as $amenityId) {
+                $query->whereExists(function ($subQuery) use ($amenityId) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('amenity_hotel')
+                        ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
+                        ->where('amenity_hotel.amenity_id', '=', intval($amenityId));
+                });
+            }
+        }
+
+        // Ensure only hotels with room categories
+        $query->whereHas('roomCategory');
+
+        return $query;
+    }
+
+    /**
+     * Optimized scope for hall search
+     */
+    public function scopeOptimizedHallSearch(Builder $query, array $params = []): Builder
+    {
+        $query = $query->select([
+            'hotels.*',
+            DB::raw('COALESCE(AVG(ratings.number), 0) as avg_rating'),
+            DB::raw('COUNT(DISTINCT ratings.id) as rating_count')
+        ])
+            ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+            ->with(['city:id,name', 'amenities:id,name'])
+            ->groupBy('hotels.id');
+
+        // Apply city filter if provided
+        if (isset($params['city_id'])) {
+            $query->where('hotels.city_id', $params['city_id']);
+        }
+
+        // Apply name search if provided
+        if (isset($params['name']) && !empty($params['name'])) {
+            $query->where('hotels.name', 'LIKE', '%' . trim($params['name']) . '%');
+        }
+
+        // Apply hall price range if provided
+        if (isset($params['price_min']) && is_numeric($params['price_min'])) {
+            $query->where('hotels.hall_lowest_price', '>=', floatval($params['price_min']));
+        }
+        if (isset($params['price_max']) && is_numeric($params['price_max'])) {
+            $query->where('hotels.hall_lowest_price', '<=', floatval($params['price_max']));
+        }
+
+        // Apply capacity filter if provided
+        if (isset($params['capacity']) && is_numeric($params['capacity'])) {
+            $query->where('hotels.hall_capacity', '>=', intval($params['capacity']));
+        }
+
+        // Apply amenity filters if provided
+        if (isset($params['amenities']) && is_array($params['amenities']) && !empty($params['amenities'])) {
+            foreach ($params['amenities'] as $amenityId) {
+                $query->whereExists(function ($subQuery) use ($amenityId) {
+                    $subQuery->select(DB::raw(1))
+                        ->from('amenity_hotel')
+                        ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
+                        ->where('amenity_hotel.amenity_id', '=', intval($amenityId));
+                });
+            }
+        }
+
+        // Ensure only hotels with halls
+        $query->whereHas('halls');
+
+        return $query;
+    }
+
+    /**
+     * Get average rating efficiently
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->avg('number') ?? 0;
+    }
+
+    /**
+     * Get total ratings count efficiently
+     */
+    public function getTotalRatingsAttribute()
+    {
+        return $this->ratings()->count();
     }
 
     public static function boot()

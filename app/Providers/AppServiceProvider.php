@@ -14,6 +14,8 @@ use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\CacheService;
+use App\Services\DatabaseOptimizationService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +24,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register optimization services
+        $this->app->singleton(CacheService::class, function ($app) {
+            return new CacheService();
+        });
+
+        $this->app->singleton(DatabaseOptimizationService::class, function ($app) {
+            return new DatabaseOptimizationService();
+        });
     }
 
     /**

@@ -301,3 +301,62 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Hotel",
+    "name": "{{ $hotel->name }}",
+    "description": "{{ strip_tags($hotel->description ?? '') }}",
+    "url": "{{ request()->url() }}",
+    "image": "{{ $hotel->background_image ? asset('storage/' . $hotel->background_image) : asset('img/9jahotel_logo.png') }}",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{ $hotel->address }}",
+        "addressLocality": "{{ $hotel->city->name }}",
+        "addressRegion": "{{ $hotel->city->state->name ?? '' }}",
+        "addressCountry": "Nigeria"
+    },
+    @if($hotel->roomCategory->count() > 0)
+    "priceRange": "₦{{ $hotel->roomCategory->min('price1') }} - ₦{{ $hotel->roomCategory->max('price1') }}",
+    @endif
+    @if($hotel->telephone)
+    "telephone": "{{ $hotel->telephone }}",
+    @endif
+    @if($hasRatings)
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ $rate }}",
+        "reviewCount": "{{ $hotel->ratings->count() }}"
+    },
+    @endif
+    @if($hotel->ratings->count() > 0)
+    "review": [
+        @foreach($hotel->ratings->take(5) as $index => $rating)
+        {
+            "@type": "Review",
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": "{{ $rating->number }}"
+            },
+            "author": {
+                "@type": "Person",
+                "name": "{{ $rating->customer->name ?? 'Guest' }}"
+            },
+            "reviewBody": "{{ $rating->comment }}"
+        }@if(!$loop->last),@endif
+        @endforeach
+    ],
+    @endif
+    "amenityFeature": [
+        @foreach($hotel->amenities as $index => $amenity)
+        {
+            "@type": "LocationFeatureSpecification",
+            "name": "{{ $amenity->name }}"
+        }@if(!$loop->last),@endif
+        @endforeach
+    ]
+}
+</script>
+@endpush

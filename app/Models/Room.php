@@ -6,6 +6,7 @@ use App\Traits\BelongToHotel;
 use App\Traits\HasManyBookings;
 use App\Models\Scopes\HotelScope;
 use App\Traits\HasManyImage;
+use App\Traits\QueryOptimizer;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,11 +16,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 // #[ScopedBy(HotelScope::class)]
 class Room extends Model implements HasMedia
 {
-    use HasFactory, BelongToHotel, HasManyBookings, HasManyImage, InteractsWithMedia;
+    use HasFactory, BelongToHotel, HasManyBookings, HasManyImage, InteractsWithMedia, QueryOptimizer;
     protected $guarded = [];
 
     protected $casts = [
@@ -105,6 +108,69 @@ class Room extends Model implements HasMedia
         return true;
     }
 
+    /**
+     * Optimized version: Checks if a room is available within a given date range using a single query
+     * This is much more efficient than looping through each day and querying the database
+     *
+     * @param string $start The start date of the range
+     * @param string $end The end date of the range
+     * @return bool True if the room is available, false otherwise
+     */
+    public function isAvailableOptimized($start, $end): bool
+    {
+        // Single query approach instead of looping through each day
+        return !$this->statuses()
+            ->whereBetween('date', [$start, $end])
+            ->exists();
+    }
+
+    /**
+     * Scope a query to only include available rooms for a date range
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $start Start date
+     * @param string $end End date
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAvailableBetween(Builder $query, string $start, string $end): Builder
+    {
+        return $query->whereDoesntHave('statuses', function ($query) use ($start, $end) {
+            $query->whereBetween('date', [$start, $end]);
+        });
+    }
+
+    /**
+     * Get all available rooms for a hotel in a date range using an efficient query
+     *
+     * @param int $hotelId Hotel ID
+     * @param string $start Start date
+     * @param string $end End date
+     * @param int|null $typeId Optional room type ID
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getAvailableRooms(int $hotelId, string $start, string $end, ?int $typeId = null)
+    {
+        $query = self::where('hotel_id', $hotelId)
+            ->where('status', '!=', 'repair')
+            ->whereDoesntHave('statuses', function ($query) use ($start, $end) {
+                $query->whereBetween('date', [$start, $end]);
+            })
+            ->with(['type:id,name,price1,hotel_id', 'images']);
+
+        if ($typeId) {
+            $query->where('type_id', $typeId);
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * Cache key for room availability
+     */
+    public function getAvailabilityCacheKey(string $start, string $end): string
+    {
+        return "room_{$this->id}_availability_{$start}_{$end}";
+    }
 
     static function amountGenerated($start, $end)
     {
