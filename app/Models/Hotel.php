@@ -208,6 +208,65 @@ class Hotel extends Model implements HasMedia
         return $query->select('hotels.*')->distinct();
     }
 
+    /**
+     * Optimized scope for search results with ratings
+     */
+    public function scopeWithSearchOptimizations(Builder $query): Builder
+    {
+        return $query->select([
+            'hotels.*',
+            DB::raw('COALESCE(AVG(ratings.number), 0) as avg_rating'),
+            DB::raw('COUNT(ratings.id) as rating_count')
+        ])
+        ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+        ->groupBy('hotels.id');
+    }
+
+    /**
+     * Scope for filtering by multiple amenities efficiently
+     */
+    public function scopeWithAmenities(Builder $query, array $amenityIds): Builder
+    {
+        if (empty($amenityIds)) {
+            return $query;
+        }
+
+        foreach ($amenityIds as $amenityId) {
+            $query->whereExists(function($subQuery) use ($amenityId) {
+                $subQuery->select(DB::raw(1))
+                    ->from('amenity_hotel')
+                    ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
+                    ->where('amenity_hotel.amenity_id', '=', $amenityId);
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for price range filtering
+     */
+    public function scopePriceRange(Builder $query, ?float $min = null, ?float $max = null): Builder
+    {
+        if ($min !== null) {
+            $query->where('room_lowest_price', '>=', $min);
+        }
+        
+        if ($max !== null) {
+            $query->where('room_lowest_price', '<=', $max);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for city filtering with index usage
+     */
+    public function scopeInCity(Builder $query, int $cityId): Builder
+    {
+        return $query->where('city_id', $cityId);
+    }
+
     public static function boot()
     {
         parent::boot();

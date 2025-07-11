@@ -12,6 +12,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchResult extends Component
 {
@@ -51,83 +52,27 @@ class SearchResult extends Component
     public function render()
     {
         $cityId = $this->city->id ?? session('city');
-        $cityName = $this->city->name ?? ($cityId ? \Nnjeim\World\Models\City::find($cityId)?->name : null);
+        $cityName = $this->city->name ?? ($cityId ? CityCopy::find($cityId)?->name : null);
 
-        // Default SEO values
-        $this->title = config('app.name') . ' | Search & Save on your bookings';
-        $this->description = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotel.';
-        $this->keywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel';
+        // Set default SEO values
+        $this->setSeoDefaults();
 
         $hotels = collect();
         $amenities = collect();
         $totalFilteredCount = 0;
 
         if ($cityId) {
-            $query = Hotel::hasTypes()->forSearchResults()->with(['city', 'amenities', 'ratings'])
-                ->where('city_id', $cityId);
+            // Get optimized results with single query
+            $results = $this->getOptimizedHotelsQuery($cityId);
+            $hotels = $results['hotels'];
+            $totalFilteredCount = $results['total'];
 
-            // Apply name filter if provided
-            if (!empty($this->name)) {
-                $term = '%' . trim($this->name) . '%';
-                $query->where('name', 'LIKE', $term);
-            }
+            // Get amenities with efficient caching
+            $amenities = $this->getCityAmenities($cityId);
 
-            // Apply price range filters if provided
-            if (!empty($this->low) && is_numeric($this->low)) {
-                $query->where('room_lowest_price', '>=', floatval($this->low));
-            }
-            if (!empty($this->high) && is_numeric($this->high)) {
-                $query->where('room_lowest_price', '<=', floatval($this->high));
-            }
-
-            // Apply amenity filters
-            if (!empty($this->filterAmenities)) {
-                foreach ($this->filterAmenities as $amenityId) {
-                    $query->whereHas('amenities', function ($q) use ($amenityId) {
-                        $q->where('amenities.id', $amenityId);
-                    });
-                }
-            }
-
-            // Sorting
-            $sortOptions = [
-                'class_high' => ['column' => 'star_rating', 'direction' => 'desc'],
-                'price_low' => ['column' => 'room_lowest_price', 'direction' => 'asc'],
-                'price_high' => ['column' => 'room_lowest_price', 'direction' => 'desc'],
-                'rating_high' => ['special' => 'rating'],
-            ];
-            if (!empty($this->sortBy)) {
-                if (isset($sortOptions[$this->sortBy])) {
-                    $sort = $sortOptions[$this->sortBy];
-                    if (isset($sort['special']) && $sort['special'] === 'rating') {
-                        $query->select('hotels.*')
-                            ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
-                            ->groupBy('hotels.id')
-                            ->orderBy(DB::raw('AVG(COALESCE(ratings.number, 0))'), 'desc');
-                    } else {
-                        $query->orderBy($sort['column'], $sort['direction']);
-                    }
-                }
-            } else {
-                $query->orderBy('created_at', 'desc');
-            }
-
-            $totalFilteredCount = $query->count();
-            $hotels = $query->paginate($this->perPage);
-
-            // Get amenities without caching to ensure fresh data
-            $amenities = Amenity::select('amenities.*')
-                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
-                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
-                ->where('hotels.city_id', $cityId)
-                ->distinct()
-                ->get();
-
-            // SEO for city page
+            // Set city-specific SEO
             if ($cityName) {
-                $this->title = 'Hotels in ' . $cityName . ' | ' . config('app.name');
-                $this->description = "Find and book from $totalFilteredCount hotels in $cityName. Save on your accommodation with 9jahotel.";
-                $this->keywords = "hotels, $cityName, accommodation, booking, hotel deals, discount hotels, 9jahotel";
+                $this->setCitySeo($cityName, $totalFilteredCount);
             }
         }
 
@@ -138,7 +83,162 @@ class SearchResult extends Component
         ]);
     }
 
-    // Add hotel to favorites
+    /**
+     * Get optimized hotels query with single database call
+     */
+    private function getOptimizedHotelsQuery(int $cityId): array
+    {
+        // Build base query with optimized joins and eager loading
+        $query = Hotel::query()
+            ->select([
+                'hotels.*',
+                DB::raw('COALESCE(AVG(ratings.number), 0) as avg_rating'),
+                DB::raw('COUNT(ratings.id) as rating_count')
+            ])
+            ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
+            ->with(['city:id,name', 'amenities:id,name'])
+            ->where('hotels.city_id', $cityId)
+            ->whereHas('roomCategory') // Only hotels with room types
+            ->groupBy('hotels.id');
+
+        // Apply filters efficiently
+        $this->applySearchFilters($query);
+        $this->applyPriceFilters($query);
+        $this->applyAmenityFilters($query);
+
+        // Apply sorting
+        $this->applySorting($query);
+
+        // Get total count efficiently
+        $totalQuery = clone $query;
+        $total = $totalQuery->distinct('hotels.id')->count('hotels.id');
+
+        // Get paginated results
+        $hotels = $query->paginate($this->perPage);
+
+        return [
+            'hotels' => $hotels,
+            'total' => $total
+        ];
+    }
+
+    /**
+     * Apply search filters efficiently
+     */
+    private function applySearchFilters($query): void
+    {
+        if (!empty($this->name)) {
+            $searchTerm = '%' . trim($this->name) . '%';
+            $query->where('hotels.name', 'LIKE', $searchTerm);
+        }
+    }
+
+    /**
+     * Apply price range filters
+     */
+    private function applyPriceFilters($query): void
+    {
+        if (!empty($this->low) && is_numeric($this->low)) {
+            $query->where('hotels.room_lowest_price', '>=', floatval($this->low));
+        }
+        
+        if (!empty($this->high) && is_numeric($this->high)) {
+            $query->where('hotels.room_lowest_price', '<=', floatval($this->high));
+        }
+    }
+
+    /**
+     * Apply amenity filters using optimized EXISTS queries
+     */
+    private function applyAmenityFilters($query): void
+    {
+        if (!empty($this->filterAmenities)) {
+            $amenityIds = array_map('intval', $this->filterAmenities);
+            
+            // Use EXISTS for better performance instead of multiple whereHas
+            $query->where(function($q) use ($amenityIds) {
+                foreach ($amenityIds as $amenityId) {
+                    $q->whereExists(function($subQuery) use ($amenityId) {
+                        $subQuery->select(DB::raw(1))
+                            ->from('amenity_hotel')
+                            ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
+                            ->where('amenity_hotel.amenity_id', '=', $amenityId);
+                    });
+                }
+            });
+        }
+    }
+
+    /**
+     * Apply sorting with optimized queries
+     */
+    private function applySorting($query): void
+    {
+        if (empty($this->sortBy)) {
+            $query->orderBy('hotels.created_at', 'desc');
+            return;
+        }
+
+        switch ($this->sortBy) {
+            case 'class_high':
+                $query->orderBy('hotels.star_rating', 'desc');
+                break;
+            case 'price_low':
+                $query->orderBy('hotels.room_lowest_price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('hotels.room_lowest_price', 'desc');
+                break;
+            case 'rating_high':
+                // Use pre-calculated average from the select
+                $query->orderBy('avg_rating', 'desc')
+                      ->orderBy('rating_count', 'desc');
+                break;
+            default:
+                $query->orderBy('hotels.created_at', 'desc');
+        }
+    }
+
+    /**
+     * Get city amenities with efficient caching
+     */
+    private function getCityAmenities(int $cityId)
+    {
+        $cacheKey = "city_amenities_{$cityId}";
+        
+        return Cache::remember($cacheKey, 3600, function() use ($cityId) {
+            return Amenity::select('amenities.id', 'amenities.name')
+                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+                ->where('hotels.city_id', $cityId)
+                ->whereHas('hotels.roomCategory') // Only from hotels with rooms
+                ->distinct()
+                ->orderBy('amenities.name')
+                ->get();
+        });
+    }
+
+    /**
+     * Set default SEO values
+     */
+    private function setSeoDefaults(): void
+    {
+        $this->title = config('app.name') . ' | Search & Save on your bookings';
+        $this->description = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotel.';
+        $this->keywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel';
+    }
+
+    /**
+     * Set city-specific SEO values
+     */
+    private function setCitySeo(string $cityName, int $totalCount): void
+    {
+        $this->title = "Hotels in {$cityName} | " . config('app.name');
+        $this->description = "Find and book from {$totalCount} hotels in {$cityName}. Save on your accommodation with 9jahotel.";
+        $this->keywords = "hotels, {$cityName}, accommodation, booking, hotel deals, discount hotels, 9jahotel";
+    }
+
+    // Add hotel to favorites - Optimized version
     public function addToFavorite($hotelId)
     {
         $customer = auth()->user();
@@ -151,32 +251,25 @@ class SearchResult extends Component
                 ->send();
         }
 
-        // Check if the hotel is already a favorite
-        if ($customer->favourites()->where('hotel_id', $hotelId)->exists()) {
+        // Use firstOrCreate for better performance and avoiding race conditions
+        $favourite = $customer->favourites()->firstOrCreate(['hotel_id' => $hotelId]);
+
+        if ($favourite->wasRecentlyCreated) {
+            return Notification::make()
+                ->title('Hotel added to favorite successfully')
+                ->duration(7000)
+                ->success()
+                ->send();
+        } else {
             return Notification::make()
                 ->title('Hotel is already in your favorites')
                 ->duration(7000)
                 ->info()
                 ->send();
         }
-
-        // Add to favorites
-        $customer->favourites()->create(['hotel_id' => $hotelId]);
-
-        return Notification::make()
-            ->title('Hotel added to favorite successfully')
-            ->duration(7000)
-            ->success()
-            ->send();
     }
 
-    // Apply price filter explicitly
-    public function applyPriceFilter()
-    {
-        $this->resetPage();
-    }
-
-    // Reset all filters
+    // Optimized filter reset with cache clearing
     public function resetFilters()
     {
         $this->name = '';
@@ -184,13 +277,18 @@ class SearchResult extends Component
         $this->high = null;
         $this->filterAmenities = [];
         $this->sortBy = '';
-        $this->resetPage(); // Use Livewire's resetPage method
+        $this->resetPage();
+
+        // Clear any related caches if needed
+        if ($cityId = $this->city->id ?? session('city')) {
+            Cache::forget("city_amenities_{$cityId}");
+        }
 
         // Dispatch an Alpine.js event to clear input fields
         $this->dispatch('reset-filters');
     }
 
-    // Methods to reset pagination when filters change
+    // Optimized event handlers
     public function updatedName()
     {
         $this->resetPage();
@@ -203,28 +301,40 @@ class SearchResult extends Component
 
     public function updatedSortBy($value)
     {
-        // Reset pagination when sort changes
         $this->resetPage();
+    }
 
-        // Ensure only one sort is active at a time
-        // The $value parameter already contains the new sort value
-        // No need to do anything else as Livewire will update the property
+    public function updatedLow()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedHigh()
+    {
+        $this->resetPage();
     }
 
     public function mount()
     {
-        // Initialize any required properties
+        // Initialize city efficiently
         if (!isset($this->city) && session()->has('city')) {
-            // If city is not provided but exists in session, retrieve it
             $cityId = session('city');
             $this->city = CityCopy::find($cityId);
         }
     }
 
-    // Method to handle sorting explicitly
+    // Optimized sorting method
     public function setSortBy($value)
     {
         $this->sortBy = $value;
         $this->resetPage();
+    }
+
+    // Method to clear amenity cache when needed
+    public function clearAmenityCache()
+    {
+        if ($cityId = $this->city->id ?? session('city')) {
+            Cache::forget("city_amenities_{$cityId}");
+        }
     }
 }
