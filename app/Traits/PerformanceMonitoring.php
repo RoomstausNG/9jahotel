@@ -17,10 +17,10 @@ trait PerformanceMonitoring
     {
         $this->queryStartTime = microtime(true);
         $this->queryCount = 0;
-        
+
         DB::listen(function ($query) {
             $this->queryCount++;
-            
+
             // Log slow queries (over 100ms)
             if ($query->time > 100) {
                 Log::warning('Slow Query Detected', [
@@ -40,7 +40,7 @@ trait PerformanceMonitoring
     {
         if ($this->queryStartTime) {
             $totalTime = (microtime(true) - $this->queryStartTime) * 1000; // Convert to milliseconds
-            
+
             // Log performance metrics
             Log::info('Component Performance', [
                 'component' => static::class,
@@ -49,7 +49,7 @@ trait PerformanceMonitoring
                 'query_count' => $this->queryCount,
                 'avg_query_time' => $this->queryCount > 0 ? round($totalTime / $this->queryCount, 2) . 'ms' : '0ms'
             ]);
-            
+
             // Reset counters
             $this->queryStartTime = null;
             $this->queryCount = 0;
@@ -64,7 +64,7 @@ trait PerformanceMonitoring
         $this->startQueryMonitoring();
         $result = $callback();
         $this->endQueryMonitoring($operation);
-        
+
         return $result;
     }
 }

@@ -9,14 +9,14 @@ use App\Models\CityCopy;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Cache;
+use App\Traits\PerformanceMonitoring;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchResult extends Component
 {
-    use WithPagination;
+    use WithPagination, PerformanceMonitoring;
 
     public CityCopy $city;
     public $power_id;
@@ -51,36 +51,38 @@ class SearchResult extends Component
     #[Layout('components.layouts.frontend')]
     public function render()
     {
-        $cityId = $this->city->id ?? session('city');
-        $cityName = $this->city->name ?? ($cityId ? CityCopy::find($cityId)?->name : null);
+        return $this->withPerformanceMonitoring(function() {
+            $cityId = $this->city->id ?? session('city');
+            $cityName = $this->city->name ?? ($cityId ? CityCopy::find($cityId)?->name : null);
 
-        // Set default SEO values
-        $this->setSeoDefaults();
+            // Set default SEO values
+            $this->setSeoDefaults();
 
-        $hotels = collect();
-        $amenities = collect();
-        $totalFilteredCount = 0;
+            $hotels = collect();
+            $amenities = collect();
+            $totalFilteredCount = 0;
 
-        if ($cityId) {
-            // Get optimized results with single query
-            $results = $this->getOptimizedHotelsQuery($cityId);
-            $hotels = $results['hotels'];
-            $totalFilteredCount = $results['total'];
+            if ($cityId) {
+                // Get optimized results with single query
+                $results = $this->getOptimizedHotelsQuery($cityId);
+                $hotels = $results['hotels'];
+                $totalFilteredCount = $results['total'];
 
-            // Get amenities with efficient caching
-            $amenities = $this->getCityAmenities($cityId);
+                // Get amenities with efficient query
+                $amenities = $this->getCityAmenities($cityId);
 
-            // Set city-specific SEO
-            if ($cityName) {
-                $this->setCitySeo($cityName, $totalFilteredCount);
+                // Set city-specific SEO
+                if ($cityName) {
+                    $this->setCitySeo($cityName, $totalFilteredCount);
+                }
             }
-        }
 
-        return view('livewire.search-result', [
-            'hotels' => $hotels,
-            'amenities' => $amenities,
-            'totalFilteredCount' => $totalFilteredCount,
-        ]);
+            return view('livewire.search-result', [
+                'hotels' => $hotels,
+                'amenities' => $amenities,
+                'totalFilteredCount' => $totalFilteredCount,
+            ]);
+        }, 'search-render');
     }
 
     /**
@@ -200,22 +202,18 @@ class SearchResult extends Component
     }
 
     /**
-     * Get city amenities with efficient caching
+     * Get city amenities with optimized query
      */
     private function getCityAmenities(int $cityId)
     {
-        $cacheKey = "city_amenities_{$cityId}";
-        
-        return Cache::remember($cacheKey, 3600, function() use ($cityId) {
-            return Amenity::select('amenities.id', 'amenities.name')
-                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
-                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
-                ->where('hotels.city_id', $cityId)
-                ->whereHas('hotels.roomCategory') // Only from hotels with rooms
-                ->distinct()
-                ->orderBy('amenities.name')
-                ->get();
-        });
+        return Amenity::select('amenities.id', 'amenities.name')
+            ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+            ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+            ->join('types', 'hotels.id', '=', 'types.hotel_id') // Direct join instead of whereHas
+            ->where('hotels.city_id', $cityId)
+            ->distinct()
+            ->orderBy('amenities.name')
+            ->get();
     }
 
     /**
@@ -269,7 +267,7 @@ class SearchResult extends Component
         }
     }
 
-    // Optimized filter reset with cache clearing
+    // Optimized filter reset
     public function resetFilters()
     {
         $this->name = '';
@@ -278,11 +276,6 @@ class SearchResult extends Component
         $this->filterAmenities = [];
         $this->sortBy = '';
         $this->resetPage();
-
-        // Clear any related caches if needed
-        if ($cityId = $this->city->id ?? session('city')) {
-            Cache::forget("city_amenities_{$cityId}");
-        }
 
         // Dispatch an Alpine.js event to clear input fields
         $this->dispatch('reset-filters');
@@ -328,13 +321,5 @@ class SearchResult extends Component
     {
         $this->sortBy = $value;
         $this->resetPage();
-    }
-
-    // Method to clear amenity cache when needed
-    public function clearAmenityCache()
-    {
-        if ($cityId = $this->city->id ?? session('city')) {
-            Cache::forget("city_amenities_{$cityId}");
-        }
     }
 }

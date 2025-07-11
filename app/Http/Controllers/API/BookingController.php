@@ -83,7 +83,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::with(['customer:id,firstname,lastname', 'bookable.type:id,name'])
             ->where('status', 'occupied')
-            ->whereHas('statuses', fn ($query) => $query->whereDate('date', '<=', now())->where('status', 'occupied'))
+            ->whereHas('statuses', fn($query) => $query->whereDate('date', '<=', now())->where('status', 'occupied'))
             ->get();
         return OccupiedResource::collection($bookings);
         // return $this->successResponse($bookings);
