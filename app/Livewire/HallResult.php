@@ -193,7 +193,7 @@ class HallResult extends Component
         if (!empty($this->low) && is_numeric($this->low)) {
             $query->where('hotels.hall_lowest_price', '>=', floatval($this->low));
         }
-        
+
         if (!empty($this->high) && is_numeric($this->high)) {
             $query->where('hotels.hall_lowest_price', '<=', floatval($this->high));
         }
@@ -206,11 +206,11 @@ class HallResult extends Component
     {
         if (!empty($this->filterAmenities)) {
             $amenityIds = array_map('intval', $this->filterAmenities);
-            
+
             // Use EXISTS for better performance instead of multiple whereHas
-            $query->where(function($q) use ($amenityIds) {
+            $query->where(function ($q) use ($amenityIds) {
                 foreach ($amenityIds as $amenityId) {
-                    $q->whereExists(function($subQuery) use ($amenityId) {
+                    $q->whereExists(function ($subQuery) use ($amenityId) {
                         $subQuery->select(DB::raw(1))
                             ->from('amenity_hotel')
                             ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
@@ -244,7 +244,7 @@ class HallResult extends Component
             case 'rating_high':
                 // Use pre-calculated average from the select
                 $query->orderBy('avg_rating', 'desc')
-                      ->orderBy('rating_count', 'desc');
+                    ->orderBy('rating_count', 'desc');
                 break;
             default:
                 $query->orderBy('hotels.created_at', 'desc');
@@ -260,7 +260,7 @@ class HallResult extends Component
             ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
             ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
             ->where('hotels.city_id', $cityId)
-            ->whereExists(function($query) {
+            ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('halls')
                     ->whereColumn('halls.hotel_id', 'hotels.id');
@@ -284,7 +284,7 @@ class HallResult extends Component
     #[Layout('components.layouts.frontend')]
     public function render()
     {
-        return $this->withPerformanceMonitoring(function() {
+        return $this->withPerformanceMonitoring(function () {
             // Get city ID from the city model or session
             $cityId = $this->city->id ?? session('city');
             $capacity = (int) session('capacity') ?? 50;

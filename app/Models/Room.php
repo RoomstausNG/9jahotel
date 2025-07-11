@@ -6,6 +6,7 @@ use App\Traits\BelongToHotel;
 use App\Traits\HasManyBookings;
 use App\Models\Scopes\HotelScope;
 use App\Traits\HasManyImage;
+use App\Traits\QueryOptimizer;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Traits\QueryOptimizer;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 

@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CacheService::class, function ($app) {
             return new CacheService();
         });
-        
+
         $this->app->singleton(DatabaseOptimizationService::class, function ($app) {
             return new DatabaseOptimizationService();
         });

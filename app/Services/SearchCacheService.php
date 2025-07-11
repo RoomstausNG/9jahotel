@@ -20,8 +20,8 @@ class SearchCacheService
     public static function getCityAmenities(int $cityId)
     {
         $cacheKey = "city_amenities_{$cityId}";
-        
-        return Cache::remember($cacheKey, self::AMENITIES_CACHE_DURATION, function() use ($cityId) {
+
+        return Cache::remember($cacheKey, self::AMENITIES_CACHE_DURATION, function () use ($cityId) {
             return \App\Models\Amenity::select('amenities.id', 'amenities.name')
                 ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
                 ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
@@ -39,8 +39,8 @@ class SearchCacheService
     public static function getCityData(int $cityId)
     {
         $cacheKey = "city_data_{$cityId}";
-        
-        return Cache::remember($cacheKey, self::CITY_DATA_CACHE_DURATION, function() use ($cityId) {
+
+        return Cache::remember($cacheKey, self::CITY_DATA_CACHE_DURATION, function () use ($cityId) {
             return \App\Models\CityCopy::find($cityId);
         });
     }
@@ -55,7 +55,7 @@ class SearchCacheService
             "city_data_{$cityId}",
             "search_results_{$cityId}_*"
         ];
-        
+
         foreach ($patterns as $pattern) {
             if (str_contains($pattern, '*')) {
                 // For wildcard patterns, we'd need a more sophisticated cache clearing
@@ -75,7 +75,7 @@ class SearchCacheService
         // In a production environment, you might want to use cache tags
         // For now, we'll log this action
         Log::info('All amenity caches should be cleared');
-        
+
         // Clear common city amenity caches
         // You might want to keep a list of active cities to clear their caches
     }
@@ -90,12 +90,15 @@ class SearchCacheService
             'name' => $params['name'] ?? '',
             'low' => $params['low'] ?? '',
             'high' => $params['high'] ?? '',
-            'amenities' => isset($params['amenities']) ? (function($arr) { sort($arr); return implode(',', $arr); })($params['amenities']) : '',
+            'amenities' => isset($params['amenities']) ? (function ($arr) {
+                sort($arr);
+                return implode(',', $arr);
+            })($params['amenities']) : '',
             'sort' => $params['sortBy'] ?? '',
             'page' => $params['page'] ?? 1,
             'per_page' => $params['perPage'] ?? 12
         ];
-        
+
         return 'search_results_' . md5(serialize($keyParams));
     }
 
@@ -115,10 +118,10 @@ class SearchCacheService
     {
         // Pre-load amenities for the city
         self::getCityAmenities($cityId);
-        
+
         // Pre-load city data
         self::getCityData($cityId);
-        
+
         Log::info("Cache warmed up for city: {$cityId}");
     }
 }

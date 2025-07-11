@@ -51,7 +51,7 @@ class SearchResult extends Component
     #[Layout('components.layouts.frontend')]
     public function render()
     {
-        return $this->withPerformanceMonitoring(function() {
+        return $this->withPerformanceMonitoring(function () {
             $cityId = $this->city->id ?? session('city');
             $cityName = $this->city->name ?? ($cityId ? CityCopy::find($cityId)?->name : null);
 
@@ -143,7 +143,7 @@ class SearchResult extends Component
         if (!empty($this->low) && is_numeric($this->low)) {
             $query->where('hotels.room_lowest_price', '>=', floatval($this->low));
         }
-        
+
         if (!empty($this->high) && is_numeric($this->high)) {
             $query->where('hotels.room_lowest_price', '<=', floatval($this->high));
         }
@@ -156,11 +156,11 @@ class SearchResult extends Component
     {
         if (!empty($this->filterAmenities)) {
             $amenityIds = array_map('intval', $this->filterAmenities);
-            
+
             // Use EXISTS for better performance instead of multiple whereHas
-            $query->where(function($q) use ($amenityIds) {
+            $query->where(function ($q) use ($amenityIds) {
                 foreach ($amenityIds as $amenityId) {
-                    $q->whereExists(function($subQuery) use ($amenityId) {
+                    $q->whereExists(function ($subQuery) use ($amenityId) {
                         $subQuery->select(DB::raw(1))
                             ->from('amenity_hotel')
                             ->where('amenity_hotel.hotel_id', '=', DB::raw('hotels.id'))
@@ -194,7 +194,7 @@ class SearchResult extends Component
             case 'rating_high':
                 // Use pre-calculated average from the select
                 $query->orderBy('avg_rating', 'desc')
-                      ->orderBy('rating_count', 'desc');
+                    ->orderBy('rating_count', 'desc');
                 break;
             default:
                 $query->orderBy('hotels.created_at', 'desc');
