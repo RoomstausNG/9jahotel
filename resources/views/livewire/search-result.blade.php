@@ -50,7 +50,7 @@
                                         style="white-space:nowrap; display: inline-flex; align-items: center; height: 16px; margin-right: 4px;">
                                         {!! preg_replace(
                                             '/<svg
-                                                                                                                                                                /',
+                                                                                                                                                                                                        /',
                                             '<svg height="20" width="auto" style="height: 20px; width: auto;"',
                                             $amenity->icon,
                                         ) !!}
@@ -216,3 +216,35 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+        @foreach($hotels as $index => $hotel)
+        {
+            "@type": "ListItem",
+            "position": {{ $loop->iteration }},
+            "item": {
+                "@type": "Hotel",
+                "name": "{{ $hotel->name }}",
+                "url": "{{ route('hotels.show', $hotel->code) }}",
+                "image": "{{ $hotel->background_image ? asset('storage/' . $hotel->background_image) : asset('img/9jahotel_logo.png') }}",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "{{ $hotel->address }}",
+                    "addressLocality": "{{ $hotel->city->name }}",
+                    "addressCountry": "Nigeria"
+                },
+                @if($hotel->room_lowest_price)
+                "priceRange": "₦{{ $hotel->room_lowest_price }} and up"
+                @endif
+            }
+        }@if(!$loop->last),@endif
+        @endforeach
+    ]
+}
+</script>
+@endpush

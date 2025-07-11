@@ -92,8 +92,21 @@ class HotelDetails extends Component
     #[Layout('components.layouts.frontend')]
     public function render()
     {
+        // Generate SEO metadata for this hotel
+        $seoData = [
+            'hotelName' => $this->hotel->name,
+            'description' => "Book your stay at {$this->hotel->name} in {$this->hotel->city->name}. " .
+                substr($this->hotel->description ?? '', 0, 150) .
+                (strlen($this->hotel->description ?? '') > 150 ? '...' : ''),
+            'keywords' => "hotels in {$this->hotel->city->name}, {$this->hotel->name}, hotel booking, Nigeria accommodation, 9jahotels",
+            'image' => $this->hotel->background_image ? asset('storage/' . $this->hotel->background_image) : asset('img/9jahotel_logo.png'),
+            'type' => 'article'
+        ];
+
         return view('livewire.hotel-details', [
-            'roomCategories' => $this->roomCategories
-        ]);
+            'roomCategories' => $this->roomCategories,
+            'seoData' => $seoData
+        ])
+            ->with($seoData);
     }
 }

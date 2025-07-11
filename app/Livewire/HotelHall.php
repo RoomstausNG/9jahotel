@@ -66,10 +66,22 @@ class HotelHall extends Component
     }
 
     #[Layout('components.layouts.frontend')]
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
+        // Generate SEO metadata for this hotel's halls
+        $seoData = [
+            'hotelName' => $this->hotel->name,
+            'title' => "Halls at {$this->hotel->name} | 9jahotels",
+            'description' => "Book halls and event spaces at {$this->hotel->name} in {$this->hotel->city->name}. Perfect for meetings, conferences, and events.",
+            'keywords' => "event halls in {$this->hotel->city->name}, {$this->hotel->name}, conference rooms, meeting spaces, venue booking, Nigeria, 9jahotels",
+            'image' => $this->hotel->background_image ? asset('storage/' . $this->hotel->background_image) : asset('img/9jahotel_logo.png'),
+            'type' => 'article'
+        ];
+
         return view('livewire.hotel-halls', [
             'halls' => $this->halls
-        ]);
+        ])
+            ->with($seoData);
     }
 }
