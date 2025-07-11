@@ -11,8 +11,8 @@
 
 @php
     $defaultTitle = config('app.name') . ' | Search & Save on your bookings';
-    $defaultDescription = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotels.';
-    $defaultKeywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotels';
+    $defaultDescription = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotel.';
+    $defaultKeywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel';
     $defaultImage = asset('img/9jahotel_logo.png');
     $defaultCanonicalUrl = request()->url();
     $defaultType = 'website';

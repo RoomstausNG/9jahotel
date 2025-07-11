@@ -72,9 +72,9 @@ class HotelHall extends Component
         // Generate SEO metadata for this hotel's halls
         $seoData = [
             'hotelName' => $this->hotel->name,
-            'title' => "Halls at {$this->hotel->name} | 9jahotels",
+            'title' => "Halls at {$this->hotel->name} | 9jahotel",
             'description' => "Book halls and event spaces at {$this->hotel->name} in {$this->hotel->city->name}. Perfect for meetings, conferences, and events.",
-            'keywords' => "event halls in {$this->hotel->city->name}, {$this->hotel->name}, conference rooms, meeting spaces, venue booking, Nigeria, 9jahotels",
+            'keywords' => "event halls in {$this->hotel->city->name}, {$this->hotel->name}, conference rooms, meeting spaces, venue booking, Nigeria, 9jahotel",
             'image' => $this->hotel->background_image ? asset('storage/' . $this->hotel->background_image) : asset('img/9jahotel_logo.png'),
             'type' => 'article'
         ];

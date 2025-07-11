@@ -98,7 +98,7 @@ class HotelDetails extends Component
             'description' => "Book your stay at {$this->hotel->name} in {$this->hotel->city->name}. " .
                 substr($this->hotel->description ?? '', 0, 150) .
                 (strlen($this->hotel->description ?? '') > 150 ? '...' : ''),
-            'keywords' => "hotels in {$this->hotel->city->name}, {$this->hotel->name}, hotel booking, Nigeria accommodation, 9jahotels",
+            'keywords' => "hotels in {$this->hotel->city->name}, {$this->hotel->name}, hotel booking, Nigeria accommodation, 9jahotel",
             'image' => $this->hotel->background_image ? asset('storage/' . $this->hotel->background_image) : asset('img/9jahotel_logo.png'),
             'type' => 'article'
         ];

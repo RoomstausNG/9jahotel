@@ -223,9 +223,9 @@ class HallResult extends Component
         // SEO metadata for the hall results page
         $cityName = $this->city->name ?? CityCopy::find($cityId)->name ?? 'Nigeria';
         $seoData = [
-            'title' => "Event Halls in {$cityName} | 9jahotels",
+            'title' => "Event Halls in {$cityName} | 9jahotel",
             'description' => "Find and book event halls, conference rooms and meeting spaces in {$cityName}. Perfect for events, meetings, and conferences.",
-            'keywords' => "event halls in {$cityName}, conference rooms, meeting spaces, venue booking, Nigeria, event spaces, 9jahotels",
+            'keywords' => "event halls in {$cityName}, conference rooms, meeting spaces, venue booking, Nigeria, event spaces, 9jahotel",
             'canonicalUrl' => request()->url(),
         ];
 
