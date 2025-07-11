@@ -25,6 +25,11 @@ class HallResult extends Component
     public $filterAmenities = []; // Array to store selected amenity IDs
     public $sortBy = ''; // Property for sorting options
     public $perPage = 12; // Items per page
+
+    // SEO properties for layout
+    public $title;
+    public $description;
+    public $keywords;
     // Remove the $page property as it's handled by WithPagination trait
 
     protected $queryString = [
@@ -193,7 +198,7 @@ class HallResult extends Component
                     $query->select('hotels.*')
                         ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
                         ->groupBy('hotels.id')
-                        ->orderBy(\DB::raw('AVG(COALESCE(ratings.number, 0))'), 'desc');
+                        ->orderBy(DB::raw('AVG(COALESCE(ratings.number, 0))'), 'desc');
                 } else {
                     // Standard column sorting
                     $query->orderBy($sort['column'], $sort['direction']);
@@ -210,29 +215,24 @@ class HallResult extends Component
         // Use paginate instead of limit and get
         $hotels = $query->paginate($this->perPage);
 
-        // Get amenities for the city (cached to avoid repeated queries)
-        $amenities = Cache::remember("hall_amenities_{$cityId}", 60 * 5, function () use ($cityId) {
-            return Amenity::select('amenities.*')
-                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
-                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
-                ->where('hotels.city_id', $cityId)
-                ->distinct()
-                ->get();
-        });
+        // Get amenities without caching to ensure fresh data
+        $amenities = Amenity::select('amenities.*')
+            ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+            ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+            ->where('hotels.city_id', $cityId)
+            ->distinct()
+            ->get();
 
         // SEO metadata for the hall results page
         $cityName = $this->city->name ?? CityCopy::find($cityId)->name ?? 'Nigeria';
-        $seoData = [
-            'title' => "Event Halls in {$cityName} | 9jahotel",
-            'description' => "Find and book event halls, conference rooms and meeting spaces in {$cityName}. Perfect for events, meetings, and conferences.",
-            'keywords' => "event halls in {$cityName}, conference rooms, meeting spaces, venue booking, Nigeria, event spaces, 9jahotel",
-            'canonicalUrl' => request()->url(),
-        ];
+        $this->title = "Event Halls in {$cityName} | 9jahotel";
+        $this->description = "Find and book event halls, conference rooms and meeting spaces in {$cityName}. Perfect for events, meetings, and conferences.";
+        $this->keywords = "event halls in {$cityName}, conference rooms, meeting spaces, venue booking, Nigeria, event spaces, 9jahotel";
 
         return view('livewire.hall-result', [
             'hotels' => $hotels,
             'amenities' => $amenities,
             'totalFilteredCount' => $totalFilteredCount,
-        ])->with($seoData);
+        ]);
     }
 }

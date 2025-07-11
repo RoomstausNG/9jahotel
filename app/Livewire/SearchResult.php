@@ -25,6 +25,11 @@ class SearchResult extends Component
     public $filterAmenities = []; // Array to store selected amenity IDs
     public $sortBy = ''; // Property for sorting options
     public $perPage = 12; // Items per page
+
+    // SEO properties for layout
+    public $title;
+    public $description;
+    public $keywords;
     // Remove the $page property as it's handled by WithPagination trait
 
     protected $queryString = [
@@ -48,9 +53,9 @@ class SearchResult extends Component
         $cityName = $this->city->name ?? ($cityId ? \Nnjeim\World\Models\City::find($cityId)?->name : null);
 
         // Default SEO values
-        $seoTitle = config('app.name') . ' | Search & Save on your bookings';
-        $seoDescription = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotel.';
-        $seoKeywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel';
+        $this->title = config('app.name') . ' | Search & Save on your bookings';
+        $this->description = 'Find and book the best hotel deals in Nigeria. Save on your accommodation with 9jahotel.';
+        $this->keywords = 'hotels, Nigeria, accommodation, booking, hotel deals, discount hotels, 9jahotel';
 
         $hotels = collect();
         $amenities = collect();
@@ -97,7 +102,7 @@ class SearchResult extends Component
                         $query->select('hotels.*')
                             ->leftJoin('ratings', 'hotels.id', '=', 'ratings.hotel_id')
                             ->groupBy('hotels.id')
-                            ->orderBy(\DB::raw('AVG(COALESCE(ratings.number, 0))'), 'desc');
+                            ->orderBy(DB::raw('AVG(COALESCE(ratings.number, 0))'), 'desc');
                     } else {
                         $query->orderBy($sort['column'], $sort['direction']);
                     }
@@ -109,20 +114,19 @@ class SearchResult extends Component
             $totalFilteredCount = $query->count();
             $hotels = $query->paginate($this->perPage);
 
-            $amenities = Cache::remember("city_amenities_{$cityId}", 60 * 5, function () use ($cityId) {
-                return Amenity::select('amenities.*')
-                    ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
-                    ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
-                    ->where('hotels.city_id', $cityId)
-                    ->distinct()
-                    ->get();
-            });
+            // Get amenities without caching to ensure fresh data
+            $amenities = Amenity::select('amenities.*')
+                ->join('amenity_hotel', 'amenities.id', '=', 'amenity_hotel.amenity_id')
+                ->join('hotels', 'amenity_hotel.hotel_id', '=', 'hotels.id')
+                ->where('hotels.city_id', $cityId)
+                ->distinct()
+                ->get();
 
             // SEO for city page
             if ($cityName) {
-                $seoTitle = 'Hotels in ' . $cityName . ' | ' . config('app.name');
-                $seoDescription = "Find and book from $totalFilteredCount hotels in $cityName. Save on your accommodation with 9jahotel.";
-                $seoKeywords = "hotels, $cityName, accommodation, booking, hotel deals, discount hotels, 9jahotel";
+                $this->title = 'Hotels in ' . $cityName . ' | ' . config('app.name');
+                $this->description = "Find and book from $totalFilteredCount hotels in $cityName. Save on your accommodation with 9jahotel.";
+                $this->keywords = "hotels, $cityName, accommodation, booking, hotel deals, discount hotels, 9jahotel";
             }
         }
 
@@ -130,10 +134,6 @@ class SearchResult extends Component
             'hotels' => $hotels,
             'amenities' => $amenities,
             'totalFilteredCount' => $totalFilteredCount,
-        ])->layout('components.layouts.frontend', [
-            'title' => $seoTitle,
-            'description' => $seoDescription,
-            'keywords' => $seoKeywords,
         ]);
     }
 
