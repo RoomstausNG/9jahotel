@@ -99,17 +99,17 @@
                     <!-- Profile Dropdown -->
                     <div x-data="{ show: false }" class="relative">
                         <button @click="show = !show" class="focus:outline-none flex items-center">
-                            <img src="{{ auth('customers')->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth('customers')->user()->name) }}"
+                            <img src="{{ auth('customers')->user()?->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth('customers')->user()?->name) }}"
                                 alt="Profile" class="w-9 h-9 rounded-full border-2 border-gray-200 object-cover" />
                         </button>
                         <div x-show="show" @click.away="show = false" x-cloak
                             class="absolute right-0 mt-2 w-56 bg-white border rounded-lg shadow-lg py-2 z-40">
                             <div class="px-4 py-2 border-b">
-                                <div class="font-semibold text-gray-800">{{ auth('customers')->user()->name }}</div>
+                                <div class="font-semibold text-gray-800">{{ auth('customers')->user()?->name }}</div>
                                 <div class="text-xs text-gray-500">Referral: <span
-                                        class="font-mono">{{ auth('customers')->user()->referral_code ?? 'N/A' }}</span>
+                                        class="font-mono">{{ auth('customers')->user()?->referral_code ?? 'N/A' }}</span>
                                 </div>
-                                <div class="text-xs text-gray-500">{{ auth('customers')->user()->email }}</div>
+                                <div class="text-xs text-gray-500">{{ auth('customers')->user()?->email }}</div>
                             </div>
                             <!-- Hidden logout form -->
                             <form id="logout-form" method="POST" action="{{ route('customer.logout') }}"

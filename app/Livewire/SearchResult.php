@@ -47,6 +47,7 @@ class SearchResult extends Component
     ];
 
 
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         $cityId = $this->city->id ?? session('city');
@@ -208,5 +209,22 @@ class SearchResult extends Component
         // Ensure only one sort is active at a time
         // The $value parameter already contains the new sort value
         // No need to do anything else as Livewire will update the property
+    }
+
+    public function mount()
+    {
+        // Initialize any required properties
+        if (!isset($this->city) && session()->has('city')) {
+            // If city is not provided but exists in session, retrieve it
+            $cityId = session('city');
+            $this->city = CityCopy::find($cityId);
+        }
+    }
+
+    // Method to handle sorting explicitly
+    public function setSortBy($value)
+    {
+        $this->sortBy = $value;
+        $this->resetPage();
     }
 }
