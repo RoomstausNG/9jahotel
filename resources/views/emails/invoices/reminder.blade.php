@@ -13,11 +13,11 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
-    <x-mail::button :url="$paymentUrl">
-        Make Payment Now
-    </x-mail::button>
 
     Please make your payment as soon as possible to avoid any service interruptions.
+    kindly call us at <a href="+23407007002424" class="+0700 700 2424"></a> or email us at
+    <a href="mailto:ask@9jahotel.com" class="">ask@9jahotel.com</a> . if you have any
+    questions or need assistance with the payment process.
 
     Thank you,<br>
     {{ config('app.name') }}
