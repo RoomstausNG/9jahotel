@@ -38,6 +38,13 @@ class BookingInvoice extends Model
         return $this->hasMany(Booking::class, 'booking_invoice_id');
     }
 
+    public function scopeMy($query)
+    {
+        return $query->whereHas('customer', function ($q) {
+            $q->where('id', auth('customers')->id());
+        });
+    }
+
 
     /**
      * Send payment confirmation emails to customer and hotel
