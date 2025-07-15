@@ -60,7 +60,7 @@ app.get("/", (c) => {
     {
       version: "v0",
       message:
-        "Welcome to 9jaHotel.com! The apis is working this is a test version to test the apis changed",
+        "Welcome to 9jahotel.com! The apis is working this is a test version to test the apis changed",
       description:
         "The latest version for production server will be v1.wakalor.com, therefore pls keep it in mind",
     },

@@ -61,12 +61,12 @@ export class EmailService {
 
       // Send the email
       const result = await this.transporter.sendMail({
-        from: '"9jaHotel" <noreply@9jahotel.com>',
+        from: '"9jahotel" <noreply@9jahotel.com>',
         to: options.to,
         subject: options.subject,
         html,
         envelope: {
-          from: '"9jaHotel" <noreply@9jahotel.com>',
+          from: '"9jahotel" <noreply@9jahotel.com>',
           to: options.to,
         },
       });
