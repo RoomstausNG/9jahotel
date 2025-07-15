@@ -540,8 +540,8 @@ export class AuthService {
       // Store OTP in Redis with expiry
       await redis.set(redisKey, otp, "EX", OTP_EXPIRY_SECONDS);
 
-      // Send email with OTP
-      await this.emailService.sendTemplateEmail({
+      // Queue email with OTP for asynchronous sending
+      await this.emailService.queueTemplateEmail({
         to: email,
         subject: "Your One-Time Password (OTP)",
         templateName: "otp-verification",
