@@ -25,27 +25,65 @@ export class BookingController {
     try {
       const body = await c.req.json();
 
-      const singleId = body.roomIds[0];
-
-      let singleRoomPrice = body.total / body.roomIds.length;
-
-      const room = await HotelService.getRoomDetailsById(singleId);
-
-      const days = getDaysBetweenDates(body.checkIn, body.checkOut);
-
-      const percent = Number(
-        body.type == "NonRefundable"
-          ? room.hotel.nonRefundablePercentage
-          : room.hotel.onlinePercentage
+      // Get details for ALL rooms, not just the first one
+      const roomDetails = await Promise.all(
+        body.roomIds.map(async (roomId: number) => {
+          return await HotelService.getRoomDetailsById(roomId);
+        })
       );
 
-      const compute = calculateDiscountedAmount(room.price, days, percent);
-
-      if (compute.remainingAmount !== body.total) {
+      // Ensure all rooms belong to the same hotel
+      const hotelIds = [...new Set(roomDetails.map((room) => room.hotel.id))];
+      if (hotelIds.length > 1) {
         return ApiResponse.failure(
-          `Invalid input the total amount for this booking type suppose to be ${compute.remainingAmount} but you provided ${body.total}`,
+          "All rooms must belong to the same hotel",
+          400
+        );
+      }
+
+      const hotel = roomDetails[0].hotel; // Since all rooms are from the same hotel
+      const days = getDaysBetweenDates(body.checkIn, body.checkOut);
+
+      // Get the discount percentage based on booking type
+      const percent = Number(
+        body.type === "NonRefundable"
+          ? hotel.nonRefundablePercentage
+          : hotel.onlinePercentage
+      );
+
+      // Calculate total base amount for ALL rooms
+      let totalBaseAmount = 0;
+      const roomCalculations = roomDetails.map((room) => {
+        const roomBaseAmount = room.price * days;
+        totalBaseAmount += roomBaseAmount;
+
+        return {
+          roomId: room.id,
+          price: room.price,
+          baseAmount: roomBaseAmount,
+          roomDetail: room,
+        };
+      });
+
+      // Apply discount to the total amount
+      const compute = calculateDiscountedAmount(totalBaseAmount, 1, percent); // Using 1 day since we already calculated total for all days
+
+      // Validate the provided total against calculated amount
+      if (Math.abs(compute.remainingAmount - body.total) > 0.01) {
+        // Allow for small rounding differences
+        return ApiResponse.failure(
+          `Invalid total amount. Expected: ${compute.remainingAmount} for ${body.roomIds.length} room(s) for ${days} day(s), but you provided: ${body.total}`,
           400,
-          compute
+          {
+            expectedTotal: compute.remainingAmount,
+            providedTotal: body.total,
+            baseAmount: compute.originalAmount,
+            discountAmount: compute.discountedAmount,
+            discountPercent: percent,
+            numberOfRooms: body.roomIds.length,
+            numberOfDays: days,
+            roomBreakdown: roomCalculations,
+          }
         );
       }
 
@@ -107,9 +145,12 @@ export class BookingController {
 
       const validatedData = {
         ...body,
-        ...compute,
+        total: compute.remainingAmount, // Use the calculated amount to ensure consistency
+        baseAmount: compute.originalAmount,
+        discountAmount: compute.discountedAmount,
         days,
         percent,
+        numberOfRooms: body.roomIds.length,
       };
 
       // Create booking
