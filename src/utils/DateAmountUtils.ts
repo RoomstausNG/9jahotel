@@ -45,7 +45,7 @@ export const calculateDiscountedAmount = (
   const validPercentage = Math.min(100, Math.max(0, percentage));
 
   // Calculate the discount amount and round to whole number
-  const discountedAmount = Math.round((originalAmount * validPercentage) / 100);
+  const discountedAmount = Math.floor((originalAmount * validPercentage) / 100);
 
   // Calculate the remaining amount after discount
   const remainingAmount = originalAmount - discountedAmount;
