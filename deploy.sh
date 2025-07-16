@@ -19,9 +19,6 @@ echo "🔨 Building Docker containers without cache..."
 docker compose build --no-cache  # Ensures no caching during build
 
 # --- Tagging and Pushing to Local Registry ---
-# Define image names (adjust 'app' if your service name in docker-compose.yml is different)
-# Assuming docker-compose uses project name (directory name) + service name
-# You might need to adjust PROJECT_NAME if your setup differs
 PROJECT_NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]*//g') # Get sanitized project name
 SOURCE_IMAGE_NAME="${PROJECT_NAME}-app:latest" # Compose usually tags with :latest by default after build
 TARGET_IMAGE_NAME_HASH="localhost:5000/${PROJECT_NAME}-app:${GIT_HASH}"
