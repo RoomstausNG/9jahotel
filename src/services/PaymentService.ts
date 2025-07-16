@@ -4,6 +4,7 @@ import { redis } from "../config/redis"; // Import Redis client
 import { EmailService } from "./EmailService"; // Import EmailService
 import { db, dbPool } from "../config/database";
 import { eq } from "drizzle-orm";
+import { generateBookingReference } from "../utils/referenceGenerator";
 
 import type { InitPaystackPaymentDTO } from "../dtos/InitPaystackPaymentDTO";
 import { injectable } from "inversify";
@@ -91,12 +92,14 @@ export class PaymentService {
       console.log("[PaymentService] Initializing Paystack payment", params);
       const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
       const url = "https://api.paystack.co/transaction/initialize";
+
+      const reference = params.reference || (await generateBookingReference());
       const response = await axios.post(
         url,
         {
           email: params.email,
-          amount: params.amount * 100, // Paystack expects amount in kobo
-          reference: params.reference,
+          amount: params.amount * 100,
+          reference,
           callback_url: params.callback_url,
         },
         {

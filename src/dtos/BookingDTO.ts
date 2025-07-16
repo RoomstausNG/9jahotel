@@ -31,6 +31,7 @@ export const CreateBookingDto = z
     email: z.string().email("Please provide a valid email address"),
     phone: z.string().min(10, "Phone number must be at least 10 characters"),
     roomIds: existsRoomsValidator,
+    reference: z.string().min(8).optional(),
 
     type: z.enum(["PayAtHotel", "PayNow", "NonRefundable"], {
       errorMap: (issue, ctx) => {
