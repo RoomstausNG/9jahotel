@@ -51,6 +51,9 @@ export class BookingService {
         : settlement.hotelPayable;
 
       const reference = await generateBookingReference(hotel.name);
+      // Determine paid/unpaid status based on type
+      const isPaid = bookingData.type !== "PayAtHotel";
+      const status = isPaid ? "paid" : "unpaid";
       const result = await dbPool.transaction(async (tx: typeof db) => {
         // Create booking invoice first
         const bookingInvoiceResult = await tx.insert(booking_invoices).values({
@@ -58,7 +61,7 @@ export class BookingService {
           amount: bookingTotal,
           commission_amount: commissionAmount,
           hotel_payable: hotelPayable,
-          status: "unpaid",
+          status,
           customer_id: userId,
           hotel_id: hotel.id,
           checked_in: bookingData.checkIn,
@@ -87,12 +90,14 @@ export class BookingService {
               bookable_id: roomId,
               due: bookingData.total / bookingData.roomIds.length,
               discount: this.getBookingCommissionPercent(bookingData, hotel),
-              amount_paid: 0,
+              amount_paid: isPaid
+                ? bookingData.total / bookingData.roomIds.length
+                : 0,
               via: "9jahotel",
               bookable_type: "App\\Models\\Room",
               checked_in: bookingData.checkIn,
               checked_out: bookingData.checkOut,
-              status: "unpaid",
+              status,
               created_at: new Date(),
               updated_at: new Date(),
             });

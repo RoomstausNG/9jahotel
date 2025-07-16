@@ -174,7 +174,6 @@ export class PaymentService {
           success: false,
           message: gatewayMessage,
           data: paystackData,
-          status,
         };
       }
     } catch (error: any) {
