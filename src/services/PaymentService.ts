@@ -147,11 +147,35 @@ export class PaymentService {
           Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
         },
       });
-      console.log("[PaymentService] Paystack verify response", response.data);
-      if (response.data.status && response.data.data.status === "success") {
-        return { success: true, data: response.data.data };
+      console.log(
+        "[PaymentService] Paystack verify response",
+        JSON.stringify(response.data, null, 2)
+      );
+      const paystackData = response.data.data;
+      const gatewayMessage =
+        paystackData?.gateway_response || response.data.message;
+      const status = paystackData?.status;
+      if (response.data.status && status === "success") {
+        console.log(
+          "[PaymentService] Paystack verification SUCCESS",
+          paystackData
+        );
+        return {
+          success: true,
+          data: paystackData,
+          message: gatewayMessage,
+        };
       } else {
-        return { success: false, message: response.data.message };
+        console.warn(
+          "[PaymentService] Paystack verification FAILURE",
+          response.data
+        );
+        return {
+          success: false,
+          message: gatewayMessage,
+          data: paystackData,
+          status,
+        };
       }
     } catch (error: any) {
       console.error(
