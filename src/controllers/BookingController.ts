@@ -33,7 +33,10 @@ export class BookingController {
       );
 
       // Ensure all rooms belong to the same hotel
-      const hotelIds = [...new Set(roomDetails.map((room) => room.hotel.id))];
+      const hotelIds = Array.from(
+        new Set(roomDetails.map((room) => room.hotel.id))
+      );
+
       if (hotelIds.length > 1) {
         return ApiResponse.failure(
           "All rooms must belong to the same hotel",
