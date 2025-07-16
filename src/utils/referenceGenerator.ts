@@ -1,7 +1,7 @@
 import { redis } from "../config/redis";
 
 const REDIS_COUNTER_KEY = "booking_reference_counter";
-const REFERENCE_PREFIX = "RE9A";
+const REFERENCE_PREFIX = "9JA";
 const PADDING_LENGTH = 5;
 
 /**
