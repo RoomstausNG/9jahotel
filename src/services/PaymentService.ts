@@ -5,6 +5,10 @@ import { EmailService } from "./EmailService"; // Import EmailService
 import { db, dbPool } from "../config/database";
 import { eq } from "drizzle-orm";
 
+import type { InitPaystackPaymentDTO } from "../dtos/InitPaystackPaymentDTO";
+import { injectable } from "inversify";
+
+@injectable()
 export class PaymentService {
   /**
    * Verifies a Flutterwave payment and updates booking invoice and bookings.
@@ -14,7 +18,7 @@ export class PaymentService {
    * @param userEmail - The customer's email
    * @returns {Promise<{ success: boolean; message: string }>} Result
    */
-  static async verifyFlutterwavePayment({
+  async verifyFlutterwavePayment({
     transactionId,
     expectedAmount,
     invoiceReference,
@@ -73,6 +77,89 @@ export class PaymentService {
       };
     } catch (error) {
       return { success: false, message: "Payment verification failed." };
+    }
+  }
+  /**
+   * Initializes a Paystack payment transaction.
+   * @param params - InitPaystackPaymentDTO
+   * @returns {Promise<{ success: boolean; data?: any; message?: string }>}
+   */
+  async initializePaystackPayment(
+    params: InitPaystackPaymentDTO
+  ): Promise<{ success: boolean; data?: any; message?: string }> {
+    try {
+      console.log("[PaymentService] Initializing Paystack payment", params);
+      const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+      const url = "https://api.paystack.co/transaction/initialize";
+      const response = await axios.post(
+        url,
+        {
+          email: params.email,
+          amount: params.amount * 100, // Paystack expects amount in kobo
+          reference: params.reference,
+          callback_url: params.callback_url,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("[PaymentService] Paystack init response", response.data);
+      if (response.data.status) {
+        return { success: true, data: response.data.data };
+      } else {
+        return { success: false, message: response.data.message };
+      }
+    } catch (error: any) {
+      console.error(
+        "[PaymentService] Paystack init error",
+        error?.response?.data || error
+      );
+      return {
+        success: false,
+        message:
+          error?.response?.data?.message || "Paystack initialization failed.",
+      };
+    }
+  }
+
+  /**
+   * Verifies a Paystack payment transaction.
+   * @param reference - The transaction reference
+   * @returns {Promise<{ success: boolean; data?: any; message?: string }>}
+   */
+  async verifyPaystackPayment(
+    reference: string
+  ): Promise<{ success: boolean; data?: any; message?: string }> {
+    try {
+      console.log(
+        `[PaymentService] Verifying Paystack payment: reference=${reference}`
+      );
+      const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+      const url = `https://api.paystack.co/transaction/verify/${reference}`;
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        },
+      });
+      console.log("[PaymentService] Paystack verify response", response.data);
+      if (response.data.status && response.data.data.status === "success") {
+        return { success: true, data: response.data.data };
+      } else {
+        return { success: false, message: response.data.message };
+      }
+    } catch (error: any) {
+      console.error(
+        "[PaymentService] Paystack verify error",
+        error?.response?.data || error
+      );
+      return {
+        success: false,
+        message:
+          error?.response?.data?.message || "Paystack verification failed.",
+      };
     }
   }
 }

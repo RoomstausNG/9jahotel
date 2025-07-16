@@ -13,6 +13,7 @@ import { PaymentService } from "./services/PaymentService";
 import { BookingController } from "./controllers/BookingController";
 import { CustomerService } from "./services/CustomerService";
 import { CustomerController } from "./controllers/CustomerController";
+import { PaymentController } from "./controllers/PaymentController";
 
 // Create the container
 const container = new Container();
@@ -30,6 +31,10 @@ container.bind<CustomerService>(CustomerService).toSelf().inSingletonScope();
 // Bind controllers
 container.bind<UserController>(UserController).toSelf().inSingletonScope();
 container.bind<AuthController>(AuthController).toSelf().inSingletonScope();
+container
+  .bind<PaymentController>(PaymentController)
+  .toSelf()
+  .inSingletonScope();
 container
   .bind<LocationController>(LocationController)
   .toSelf()

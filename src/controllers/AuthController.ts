@@ -1,10 +1,8 @@
 import { Context } from "hono";
 import { AuthService } from "../services/AuthService";
 import { ApiResponse } from "../utils/ApiResponse";
-import { SocialLoginDtoType } from "../dtos/UserDTO";
 import { inject, injectable } from "inversify";
 import { customerSchema } from "../validators/customer-schema";
-import { ResetPasswordDto, SendOtpDto, VerifyOtpDto } from "../dtos/auth-dto";
 
 @injectable()
 export class AuthController {

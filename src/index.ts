@@ -19,8 +19,11 @@ import bookingRoutes from "./routes/booking-routes";
 import { customerRoutes } from "./routes/customer-routes";
 import { EmailService } from "./services/EmailService";
 import { corsConfig } from "./config/cors";
+
 // Import email worker to start it
 import "./jobs/email-processor";
+
+import paymentRoutes from "./routes/payment-routes";
 
 const app = new Hono().basePath("/api");
 
@@ -94,6 +97,7 @@ app.get("/health", (c) => {
 
 const emailService = new EmailService();
 
+app.route("/", paymentRoutes);
 app.get("/test-email", async (c) => {
   try {
     await emailService.sendTemplateEmail({
