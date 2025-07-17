@@ -19,7 +19,7 @@ export async function generateBookingReference(
     const now = new Date();
     const month = String(now.getMonth() + 1).padStart(2, "0");
 
-    // Generate hotel prefix (first letter of each word, max 2, uppercase)
+    // Generate hotel prefix (first letter of each word, max 3, uppercase)
     let hotelPrefix = "";
     if (hotelName) {
       hotelPrefix = hotelName
@@ -27,15 +27,20 @@ export async function generateBookingReference(
         .map((w) => w[0])
         .join("")
         .toUpperCase()
-        .slice(0, 2);
+        .slice(0, 3);
     }
 
-    // Atomically increment the counter in Redis.
-    const currentCount = await redis.incr(REDIS_COUNTER_KEY);
+    // Use a dynamic Redis key per hotel prefix and month
+    const dynamicCounterKey = `booking_reference_counter:${month}:${hotelPrefix}`;
+    // Atomically increment the counter for this prefix/month
+    const currentCount = await redis.incr(dynamicCounterKey);
     const paddedCount = String(currentCount).padStart(PADDING_LENGTH, "0");
 
-    // Combine the prefix, month, hotelPrefix, and the padded count.
-    const reference = `${REFERENCE_PREFIX}${month}${hotelPrefix}${paddedCount}`;
+    // Generate a short random alphanumeric string for uniqueness
+    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    // Combine the prefix, month, hotelPrefix, padded count, and random string.
+    const reference = `${REFERENCE_PREFIX}${month}${hotelPrefix}${paddedCount}${randomStr}`;
 
     console.log(`Generated booking reference: ${reference}`); // Optional logging
     return reference;

@@ -30,12 +30,16 @@ export class LocationService {
 
     const offset = (page - 1) * perPage;
 
-    // Prepare the search filter
+    // Prepare the search filter and country filter
+    const countryFilter = eq(cities.country_id, 160);
     const searchFilter = search
-      ? or(like(cities.name, `%${search}%`), like(states.name, `%${search}%`))
-      : undefined;
+      ? and(
+          countryFilter,
+          or(like(cities.name, `%${search}%`), like(states.name, `%${search}%`))
+        )
+      : countryFilter;
 
-    // Fetch cities with optional search filter
+    // Fetch cities with optional search filter and country filter
     const cityList = await dbPool
       .select({
         id: cities.id,
@@ -51,7 +55,7 @@ export class LocationService {
       .limit(perPage)
       .offset(offset);
 
-    // Fetch total count based on the search filter
+    // Fetch total count based on the search filter and country filter
     const [{ count: totalcities }] = await db
       .select({ count: countDistinct(cities.id).as("count") })
       .from(cities)
@@ -198,7 +202,7 @@ export class LocationService {
       console.error("Redis error getting cache:", error);
     }
 
-    // Fetch city data
+    // Fetch city data (only where country_id = 160)
     const city = await db
       .select({
         id: cities.id,
@@ -207,7 +211,7 @@ export class LocationService {
       })
       .from(cities)
       .innerJoin(states, eq(cities.state_id, states.id))
-      .where(eq(cities.id, cityId))
+      .where(and(eq(cities.id, cityId), eq(cities.country_id, 160)))
       .limit(1);
 
     if (!city || city.length === 0) {
@@ -257,7 +261,7 @@ export class LocationService {
       console.error("Redis error getting cache:", error);
     }
 
-    // Fetch popular cities based on hotel count
+    // Fetch popular cities based on hotel count (only where country_id = 160)
     const popularCities = await db
       .select({
         id: cities.id,
@@ -268,6 +272,7 @@ export class LocationService {
       .from(cities)
       .innerJoin(states, eq(cities.state_id, states.id))
       .innerJoin(hotels, eq(cities.id, hotels.city_id))
+      .where(eq(cities.country_id, 160))
       .groupBy(cities.id, states.name)
       .orderBy(sql`hotel_count DESC`)
       .limit(limit);
