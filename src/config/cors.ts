@@ -47,6 +47,7 @@ export const corsConfig = {
    * Allowed headers for CORS requests
    * Includes common headers needed for mobile apps and web frontends
    */
+
   allowedHeaders: [
     "Content-Type",
     "Authorization",
