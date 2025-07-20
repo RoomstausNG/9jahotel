@@ -71,7 +71,8 @@ export class HotelService {
     minPrice?: number,
     maxPrice?: number,
     userLatitude?: number,
-    userLongitude?: number
+    userLongitude?: number,
+    customerId?: number // Add customerId for favorite detection
   ) {
     const searchKey = search?.toLowerCase().trim() || "";
     const cacheKey = this.getListHotelsCacheKey(
@@ -186,7 +187,13 @@ export class HotelService {
         averageRating: sql<number>`AVG(ratings.number)`.as("averageRating"),
         starRating: hotels.star_rating,
         distance: distanceCalculation,
-        isFavourite: sql<boolean>`false`.as("isFavourite"),
+        isFavourite: customerId
+          ? sql<boolean>`EXISTS(
+              SELECT 1 FROM favourites 
+              WHERE favourites.customer_id = ${customerId} 
+              AND favourites.hotel_id = ${hotels.id}
+            )`.as("isFavourite")
+          : sql<boolean>`false`.as("isFavourite"),
       })
       .from(hotels)
       .innerJoin(cities, eq(hotels.city_id, cities.id))

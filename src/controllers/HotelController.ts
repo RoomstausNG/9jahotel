@@ -35,6 +35,10 @@ export class HotelController {
         longitude,
       } = await SearchHotelByCityDTO.parseAsync(data);
 
+      // Get user from context if logged in
+      const user = c.get("user");
+      const customerId = user?.id;
+
       const hotels = await this.hotelService.listHotelsByCity(
         cityId,
         page,
@@ -47,7 +51,8 @@ export class HotelController {
         minPrice,
         maxPrice,
         latitude,
-        longitude
+        longitude,
+        customerId // Pass customerId for favorite detection
       );
 
       return ApiResponse.success(
