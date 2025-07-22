@@ -28,6 +28,24 @@ export class LocationController {
     }
   }
 
+  async getAllCitiesByCountry(c: Context) {
+    try {
+      const page = Number(c.req.query("page") || 1);
+      const perPage = Number(c.req.query("perPage") || 50);
+      const search = c.req.query("search") || "";
+
+      const cities = await this.locationService.getCitiesByCountry(
+        160,
+        page,
+        perPage,
+        search
+      );
+      return ApiResponse.success(cities, "Cities fetched successfully");
+    } catch (error: any) {
+      return ApiResponse.failure(error.message, 500);
+    }
+  }
+
   async searchNearbyHotels(c: Context) {
     const lat = parseFloat(c.req.query("lat") || "0");
     const long = parseFloat(c.req.query("long") || "0");

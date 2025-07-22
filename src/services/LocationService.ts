@@ -86,6 +86,47 @@ export class LocationService {
     return result;
   }
 
+  async getCitiesByCountry(
+    countryId: number,
+    page: number,
+    perPage: number,
+    search: string
+  ) {
+    const offset = (page - 1) * perPage;
+    let whereClause: any;
+
+    if (search) {
+      whereClause = and(
+        eq(cities.country_id, countryId),
+        sql`LOWER(${cities.name}) LIKE LOWER(${`%${search}%`})`
+      );
+    } else {
+      whereClause = eq(cities.country_id, countryId);
+    }
+
+    const result = await db
+      .select({
+        id: cities.id,
+        name: cities.name,
+      })
+      .from(cities)
+      .where(whereClause)
+      .limit(perPage)
+      .offset(offset);
+
+    const total = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(cities)
+      .where(whereClause);
+
+    return {
+      cities: result,
+      total: total[0]?.count || 0,
+      page,
+      perPage,
+    };
+  }
+
   async searchHotelsNearby(
     lat: number,
     long: number,

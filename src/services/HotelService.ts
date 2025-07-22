@@ -36,7 +36,8 @@ export class HotelService {
     minPrice?: number,
     maxPrice?: number,
     checkIn?: string,
-    checkOut?: string
+    checkOut?: string,
+    customerId?: number // Add customerId for cache key
   ) {
     const sortParam = sortBy ? `${sortBy}:${sortOrder || "asc"}` : "name:asc";
     const priceParam =
@@ -47,15 +48,29 @@ export class HotelService {
       checkIn && checkOut
         ? `checkin:${checkIn}:checkout:${checkOut}`
         : "nodates";
-    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}:dates:${dateParam}`;
+    const userParam = customerId ? `user:${customerId}` : "guest";
+    return `hotels:city:${cityId}:page:${page}:limit:${perPage}:search:${searchKey}:sort:${sortParam}:price:${priceParam}:dates:${dateParam}:user:${userParam}`;
   }
 
-  private async invalidateCityHotelCache(cityId: number): Promise<void> {
-    const pattern = `hotels:city:${cityId}:*`;
-    const keys = await redis.keys(pattern);
-    if (keys.length > 0) {
-      await redis.del(keys);
-      console.log(`Invalidated cache for city ${cityId}: ${keys.join(", ")}`);
+  private async invalidateCityHotelCache(
+    cityId: number,
+    customerId?: number
+  ): Promise<void> {
+    // Invalidate both guest and user cache for this city
+    const patterns = [
+      `hotels:city:${cityId}:*user:guest`,
+      customerId ? `hotels:city:${cityId}:*user:${customerId}` : null,
+    ].filter(Boolean);
+    for (const pattern of patterns) {
+      const keys = await redis.keys(pattern);
+      if (keys.length > 0) {
+        await redis.del(keys);
+        console.log(
+          `Invalidated cache for city ${cityId} (${pattern}): ${keys.join(
+            ", "
+          )}`
+        );
+      }
     }
   }
 
@@ -85,7 +100,8 @@ export class HotelService {
       minPrice,
       maxPrice,
       checkIn,
-      checkOut
+      checkOut,
+      customerId // Pass customerId for cache key
     );
 
     try {
@@ -465,17 +481,17 @@ export class HotelService {
       reviews.length > 0
         ? reviews.reduce((sum, r) => sum + (r.star || 0), 0) / reviews.length
         : 0;
-    (hotelDetails as any).reviews = reviews; // Attach the detailed list
-    (hotelDetails as any).imageUrls = imageUrls; // Attach the fetched image URLs
+    (hotelDetails as any).reviews = reviews;
+    (hotelDetails as any).imageUrls = imageUrls;
 
     const reviewsSummary = buildReviewSummary(reviews);
 
     // Combine all the data - Pass amenities and image URLs if needed by resource
     const response = HotelResource.toDetail(
-      hotelDetails, // Now includes reviewCount, averageRating, reviews list, imageUrls
+      hotelDetails,
       reviewsSummary,
       isFavourite,
-      formattedAmenities // Pass fetched amenities
+      formattedAmenities
     );
 
     try {
@@ -956,7 +972,9 @@ export class HotelService {
 
     // Invalidate relevant caches
     const invalidationPromises = [];
-    invalidationPromises.push(this.invalidateCityHotelCache(cityId));
+    invalidationPromises.push(
+      this.invalidateCityHotelCache(cityId, customerId)
+    );
     // Always invalidate the user's favourites cache
     invalidationPromises.push(this.invalidateFavouritesCache(customerId));
 

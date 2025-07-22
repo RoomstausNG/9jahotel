@@ -24,6 +24,9 @@ const locationController = container.get(LocationController); // Get HotelContro
 
 // Route to list hotels by city ID
 hotelRoutes.get("/cities", (c) => locationController.getCities(c));
+
+hotelRoutes.get("/allcity", (c) => locationController.getAllCitiesByCountry(c));
+
 hotelRoutes.get(
   "/hotels/city/:cityId",
   zValidator("param", CityDTO),
