@@ -6,6 +6,7 @@ import { authMiddleware } from "../middlewares/auth-middleware";
 import { CreateAuthBookingDto, CreateBookingDto } from "../dtos/BookingDTO";
 import { GetBookingByIdOrReferenceDTO } from "../dtos/BookingDTO";
 import { GetBookingsByStatusDTO } from "../dtos/BookingDTO";
+import hotelRoutes from "./hotel-routes";
 
 const bookingRoutes = new Hono();
 const bookingController = container.get(BookingController);
@@ -35,12 +36,13 @@ bookingRoutes.get(
   (c) => bookingController.getBookingsByStatus(c)
 );
 
-// Route for authenticated user booking creation
 bookingRoutes.post(
   "/auth",
   authMiddleware,
   zValidator("json", CreateAuthBookingDto),
   (c) => bookingController.createBookingForAuthUser(c)
 );
+
+hotelRoutes.post("/coupon/check", (c) => bookingController.checkCoupon(c));
 
 export default bookingRoutes;

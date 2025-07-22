@@ -304,4 +304,29 @@ export class BookingController {
       );
     }
   }
+
+  // ...existing code...
+  async checkCoupon(c: Context) {
+    try {
+      const body = await c.req.json();
+      const { code, amount } = body;
+
+      if (!code || typeof amount !== "number" || amount <= 0) {
+        return ApiResponse.failure("Invalid coupon code or amount", 400);
+      }
+
+      const result = await this.bookingService.validateAndCalculateCoupon(
+        code,
+        amount
+      );
+
+      if (result.error) {
+        return ApiResponse.failure(result.error, 400);
+      }
+
+      return ApiResponse.success(result.data, "Coupon applied successfully");
+    } catch (error: any) {
+      return ApiResponse.failure(error.message, 500);
+    }
+  }
 }

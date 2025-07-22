@@ -4,6 +4,7 @@ import {
   customers,
   halls,
   hotels,
+  coupons,
   rooms,
 } from "./../database/migrations/schema";
 import { injectable, inject } from "inversify";
@@ -562,5 +563,60 @@ export class BookingService {
     }
 
     return result;
+  }
+
+  // ...existing code...
+  async validateAndCalculateCoupon(code: string, amount: number) {
+    // Fetch coupon by code
+    const coupon = await db
+      .select()
+      .from(coupons)
+      .where(eq(coupons.code, code))
+      .limit(1);
+
+    if (!coupon || coupon.length === 0) {
+      return { error: "Coupon code does not exist" };
+    }
+
+    const c = coupon[0];
+    const now = new Date();
+
+    // Check status
+    if (c.status !== "active") {
+      return { error: "Coupon is not active" };
+    }
+
+    // Check usage limit
+    if (c.usage_count >= c.limit_usage) {
+      return { error: "Coupon usage limit reached" };
+    }
+
+    // Check validity period
+    if (c.valid_from && now < new Date(c.valid_from)) {
+      return { error: "Coupon is not yet valid" };
+    }
+    if (c.valid_till && now > new Date(c.valid_till)) {
+      return { error: "Coupon has expired" };
+    }
+
+    // Calculate worth
+    let worth = 0;
+    if (c.type === "percent") {
+      worth = Math.round((amount * c.percent) / 100);
+    } else if (c.type === "fixed") {
+      worth = c.percent;
+    }
+
+    // Cap at highest_value
+    if (c.highest_value && worth > c.highest_value) {
+      worth = c.highest_value;
+    }
+
+    return {
+      data: {
+        coupon_id: c.id,
+        amount_worth: worth,
+      },
+    };
   }
 }
