@@ -53,6 +53,7 @@ export const CreateBookingDto = z
     total: z
       .number() // Removed required_error and invalid_type_error
       .positive("Total must be a positive number"),
+    couponId: z.string().optional(),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date",
@@ -92,6 +93,7 @@ export const CreateAuthBookingDto = z
     total: z
       .number() // Removed required_error and invalid_type_error
       .positive("Total must be a positive number"),
+    couponId: z.number().optional(),
   })
   .refine((data) => data.checkOut > data.checkIn, {
     message: "Check-out date must be after check-in date",

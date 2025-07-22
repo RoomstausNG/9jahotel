@@ -44,12 +44,32 @@ export class BookingService {
       const settlement = ourCommission(bookingTotal, commissionPercent);
 
       // Fallback to 0 if commission calculation fails
-      const commissionAmount = isNaN(settlement.commissionAmount)
+      let commissionAmount = isNaN(settlement.commissionAmount)
         ? 0
         : settlement.commissionAmount;
       const hotelPayable = isNaN(settlement.hotelPayable)
         ? 0
         : settlement.hotelPayable;
+
+      // Coupon deduction logic
+      if (bookingData.couponId) {
+        // Fetch coupon details
+        const couponArr = await db
+          .select()
+          .from(coupons)
+          .where(eq(coupons.id, bookingData.couponId))
+          .limit(1);
+        const coupon = couponArr[0];
+        if (coupon) {
+          // Calculate coupon worth
+          let couponWorth = Math.round((bookingTotal * coupon.percent) / 100);
+          if (coupon.highest_value && couponWorth > coupon.highest_value) {
+            couponWorth = coupon.highest_value;
+          }
+          // Subtract coupon worth from commissionAmount
+          commissionAmount = commissionAmount - couponWorth;
+        }
+      }
 
       const reference = await generateBookingReference(hotel.name);
       // Determine paid/unpaid status based on type
@@ -60,13 +80,14 @@ export class BookingService {
         const bookingInvoiceResult = await tx.insert(booking_invoices).values({
           reference,
           amount: bookingTotal,
-          commission_amount: commissionAmount,
+          commission_amount: commissionAmount, // already adjusted above
           hotel_payable: hotelPayable,
           status,
           customer_id: userId,
           hotel_id: hotel.id,
           checked_in: bookingData.checkIn,
           checked_out: bookingData.checkOut,
+          coupon_id: bookingData.couponId || null,
           type: bookingData.type,
           created_at: new Date(),
           updated_at: new Date(),
