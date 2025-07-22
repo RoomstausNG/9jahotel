@@ -565,7 +565,6 @@ export class BookingService {
     return result;
   }
 
-  // ...existing code...
   async validateAndCalculateCoupon(code: string, amount: number) {
     // Fetch coupon by code
     const coupon = await db
@@ -582,8 +581,8 @@ export class BookingService {
     const now = new Date();
 
     // Check status
-    if (c.status !== "active") {
-      return { error: "Coupon is not active" };
+    if (c.status == false) {
+      return { error: "Coupon is disabled" };
     }
 
     // Check usage limit
@@ -601,11 +600,7 @@ export class BookingService {
 
     // Calculate worth
     let worth = 0;
-    if (c.type === "percent") {
-      worth = Math.round((amount * c.percent) / 100);
-    } else if (c.type === "fixed") {
-      worth = c.percent;
-    }
+    worth = Math.round((amount * c.percent) / 100); // Round to 2 decimal places
 
     // Cap at highest_value
     if (c.highest_value && worth > c.highest_value) {
@@ -615,7 +610,7 @@ export class BookingService {
     return {
       data: {
         coupon_id: c.id,
-        amount_worth: worth,
+        amount_worth: Number(worth),
       },
     };
   }

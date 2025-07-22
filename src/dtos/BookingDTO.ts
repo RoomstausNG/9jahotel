@@ -7,6 +7,11 @@ const startOfToday = () => {
   return today;
 };
 
+export const CouponCheckDTO = z.object({
+  code: z.string().min(1, "Coupon code is required"),
+  amount: z.number().positive("Amount must be greater than zero"),
+});
+
 // DTO for booking creation
 export const CreateBookingDto = z
   .object({
@@ -95,6 +100,7 @@ export const CreateAuthBookingDto = z
 
 // Type inference
 export type CreateBookingDtoType = z.infer<typeof CreateBookingDto>;
+export type CouponCheckDTOType = z.infer<typeof CouponCheckDTO>;
 
 export const GetBookingByIdOrReferenceDTO = z.object({
   reference: z.string().min(1, "Booking ID or reference is required"),

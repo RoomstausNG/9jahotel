@@ -3,7 +3,11 @@ import { container } from "../container";
 import { BookingController } from "../controllers/BookingController";
 import { zValidator } from "../validators/validator-wrapper";
 import { authMiddleware } from "../middlewares/auth-middleware";
-import { CreateAuthBookingDto, CreateBookingDto } from "../dtos/BookingDTO";
+import {
+  CouponCheckDTO,
+  CreateAuthBookingDto,
+  CreateBookingDto,
+} from "../dtos/BookingDTO";
 import { GetBookingByIdOrReferenceDTO } from "../dtos/BookingDTO";
 import { GetBookingsByStatusDTO } from "../dtos/BookingDTO";
 import hotelRoutes from "./hotel-routes";
@@ -43,6 +47,8 @@ bookingRoutes.post(
   (c) => bookingController.createBookingForAuthUser(c)
 );
 
-hotelRoutes.post("/coupon/check", (c) => bookingController.checkCoupon(c));
+bookingRoutes.post("/coupon/check", zValidator("json", CouponCheckDTO), (c) =>
+  bookingController.checkCoupon(c)
+);
 
 export default bookingRoutes;
