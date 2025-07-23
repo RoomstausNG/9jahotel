@@ -47,7 +47,7 @@ bookingRoutes.post(
   (c) => bookingController.createBookingForAuthUser(c)
 );
 
-bookingRoutes.post("/coupon/check", zValidator("json", CouponCheckDTO), (c) =>
+bookingRoutes.post("/coupons/check", zValidator("json", CouponCheckDTO), (c) =>
   bookingController.checkCoupon(c)
 );
 
