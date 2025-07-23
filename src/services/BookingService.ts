@@ -40,21 +40,29 @@ export class BookingService {
       );
       hotel = room.hotel;
 
-      // FIXED: Use let instead of const for variables that need reassignment
+      // Use the pre-calculated values from controller
       const customerPaidAmount = Number(bookingData.total) || 0;
       let hotelPayable = Number(bookingData.hotelPayable) || 0;
-      let commissionAmount = Number(bookingData.commissionAmount) || 0;
+      const platformCommissionAmount =
+        Number(bookingData.platformCommissionAmount) || 0;
+      let platformNetAmount = Number(bookingData.commissionAmount) || 0; // Net after coupon
       const couponAmount = Number(bookingData.couponAmount) || 0;
 
       // Fallback calculation if values are not provided (should not happen with fixed controller)
-      if (!bookingData.hotelPayable || !bookingData.commissionAmount) {
+      if (
+        !bookingData.hotelPayable ||
+        bookingData.commissionAmount === undefined
+      ) {
         console.warn(
           "Missing pre-calculated payment breakdown, recalculating..."
         );
 
         const settlement = ourCommission(
           bookingData.baseAmount,
-          bookingData.discountAmount,
+          bookingData.customerDiscountAmount || bookingData.discountAmount,
+          bookingData.platformCommissionPercent ||
+            Number(hotel.commissionPercent) ||
+            0,
           customerPaidAmount,
           couponAmount
         );
@@ -62,7 +70,7 @@ export class BookingService {
         hotelPayable = isNaN(settlement.hotelPayable)
           ? 0
           : settlement.hotelPayable;
-        commissionAmount = isNaN(settlement.commissionAmount)
+        platformNetAmount = isNaN(settlement.commissionAmount)
           ? 0
           : settlement.commissionAmount;
       }
@@ -78,8 +86,8 @@ export class BookingService {
         const bookingInvoiceResult = await tx.insert(booking_invoices).values({
           reference,
           amount: customerPaidAmount, // Amount customer actually paid
-          commission_amount: commissionAmount, // Platform commission (can be negative)
-          hotel_payable: hotelPayable, // Amount hotel receives
+          commission_amount: platformNetAmount, // Platform net commission (after coupon cost)
+          hotel_payable: hotelPayable, // Amount hotel receives (FIXED)
           status,
           customer_id: userId,
           hotel_id: hotel.id,
@@ -109,7 +117,7 @@ export class BookingService {
               customer_id: userId,
               bookable_id: roomId,
               due: customerPaidAmount / bookingData.roomIds.length, // Per room customer payment
-              discount: this.getBookingCommissionPercent(bookingData, hotel),
+              discount: bookingData.platformCommissionPercent || 0, // Platform commission percentage
               amount_paid: isPaid
                 ? customerPaidAmount / bookingData.roomIds.length
                 : 0,
