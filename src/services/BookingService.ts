@@ -30,6 +30,7 @@ export class BookingService {
     @inject(EmailService) private emailService: EmailService,
     @inject(CustomerService) private customerService: CustomerService
   ) {}
+
   async createBooking(bookingData: any, c: Context, userId?: number) {
     let hotel: any;
     try {
@@ -38,50 +39,47 @@ export class BookingService {
         bookingData.roomIds[0]
       );
       hotel = room.hotel;
-      // Ensure commissionPercent and total are valid numbers
-      const commissionPercent = Number(hotel.commissionPercent) || 0;
-      const bookingTotal = Number(bookingData.total) || 0;
-      const settlement = ourCommission(bookingTotal, commissionPercent);
 
-      // Fallback to 0 if commission calculation fails
-      let commissionAmount = isNaN(settlement.commissionAmount)
-        ? 0
-        : settlement.commissionAmount;
-      const hotelPayable = isNaN(settlement.hotelPayable)
-        ? 0
-        : settlement.hotelPayable;
+      // FIXED: Use let instead of const for variables that need reassignment
+      const customerPaidAmount = Number(bookingData.total) || 0;
+      let hotelPayable = Number(bookingData.hotelPayable) || 0;
+      let commissionAmount = Number(bookingData.commissionAmount) || 0;
+      const couponAmount = Number(bookingData.couponAmount) || 0;
 
-      // Coupon deduction logic
-      if (bookingData.couponId) {
-        // Fetch coupon details
-        const couponArr = await db
-          .select()
-          .from(coupons)
-          .where(eq(coupons.id, bookingData.couponId))
-          .limit(1);
-        const coupon = couponArr[0];
-        if (coupon) {
-          // Calculate coupon worth
-          let couponWorth = Math.round((bookingTotal * coupon.percent) / 100);
-          if (coupon.highest_value && couponWorth > coupon.highest_value) {
-            couponWorth = coupon.highest_value;
-          }
-          // Subtract coupon worth from commissionAmount
-          commissionAmount = commissionAmount - couponWorth;
-        }
+      // Fallback calculation if values are not provided (should not happen with fixed controller)
+      if (!bookingData.hotelPayable || !bookingData.commissionAmount) {
+        console.warn(
+          "Missing pre-calculated payment breakdown, recalculating..."
+        );
+
+        const settlement = ourCommission(
+          bookingData.baseAmount,
+          bookingData.discountAmount,
+          customerPaidAmount,
+          couponAmount
+        );
+
+        hotelPayable = isNaN(settlement.hotelPayable)
+          ? 0
+          : settlement.hotelPayable;
+        commissionAmount = isNaN(settlement.commissionAmount)
+          ? 0
+          : settlement.commissionAmount;
       }
 
       const reference = await generateBookingReference(hotel.name);
+
       // Determine paid/unpaid status based on type
       const isPaid = bookingData.type !== "PayAtHotel";
       const status = isPaid ? "paid" : "unpaid";
+
       const result = await dbPool.transaction(async (tx: typeof db) => {
         // Create booking invoice first
         const bookingInvoiceResult = await tx.insert(booking_invoices).values({
           reference,
-          amount: bookingTotal,
-          commission_amount: commissionAmount, // already adjusted above
-          hotel_payable: hotelPayable,
+          amount: customerPaidAmount, // Amount customer actually paid
+          commission_amount: commissionAmount, // Platform commission (can be negative)
+          hotel_payable: hotelPayable, // Amount hotel receives
           status,
           customer_id: userId,
           hotel_id: hotel.id,
@@ -110,10 +108,10 @@ export class BookingService {
               hotel_id: hotel.id,
               customer_id: userId,
               bookable_id: roomId,
-              due: bookingData.total / bookingData.roomIds.length,
+              due: customerPaidAmount / bookingData.roomIds.length, // Per room customer payment
               discount: this.getBookingCommissionPercent(bookingData, hotel),
               amount_paid: isPaid
-                ? bookingData.total / bookingData.roomIds.length
+                ? customerPaidAmount / bookingData.roomIds.length
                 : 0,
               via: "9jahotel",
               bookable_type: "App\\Models\\Room",
@@ -133,7 +131,7 @@ export class BookingService {
           bookingData.firstname && bookingData.lastname
             ? `${bookingData.firstname} ${bookingData.lastname}`
             : bookingData.customerName || "Guest";
-        const bookingAmount = bookingData.total;
+        const bookingAmount = customerPaidAmount; // Use actual amount paid
         const numberOfRooms = bookingData.roomIds.length;
         const roomCategory = room.roomCategory.name.toUpperCase();
         const bookingReference = reference;
@@ -209,7 +207,7 @@ export class BookingService {
           check_in: bookingData.checkIn,
           check_out: bookingData.checkOut,
           room_type: room.roomCategory.name,
-          total_amount: parseFloat(bookingData.total),
+          total_amount: parseFloat(customerPaidAmount.toString()), // Use actual amount paid
           source: "web_app",
         };
 
@@ -630,8 +628,8 @@ export class BookingService {
 
     return {
       data: {
-        coupon_id: c.id,
-        amount_worth: Number(worth),
+        couponId: c.id,
+        amountWorth: Number(worth),
       },
     };
   }
