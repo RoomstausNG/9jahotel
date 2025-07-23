@@ -1,0 +1,5935 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "amenities": {
+      "name": "amenities",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icon": {
+          "autoincrement": false,
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "general_amenity_id": {
+          "autoincrement": false,
+          "name": "general_amenity_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "amenities_id": {
+          "name": "amenities_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "amenities_general_amenity_id_foreign": {
+          "name": "amenities_general_amenity_id_foreign",
+          "tableFrom": "amenities",
+          "tableTo": "amenities",
+          "columnsFrom": [
+            "general_amenity_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "amenity_hotel": {
+      "name": "amenity_hotel",
+      "columns": {
+        "amenity_id": {
+          "autoincrement": false,
+          "name": "amenity_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "amenity_hotel_amenity_id_foreign": {
+          "name": "amenity_hotel_amenity_id_foreign",
+          "tableFrom": "amenity_hotel",
+          "tableTo": "amenities",
+          "columnsFrom": [
+            "amenity_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "amenity_hotel_hotel_id_foreign": {
+          "name": "amenity_hotel_hotel_id_foreign",
+          "tableFrom": "amenity_hotel",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "booking_invoices": {
+      "name": "booking_invoices",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference": {
+          "autoincrement": false,
+          "name": "reference",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commission_amount": {
+          "autoincrement": false,
+          "name": "commission_amount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_payable": {
+          "autoincrement": false,
+          "name": "hotel_payable",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "default": "'unpaid'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payed_on": {
+          "autoincrement": false,
+          "name": "payed_on",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_settled": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_settled",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_settled": {
+          "autoincrement": false,
+          "name": "date_settled",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checked_in": {
+          "autoincrement": false,
+          "name": "checked_in",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checked_out": {
+          "autoincrement": false,
+          "name": "checked_out",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "default": "'online'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "booking_invoices_id": {
+          "name": "booking_invoices_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "booking_invoices_customer_id_foreign": {
+          "name": "booking_invoices_customer_id_foreign",
+          "tableFrom": "booking_invoices",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "booking_invoices_hotel_id_foreign": {
+          "name": "booking_invoices_hotel_id_foreign",
+          "tableFrom": "booking_invoices",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "booking_invoices_reference_unique": {
+          "name": "booking_invoices_reference_unique",
+          "columns": [
+            "reference"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "bookings": {
+      "name": "bookings",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bookable_id": {
+          "autoincrement": false,
+          "name": "bookable_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bookable_type": {
+          "autoincrement": false,
+          "name": "bookable_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due": {
+          "autoincrement": false,
+          "name": "due",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discount": {
+          "autoincrement": false,
+          "name": "discount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount_paid": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "amount_paid",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checked_in": {
+          "autoincrement": false,
+          "name": "checked_in",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checked_out": {
+          "autoincrement": false,
+          "name": "checked_out",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'booked'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "default": "'room'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_id": {
+          "autoincrement": false,
+          "name": "agent_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mode_of_payment": {
+          "autoincrement": false,
+          "name": "mode_of_payment",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "via": {
+          "default": "'9jahotel'",
+          "autoincrement": false,
+          "name": "via",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "booking_invoice_id": {
+          "autoincrement": false,
+          "name": "booking_invoice_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "bookings_id": {
+          "name": "bookings_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookings_agent_id_foreign": {
+          "name": "bookings_agent_id_foreign",
+          "tableFrom": "bookings",
+          "tableTo": "users",
+          "columnsFrom": [
+            "agent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "bookings_booking_invoice_id_foreign": {
+          "name": "bookings_booking_invoice_id_foreign",
+          "tableFrom": "bookings",
+          "tableTo": "booking_invoices",
+          "columnsFrom": [
+            "booking_invoice_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bookings_customer_id_foreign": {
+          "name": "bookings_customer_id_foreign",
+          "tableFrom": "bookings",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bookings_hotel_id_foreign": {
+          "name": "bookings_hotel_id_foreign",
+          "tableFrom": "bookings",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "bookings_code_unique": {
+          "name": "bookings_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "businesses": {
+      "name": "businesses",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city_id": {
+          "autoincrement": false,
+          "name": "city_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "balance": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "balance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "limit": {
+          "default": 500000,
+          "autoincrement": false,
+          "name": "limit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "businesses_id": {
+          "name": "businesses_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "businesses_city_id_foreign": {
+          "name": "businesses_city_id_foreign",
+          "tableFrom": "businesses",
+          "tableTo": "cities",
+          "columnsFrom": [
+            "city_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "businesses_hotel_id_foreign": {
+          "name": "businesses_hotel_id_foreign",
+          "tableFrom": "businesses",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "categories": {
+      "name": "categories",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "default": "'supply'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "categories_id": {
+          "name": "categories_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "categories_hotel_id_foreign": {
+          "name": "categories_hotel_id_foreign",
+          "tableFrom": "categories",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "cities": {
+      "name": "cities",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state_id": {
+          "autoincrement": false,
+          "name": "state_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_code": {
+          "autoincrement": false,
+          "name": "country_code",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "cities_id": {
+          "name": "cities_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "countries": {
+      "name": "countries",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iso2": {
+          "autoincrement": false,
+          "name": "iso2",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "status",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_code": {
+          "autoincrement": false,
+          "name": "phone_code",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iso3": {
+          "autoincrement": false,
+          "name": "iso3",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region": {
+          "autoincrement": false,
+          "name": "region",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subregion": {
+          "autoincrement": false,
+          "name": "subregion",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "countries_id": {
+          "name": "countries_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "credit_payments": {
+      "name": "credit_payments",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_paid": {
+          "autoincrement": false,
+          "name": "amount_paid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_owed": {
+          "autoincrement": false,
+          "name": "amount_owed",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "business_id": {
+          "autoincrement": false,
+          "name": "business_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "credit_payments_id": {
+          "name": "credit_payments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "credit_payments_business_id_foreign": {
+          "name": "credit_payments_business_id_foreign",
+          "tableFrom": "credit_payments",
+          "tableTo": "businesses",
+          "columnsFrom": [
+            "business_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "credit_payments_hotel_id_foreign": {
+          "name": "credit_payments_hotel_id_foreign",
+          "tableFrom": "credit_payments",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "currencies": {
+      "name": "currencies",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "precision": {
+          "default": 2,
+          "autoincrement": false,
+          "name": "precision",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "symbol": {
+          "autoincrement": false,
+          "name": "symbol",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "symbol_native": {
+          "autoincrement": false,
+          "name": "symbol_native",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "symbol_first": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "symbol_first",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decimal_mark": {
+          "default": "'.'",
+          "autoincrement": false,
+          "name": "decimal_mark",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "thousands_separator": {
+          "default": "','",
+          "autoincrement": false,
+          "name": "thousands_separator",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "currencies_id": {
+          "name": "currencies_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer_hotel": {
+      "name": "customer_hotel",
+      "columns": {
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "customer_hotel_customer_id_foreign": {
+          "name": "customer_hotel_customer_id_foreign",
+          "tableFrom": "customer_hotel",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "customer_hotel_hotel_id_foreign": {
+          "name": "customer_hotel_hotel_id_foreign",
+          "tableFrom": "customer_hotel",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customers": {
+      "name": "customers",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "firstname": {
+          "autoincrement": false,
+          "name": "firstname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastname": {
+          "autoincrement": false,
+          "name": "lastname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "otp": {
+          "autoincrement": false,
+          "name": "otp",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_name": {
+          "autoincrement": false,
+          "name": "nok_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_phone": {
+          "autoincrement": false,
+          "name": "nok_phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_email": {
+          "autoincrement": false,
+          "name": "nok_email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_of_birth": {
+          "autoincrement": false,
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatar": {
+          "autoincrement": false,
+          "name": "avatar",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "autoincrement": false,
+          "name": "gender",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city_id": {
+          "autoincrement": false,
+          "name": "city_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state_id": {
+          "autoincrement": false,
+          "name": "state_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nationality": {
+          "autoincrement": false,
+          "name": "nationality",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "business_id": {
+          "autoincrement": false,
+          "name": "business_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "default": "'$2y$12$f1kewYVMIb1n4YlWEKmKu.z6MO/89qJ/UtzpzHoJOvWMAUGqVzi6q'",
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device_name": {
+          "autoincrement": false,
+          "name": "device_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "remember_token": {
+          "autoincrement": false,
+          "name": "remember_token",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_type": {
+          "autoincrement": false,
+          "name": "id_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_number": {
+          "autoincrement": false,
+          "name": "id_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "customers_id": {
+          "name": "customers_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "customers_business_id_foreign": {
+          "name": "customers_business_id_foreign",
+          "tableFrom": "customers",
+          "tableTo": "businesses",
+          "columnsFrom": [
+            "business_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "customers_city_id_foreign": {
+          "name": "customers_city_id_foreign",
+          "tableFrom": "customers",
+          "tableTo": "cities",
+          "columnsFrom": [
+            "city_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "customers_country_id_foreign": {
+          "name": "customers_country_id_foreign",
+          "tableFrom": "customers",
+          "tableTo": "countries",
+          "columnsFrom": [
+            "country_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "customers_hotel_id_foreign": {
+          "name": "customers_hotel_id_foreign",
+          "tableFrom": "customers",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "customers_state_id_foreign": {
+          "name": "customers_state_id_foreign",
+          "tableFrom": "customers",
+          "tableTo": "states",
+          "columnsFrom": [
+            "state_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "departments": {
+      "name": "departments",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "departments_id": {
+          "name": "departments_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "departments_hotel_id_foreign": {
+          "name": "departments_hotel_id_foreign",
+          "tableFrom": "departments",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "departments_user_id_foreign": {
+          "name": "departments_user_id_foreign",
+          "tableFrom": "departments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "expenditures": {
+      "name": "expenditures",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "autoincrement": false,
+          "name": "source",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "expenditures_id": {
+          "name": "expenditures_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "expenditures_hotel_id_foreign": {
+          "name": "expenditures_hotel_id_foreign",
+          "tableFrom": "expenditures",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "failed_jobs": {
+      "name": "failed_jobs",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uuid": {
+          "autoincrement": false,
+          "name": "uuid",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "connection": {
+          "autoincrement": false,
+          "name": "connection",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "queue": {
+          "autoincrement": false,
+          "name": "queue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "autoincrement": false,
+          "name": "payload",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exception": {
+          "autoincrement": false,
+          "name": "exception",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "failed_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "failed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "failed_jobs_id": {
+          "name": "failed_jobs_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "failed_jobs_uuid_unique": {
+          "name": "failed_jobs_uuid_unique",
+          "columns": [
+            "uuid"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "faqs": {
+      "name": "faqs",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer": {
+          "autoincrement": false,
+          "name": "answer",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question_id": {
+          "autoincrement": false,
+          "name": "question_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "faqs_id": {
+          "name": "faqs_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faqs_hotel_id_foreign": {
+          "name": "faqs_hotel_id_foreign",
+          "tableFrom": "faqs",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "faqs_question_id_foreign": {
+          "name": "faqs_question_id_foreign",
+          "tableFrom": "faqs",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "favourites": {
+      "name": "favourites",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "favourites_id": {
+          "name": "favourites_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "favourites_customer_id_foreign": {
+          "name": "favourites_customer_id_foreign",
+          "tableFrom": "favourites",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "favourites_hotel_id_foreign": {
+          "name": "favourites_hotel_id_foreign",
+          "tableFrom": "favourites",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "finances": {
+      "name": "finances",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "financeable_id": {
+          "autoincrement": false,
+          "name": "financeable_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "financeable_type": {
+          "autoincrement": false,
+          "name": "financeable_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "finances_id": {
+          "name": "finances_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "finances_hotel_id_foreign": {
+          "name": "finances_hotel_id_foreign",
+          "tableFrom": "finances",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "finances_code_unique": {
+          "name": "finances_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "floors": {
+      "name": "floors",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "floors_id": {
+          "name": "floors_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "floors_hotel_id_foreign": {
+          "name": "floors_hotel_id_foreign",
+          "tableFrom": "floors",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "floors_name_unique": {
+          "name": "floors_name_unique",
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "general_items": {
+      "name": "general_items",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "general_items_id": {
+          "name": "general_items_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "general_items_code_unique": {
+          "name": "general_items_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "halls": {
+      "name": "halls",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "capacity": {
+          "autoincrement": false,
+          "name": "capacity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'available'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_available": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_id": {
+          "autoincrement": false,
+          "name": "type_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deposit": {
+          "autoincrement": false,
+          "name": "deposit",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_price": {
+          "autoincrement": false,
+          "name": "promo_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_start_day": {
+          "autoincrement": false,
+          "name": "promo_start_day",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_end_day": {
+          "autoincrement": false,
+          "name": "promo_end_day",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reference": {
+          "autoincrement": false,
+          "name": "reference",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number": {
+          "autoincrement": false,
+          "name": "number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "remarks": {
+          "default": "'sellable'",
+          "autoincrement": false,
+          "name": "remarks",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "halls_id": {
+          "name": "halls_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "halls_hotel_id_foreign": {
+          "name": "halls_hotel_id_foreign",
+          "tableFrom": "halls",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "halls_type_id_foreign": {
+          "name": "halls_type_id_foreign",
+          "tableFrom": "halls",
+          "tableTo": "types",
+          "columnsFrom": [
+            "type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "hotel_galleries": {
+      "name": "hotel_galleries",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from": {
+          "autoincrement": false,
+          "name": "from",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to": {
+          "autoincrement": false,
+          "name": "to",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "hotel_galleries_id": {
+          "name": "hotel_galleries_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "hotel_galleries_hotel_id_foreign": {
+          "name": "hotel_galleries_hotel_id_foreign",
+          "tableFrom": "hotel_galleries",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "hotel_user": {
+      "name": "hotel_user",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "hotel_user_id": {
+          "name": "hotel_user_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "hotel_user_hotel_id_foreign": {
+          "name": "hotel_user_hotel_id_foreign",
+          "tableFrom": "hotel_user",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "hotel_user_user_id_foreign": {
+          "name": "hotel_user_user_id_foreign",
+          "tableFrom": "hotel_user",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "hotels": {
+      "name": "hotels",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "background_image": {
+          "autoincrement": false,
+          "name": "background_image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "primary_currency": {
+          "autoincrement": false,
+          "name": "primary_currency",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary_currency": {
+          "autoincrement": false,
+          "name": "secondary_currency",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city_id": {
+          "autoincrement": false,
+          "name": "city_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "zip_code": {
+          "autoincrement": false,
+          "name": "zip_code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "service_charge": {
+          "autoincrement": false,
+          "name": "service_charge",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vat": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "vat",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "surcharge": {
+          "autoincrement": false,
+          "name": "surcharge",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logo": {
+          "autoincrement": false,
+          "name": "logo",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_color": {
+          "autoincrement": false,
+          "name": "primary_color",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary_color": {
+          "autoincrement": false,
+          "name": "secondary_color",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checked_out": {
+          "autoincrement": false,
+          "name": "checked_out",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telephone": {
+          "autoincrement": false,
+          "name": "telephone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "default": "'active'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "renew": {
+          "default": "'2024-06-16'",
+          "autoincrement": false,
+          "name": "renew",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "percentage_charge": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "percentage_charge",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "online_price": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "online_price",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "non_refundable_price": {
+          "default": 15,
+          "autoincrement": false,
+          "name": "non_refundable_price",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "default": "'both'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "team_id": {
+          "autoincrement": false,
+          "name": "team_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "star_rating": {
+          "autoincrement": false,
+          "name": "star_rating",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state_id": {
+          "autoincrement": false,
+          "name": "state_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "hotels_id": {
+          "name": "hotels_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "hotels_city_id_foreign": {
+          "name": "hotels_city_id_foreign",
+          "tableFrom": "hotels",
+          "tableTo": "cities",
+          "columnsFrom": [
+            "city_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "hotels_country_id_foreign": {
+          "name": "hotels_country_id_foreign",
+          "tableFrom": "hotels",
+          "tableTo": "states",
+          "columnsFrom": [
+            "country_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "hotels_state_id_foreign": {
+          "name": "hotels_state_id_foreign",
+          "tableFrom": "hotels",
+          "tableTo": "states",
+          "columnsFrom": [
+            "state_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "hotels_team_id_foreign": {
+          "name": "hotels_team_id_foreign",
+          "tableFrom": "hotels",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "hotels_code_unique": {
+          "name": "hotels_code_unique",
+          "columns": [
+            "code"
+          ]
+        },
+        "hotels_email_unique": {
+          "name": "hotels_email_unique",
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "images": {
+      "name": "images",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageable_id": {
+          "autoincrement": false,
+          "name": "imageable_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageable_type": {
+          "autoincrement": false,
+          "name": "imageable_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "images_id": {
+          "name": "images_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_hotel_id_foreign": {
+          "name": "images_hotel_id_foreign",
+          "tableFrom": "images",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "images_url_unique": {
+          "name": "images_url_unique",
+          "columns": [
+            "url"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "invoices": {
+      "name": "invoices",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference": {
+          "autoincrement": false,
+          "name": "reference",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscription": {
+          "default": "'yearly'",
+          "autoincrement": false,
+          "name": "subscription",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'unpaid'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_paid": {
+          "autoincrement": false,
+          "name": "date_paid",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "from": {
+          "autoincrement": false,
+          "name": "from",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "to": {
+          "autoincrement": false,
+          "name": "to",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted_at": {
+          "autoincrement": false,
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "invoices_id": {
+          "name": "invoices_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "invoices_hotel_id_foreign": {
+          "name": "invoices_hotel_id_foreign",
+          "tableFrom": "invoices",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "invoices_reference_unique": {
+          "name": "invoices_reference_unique",
+          "columns": [
+            "reference"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "items": {
+      "name": "items",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cost_price": {
+          "autoincrement": false,
+          "name": "cost_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "autoincrement": false,
+          "name": "quantity",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "discount": {
+          "autoincrement": false,
+          "name": "discount",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "limit": {
+          "autoincrement": false,
+          "name": "limit",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "revenue_id": {
+          "autoincrement": false,
+          "name": "revenue_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "general_item_id": {
+          "autoincrement": false,
+          "name": "general_item_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "items_id": {
+          "name": "items_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "items_general_item_id_foreign": {
+          "name": "items_general_item_id_foreign",
+          "tableFrom": "items",
+          "tableTo": "general_items",
+          "columnsFrom": [
+            "general_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "items_hotel_id_foreign": {
+          "name": "items_hotel_id_foreign",
+          "tableFrom": "items",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "items_revenue_id_foreign": {
+          "name": "items_revenue_id_foreign",
+          "tableFrom": "items",
+          "tableTo": "revenues",
+          "columnsFrom": [
+            "revenue_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "jobs": {
+      "name": "jobs",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "queue": {
+          "autoincrement": false,
+          "name": "queue",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payload": {
+          "autoincrement": false,
+          "name": "payload",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "attempts": {
+          "autoincrement": false,
+          "name": "attempts",
+          "type": "tinyint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reserved_at": {
+          "autoincrement": false,
+          "name": "reserved_at",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "available_at": {
+          "autoincrement": false,
+          "name": "available_at",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "jobs_id": {
+          "name": "jobs_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "jobs_queue_index": {
+          "name": "jobs_queue_index",
+          "columns": [
+            "queue"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "languages": {
+      "name": "languages",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name_native": {
+          "autoincrement": false,
+          "name": "name_native",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dir": {
+          "autoincrement": false,
+          "name": "dir",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "languages_id": {
+          "name": "languages_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "media": {
+      "name": "media",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_type": {
+          "autoincrement": false,
+          "name": "model_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_id": {
+          "autoincrement": false,
+          "name": "model_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uuid": {
+          "autoincrement": false,
+          "name": "uuid",
+          "type": "char(36)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collection_name": {
+          "autoincrement": false,
+          "name": "collection_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_name": {
+          "autoincrement": false,
+          "name": "file_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mime_type": {
+          "autoincrement": false,
+          "name": "mime_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "disk": {
+          "autoincrement": false,
+          "name": "disk",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conversions_disk": {
+          "autoincrement": false,
+          "name": "conversions_disk",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "size": {
+          "autoincrement": false,
+          "name": "size",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manipulations": {
+          "autoincrement": false,
+          "name": "manipulations",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "custom_properties": {
+          "autoincrement": false,
+          "name": "custom_properties",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "generated_conversions": {
+          "autoincrement": false,
+          "name": "generated_conversions",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "responsive_images": {
+          "autoincrement": false,
+          "name": "responsive_images",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_column": {
+          "autoincrement": false,
+          "name": "order_column",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "media_id": {
+          "name": "media_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "media_model_type_model_id_index": {
+          "name": "media_model_type_model_id_index",
+          "columns": [
+            "model_type",
+            "model_id"
+          ],
+          "isUnique": false
+        },
+        "media_order_column_index": {
+          "name": "media_order_column_index",
+          "columns": [
+            "order_column"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "media_uuid_unique": {
+          "name": "media_uuid_unique",
+          "columns": [
+            "uuid"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "migrations": {
+      "name": "migrations",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "migration": {
+          "autoincrement": false,
+          "name": "migration",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "batch": {
+          "autoincrement": false,
+          "name": "batch",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "migrations_id": {
+          "name": "migrations_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "model_has_permissions": {
+      "name": "model_has_permissions",
+      "columns": {
+        "permission_id": {
+          "autoincrement": false,
+          "name": "permission_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_type": {
+          "autoincrement": false,
+          "name": "model_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_id": {
+          "autoincrement": false,
+          "name": "model_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "model_has_permissions_permission_id_model_id_model_type": {
+          "name": "model_has_permissions_permission_id_model_id_model_type",
+          "columns": [
+            "permission_id",
+            "model_id",
+            "model_type"
+          ]
+        }
+      },
+      "indexes": {
+        "model_has_permissions_model_id_model_type_index": {
+          "name": "model_has_permissions_model_id_model_type_index",
+          "columns": [
+            "model_id",
+            "model_type"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "model_has_permissions_permission_id_foreign": {
+          "name": "model_has_permissions_permission_id_foreign",
+          "tableFrom": "model_has_permissions",
+          "tableTo": "permissions",
+          "columnsFrom": [
+            "permission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "model_has_roles": {
+      "name": "model_has_roles",
+      "columns": {
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_type": {
+          "autoincrement": false,
+          "name": "model_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_id": {
+          "autoincrement": false,
+          "name": "model_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "model_has_roles_role_id_model_id_model_type": {
+          "name": "model_has_roles_role_id_model_id_model_type",
+          "columns": [
+            "role_id",
+            "model_id",
+            "model_type"
+          ]
+        }
+      },
+      "indexes": {
+        "model_has_roles_model_id_model_type_index": {
+          "name": "model_has_roles_model_id_model_type_index",
+          "columns": [
+            "model_id",
+            "model_type"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "model_has_roles_role_id_foreign": {
+          "name": "model_has_roles_role_id_foreign",
+          "tableFrom": "model_has_roles",
+          "tableTo": "roles",
+          "columnsFrom": [
+            "role_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "notifications": {
+      "name": "notifications",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "char(36)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notifiable_type": {
+          "autoincrement": false,
+          "name": "notifiable_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notifiable_id": {
+          "autoincrement": false,
+          "name": "notifiable_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "autoincrement": false,
+          "name": "data",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "read_at": {
+          "autoincrement": false,
+          "name": "read_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "notifications_id": {
+          "name": "notifications_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "notifications_notifiable_type_notifiable_id_index": {
+          "name": "notifications_notifiable_type_notifiable_id_index",
+          "columns": [
+            "notifiable_type",
+            "notifiable_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "orders": {
+      "name": "orders",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mode_of_payment": {
+          "default": "'cash'",
+          "autoincrement": false,
+          "name": "mode_of_payment",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "default": "'customer'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_price": {
+          "autoincrement": false,
+          "name": "total_price",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discount": {
+          "autoincrement": false,
+          "name": "discount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quantity": {
+          "autoincrement": false,
+          "name": "quantity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "item_id": {
+          "autoincrement": false,
+          "name": "item_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_id": {
+          "autoincrement": false,
+          "name": "agent_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "booking_id": {
+          "autoincrement": false,
+          "name": "booking_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sale_id": {
+          "autoincrement": false,
+          "name": "sale_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "orders_id": {
+          "name": "orders_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "orders_agent_id_foreign": {
+          "name": "orders_agent_id_foreign",
+          "tableFrom": "orders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "agent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "orders_booking_id_foreign": {
+          "name": "orders_booking_id_foreign",
+          "tableFrom": "orders",
+          "tableTo": "bookings",
+          "columnsFrom": [
+            "booking_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "orders_customer_id_foreign": {
+          "name": "orders_customer_id_foreign",
+          "tableFrom": "orders",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "orders_hotel_id_foreign": {
+          "name": "orders_hotel_id_foreign",
+          "tableFrom": "orders",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "orders_item_id_foreign": {
+          "name": "orders_item_id_foreign",
+          "tableFrom": "orders",
+          "tableTo": "items",
+          "columnsFrom": [
+            "item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "orders_code_unique": {
+          "name": "orders_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "password_reset_tokens": {
+      "name": "password_reset_tokens",
+      "columns": {
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "password_reset_tokens_email": {
+          "name": "password_reset_tokens_email",
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "permissions": {
+      "name": "permissions",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guard_name": {
+          "autoincrement": false,
+          "name": "guard_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "permissions_id": {
+          "name": "permissions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "permissions_name_guard_name_unique": {
+          "name": "permissions_name_guard_name_unique",
+          "columns": [
+            "name",
+            "guard_name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "personal_access_tokens": {
+      "name": "personal_access_tokens",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tokenable_type": {
+          "autoincrement": false,
+          "name": "tokenable_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tokenable_id": {
+          "autoincrement": false,
+          "name": "tokenable_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "abilities": {
+          "autoincrement": false,
+          "name": "abilities",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_used_at": {
+          "autoincrement": false,
+          "name": "last_used_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "autoincrement": false,
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "personal_access_tokens_id": {
+          "name": "personal_access_tokens_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "personal_access_tokens_tokenable_type_tokenable_id_index": {
+          "name": "personal_access_tokens_tokenable_type_tokenable_id_index",
+          "columns": [
+            "tokenable_type",
+            "tokenable_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "personal_access_tokens_token_unique": {
+          "name": "personal_access_tokens_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "profiles": {
+      "name": "profiles",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_number": {
+          "autoincrement": false,
+          "name": "account_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "account_name": {
+          "autoincrement": false,
+          "name": "account_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bank_name": {
+          "autoincrement": false,
+          "name": "bank_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_bonus": {
+          "autoincrement": false,
+          "name": "special_bonus",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paye": {
+          "autoincrement": false,
+          "name": "paye",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pension_fund_contribution": {
+          "autoincrement": false,
+          "name": "pension_fund_contribution",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_deductions": {
+          "autoincrement": false,
+          "name": "other_deductions",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "surcharges": {
+          "autoincrement": false,
+          "name": "surcharges",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tip": {
+          "autoincrement": false,
+          "name": "tip",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "health_insurance": {
+          "autoincrement": false,
+          "name": "health_insurance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transport_allowance": {
+          "autoincrement": false,
+          "name": "transport_allowance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "housing_allowance": {
+          "autoincrement": false,
+          "name": "housing_allowance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_duty_allowance": {
+          "autoincrement": false,
+          "name": "special_duty_allowance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "overtime_allowance": {
+          "autoincrement": false,
+          "name": "overtime_allowance",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "profiles_id": {
+          "name": "profiles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_hotel_id_foreign": {
+          "name": "profiles_hotel_id_foreign",
+          "tableFrom": "profiles",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "profiles_user_id_foreign": {
+          "name": "profiles_user_id_foreign",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "questions": {
+      "name": "questions",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text": {
+          "autoincrement": false,
+          "name": "text",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "questions_id": {
+          "name": "questions_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "questions_text_unique": {
+          "name": "questions_text_unique",
+          "columns": [
+            "text"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "ratings": {
+      "name": "ratings",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body": {
+          "autoincrement": false,
+          "name": "body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "number": {
+          "autoincrement": false,
+          "name": "number",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "ratings_id": {
+          "name": "ratings_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ratings_customer_id_foreign": {
+          "name": "ratings_customer_id_foreign",
+          "tableFrom": "ratings",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ratings_hotel_id_foreign": {
+          "name": "ratings_hotel_id_foreign",
+          "tableFrom": "ratings",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "revenues": {
+      "name": "revenues",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "autoincrement": false,
+          "name": "source",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "revenues_id": {
+          "name": "revenues_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "revenues_hotel_id_foreign": {
+          "name": "revenues_hotel_id_foreign",
+          "tableFrom": "revenues",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "role_has_permissions": {
+      "name": "role_has_permissions",
+      "columns": {
+        "permission_id": {
+          "autoincrement": false,
+          "name": "permission_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "role_has_permissions_permission_id_role_id": {
+          "name": "role_has_permissions_permission_id_role_id",
+          "columns": [
+            "permission_id",
+            "role_id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "role_has_permissions_permission_id_foreign": {
+          "name": "role_has_permissions_permission_id_foreign",
+          "tableFrom": "role_has_permissions",
+          "tableTo": "permissions",
+          "columnsFrom": [
+            "permission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "role_has_permissions_role_id_foreign": {
+          "name": "role_has_permissions_role_id_foreign",
+          "tableFrom": "role_has_permissions",
+          "tableTo": "roles",
+          "columnsFrom": [
+            "role_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "roles": {
+      "name": "roles",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guard_name": {
+          "autoincrement": false,
+          "name": "guard_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "roles_id": {
+          "name": "roles_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "roles_name_guard_name_unique": {
+          "name": "roles_name_guard_name_unique",
+          "columns": [
+            "name",
+            "guard_name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "rooms": {
+      "name": "rooms",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "autoincrement": false,
+          "name": "number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_id": {
+          "autoincrement": false,
+          "name": "type_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "floor_id": {
+          "autoincrement": false,
+          "name": "floor_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "capacity": {
+          "autoincrement": false,
+          "name": "capacity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bed_type": {
+          "autoincrement": false,
+          "name": "bed_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'available'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "character": {
+          "default": "'no smoking'",
+          "autoincrement": false,
+          "name": "character",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_available": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_available",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "comment": {
+          "autoincrement": false,
+          "name": "comment",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "rooms_id": {
+          "name": "rooms_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "rooms_floor_id_foreign": {
+          "name": "rooms_floor_id_foreign",
+          "tableFrom": "rooms",
+          "tableTo": "floors",
+          "columnsFrom": [
+            "floor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "rooms_hotel_id_foreign": {
+          "name": "rooms_hotel_id_foreign",
+          "tableFrom": "rooms",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "rooms_type_id_foreign": {
+          "name": "rooms_type_id_foreign",
+          "tableFrom": "rooms",
+          "tableTo": "types",
+          "columnsFrom": [
+            "type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "sales": {
+      "name": "sales",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mode_of_payment": {
+          "default": "'cash'",
+          "autoincrement": false,
+          "name": "mode_of_payment",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "default": "'customer'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total": {
+          "autoincrement": false,
+          "name": "total",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discount": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "discount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_id": {
+          "autoincrement": false,
+          "name": "agent_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "booking_id": {
+          "autoincrement": false,
+          "name": "booking_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "sales_id": {
+          "name": "sales_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sales_agent_id_foreign": {
+          "name": "sales_agent_id_foreign",
+          "tableFrom": "sales",
+          "tableTo": "users",
+          "columnsFrom": [
+            "agent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "sales_booking_id_foreign": {
+          "name": "sales_booking_id_foreign",
+          "tableFrom": "sales",
+          "tableTo": "bookings",
+          "columnsFrom": [
+            "booking_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sales_customer_id_foreign": {
+          "name": "sales_customer_id_foreign",
+          "tableFrom": "sales",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sales_hotel_id_foreign": {
+          "name": "sales_hotel_id_foreign",
+          "tableFrom": "sales",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "sales_code_unique": {
+          "name": "sales_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "states": {
+      "name": "states",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_code": {
+          "autoincrement": false,
+          "name": "country_code",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "states_id": {
+          "name": "states_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "statuses": {
+      "name": "statuses",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "booking_id": {
+          "autoincrement": false,
+          "name": "booking_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "room_id": {
+          "autoincrement": false,
+          "name": "room_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hall_id": {
+          "autoincrement": false,
+          "name": "hall_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "statuses_id": {
+          "name": "statuses_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "statuses_booking_id_foreign": {
+          "name": "statuses_booking_id_foreign",
+          "tableFrom": "statuses",
+          "tableTo": "bookings",
+          "columnsFrom": [
+            "booking_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "statuses_hall_id_foreign": {
+          "name": "statuses_hall_id_foreign",
+          "tableFrom": "statuses",
+          "tableTo": "halls",
+          "columnsFrom": [
+            "hall_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "statuses_room_id_foreign": {
+          "name": "statuses_room_id_foreign",
+          "tableFrom": "statuses",
+          "tableTo": "rooms",
+          "columnsFrom": [
+            "room_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "suppliers": {
+      "name": "suppliers",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "autoincrement": false,
+          "name": "website",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category_id": {
+          "autoincrement": false,
+          "name": "category_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_name": {
+          "autoincrement": false,
+          "name": "company_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "default": "'active'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_trusted_and_tested": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "is_trusted_and_tested",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "suppliers_id": {
+          "name": "suppliers_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "suppliers_category_id_foreign": {
+          "name": "suppliers_category_id_foreign",
+          "tableFrom": "suppliers",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "suppliers_hotel_id_foreign": {
+          "name": "suppliers_hotel_id_foreign",
+          "tableFrom": "suppliers",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "team_user": {
+      "name": "team_user",
+      "columns": {
+        "team_id": {
+          "autoincrement": false,
+          "name": "team_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "marketer_id": {
+          "autoincrement": false,
+          "name": "marketer_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "team_user_marketer_id_foreign": {
+          "name": "team_user_marketer_id_foreign",
+          "tableFrom": "team_user",
+          "tableTo": "users",
+          "columnsFrom": [
+            "marketer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "team_user_team_id_foreign": {
+          "name": "team_user_team_id_foreign",
+          "tableFrom": "team_user",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "teams": {
+      "name": "teams",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "teams_id": {
+          "name": "teams_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "teams_code_unique": {
+          "name": "teams_code_unique",
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "timezones": {
+      "name": "timezones",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "timezones_id": {
+          "name": "timezones_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "types": {
+      "name": "types",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price1": {
+          "autoincrement": false,
+          "name": "price1",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "price2": {
+          "autoincrement": false,
+          "name": "price2",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deposit1": {
+          "autoincrement": false,
+          "name": "deposit1",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deposit2": {
+          "autoincrement": false,
+          "name": "deposit2",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekend_price": {
+          "autoincrement": false,
+          "name": "weekend_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekend_start_day": {
+          "autoincrement": false,
+          "name": "weekend_start_day",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekend_end_day": {
+          "autoincrement": false,
+          "name": "weekend_end_day",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_price": {
+          "autoincrement": false,
+          "name": "promo_price",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_start_day": {
+          "autoincrement": false,
+          "name": "promo_start_day",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "promo_end_day": {
+          "autoincrement": false,
+          "name": "promo_end_day",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "remarks": {
+          "autoincrement": false,
+          "name": "remarks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "types_id": {
+          "name": "types_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "types_hotel_id_foreign": {
+          "name": "types_hotel_id_foreign",
+          "tableFrom": "types",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "firstname": {
+          "autoincrement": false,
+          "name": "firstname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "department_id": {
+          "autoincrement": false,
+          "name": "department_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastname": {
+          "autoincrement": false,
+          "name": "lastname",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "autoincrement": false,
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_name": {
+          "autoincrement": false,
+          "name": "nok_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_avatar": {
+          "autoincrement": false,
+          "name": "nok_avatar",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_phone": {
+          "autoincrement": false,
+          "name": "nok_phone",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nok_email": {
+          "autoincrement": false,
+          "name": "nok_email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_of_birth": {
+          "autoincrement": false,
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "can_login": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "can_login",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_employment": {
+          "autoincrement": false,
+          "name": "date_of_employment",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avatar": {
+          "autoincrement": false,
+          "name": "avatar",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "current_role": {
+          "autoincrement": false,
+          "name": "current_role",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "designation": {
+          "autoincrement": false,
+          "name": "designation",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "autoincrement": false,
+          "name": "gender",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "account_number": {
+          "autoincrement": false,
+          "name": "account_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bank_name": {
+          "autoincrement": false,
+          "name": "bank_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "account_name": {
+          "autoincrement": false,
+          "name": "account_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "signature": {
+          "autoincrement": false,
+          "name": "signature",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gross_annual_salary": {
+          "autoincrement": false,
+          "name": "gross_annual_salary",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payee": {
+          "autoincrement": false,
+          "name": "payee",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "surcharges": {
+          "autoincrement": false,
+          "name": "surcharges",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_bonus": {
+          "autoincrement": false,
+          "name": "special_bonus",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "health_insurance": {
+          "autoincrement": false,
+          "name": "health_insurance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transport_insurance": {
+          "autoincrement": false,
+          "name": "transport_insurance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "housing_insurance": {
+          "autoincrement": false,
+          "name": "housing_insurance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "overtime_insurance": {
+          "autoincrement": false,
+          "name": "overtime_insurance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_duty_insurance": {
+          "autoincrement": false,
+          "name": "special_duty_insurance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "other_deductions": {
+          "autoincrement": false,
+          "name": "other_deductions",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city_id": {
+          "autoincrement": false,
+          "name": "city_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state_id": {
+          "autoincrement": false,
+          "name": "state_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country_id": {
+          "autoincrement": false,
+          "name": "country_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "two_factor_secret": {
+          "autoincrement": false,
+          "name": "two_factor_secret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "two_factor_recovery_codes": {
+          "autoincrement": false,
+          "name": "two_factor_recovery_codes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "two_factor_confirmed_at": {
+          "autoincrement": false,
+          "name": "two_factor_confirmed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_new": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_new",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified_at": {
+          "autoincrement": false,
+          "name": "email_verified_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "remember_token": {
+          "autoincrement": false,
+          "name": "remember_token",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "otp": {
+          "autoincrement": false,
+          "name": "otp",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device_name": {
+          "default": "'web'",
+          "autoincrement": false,
+          "name": "device_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "users_id": {
+          "name": "users_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_department_id_foreign": {
+          "name": "users_department_id_foreign",
+          "tableFrom": "users",
+          "tableTo": "departments",
+          "columnsFrom": [
+            "department_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "users_hotel_id_foreign": {
+          "name": "users_hotel_id_foreign",
+          "tableFrom": "users",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "columns": [
+            "email"
+          ]
+        },
+        "users_phone_unique": {
+          "name": "users_phone_unique",
+          "columns": [
+            "phone"
+          ]
+        },
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "columns": [
+            "username"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "videos": {
+      "name": "videos",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hotel_id": {
+          "autoincrement": false,
+          "name": "hotel_id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "videos_id": {
+          "name": "videos_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "videos_hotel_id_foreign": {
+          "name": "videos_hotel_id_foreign",
+          "tableFrom": "videos",
+          "tableTo": "hotels",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "failed_jobs": {
+        "columns": {
+          "failed_at": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    },
+    "indexes": {}
+  }
+}
