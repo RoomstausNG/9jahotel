@@ -21,6 +21,8 @@ import { Context } from "hono";
 import { AuthService } from "./AuthService";
 import { getToken } from "../utils/getToken";
 import { queueBookingEmails } from "../jobs/email-queue";
+import { queueCouponUsageIncrementJob } from "../jobs/coupon-queue";
+import { queueDashboardNotificationJob } from "../jobs/notify-dashboard-queue";
 import { CustomerService } from "./CustomerService";
 import axios from "axios";
 
@@ -201,48 +203,23 @@ export class BookingService {
         );
       }
 
-      // Notify Wakalor dashboard of successful booking
-      try {
-        const guestName =
-          bookingData.firstname && bookingData.lastname
-            ? `${bookingData.firstname} ${bookingData.lastname}`
-            : bookingData.customerName || "Guest";
+      // Queue dashboard notification job (non-blocking, increased timeout)
+      const guestName =
+        bookingData.firstname && bookingData.lastname
+          ? `${bookingData.firstname} ${bookingData.lastname}`
+          : bookingData.customerName || "Guest";
 
-        const notificationData = {
-          hotel_id: hotel.id,
-          booking_id: reference,
-          guest_name: guestName,
-          check_in: bookingData.checkIn,
-          check_out: bookingData.checkOut,
-          room_type: room.roomCategory.name,
-          total_amount: parseFloat(customerPaidAmount.toString()), // Use actual amount paid
-          source: "web_app",
-        };
-
-        const response = await axios.post(
-          "https://dashboard.wakalor.com/api/v1_hotel/bookings/notify",
-          notificationData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            timeout: 10000, // 10 second timeout
-          }
-        );
-
-        if (response.status >= 200 && response.status < 300) {
-          console.log(
-            `✅ Successfully notified Wakalor dashboard for booking ${reference}`
-          );
-        } else {
-          console.error(
-            `❌ Failed to notify Wakalor dashboard for booking ${reference}. Status: ${response}`
-          );
-        }
-      } catch (notificationError) {
-        console.error("Failed to notify Wakalor dashboard:", notificationError);
-        // Don't throw error - booking was successful, just notification failed
-      }
+      const notificationData = {
+        hotel_id: hotel.id,
+        booking_id: reference,
+        guest_name: guestName,
+        check_in: bookingData.checkIn,
+        check_out: bookingData.checkOut,
+        room_type: room.roomCategory.name,
+        total_amount: parseFloat(customerPaidAmount.toString()),
+        source: "mobile_app",
+      };
+      await queueDashboardNotificationJob(notificationData);
 
       // Clear bookings status caches for this user
       try {
@@ -258,6 +235,21 @@ export class BookingService {
         }
       } catch (cacheError) {
         console.error("Failed to clear bookings cache:", cacheError);
+      }
+
+      // After booking creation, increment coupon usage if coupon was used
+      if (bookingData.couponId) {
+        try {
+          await queueCouponUsageIncrementJob(bookingData.couponId);
+          console.log(
+            `Queued coupon usage increment for couponId ${bookingData.couponId}`
+          );
+        } catch (couponJobError) {
+          console.error(
+            "Failed to queue coupon usage increment job:",
+            couponJobError
+          );
+        }
       }
 
       // Return the booking invoice resource
