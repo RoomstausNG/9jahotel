@@ -10,7 +10,6 @@ import {
 } from "../dtos/BookingDTO";
 import { GetBookingByIdOrReferenceDTO } from "../dtos/BookingDTO";
 import { GetBookingsByStatusDTO } from "../dtos/BookingDTO";
-import hotelRoutes from "./hotel-routes";
 
 const bookingRoutes = new Hono();
 const bookingController = container.get(BookingController);
@@ -47,7 +46,7 @@ bookingRoutes.post(
   (c) => bookingController.createBookingForAuthUser(c)
 );
 
-bookingRoutes.post("/coupons/check", zValidator("json", CouponCheckDTO), (c) =>
+bookingRoutes.post("/coupon/check", zValidator("json", CouponCheckDTO), (c) =>
   bookingController.checkCoupon(c)
 );
 

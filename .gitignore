@@ -2,7 +2,7 @@
 node_modules/
 # dist
 # /dist
-src/database/migrations
+src/database
 .env
 .qodo
 .trae
