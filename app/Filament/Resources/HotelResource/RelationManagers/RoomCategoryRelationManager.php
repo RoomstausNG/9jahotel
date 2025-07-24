@@ -106,6 +106,7 @@ class RoomCategoryRelationManager extends RelationManager
                                         ->numeric(),
                                     Forms\Components\Select::make('bed_type')
                                         ->label('Bed Type')
+                                        ->searchable()
                                         ->preload()
                                         ->native(false)
                                         ->required()

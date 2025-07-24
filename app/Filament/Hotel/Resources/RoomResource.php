@@ -73,6 +73,7 @@ class RoomResource extends Resource
                     ->numeric(),
                 Forms\Components\Select::make('bed_type')
                     ->label('Bed Type')
+                    ->searchable()
                     ->preload()
                     ->native(false)
                     ->required()
