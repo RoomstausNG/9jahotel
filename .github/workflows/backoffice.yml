@@ -71,7 +71,11 @@ jobs:
 
               # Run essential deployment steps
               composer install --no-dev --optimize-autoloader
+              composer dump-autoload
               php artisan migrate --force
+              php artisan config:clear
+              php artisan route:clear
+              php artisan cache:clear
               php artisan optimize:clear
               chmod -R 777 storage bootstrap/cache
               chown -R 777 storage bootstrap/cache
