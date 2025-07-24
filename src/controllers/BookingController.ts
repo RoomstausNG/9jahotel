@@ -3,7 +3,6 @@ import { inject, injectable } from "inversify";
 import { BookingService } from "../services/BookingService";
 import { HotelService } from "../services/HotelService";
 import { ApiResponse } from "../utils/ApiResponse";
-import { CreateBookingDto } from "../dtos/BookingDTO";
 import {
   getDaysBetweenDates,
   calculateDiscountedAmount,
@@ -76,7 +75,7 @@ export class BookingController {
       // Calculate customer discount - totalBaseAmount already includes days, so pass days as 1
       const customerDiscount = calculateDiscountedAmount(
         totalBaseAmount,
-        1, // Pass 1 since totalBaseAmount already includes days calculation
+        1,
         customerDiscountPercent
       );
 

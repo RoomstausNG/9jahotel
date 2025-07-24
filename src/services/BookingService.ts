@@ -605,7 +605,7 @@ export class BookingService {
     }
 
     // Check usage limit
-    if (c.usage_count >= c.limit_usage) {
+    if (c.usage_count >= c.limit_usage && c.limit_usage != -1) {
       return { error: "Coupon usage limit reached" };
     }
 
