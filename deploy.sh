@@ -10,28 +10,28 @@ git stash
 # Fetch the latest changes
 echo ">> Fetching latest changes..."
 git fetch
-git reset --hard origin/dashboard
+git reset --hard origin/backoffice
 
 # Pull the latest changes with a strategy to handle permission issues
 echo ">> Force pulling latest changes..."
 
 git pull --rebase --strategy-option=theirs
 if [ $? -eq 0 ]; then
-  echo "✓ SUCCESS: Git pull from dashboard branch"
+  echo "✓ SUCCESS: Git pull from backoffice branch"
 else
-  echo "✗ ERROR: Git pull from dashboard branch failed"
+  echo "✗ ERROR: Git pull from backoffice branch failed"
   # Try alternative approach if standard pull fails
   echo ">> Attempting to fix permissions before reset..."
   sudo find . -type f -name ".user.ini" -exec chmod 666 {} \; || find . -type f -name ".user.ini" -exec chmod 666 {} \; || true
 
-  git reset --hard origin/dashboard
+  git reset --hard origin/backoffice
   if [ $? -eq 0 ]; then
-    echo "✓ SUCCESS: Git reset to dashboard branch"
+    echo "✓ SUCCESS: Git reset to backoffice branch"
   else
-    echo "✗ ERROR: Git force pull from dashboard branch failed"
+    echo "✗ ERROR: Git force pull from backoffice branch failed"
     echo ">> Attempting with sudo..."
-    sudo git reset --hard origin/dashboard || {
-      echo "✗ ERROR: Git force pull from dashboard branch failed even with sudo"
+    sudo git reset --hard origin/backoffice || {
+      echo "✗ ERROR: Git force pull from backoffice branch failed even with sudo"
       echo "Stopping script execution"
       exit 1
     }
