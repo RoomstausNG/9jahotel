@@ -82,7 +82,6 @@ class HotelSettings extends Page implements HasForms, HasTable
                 Tables\Actions\DeleteAction::make(),
             ]);
     }
-
     protected function getForms(): array
     {
         return [
