@@ -5,11 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\CustomerResource;
-use App\Http\Controllers\API\CityController;
-use App\Http\Controllers\API\HotelController;
-use App\Http\Controllers\API\RatingController;
-use App\Http\Controllers\FrontendApiController;
-use App\Http\Controllers\API\MobileAuthController;
 use App\Http\Controllers\API\MobileHotelController;
 use App\Http\Controllers\Api\BookingNotificationController;
 
