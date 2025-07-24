@@ -67,7 +67,7 @@ jobs:
               echo "Deployment failed, trying alternative approach..."
               # If deploy.sh fails, try a direct git pull approach
               git fetch
-              git pull origin backoffice || git reset --hard origin/backoffice
+              git reset --hard origin/backoffice
 
               # Run essential deployment steps
               composer install --no-dev --optimize-autoloader
