@@ -1,4 +1,6 @@
 <x-mail::message>
+    ROOMSTATUS PAYMENT REMINDER
+
     # New Invoice: {{ $invoice->reference }}
 
     Dear {{ $hotel->name }},
@@ -20,5 +22,8 @@
     Please make your payment before the due date to ensure uninterrupted service.
 
     Thank you,<br>
-    {{ config('app.name') }}
+    Natsat Siyaka(Ms)<br>
+    09068389486
+
+    ROOMSTATUS HOTEL MANAGEMENT SOFTWARE IS PROMOTED BY 9JAHOTEL.COM LTD AND VIA OPAY NIGERIA DEVICES.
 </x-mail::message>
