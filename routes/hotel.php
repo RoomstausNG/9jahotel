@@ -1,12 +1,11 @@
 <?php
 
-use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Resources\CustomerResource;
 use App\Http\Controllers\API\MobileHotelController;
-use App\Http\Controllers\Api\BookingNotificationController;
+use App\Http\Controllers\BookingNotificationController;
 
 /*
 |--------------------------------------------------------------------------
