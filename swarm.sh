@@ -3,7 +3,7 @@
 set -e
 
 # Define variables
-APP_NAME="wakalor"
+APP_NAME="9jahotel"
 IMAGE_NAME="9jahotel:v1.0.0"
 LOCAL_REGISTRY="localhost:5000"
 REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:v1.0.0"

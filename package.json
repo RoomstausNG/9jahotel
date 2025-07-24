@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "wakalor",
+  "name": "9jahotel",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun dist/index.js",

@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "wakalor",
+      name: "9jahotel",
       script: "bun",
       args: "dist/index.js",
       instances: 3,
@@ -21,7 +21,7 @@ module.exports = {
 
 // export const apps = [
 //   {
-//     name: "wakalor",
+//     name: "9jahotel",
 //     script: "bun",
 //     args: "run dist/index.js",
 //     instances: 2,

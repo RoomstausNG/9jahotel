@@ -2,7 +2,7 @@
 import axios from "axios";
 
 /**
- * Queue a job to notify Wakalor dashboard of a successful booking
+ * Queue a job to notify 9jahotel dashboard of a successful booking
  * @param notificationData - The booking notification payload
  */
 export async function queueDashboardNotificationJob(notificationData: any) {
@@ -10,7 +10,7 @@ export async function queueDashboardNotificationJob(notificationData: any) {
   setTimeout(async () => {
     try {
       const response = await axios.post(
-        "https://dashboard.wakalor.com/api/v1_hotel/bookings/notify",
+        "https://dashboard.9jahotel.com/api/v1_hotel/bookings/notify",
         notificationData,
         {
           headers: {
@@ -21,15 +21,15 @@ export async function queueDashboardNotificationJob(notificationData: any) {
       );
       if (response.status >= 200 && response.status < 300) {
         console.log(
-          `✅ Successfully notified Wakalor dashboard for booking ${notificationData.booking_id}`
+          `✅ Successfully notified 9jahotel dashboard for booking ${notificationData.booking_id}`
         );
       } else {
         console.error(
-          `❌ Failed to notify Wakalor dashboard for booking ${notificationData.booking_id}. Status: ${response.status}`
+          `❌ Failed to notify 9jahotel dashboard for booking ${notificationData.booking_id}. Status: ${response.status}`
         );
       }
     } catch (notificationError) {
-      console.error("Failed to notify Wakalor dashboard:", notificationError);
+      console.error("Failed to notify 9jahotel dashboard:", notificationError);
     }
   }, 0); // Immediate queue, replace with real job delay if needed
 }
