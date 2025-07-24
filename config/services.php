@@ -35,7 +35,7 @@ return [
     ],
 
     'firebase' => [
-        'credentials' => '/Users/fade_networker/Documents/projects/php/wakalor/storage/app/firebase/firebase-service-account.json',
+        'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/firebase_credentials.json')),
     ],
 
     'booking_notify_api_key' => env('BOOKING_NOTIFY_API_KEY', 'default-notify-key-change-me'),
