@@ -13,6 +13,10 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
+    ** Name: ** RoomStatus LTD
+    ** Bank: ** Sterling Bank
+    ** Account Number: ** 0116006836
+
 
     Please make your payment before the due date to ensure uninterrupted service.
 

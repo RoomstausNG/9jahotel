@@ -15,6 +15,10 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
+    ** Name: ** RoomStatus LTD
+    ** Bank: ** Sterling Bank
+    ** Account Number: ** 0116006836
+
     {{-- <x-mail::button :url="$paymentUrl">
         Make Payment
     </x-mail::button> --}}
