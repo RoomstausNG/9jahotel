@@ -21,12 +21,10 @@
     **Bank:** Sterling Bank
     **Account Number:** 0116006836
 
-    Please make your payment before the due date to ensure uninterrupted service.
+    Please make your payment within 5 DAYS of receipt of this invoice to avoid service interruption.
 
     Thank you,
+
     Hafsat Siyaka(Ms)
-
     0906 838 9486
-
-    ROOMSTATUS HOTEL MANAGEMENT SOFTWARE IS PROMOTED BY 9JAHOTEL.COM LTD AND VIA OPAY NIGERIA DEVICES.
 </x-mail::message>
