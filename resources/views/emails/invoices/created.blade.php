@@ -21,8 +21,9 @@
 
     Please make your payment before the due date to ensure uninterrupted service.
 
-    Thank you,<br>
-    Natsat Siyaka(Ms)<br>
+    Thank you,
+    Hafsat Siyaka(Ms)
+
     09068389486
 
     ROOMSTATUS HOTEL MANAGEMENT SOFTWARE IS PROMOTED BY 9JAHOTEL.COM LTD AND VIA OPAY NIGERIA DEVICES.
