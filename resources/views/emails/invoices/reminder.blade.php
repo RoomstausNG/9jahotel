@@ -1,9 +1,11 @@
 <x-mail::message>
-    # Payment Reminder: Invoice {{ $invoice->reference }}
+    ROOMSTATUS PAYMENT REMINDER
+
+    # New Invoice: {{ $invoice->reference }}
 
     Dear {{ $hotel->name }},
 
-    This is a friendly reminder about your pending invoice.
+    A new invoice has been created for your account.
 
     **Invoice Details:**
     - Reference: {{ $invoice->reference }}
@@ -13,16 +15,16 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
-    ** Name: ** RoomStatus LTD
-    ** Bank: ** Sterling Bank
-    ** Account Number: ** 0116006836
-
+    **Name:** RoomStatus LTD
+    **Bank:** Sterling Bank
+    **Account Number:** 0116006836
 
     Please make your payment before the due date to ensure uninterrupted service.
 
-    Thank you,<br>
-    Natsat Siyaka(Ms)<br>
-    09068389486
+    Thank you,
+    Hafsat Siyaka(Ms)
+
+    0906 838 9486
 
     ROOMSTATUS HOTEL MANAGEMENT SOFTWARE IS PROMOTED BY 9JAHOTEL.COM LTD AND VIA OPAY NIGERIA DEVICES.
 </x-mail::message>
