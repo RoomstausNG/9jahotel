@@ -14,11 +14,11 @@
     - Description: {{ $invoice->description }}
 
 
-    Please make your payment as soon as possible to avoid any service interruptions.
-    kindly call us at <a href="+23407007002424" class="+0700 700 2424"></a> or email us at
-    <a href="mailto:ask@9jahotel.com" class="">ask@9jahotel.com</a> . if you have any
-    questions or need assistance with the payment process.
+    Please make your payment before the due date to ensure uninterrupted service.
 
     Thank you,<br>
-    {{ config('app.name') }}
+    Natsat Siyaka(Ms)<br>
+    09068389486
+
+    ROOMSTATUS HOTEL MANAGEMENT SOFTWARE IS PROMOTED BY 9JAHOTEL.COM LTD AND VIA OPAY NIGERIA DEVICES.
 </x-mail::message>
