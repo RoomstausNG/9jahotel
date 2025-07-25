@@ -87,7 +87,7 @@ class InvoicesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('id'))
+            // ->modifyQueryUsing(fn(Builder $query) => $query->orderByDesc('id'))
             ->recordTitleAttribute('reference')
             ->columns([
                 Tables\Columns\TextColumn::make('reference')

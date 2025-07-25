@@ -25,7 +25,7 @@ class Invoice extends Model
 
     protected static function booted(): void
     {
-        static::addGlobalScope(new InvoiceScope);
+        // static::addGlobalScope(new InvoiceScope);
 
         parent::booted();
 
