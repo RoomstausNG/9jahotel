@@ -1,7 +1,7 @@
 <x-mail::message>
-    ROOMSTATUS PAYMENT REMINDER
+    # ROOMSTATUS PAYMENT REMINDER
 
-    # New Invoice: {{ $invoice->reference }}
+    ## New Invoice: {{ $invoice->reference }}
 
     Dear {{ $hotel->name }},
 
@@ -15,11 +15,11 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
+    ### Kindly pay into the following account details:
+
     **Name:** RoomStatus LTD
     **Bank:** Sterling Bank
     **Account Number:** 0116006836
-
-    Please make your payment before the due date to ensure uninterrupted service.
 
     Thank you,
     Hafsat Siyaka(Ms)

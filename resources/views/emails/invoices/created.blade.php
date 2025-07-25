@@ -15,6 +15,8 @@
     - Valid To: {{ $invoice->to->format('M d, Y') }}
     - Description: {{ $invoice->description }}
 
+    ### Kindly pay into the following account details:
+
     **Name:** RoomStatus LTD
     **Bank:** Sterling Bank
     **Account Number:** 0116006836
