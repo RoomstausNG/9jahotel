@@ -73,18 +73,17 @@ else
     echo "⏭️ Skipping migrations"
 fi
 
-# Check if Node.js/npm is available
-if command -v npm &> /dev/null; then
-    echo "🏗️ Rebuilding frontend assets..."
-    npm install || {
-        echo "⚠️ npm install failed, trying with --force..."
-        npm install --force || echo "❌ npm install failed completely"
+# Check if Bun is available
+if command -v bun &> /dev/null; then
+    echo "🏗️ Rebuilding frontend assets with Bun..."
+    bun install || {
+        echo "⚠️ bun install failed, but continuing..."
     }
-    npm run build || {
+    bun run build || {
         echo "⚠️ Asset build failed, but continuing..."
     }
 else
-    echo "⚠️ npm not found, skipping asset compilation"
+    echo "⚠️ Bun not found, skipping asset compilation"
 fi
 
 # Cache configuration for better performance
