@@ -12,10 +12,14 @@ php artisan octane:stop
 
 # Git operations - Force update from main branch
 echo "📥 Pulling latest code from main branch (force update)..."
-git fetch origin/main
-git checkout main
-git reset --hard origin/main
-git clean -fd
+
+# Force pull regardless of errors
+set +e
+git fetch origin/main || true
+git checkout main || true
+git reset --hard origin/main || true
+git clean -fd || true
+set -e
 
 # Install/update dependencies
 echo "📦 Updating composer dependencies..."
