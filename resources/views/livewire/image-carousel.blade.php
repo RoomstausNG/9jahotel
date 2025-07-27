@@ -170,16 +170,21 @@
             }
         },
     }" x-show="showCarousel" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 bg-black/80 backdrop-blur-md cursor-pointer"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md cursor-pointer"
         @keydown.escape="close()" @keydown.arrow-left="previous()" @keydown.arrow-right="next()" @click="close()">
 
         {{-- Close button --}}
         <button @click.stop="close()"
-            class="absolute top-5 right-5 text-white text-3xl hover:text-gray-300 z-40 bg-black/30 rounded-full w-12 h-12 flex items-center justify-center hover:bg-black/50 transition-colors">&times;</button>
+            class="absolute top-6 right-6 text-white text-2xl hover:text-gray-300 z-40 bg-black/50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-black/70 transition-colors shadow-lg border border-white/20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
+                stroke-width="2" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
 
         {{-- Cancel button (alternative close) --}}
         <button @click.stop="close()"
-            class="absolute top-5 left-5 text-white text-sm hover:text-gray-300 z-40 bg-black/30 rounded-lg px-4 py-2 hover:bg-black/50 transition-colors flex items-center gap-2">
+            class="absolute top-6 left-6 text-white text-sm hover:text-gray-300 z-40 bg-black/50 rounded-lg px-4 py-3 hover:bg-black/70 transition-colors flex items-center gap-2 shadow-lg border border-white/20">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
                 stroke-width="2" class="size-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -188,36 +193,35 @@
         </button>
 
         {{-- Image counter --}}
-        <div class="absolute top-5 left-1/2 transform -translate-x-1/2 text-white text-lg z-40 bg-black/30 rounded-lg px-4 py-2"
+        <div class="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-lg z-40 bg-black/50 rounded-lg px-6 py-3 shadow-lg border border-white/20"
             @click.stop>
             <span x-text="currentSlideIndex"></span> / <span x-text="slides.length"></span>
         </div>
 
         {{-- Previous button --}}
         <button type="button"
-            class="absolute left-4 md:left-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-3 text-white hover:bg-white/60 transition-colors"
+            class="absolute left-4 md:left-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-4 text-gray-800 hover:bg-white/80 transition-colors shadow-lg"
             aria-label="previous slide" @click.stop="previous()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                stroke-width="3" class="size-6" aria-hidden="true">
+                stroke-width="2" class="size-6" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
         </button>
 
         {{-- Next button --}}
         <button type="button"
-            class="absolute right-4 md:right-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-3 text-white hover:bg-white/60 transition-colors"
+            class="absolute right-4 md:right-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-4 text-gray-800 hover:bg-white/80 transition-colors shadow-lg"
             aria-label="next slide" @click.stop="next()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                stroke-width="3" class="size-6" aria-hidden="true">
+                stroke-width="2" class="size-6" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
         </button>
 
         {{-- Main content area --}}
-        <div class="relative w-full h-full min-w-[90%] md:min-w-[70%] flex items-center justify-center p-4 md:p-8"
-            @click.stop>
+        <div class="relative w-full h-full min-w-[90%] md:min-w-[70%] flex items-center justify-center p-4 md:p-8">
             {{-- Slides --}}
-            <div class="relative w-full h-full max-h-[90vh] flex items-center justify-center">
+            <div class="relative w-full h-full max-h-[90vh] flex items-center justify-center" @click.stop>
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="currentSlideIndex == index + 1"
                         class="absolute inset-0 flex items-center justify-center"
@@ -228,18 +232,19 @@
                         x-transition:leave-start="opacity-100 transform scale-100"
                         x-transition:leave-end="opacity-0 transform scale-95">
                         <img class="max-w-full max-h-full min-w-[300px] md:min-w-[500px] object-contain rounded-lg shadow-2xl cursor-default"
-                            :src="slide.imgSrc" :alt="slide.imgAlt" @click.stop />
+                            :src="slide.imgSrc" :alt="slide.imgAlt" />
                     </div>
                 </template>
             </div>
         </div>
 
         {{-- Indicators --}}
-        <div class="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 gap-2 bg-white/20 bg-opacity-20 backdrop-blur-sm px-4 py-3 rounded-full"
+        <div class="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 gap-3 bg-black/40 backdrop-blur-sm px-6 py-4 rounded-full shadow-lg"
             role="group" aria-label="slides" @click.stop>
             <template x-for="(slide, index) in slides" :key="index">
-                <button class="size-3 rounded-full transition-all duration-200 hover:scale-110"
-                    :class="currentSlideIndex === index + 1 ? 'bg-white' : 'bg-white/50'"
+                <button class="size-4 rounded-full transition-all duration-300 hover:scale-125 border-2"
+                    :class="currentSlideIndex === index + 1 ? 'bg-white border-white shadow-md' :
+                        'bg-white/30 border-white/50 hover:bg-white/50'"
                     @click.stop="currentSlideIndex = index + 1" :aria-label="'Go to slide ' + (index + 1)"></button>
             </template>
         </div>
