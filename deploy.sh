@@ -29,9 +29,6 @@ fi
 # Git operations - Force update from main branch
 echo "📥 Pulling latest code from main branch..."
 
-# Ensure we're on main branch
-git checkout main 2>/dev/null || git checkout -b main
-
 # Stash any local changes
 echo "💾 Stashing local changes..."
 git stash push -m "Pre-deployment stash $(date)" --include-untracked || true
@@ -128,19 +125,6 @@ if command -v supervisorctl &> /dev/null; then
     fi
 else
     echo "⚠️ Supervisorctl not found, skipping supervisor commands"
-fi
-
-# Restart Octane
-echo "🚀 Starting Octane server..."
-php artisan octane:start --host=0.0.0.0 --port=8000 --watch &
-OCTANE_PID=$!
-
-# Wait a moment and check if Octane started successfully
-sleep 5
-if kill -0 $OCTANE_PID 2>/dev/null; then
-    echo "✅ Octane server started successfully (PID: $OCTANE_PID)"
-else
-    echo "⚠️ Octane may have failed to start. Check manually with: php artisan octane:status"
 fi
 
 # Final status check
