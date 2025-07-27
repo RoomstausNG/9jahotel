@@ -54,7 +54,8 @@ composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev ||
 
 # Set proper directory permissions
 echo "🔒 Setting directory permissions..."
-chmod -R 775 storage bootstrap/cache
+chmod -R 777 storage bootstrap/cache
+chown -R 777 storage bootstrap/cache
 sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
 # Run migrations (uncomment when ready)
