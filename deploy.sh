@@ -63,7 +63,7 @@ else
 fi
 
 # Restart Octane
-echo "🚀 Starting Octane server..."
-php artisan octane:start --watch || echo "Warning: Failed to start Octane, please check manually"
+# echo "🚀 Starting Octane server..."
+# php artisan octane:start --watch || echo "Warning: Failed to start Octane, please check manually"
 
 echo "✅ Deployment completed successfully!"
