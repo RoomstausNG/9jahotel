@@ -5,6 +5,7 @@
 /public/hot
 /public/build
 /public/storage
+/public/.user.ini
 /public/index.html
 /img
 index.html
