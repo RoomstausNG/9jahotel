@@ -171,16 +171,13 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\Filament\ServicePanelProvider::class,
         App\Providers\Filament\CustomerPanelProvider::class,
-        App\Providers\Filament\HotelPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Unicodeveloper\Paystack\PaystackServiceProvider::class,
         CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider::class,
         Unicodeveloper\Paystack\PaystackServiceProvider::class
-        // Triverla\LaravelOpay\OpayServiceProvider::class
     ])->toArray(),
 
     /*
@@ -195,7 +192,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class, 
+        // 'Example' => App\Facades\Example::class,
 
         'Paystack' => Unicodeveloper\Paystack\Facades\Paystack::class,
         // 'Opay' => Triverla\LaravelOPay\Facades\Opay::class,
