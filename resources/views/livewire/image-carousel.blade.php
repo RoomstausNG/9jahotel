@@ -5,7 +5,8 @@
             'imgSrc' => 'https://9jahotel.com/img/logo.jpeg',
             'imgAlt' => 'Default hotel image',
         ];
-        // For the grid, show up to 4 more images after the main image
+
+        // For the grid, show up to 4 more images after the main image (total 5 displayed in grid)
         $gridImages = [];
         $gridIndexes = [];
         $defaultGrid = [
@@ -14,7 +15,8 @@
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
             ['imgSrc' => 'https://9jahotel.com/img/logo.jpeg', 'imgAlt' => 'Default hotel image'],
         ];
-        // Only take up to 4 images after the main image, but keep their real indexes
+
+        // Only take up to 4 images after the main image for grid display
         for ($i = 1; $i <= 4; $i++) {
             if (isset($slides[$i])) {
                 $gridImages[] = $slides[$i];
@@ -24,22 +26,20 @@
                 $gridIndexes[] = null; // no real image
             }
         }
-        $imageCount = count($slides);
-    @endphp
 
-    {{-- The following block for initial mobile image is removed --}}
+        $imageCount = count($slides);
+        $hasMoreImages = $imageCount > 5; // More than 5 total (1 main + 4 grid)
+        $remainingCount = max(0, $imageCount - 5);
+    @endphp
 
     {{-- Mobile: Show only one image if only one, else show slideshow --}}
     @if ($imageCount <= 1)
-        {{-- Only show single image if it's a real image or the only image available (even if default) --}}
-        {{-- If $hasRealImages is false AND $imageCount is 1 (meaning it's a default), it will show. --}}
-        {{-- If $hasRealImages is true AND $imageCount is 1, it will show. --}}
         <div class="block md:hidden relative">
             <img src="{{ $mainImage['imgSrc'] }}" alt="{{ $mainImage['imgAlt'] }}"
                 class="w-full aspect-square object-cover rounded">
         </div>
     @else
-        {{-- This is the mobile slideshow part --}}
+        {{-- Mobile slideshow --}}
         <div x-data="{
             slides: {{ json_encode($slides) }},
             currentSlideIndex: 1,
@@ -66,7 +66,7 @@
                     <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">
                         <span x-text="slidesCount"></span> photos
                     </span>
-                    <!-- Optional: Show navigation arrows on mobile -->
+                    <!-- Navigation arrows on mobile -->
                     <button type="button"
                         class="absolute left-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-1 text-neutral-600"
                         aria-label="previous slide" @click.stop="previous()">
@@ -97,29 +97,45 @@
         </div>
     @endif
 
-    {{-- Desktop: Main image left, 4-grid right --}}
+    {{-- Desktop: Main image left, 2x2 grid right --}}
     <div class="hidden md:flex gap-2 w-full max-h-max">
+        {{-- Main image --}}
         <div class="w-1/2 h-full">
             <img src="{{ $mainImage['imgSrc'] }}" alt="{{ $mainImage['imgAlt'] }}"
                 class="w-full h-full aspect-square object-cover rounded-lg cursor-pointer"
                 @click="$dispatch('open-carousel', { startSlide: 1 })">
         </div>
+
+        {{-- 2x2 Grid images --}}
         <div class="w-1/2 grid grid-cols-2 grid-rows-2 gap-2 h-full relative">
             @foreach ($gridImages as $i => $img)
-                <img src="{{ $img['imgSrc'] }}" alt="{{ $img['imgAlt'] }}"
-                    class="w-full h-full aspect-square object-cover rounded @if ($i == 3) rounded-br-lg @endif @if ($i == 1) rounded-tr-lg @endif cursor-pointer"
-                    @if ($gridIndexes[$i] !== null) @click="$dispatch('open-carousel', { startSlide: {{ $gridIndexes[$i] + 1 }} })" @endif>
+                <div class="relative">
+                    <img src="{{ $img['imgSrc'] }}" alt="{{ $img['imgAlt'] }}"
+                        class="w-full h-full aspect-square object-cover rounded @if ($i == 3) rounded-br-lg @endif @if ($i == 1) rounded-tr-lg @endif cursor-pointer"
+                        @if ($gridIndexes[$i] !== null) @click="$dispatch('open-carousel', { startSlide: {{ $gridIndexes[$i] + 1 }} })" @endif>
+
+                    {{-- Show "more photos" overlay on last image if there are more than 5 total --}}
+                    @if ($i == 3 && $hasMoreImages)
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center rounded @if ($i == 3) rounded-br-lg @endif cursor-pointer"
+                            @click="$dispatch('open-carousel', { startSlide: 1 })">
+                            <span class="text-white text-lg font-semibold">+{{ $remainingCount }} more</span>
+                        </div>
+                    @endif
+                </div>
             @endforeach
+
+            {{-- Show all photos button --}}
             @if (!empty($showAllPhotos) && $showAllPhotos)
-                <button class="absolute bottom-3 right-3 z-30 bg-white/80 px-4 py-2 rounded shadow"
-                    @click="$dispatch('open-carousel')"> {{-- This will default to slide 1 --}}
-                    Show all photos
+                <button
+                    class="absolute bottom-3 right-3 z-30 bg-white/90 px-4 py-2 rounded shadow hover:bg-white transition-colors"
+                    @click="$dispatch('open-carousel')">
+                    Show all {{ $imageCount }} photos
                 </button>
             @endif
         </div>
     </div>
 
-    {{-- Carousel Modal (hidden by default, shown when open-carousel is dispatched) --}}
+    {{-- Carousel Modal --}}
     <div x-data="{
         slides: {{ json_encode($slides) }},
         currentSlideIndex: 1,
@@ -129,12 +145,16 @@
                 if (event.detail && event.detail.startSlide) {
                     this.currentSlideIndex = event.detail.startSlide;
                 } else {
-                    this.currentSlideIndex = 1; // Default to first slide
+                    this.currentSlideIndex = 1;
                 }
                 this.showCarousel = true;
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             });
         },
-        close() { this.showCarousel = false; },
+        close() {
+            this.showCarousel = false;
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        },
         previous() {
             if (this.currentSlideIndex > 1) {
                 this.currentSlideIndex = this.currentSlideIndex - 1;
@@ -150,46 +170,63 @@
             }
         },
     }" x-show="showCarousel" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-        <button @click="close()" class="absolute top-5 right-5 text-white text-2xl">&times;</button>
-        <div class="relative w-full max-w-3xl mx-auto">
-            <!-- previous button -->
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/90" @keydown.escape="close()"
+        @keydown.arrow-left="previous()" @keydown.arrow-right="next()">
+
+        {{-- Close button --}}
+        <button @click="close()"
+            class="absolute top-5 right-5 text-white text-3xl hover:text-gray-300 z-30">&times;</button>
+
+        {{-- Image counter --}}
+        <div class="absolute top-5 left-5 text-white text-lg z-30">
+            <span x-text="currentSlideIndex"></span> / <span x-text="slides.length"></span>
+        </div>
+
+        <div class="relative w-full max-w-5xl mx-auto px-4">
+            {{-- Previous button --}}
             <button type="button"
-                class="absolute left-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-2 text-neutral-600"
-                aria-label="previous slide" x-on:click="previous()">
+                class="absolute left-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-3 text-white hover:bg-white/60 transition-colors"
+                aria-label="previous slide" @click="previous()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                    stroke-width="3" class="size-5 md:size-6 pr-0.5" aria-hidden="true">
+                    stroke-width="3" class="size-6" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
             </button>
-            <!-- next button -->
+
+            {{-- Next button --}}
             <button type="button"
-                class="absolute right-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-2 text-neutral-600"
-                aria-label="next slide" x-on:click="next()">
+                class="absolute right-2 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/40 p-3 text-white hover:bg-white/60 transition-colors"
+                aria-label="next slide" @click="next()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                    stroke-width="3" class="size-5 md:size-6 pl-0.5" aria-hidden="true">
+                    stroke-width="3" class="size-6" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
             </button>
-            <!-- slides -->
-            <div class="relative min-h-[50svh] w-full">
+
+            {{-- Slides --}}
+            <div class="relative min-h-[60vh] max-h-[80vh] w-full">
                 <template x-for="(slide, index) in slides" :key="index">
-                    <div x-show="currentSlideIndex == index + 1" class="absolute inset-0"
-                        x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                        <img class="absolute rounded w-full h-full inset-0 object-cover text-neutral-600"
-                            :src="slide.imgSrc" :alt="slide.imgAlt" />
+                    <div x-show="currentSlideIndex == index + 1"
+                        class="absolute inset-0 flex items-center justify-center"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 transform scale-95"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform scale-100"
+                        x-transition:leave-end="opacity-0 transform scale-95">
+                        <img class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" :src="slide.imgSrc"
+                            :alt="slide.imgAlt" />
                     </div>
                 </template>
             </div>
-            <!-- indicators -->
-            <div class="absolute rounded-sm bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-4 bg-white/75 px-1.5 py-1"
+
+            {{-- Indicators --}}
+            <div class="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2 bg-white/20 backdrop-blur-sm px-3 py-2 rounded-full"
                 role="group" aria-label="slides">
                 <template x-for="(slide, index) in slides" :key="index">
-                    <button class="size-2 rounded-full transition"
-                        :class="currentSlideIndex === index + 1 ? 'bg-neutral-600' : 'bg-neutral-600/50'"
-                        x-on:click="currentSlideIndex = index + 1" :aria-label="'slide ' + (index + 1)"></button>
+                    <button class="size-3 rounded-full transition-all duration-200 hover:scale-110"
+                        :class="currentSlideIndex === index + 1 ? 'bg-white' : 'bg-white/50'"
+                        @click="currentSlideIndex = index + 1" :aria-label="'Go to slide ' + (index + 1)"></button>
                 </template>
             </div>
         </div>

@@ -18,6 +18,16 @@ class ImageCarousel extends Component
     public $slides = [];
 
     /**
+     * Whether to show "Show all photos" button
+     */
+    public $showAllPhotos = false;
+
+    /**
+     * Whether there are real hotel images
+     */
+    public $hasRealImages = false;
+
+    /**
      * Mount the component with optional hotel ID
      */
     public function mount($hotelId = null)
@@ -71,11 +81,14 @@ class ImageCarousel extends Component
                 ];
             }
 
-            // 2. Add up to 4 more images
+            // 2. Add up to 9 more images (for a total of 10 including background)
             if ($hotel && $hotel->images && $hotel->images->count() > 0) {
                 $images = $hotel->images;
                 $imageSlides = [];
-                foreach ($images->take(4) as $image) {
+
+                // Take up to 9 images (or all if less than 9)
+                $maxImages = min(9, $images->count());
+                foreach ($images->take($maxImages) as $image) {
                     $imageSlides[] = [
                         'imgSrc' => getCloudinaryImage($image->url),
                         'imgAlt' => $hotel->name . ' - ' . ($image->description ?? 'Hotel image')
@@ -90,8 +103,8 @@ class ImageCarousel extends Component
                 $slides = $defaultSlides;
             }
 
-            // 4. Only show "Show all photos" if there are real hotel images
-            $this->showAllPhotos = $hasImages;
+            // 4. Only show "Show all photos" if there are real hotel images and more than 5 total
+            $this->showAllPhotos = $hasImages && count($slides) > 5;
             $this->hasRealImages = $hasImages;
 
             $this->slides = $slides;
