@@ -10,6 +10,12 @@ echo "🚀 Starting deployment process for 9jahotel..."
 echo "⏱️ Stopping Octane server..."
 php artisan octane:stop
 
+# Fix permissions on public/.user.ini to avoid git errors
+if [ -f public/.user.ini ]; then
+  sudo chown $(whoami) public/.user.ini 2>/dev/null || true
+  chmod +w public/.user.ini 2>/dev/null || true
+fi
+
 # Git operations - Force update from main branch
 echo "📥 Pulling latest code from main branch (force update)..."
 
