@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# 9jahotel Deployment Script
-# Created: June 10, 2025
-# Purpose: Deploy updates to production server, run migrations and restart Octane
-
 echo "🚀 Starting deployment process for 9jahotel..."
 
 # Fix permissions on public/.user.ini to avoid git errors
