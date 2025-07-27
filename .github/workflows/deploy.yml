@@ -57,5 +57,4 @@ jobs:
           port: "22"
           key: ${{ secrets.CONTABO_KEY }}
           script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
-          debug: true
           timeout: 120s
