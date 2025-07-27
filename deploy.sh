@@ -19,10 +19,10 @@ fi
 
 # Check if git remote exists and fix if needed
 echo "🔍 Checking git configuration..."
-if ! git remote get-url origin >/dev/null 2>&1; then
-    echo "⚠️ Git remote 'origin' not found. Please configure it:"
-    echo "Run: git remote add origin <your-repository-url>"
-    echo "Or: git remote set-url origin <your-repository-url>"
+if ! git remote get-url production >/dev/null 2>&1; then
+    echo "⚠️ Git remote 'production' not found. Please configure it:"
+    echo "Run: git remote add production <your-repository-url>"
+    echo "Or: git remote set-url production <your-repository-url>"
     exit 1
 fi
 
@@ -38,15 +38,15 @@ git stash push -m "Pre-deployment stash $(date)" --include-untracked || true
 
 # Force fetch and reset
 echo "🔄 Fetching latest changes..."
-git fetch origin main || {
-    echo "❌ Failed to fetch from origin. Please check your git remote configuration."
+git fetch production main || {
+    echo "❌ Failed to fetch from production. Please check your git remote configuration."
     exit 1
 }
 
 echo "🔄 Resetting to latest main branch..."
-git reset --hard origin/main || {
-    echo "❌ Failed to reset to origin/main. Trying alternative approach..."
-    git pull origin main --force || {
+git reset --hard production/main || {
+    echo "❌ Failed to reset to production/main. Trying alternative approach..."
+    git pull production main --force || {
         echo "❌ Failed to pull changes. Please resolve manually."
         exit 1
     }
