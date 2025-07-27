@@ -12,7 +12,8 @@ php artisan octane:stop
 
 # Git operations - Force update from main branch
 echo "📥 Pulling latest code from main branch (force update)..."
-git fetch --all
+git fetch origin/main
+git checkout main
 git reset --hard origin/main
 git clean -fd
 
