@@ -129,7 +129,7 @@
                 <button
                     class="absolute bottom-3 right-3 text-sm font-medium z-30 bg-white/90 px-4 py-2 rounded shadow hover:bg-white transition-colors"
                     @click="$dispatch('open-carousel')">
-                    Show all {{ $imageCount }} photos
+                    Showing all {{ $imageCount }} photos
                 </button>
             @endif
         </div>

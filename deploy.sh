@@ -6,10 +6,6 @@
 
 echo "🚀 Starting deployment process for 9jahotel..."
 
-# Stop the Octane server
-echo "⏱️ Stopping Octane server..."
-php artisan octane:stop 2>/dev/null || echo "Octane was not running"
-
 # Fix permissions on public/.user.ini to avoid git errors
 echo "🔧 Fixing file permissions..."
 if [ -f public/.user.ini ]; then
@@ -17,14 +13,6 @@ if [ -f public/.user.ini ]; then
   chmod 644 public/.user.ini 2>/dev/null || true
 fi
 
-# Check if git remote exists and fix if needed
-echo "🔍 Checking git configuration..."
-if ! git remote get-url production >/dev/null 2>&1; then
-    echo "⚠️ Git remote 'production' not found. Please configure it:"
-    echo "Run: git remote add production <your-repository-url>"
-    echo "Or: git remote set-url production <your-repository-url>"
-    exit 1
-fi
 
 # Git operations - Force update from main branch
 echo "📥 Pulling latest code from main branch..."
