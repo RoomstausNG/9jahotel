@@ -61,7 +61,7 @@ Route::get('/state/{state:name}/hotels', [PageController::class, 'hotelByState']
 Route::get('/privacy-policy', [PageController::class, 'policy'])->name('privacy');
 Route::get('/support', [PageController::class, 'support'])->name('support');
 
-Route::get('/home', Dashboard::class)->name('dashboard')->middleware('auth:customers');
+Route::get('/home', Dashboard::class)->middleware('auth:customers');
 Route::post('/customer/logout', function () {
     auth('customers')->logout();
     // Session::flush(); // Ensure all session data is cleared
