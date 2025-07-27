@@ -170,7 +170,7 @@
             }
         },
     }" x-show="showCarousel" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md cursor-pointer"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 bg-black/80 backdrop-blur-md cursor-pointer"
         @keydown.escape="close()" @keydown.arrow-left="previous()" @keydown.arrow-right="next()" @click="close()">
 
         {{-- Close button --}}
@@ -235,7 +235,7 @@
         </div>
 
         {{-- Indicators --}}
-        <div class="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 gap-2 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-full"
+        <div class="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 gap-2 bg-white/20 bg-opacity-20 backdrop-blur-sm px-4 py-3 rounded-full"
             role="group" aria-label="slides" @click.stop>
             <template x-for="(slide, index) in slides" :key="index">
                 <button class="size-3 rounded-full transition-all duration-200 hover:scale-110"
