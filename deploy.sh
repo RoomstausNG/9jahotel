@@ -33,6 +33,14 @@ echo "📥 Pulling latest code from main branch..."
 echo "💾 Stashing local changes..."
 git stash push -m "Pre-deployment stash $(date)" --include-untracked || true
 
+# Clear all caches
+echo "🧹 Clearing application caches..."
+php artisan optimize:clear
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
 # Force fetch and reset
 echo "🔄 Fetching latest changes..."
 git fetch production main || {
@@ -64,14 +72,6 @@ composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev ||
 echo "🔒 Setting directory permissions..."
 chmod -R 775 storage bootstrap/cache
 sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
-
-# Clear all caches
-echo "🧹 Clearing application caches..."
-php artisan optimize:clear
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
 
 # Run migrations (uncomment when ready)
 echo "🔄 Running database migrations..."
