@@ -136,7 +136,7 @@ php artisan octane:start --host=0.0.0.0 --port=8000 --watch &
 OCTANE_PID=$!
 
 # Wait a moment and check if Octane started successfully
-sleep 3
+sleep 5
 if kill -0 $OCTANE_PID 2>/dev/null; then
     echo "✅ Octane server started successfully (PID: $OCTANE_PID)"
 else
