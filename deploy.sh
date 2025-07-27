@@ -33,8 +33,8 @@ php artisan route:clear
 php artisan view:clear
 
 # Run migrations
-echo "🔄 Running database migrations..."
-php artisan migrate --force
+# echo "🔄 Running database migrations..."
+# php artisan migrate --force
 
 # Rebuild assets if needed
 echo "🏗️ Rebuilding frontend assets with Bun..."

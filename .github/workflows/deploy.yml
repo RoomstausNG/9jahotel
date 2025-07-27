@@ -49,17 +49,6 @@ jobs:
           bun install
           bun run build
 
-      - name: Shut Down serve
-        run: php artisan down
-
-      - name: Test SSH connection
-        run: |
-          echo "Testing SSH connection to server..."
-          # Print out some debug info but mask the actual host
-          echo "Connecting to host (masked): ${{ secrets.CONTABO_HOST != '' && '***' || 'CONTABO_HOST not set' }}"
-          echo "Using username: ${{ secrets.CONTABO_USERNAME != '' && secrets.CONTABO_USERNAME || 'CONTABO_USERNAME not set' }}"
-          echo "SSH key provided: ${{ secrets.CONTABO_KEY != '' && 'Yes' || 'No' }}"
-
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
