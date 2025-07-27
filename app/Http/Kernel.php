@@ -69,9 +69,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verified-otp' => \App\Http\Middleware\OtpMiddleware::class,
         'expired' => \App\Http\Middleware\RenewalMiddleware::class,
-        'customer' => CustomerMiddleware::class,
-        'hotel' => HotelMiddleware::class,
-        'back-office' => BackOfficeMiddleware::class,
+        // 'customer' => CustomerMiddleware::class,
+        // 'hotel' => HotelMiddleware::class,
+        // 'back-office' => BackOfficeMiddleware::class,
         // 'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class, // Commented out - package not installed
         // 'page-cache' => \Silber\PageCache\Middleware\CacheResponse::class,
     ];
