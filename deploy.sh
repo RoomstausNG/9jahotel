@@ -121,7 +121,6 @@ echo "   - PHP: $(php -r 'echo PHP_VERSION;')"
 echo "   - Laravel: $(php artisan --version | cut -d' ' -f3)"
 
 echo "✅ Deployment completed!"
-echo "🌐 Your application should be available shortly."
 
 # Optionally display application URL
 if [ -f .env ]; then
