@@ -198,30 +198,30 @@
             <span x-text="currentSlideIndex"></span> / <span x-text="slides.length"></span>
         </div>
 
-        {{-- Previous button --}}
-        <button type="button"
-            class="absolute left-4 md:left-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-4 text-gray-800 hover:bg-white/80 transition-colors shadow-lg"
-            aria-label="previous slide" @click.stop="previous()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                stroke-width="2" class="size-6" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-        </button>
-
-        {{-- Next button --}}
-        <button type="button"
-            class="absolute right-4 md:right-8 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/60 p-4 text-gray-800 hover:bg-white/80 transition-colors shadow-lg"
-            aria-label="next slide" @click.stop="next()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
-                stroke-width="2" class="size-6" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-        </button>
-
         {{-- Main content area --}}
         <div class="relative w-full h-full min-w-[90%] md:min-w-[70%] flex items-center justify-center p-4 md:p-8">
             {{-- Slides --}}
             <div class="relative w-full h-full max-h-[90vh] flex items-center justify-center" @click.stop>
+                {{-- Previous button - positioned relative to image area --}}
+                <button type="button"
+                    class="absolute left-4 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/70 p-3 text-gray-800 hover:bg-white/90 transition-all duration-200 shadow-xl border border-white/30 hover:scale-110"
+                    aria-label="previous slide" @click.stop="previous()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
+                        stroke-width="2.5" class="size-5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+
+                {{-- Next button - positioned relative to image area --}}
+                <button type="button"
+                    class="absolute right-4 top-1/2 z-30 flex rounded-full -translate-y-1/2 items-center justify-center bg-white/70 p-3 text-gray-800 hover:bg-white/90 transition-all duration-200 shadow-xl border border-white/30 hover:scale-110"
+                    aria-label="next slide" @click.stop="next()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"
+                        stroke-width="2.5" class="size-5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="currentSlideIndex == index + 1"
                         class="absolute inset-0 flex items-center justify-center"
