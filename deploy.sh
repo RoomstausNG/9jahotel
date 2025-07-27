@@ -8,32 +8,65 @@ echo "🚀 Starting deployment process for 9jahotel..."
 
 # Stop the Octane server
 echo "⏱️ Stopping Octane server..."
-php artisan octane:stop
+php artisan octane:stop 2>/dev/null || echo "Octane was not running"
 
 # Fix permissions on public/.user.ini to avoid git errors
+echo "🔧 Fixing file permissions..."
 if [ -f public/.user.ini ]; then
-  sudo chown $(whoami) public/.user.ini 2>/dev/null || true
-  chmod +w public/.user.ini 2>/dev/null || true
+  sudo chown $(whoami):$(whoami) public/.user.ini 2>/dev/null || true
+  chmod 644 public/.user.ini 2>/dev/null || true
+fi
+
+# Check if git remote exists and fix if needed
+echo "🔍 Checking git configuration..."
+if ! git remote get-url origin >/dev/null 2>&1; then
+    echo "⚠️ Git remote 'origin' not found. Please configure it:"
+    echo "Run: git remote add origin <your-repository-url>"
+    echo "Or: git remote set-url origin <your-repository-url>"
+    exit 1
 fi
 
 # Git operations - Force update from main branch
-echo "📥 Pulling latest code from main branch (force update)..."
+echo "📥 Pulling latest code from main branch..."
 
-# Force pull regardless of errors
-set +e
-git fetch origin/main || true
-git checkout main || true
-git reset --hard origin/main || true
-git clean -fd || true
-set -e
+# Ensure we're on main branch
+git checkout main 2>/dev/null || git checkout -b main
+
+# Stash any local changes
+echo "💾 Stashing local changes..."
+git stash push -m "Pre-deployment stash $(date)" --include-untracked || true
+
+# Force fetch and reset
+echo "🔄 Fetching latest changes..."
+git fetch origin main || {
+    echo "❌ Failed to fetch from origin. Please check your git remote configuration."
+    exit 1
+}
+
+echo "🔄 Resetting to latest main branch..."
+git reset --hard origin/main || {
+    echo "❌ Failed to reset to origin/main. Trying alternative approach..."
+    git pull origin main --force || {
+        echo "❌ Failed to pull changes. Please resolve manually."
+        exit 1
+    }
+}
+
+# Clean untracked files
+echo "🧹 Cleaning untracked files..."
+git clean -fd
 
 # Install/update dependencies
 echo "📦 Updating composer dependencies..."
-composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev
+composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev || {
+    echo "❌ Composer update failed"
+    exit 1
+}
 
 # Set proper directory permissions
 echo "🔒 Setting directory permissions..."
-chmod -R 777 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
 # Clear all caches
 echo "🧹 Clearing application caches..."
@@ -43,14 +76,31 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Run migrations
-# echo "🔄 Running database migrations..."
-# php artisan migrate --force
+# Run migrations (uncomment when ready)
+echo "🔄 Running database migrations..."
+read -p "Do you want to run migrations? (y/N): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    php artisan migrate --force || {
+        echo "⚠️ Migration failed, but continuing deployment..."
+    }
+else
+    echo "⏭️ Skipping migrations"
+fi
 
-# Rebuild assets if needed
-echo "🏗️ Rebuilding frontend assets with Bun..."
-npm install
-npm run build
+# Check if Node.js/npm is available
+if command -v npm &> /dev/null; then
+    echo "🏗️ Rebuilding frontend assets..."
+    npm install || {
+        echo "⚠️ npm install failed, trying with --force..."
+        npm install --force || echo "❌ npm install failed completely"
+    }
+    npm run build || {
+        echo "⚠️ Asset build failed, but continuing..."
+    }
+else
+    echo "⚠️ npm not found, skipping asset compilation"
+fi
 
 # Cache configuration for better performance
 echo "⚡ Optimizing application..."
@@ -59,22 +109,53 @@ php artisan route:cache
 php artisan view:cache
 php artisan optimize
 
-# Update and restart supervisor
-echo "🔄 Updating supervisor configuration..."
+# Update and restart supervisor if available
 if command -v supervisorctl &> /dev/null; then
-    sudo supervisorctl update || echo "Warning: Failed to update supervisor, continuing..."
+    echo "🔄 Managing supervisor processes..."
 
-    echo "🔄 Reloading supervisor..."
-    sudo supervisorctl reload || echo "Warning: Failed to reload supervisor, continuing..."
+    # Check if supervisor is running
+    if sudo supervisorctl status >/dev/null 2>&1; then
+        echo "🔄 Updating supervisor configuration..."
+        sudo supervisorctl update || echo "⚠️ Failed to update supervisor"
 
-    echo "🔄 Restarting all supervisor processes..."
-    sudo supervisorctl restart all || echo "Warning: Failed to restart supervisor processes, continuing..."
+        echo "🔄 Reloading supervisor..."
+        sudo supervisorctl reload || echo "⚠️ Failed to reload supervisor"
+
+        echo "🔄 Restarting Laravel worker processes..."
+        sudo supervisorctl restart laravel-worker:* 2>/dev/null || echo "⚠️ No Laravel workers found"
+    else
+        echo "⚠️ Supervisor daemon not running"
+    fi
 else
     echo "⚠️ Supervisorctl not found, skipping supervisor commands"
 fi
 
 # Restart Octane
-# echo "🚀 Starting Octane server..."
-# php artisan octane:start --watch || echo "Warning: Failed to start Octane, please check manually"
+echo "🚀 Starting Octane server..."
+php artisan octane:start --host=0.0.0.0 --port=8000 --watch &
+OCTANE_PID=$!
 
-echo "✅ Deployment completed successfully!"
+# Wait a moment and check if Octane started successfully
+sleep 3
+if kill -0 $OCTANE_PID 2>/dev/null; then
+    echo "✅ Octane server started successfully (PID: $OCTANE_PID)"
+else
+    echo "⚠️ Octane may have failed to start. Check manually with: php artisan octane:status"
+fi
+
+# Final status check
+echo "🏁 Deployment Summary:"
+echo "   - Git: $(git rev-parse --short HEAD) on $(git branch --show-current)"
+echo "   - PHP: $(php -r 'echo PHP_VERSION;')"
+echo "   - Laravel: $(php artisan --version | cut -d' ' -f3)"
+
+echo "✅ Deployment completed!"
+echo "🌐 Your application should be available shortly."
+
+# Optionally display application URL
+if [ -f .env ]; then
+    APP_URL=$(grep "^APP_URL=" .env | cut -d'=' -f2 | tr -d '"')
+    if [ ! -z "$APP_URL" ]; then
+        echo "🔗 Visit: $APP_URL"
+    fi
+fi
