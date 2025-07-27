@@ -38,8 +38,8 @@ php artisan migrate --force
 
 # Rebuild assets if needed
 echo "🏗️ Rebuilding frontend assets with Bun..."
-bun install
-bun run build
+npm install
+npm run build
 
 # Cache configuration for better performance
 echo "⚡ Optimizing application..."
