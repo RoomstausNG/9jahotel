@@ -56,7 +56,11 @@ sudo chmod -R 775 storage bootstrap/cache 2>/dev/null || chmod -R 775 storage bo
 echo ">> Setting proper ownership..."
 sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R www-data:www-data storage bootstrap/cache
 
-# Bring the application back online
+
+# Clear caches before bringing the application online
+echo ">> Clearing caches before bringing application online..."
+php artisan optimize:clear
+
 echo ">> Bringing application online..."
 
 echo ">> Running hotel price update..."
