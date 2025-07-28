@@ -1,13 +1,10 @@
+
 #!/bin/bash
 
-echo "🚀 Starting deployment process for 9jahotel..."
+# Ensure Bun is available in PATH
+export PATH="$HOME/.bun/bin:$PATH"
 
-# Fix permissions on public/.user.ini to avoid git errors
-echo "🔧 Fixing file permissions..."
-if [ -f public/.user.ini ]; then
-  sudo chown $(whoami):$(whoami) public/.user.ini 2>/dev/null || true
-  chmod 644 public/.user.ini 2>/dev/null || true
-fi
+echo "🚀 Starting deployment process for 9jahotel..."
 
 
 # Git operations - Force update from main branch
