@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Ensure Bun is available in PATH
