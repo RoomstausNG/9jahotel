@@ -253,6 +253,18 @@ class BookingResource extends Resource
                     Infolists\Components\TextEntry::make('customer.email')
                         ->label("Email Address"),
                 ])->columns(3),
+
+                Section::make("Hotel Details")->schema([
+                    Infolists\Components\TextEntry::make('hotel.name')
+                        ->label("Hotel Name"),
+                    Infolists\Components\TextEntry::make('hotel.telephone')
+                        ->label("Phone Number"),
+                    Infolists\Components\TextEntry::make('hotel.email')
+                        ->label("Email Address"),
+                    Infolists\Components\TextEntry::make('hotel.address_city')
+                        ->label("Location")
+                        ->state(fn(Model $record) => $record->hotel?->address . (isset($record->hotel->city->name) ? ', ' . $record->hotel->city->name : '')),
+                ])->columns(4),
                 Infolists\Components\RepeatableEntry::make('bookings')
                     ->schema([
                         Infolists\Components\TextEntry::make('bookable.number')
