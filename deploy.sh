@@ -39,37 +39,41 @@ else
 fi
 
 # Run remaining deployment steps
+echo "✓ SUCCESS: Deployment is successfully!"
+
+# Run remaining deployment steps
 echo ">> Installing dependencies..."
 composer install --no-dev --optimize-autoloader
+composer dump-autoload
+
 echo ">> Running migrations..."
 php artisan migrate --force
 
-# Use optimize:clear instead of individual clear commands
-echo ">> Clearing all caches..."
+echo ">> Clearing config..."
+php artisan config:clear
+echo ">> Clearing route..."
+php artisan route:clear
+echo ">> Clearing cache..."
+php artisan cache:clear
+echo ">> Clearing optimize..."
 php artisan optimize:clear
 
-# Fix storage permissions - Changed to 777 for full access
-echo ">> Setting permissions to 775..."
-sudo chmod -R 775 storage bootstrap/cache 2>/dev/null || chmod -R 775 storage bootstrap/cache
-
-# Set proper permissions and ownership for web server
-echo ">> Setting proper ownership..."
-sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R www-data:www-data storage bootstrap/cache
-
-
-# Clear caches before bringing the application online
-echo ">> Clearing caches before bringing application online..."
-php artisan optimize:clear
+echo ">> Setting permissions to 777..."
+chmod -R 777 storage bootstrap/cache
+chown -R 777 storage bootstrap/cache
+sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || chown -R www-data:www-data storage/bootstrap/cache
 
 echo ">> Bringing application online..."
+php artisan up
+
+# Cache configuration for better performance
+echo "⚡ Caching configuration, routes, and views..."
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
 
 echo ">> Running hotel price update..."
 php artisan update:price
-
-php artisan optimize
-
-chown -R 777 storage bootstrap/cache
-chmod -R 777 storage bootstrap/cache
-php artisan up
 
 echo "✓ SUCCESS: Deployment is successfully!"
