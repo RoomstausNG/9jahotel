@@ -19,11 +19,11 @@ git stash push -m "Pre-deployment stash $(date)" --include-untracked || true
 
 # Clear all caches
 echo "🧹 Clearing application caches..."
-php artisan optimize:clear
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
+php artisan optimize:clear
 
 # Force fetch and reset
 echo "🔄 Fetching latest changes..."
@@ -45,12 +45,23 @@ git reset --hard production/main || {
 echo "🧹 Cleaning untracked files..."
 git clean -fd
 
+
 # Install/update dependencies
 echo "📦 Updating composer dependencies..."
 composer update --no-interaction --prefer-dist --optimize-autoloader --no-dev || {
     echo "❌ Composer update failed"
     exit 1
 }
+
+echo "🔄 Regenerating autoload files..."
+composer dump-autoload --optimize
+
+echo "🧹 Clearing application caches..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
 
 # Set proper directory permissions
 echo "🔒 Setting directory permissions..."
