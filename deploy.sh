@@ -63,11 +63,11 @@ php artisan route:clear
 php artisan view:clear
 php artisan optimize:clear
 
-# Set proper directory permissions
-echo "🔒 Setting directory permissions..."
-chmod -R 777 storage bootstrap/cache
-chown -R 777 storage bootstrap/cache
-sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+# # Set proper directory permissions
+# echo "🔒 Setting directory permissions..."
+# chmod -R 777 storage bootstrap/cache
+# chown -R 777 storage bootstrap/cache
+# sudo chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
 # Run migrations (uncomment when ready)
 echo "🔄 Running database migrations..."
@@ -96,9 +96,7 @@ fi
 
 # Cache configuration for better performance
 echo "⚡ Optimizing application..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan optimize:clear
 php artisan optimize
 
 # Update and restart supervisor if available
