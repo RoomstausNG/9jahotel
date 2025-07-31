@@ -64,10 +64,9 @@ Route::get('/support', [PageController::class, 'support'])->name('support');
 Route::get('/home', Dashboard::class)->middleware('auth:customers');
 Route::post('/customer/logout', function () {
     auth('customers')->logout();
-    // Session::flush(); // Ensure all session data is cleared
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/login'); // Redirect to the correct login page
+    return redirect('/login');
 })->name('customer.logout');
 
 Route::get('/hotels/halls/{city?}', HallResult::class)->name('halls.result');

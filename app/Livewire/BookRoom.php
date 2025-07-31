@@ -11,18 +11,19 @@ use App\Models\Customer;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use App\Models\PaymentMethod;
 use App\Services\OpayService;
 use App\Models\BookingInvoice;
 use Filament\Forms\Components;
 use Livewire\Attributes\Layout;
+use App\Services\PaystackService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
+use App\Services\PaymentGatewayService;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Redirect;
-use App\Services\PaymentGatewayService;
-use App\Models\PaymentMethod;
-use App\Services\PaystackService;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -277,7 +278,7 @@ cancellation with or without notice by the Hotel.',
             try {
                 $paymentDetails = $opayService->verifyPayment($reference);
 
-                \Log::info('Payment verification initiated', [
+                Log::info('Payment verification initiated', [
                     'reference' => $reference,
                     'payment_details' => $paymentDetails
                 ]);
@@ -293,7 +294,7 @@ cancellation with or without notice by the Hotel.',
                         Booking::where('booking_invoice_id', $bookingInvoice->id)
                             ->update(['status' => 'paid', 'date_paid' => now()]);
 
-                        \Log::info('Payment successful', [
+                        Log::info('Payment successful', [
                             'reference' => $reference,
                             'booking_invoice_id' => $bookingInvoice->id
                         ]);
@@ -303,7 +304,7 @@ cancellation with or without notice by the Hotel.',
                     return redirect()->route('booking.success')
                         ->with('success', 'Payment successful for booking ' . $reference);
                 } else {
-                    \Log::error('Payment verification failed', [
+                    Log::error('Payment verification failed', [
                         'reference' => $reference,
                         'payment_details' => $paymentDetails ?? "nothing returned"
                     ]);
@@ -313,7 +314,7 @@ cancellation with or without notice by the Hotel.',
                         ->with('error', 'Payment verification failed for booking ' . $reference);
                 }
             } catch (\Exception $e) {
-                \Log::error('Payment verification error', [
+                Log::error('Payment verification error', [
                     'reference' => $reference,
                     'error' => $e->getMessage()
                 ]);
@@ -323,7 +324,7 @@ cancellation with or without notice by the Hotel.',
                     ->with('error', 'Error verifying payment: ' . $e->getMessage());
             }
         } else {
-            \Log::error('Payment callback without reference');
+            Log::error('Payment callback without reference');
 
             // Redirect to a failure page with flash message
             return redirect()->route('booking.failed')
