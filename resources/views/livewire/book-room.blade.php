@@ -106,7 +106,7 @@
                 <div class="gap-4 p-4 md:p-0 space-y-4 md:grid-cols-2 lg:grid-cols-4">
 
                     <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        @foreach ($category->rooms as $room)
+                        @foreach ($category->rooms->take(10) as $room)
                             @if (
                                 !$room->isAvailable(Session::get('checkin'), Session::get('checkout')) ||
                                     in_array($room->status, ['occupied', 'repair', 'dirty']))
