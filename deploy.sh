@@ -97,7 +97,7 @@ fi
 # Cache configuration for better performance
 echo "⚡ Optimizing application..."
 php artisan optimize:clear
-php artisan optimize
+# php artisan optimize
 
 # Update and restart supervisor if available
 if command -v supervisorctl &> /dev/null; then
