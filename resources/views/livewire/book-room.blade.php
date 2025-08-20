@@ -1,8 +1,10 @@
 <div class="relative w-full p-0 mx-auto" x-data="{ review: false, modal: @entangle('modal').live }">
     @php
         $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $basePrice = $category->price1 * $days * count($checked);
         $discountedPrice = $category->price1 - ($category->price1 * ($hotel->online_price ?? 0)) / 100;
         $nonRefundablePrice = $category->price1 - ($category->price1 * ($hotel->non_refundable_price ?? 0)) / 100;
+        $onlineDiscountAmount = ($basePrice * ($hotel->online_price ?? 0)) / 100;
     @endphp
 
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
@@ -94,23 +96,9 @@
                                 class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($category->price1 * $days * count($checked)) }}</span>
                         </p>
                         <p class="flex items-center justify-between text-sm">
-                            <span>Online Discount ({{ $hotel->online_price ?? 0 }}%)</span>
+                            <span>Total Price</span>
                             <span
-                                class="text-lg font-medium text-green-600">-{{ formatAsNaira(($category->price1 * $days * count($checked) * ($hotel->online_price ?? 0)) / 100) }}</span>
-                        </p>
-                        @if ($appliedCoupon && $couponDiscount > 0)
-                            <p class="flex items-center justify-between text-sm">
-                                <span>Coupon Discount ({{ $appliedCoupon->percent }}%)</span>
-                                <span
-                                    class="text-lg font-medium text-green-600">-{{ formatAsNaira($couponDiscount) }}</span>
-                            </p>
-                        @endif
-                        <hr class="my-2">
-                        <p class="flex items-center justify-between text-sm">
-                            <span class="font-semibold">Final Price</span>
-                            <span class="text-lg font-bold">
-                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $hotel->online_price)) }}
-                            </span>
+                                class="text-lg font-bold">{{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $hotel->online_price)) }}</span>
                         </p>
                     </div>
                 </div>
@@ -120,7 +108,7 @@
                 <div class="gap-4 p-4 md:p-0 space-y-4 md:grid-cols-2 lg:grid-cols-4">
 
                     <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        @foreach ($category->rooms->take(10) as $room)
+                        @foreach ($category->rooms as $room)
                             @if (
                                 !$room->isAvailable(Session::get('checkin'), Session::get('checkout')) ||
                                     in_array($room->status, ['occupied', 'repair', 'dirty']))
@@ -194,60 +182,36 @@
                         </div>
                     @endif
 
-                    {{-- Coupon Code Section --}}
-                    <div class="w-full p-4 space-y-4 border-t">
-                        <h2 class="font-medium text-lg">Have a Coupon Code?</h2>
-
-                        @if (!$appliedCoupon)
-                            <div class="flex gap-2">
-                                <div class="flex-1">
-                                    <input type="text" wire:model.live="couponCode"
-                                        placeholder="Enter coupon code"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                        @keydown.enter="$wire.applyCoupon()">
-                                </div>
-                                <button type="button" wire:click="applyCoupon"
-                                    class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
-                                    Apply
-                                </button>
-                            </div>
-                        @else
-                            <div
-                                class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="text-green-800 font-medium">
-                                        Coupon "{{ $appliedCoupon->code }}" applied!
-                                        You save {{ formatAsNaira($couponDiscount) }}
-                                    </span>
-                                </div>
-                                <button type="button" wire:click="removeCoupon"
-                                    class="text-red-500 hover:text-red-700 transition-colors" title="Remove coupon">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        @endif
+                    <div class="w-full p-4 bg-white border rounded space-y-3">
+                        <h3 class="font-medium">Have a coupon?</h3>
+                        <div class="flex gap-2">
+                            <input wire:model.live="couponCode" type="text" placeholder="Enter coupon code"
+                                class="w-full p-2 border rounded" />
+                            <button wire:click="applyCoupon" type="button"
+                                class="px-3 py-2 font-medium text-white bg-primary rounded">Apply</button>
+                            @if ($appliedCoupon)
+                                <button wire:click="removeCoupon" type="button"
+                                    class="px-3 py-2 font-medium border rounded">Remove</button>
+                            @endif
+                        </div>
 
                         @if ($couponError)
-                            <div class="p-3 bg-red-50 border border-red-200 rounded-md">
-                                <div class="flex">
-                                    <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="text-red-800">{{ $couponError }}</span>
-                                </div>
-                            </div>
+                            <p class="text-sm text-red-600">{{ $couponError }}</p>
                         @endif
+
+                        @if ($showCouponSuccess && $appliedCoupon)
+                            <p class="text-sm text-green-600">Coupon applied: {{ $appliedCoupon->code }}</p>
+                        @endif
+
+                        <div class="pt-2 text-sm">
+                            <p>Original Price: <span class="font-medium">{{ formatAsNaira($basePrice) }}</span></p>
+                            <p>Online Discount: <span
+                                    class="font-medium">{{ formatAsNaira($onlineDiscountAmount) }}</span></p>
+                            <p>Coupon Discount: <span class="font-medium">{{ formatAsNaira($couponDiscount) }}</span>
+                            </p>
+                            <p class="pt-1">Total Due: <span
+                                    class="font-bold">{{ formatAsNaira($this->getFinalPrice()) }}</span></p>
+                        </div>
                     </div>
 
                     <div
@@ -258,9 +222,7 @@
                                 data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('PayNow')" type="button"
                                 class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full flex items-center justify-center">
-                                Reserve & Pay Now (
-                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }}
-                                )
+                                Reserve & Pay Now ( {{ formatAsNaira($this->getFinalPrice()) }})
                             </button>
                             <span>Refundable</span>
                         </div>
@@ -273,7 +235,7 @@
                                     data-tooltip-target="guarantee"
                                     class="relative font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100 border-primary animate flex items-center justify-center">
                                     Instant Pay
-                                    {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
+                                    {{ formatAsNaira($this->getNonRefundableFinalPrice()) }}
                                 </button>
                                 <span>(NonRefundable)</span>
                             </div>
@@ -284,9 +246,7 @@
                                 data-tooltip-placement="top" data-tooltip-target="not-guarantee"
                                 wire:click="addBooking('PayAtHotel')" type="button"
                                 class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">
-                                Pay on arrival (
-                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }}
-                                )
+                                Pay on arrival ({{ formatAsNaira($this->getFinalPrice()) }})
                             </button>
                         </div>
                     </div>

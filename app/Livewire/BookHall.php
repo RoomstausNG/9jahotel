@@ -82,64 +82,6 @@ class BookHall extends Component implements HasForms
             ])->columns(2);
     }
 
-    public function applyCoupon()
-    {
-        $this->couponError = null;
-        $this->showCouponSuccess = false;
-
-        $coupon = Coupon::byCode($this->couponCode)->first();
-
-        if (!$coupon) {
-            $this->couponError = 'The coupon code is invalid.';
-            return;
-        }
-
-        if (!$coupon->isValid()) {
-            $this->couponError = $coupon->getValidationMessage();
-            return;
-        }
-
-        $this->appliedCoupon = $coupon;
-        $this->couponDiscount = $this->appliedCoupon->calculateDiscount($this->getBasePrice());
-        $this->showCouponSuccess = true;
-        $this->couponCode = ''; // Clear input field
-    }
-
-    public function removeCoupon()
-    {
-        $this->appliedCoupon = null;
-        $this->couponDiscount = 0;
-        $this->couponError = null;
-        $this->couponCode = '';
-        $this->showCouponSuccess = false;
-    }
-
-    private function getBasePrice()
-    {
-        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
-        return $this->hall->price * $days;
-    }
-
-    public function getFinalPrice()
-    {
-        $basePrice = $this->getBasePrice();
-        $onlineDiscountAmount = ($basePrice * ($this->hotel->online_price ?? 0)) / 100;
-        $finalPrice = $basePrice - $onlineDiscountAmount;
-
-        if ($this->appliedCoupon) {
-            $finalPrice -= $this->couponDiscount;
-        }
-
-        return $finalPrice > 0 ? $finalPrice : 0;
-    }
-
-    public function getNonRefundableFinalPrice()
-    {
-        $basePrice = $this->getBasePrice();
-        $nonRefundableDiscountAmount = ($basePrice * ($this->hotel->non_refundable_price ?? 0)) / 100;
-        return $basePrice - $nonRefundableDiscountAmount;
-    }
-
     public function addBooking($type)
     {
         if (!$this->hall) {
@@ -149,72 +91,75 @@ class BookHall extends Component implements HasForms
                 'title' => 'No Hall selected'
             ];
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
-        }
-
-        if ($this->appliedCoupon && $type === 'NonRefundable') {
-            $details = [
-                'icon' => 'error',
-                'text' => 'Coupons cannot be applied to non-refundable bookings.',
-                'title' => 'Invalid Option'
-            ];
-            return $this->dispatch('swal:success', details: sweetAlert(...$details));
-        }
-
-        $hall = $this->hall;
-        $customer = $this->getOrCreateCustomer($this->form->getState());
-
-        $basePrice = $this->getBasePrice();
-        $finalPrice = 0;
-        $onlineDiscount = 0;
-
-        if ($type == 'NonRefundable') {
-            $onlineDiscount = ($basePrice * ($this->hotel->non_refundable_price ?? 0)) / 100;
-            $finalPrice = $basePrice - $onlineDiscount;
         } else {
-            $onlineDiscount = ($basePrice * ($this->hotel->online_price ?? 0)) / 100;
-            $finalPrice = $basePrice - $onlineDiscount;
+            $hall = $this->hall;
+            $customer = $this->getOrCreateCustomer($this->form->getState());
+
+            // Prevent coupons on non-refundable bookings
+            if ($this->appliedCoupon && $type === 'NonRefundable') {
+                $details = [
+                    'icon' => 'error',
+                    'text' => 'Coupons cannot be applied to non-refundable bookings.',
+                    'title' => 'Invalid Option'
+                ];
+                return $this->dispatch('swal:success', details: sweetAlert(...$details));
+            }
+
+            $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+            $basePrice = $hall->price * $days;
+
+            $data['checked_in'] = Session::get('checkin');
+            $data['checked_out'] = Session::get('checkout');
+
+            if ($type == 'NonRefundable') {
+                $data['discount'] = $this->hall->hotel->non_refundable_price;
+                $onlineDiscount = ($basePrice * ($this->hall->hotel->non_refundable_price ?? 0)) / 100;
+                $due = $basePrice - $onlineDiscount;
+                $this->due = $due;
+            } else {
+                $data['discount'] = $this->hall->hotel->online_price;
+                $onlineDiscount = ($basePrice * ($this->hall->hotel->online_price ?? 0)) / 100;
+                $due = $basePrice - $onlineDiscount;
+                $this->due = $due;
+            }
+
+            if ($this->appliedCoupon) {
+                // apply coupon discount on top of online discount
+                $due -= $this->couponDiscount;
+            }
+
+            // ensure non-negative
+            $due = $due > 0 ? $due : 0;
+
+            $data['due'] = $due;
+
+            // booking invoice
+            $invoice = BookingInvoice::create([
+                'customer_id' => $customer->id,
+                'hotel_id' => $this->hall->hotel_id,
+                'amount' => $this->due,
+                'status' => 'unpaid',
+                'checked_in' => $data['checked_in'], // ensure checkin is saved
+                'checked_out' => $data['checked_out'], // ensure checkout is saved
+                'coupon_id' => $this->appliedCoupon?->id,
+            ]);
+
+            // Calculate and save commission amounts
+            $invoice->calculateAndSaveCommission();
+
+            $data['booking_invoice_id'] = $invoice->id;
+
+            // create bookings
+
+            $data['bookable_id'] = $hall->id;
+            $created = $this->createBooking($hall, $data, $customer);
+
+
+            // associate customer if not exist before
+            $this->associateCustomer($customer->id);
         }
-
-        if ($this->appliedCoupon) {
-            $finalPrice -= $this->couponDiscount;
-        }
-
-
-        // booking invoice
-        $invoice = BookingInvoice::create([
-            'customer_id' => $customer->id,
-            'hotel_id' => $this->hall->hotel_id,
-            'sub_total' => $basePrice,
-            'online_discount' => $onlineDiscount,
-            'amount' => $finalPrice > 0 ? $finalPrice : 0,
-            'status' => 'unpaid',
-            'checked_in' => Session::get('checkin'),
-            'checked_out' => Session::get('checkout'),
-            'coupon_id' => $this->appliedCoupon?->id,
-        ]);
-
-        // Calculate and save commission amounts
-        $invoice->calculateAndSaveCommission();
-
-        $data['booking_invoice_id'] = $invoice->id;
-        $data['checked_in'] = Session::get('checkin');
-        $data['checked_out'] = Session::get('checkout');
-        $data['discount'] = $this->hotel->online_price;
-        $data['due'] = $finalPrice;
-
-        // create bookings
-        $data['bookable_id'] = $hall->id;
-        $this->createBooking($hall, $data, $customer);
-
-
-        // associate customer if not exist before
-        $this->associateCustomer($customer->id);
-
 
         if ($type == 'PayAtHotel') {
-            if ($this->appliedCoupon) {
-                $this->appliedCoupon->incrementUsageCount();
-            }
             $details = [
                 'text' => 'Please check your email for confirmation\nKindly note that UNPAID Bookings are subject to\ncancellation with or without notice by the Hotel.',
                 'title' => 'Your Booking is Received!'
@@ -423,7 +368,9 @@ class BookHall extends Component implements HasForms
         // Load payment methods
         $paymentGatewayService = new PaymentGatewayService();
         $this->paymentMethods = $paymentGatewayService->getActivePaymentMethods();
-        $this->selectedPaymentMethod = $this->paymentMethods->first()->code;
+        // Guard against empty collection/array
+        $first = is_object($this->paymentMethods) && method_exists($this->paymentMethods, 'first') ? $this->paymentMethods->first() : null;
+        $this->selectedPaymentMethod = $first->code ?? 'opay';
     }
 
     public function refreshBookingData()
