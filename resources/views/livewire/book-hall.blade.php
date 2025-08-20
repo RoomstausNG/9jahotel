@@ -2,8 +2,14 @@
 
     @php
         $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $basePrice = $hall->price * $days;
         $discountedPrice = $hall->price - ($hall->price * ($hotel->online_price ?? 0)) / 100;
         $nonRefundablePrice = $hall->price - ($hall->price * ($hotel->non_refundable_price ?? 0)) / 100;
+        $onlineDiscountAmount = ($basePrice * ($hotel->online_price ?? 0)) / 100;
+        $finalPrice = $basePrice - $onlineDiscountAmount - ($couponDiscount ?? 0);
+        if ($finalPrice < 0) {
+            $finalPrice = 0;
+        }
     @endphp
 
     <div class="grid w-full max-w-screen-xl px-4 py-4 mx-auto space-y-8 rounded-lg">
@@ -151,6 +157,48 @@
                                 </div>
                             </div>
                         @endif
+
+                        {{-- Coupon UI and summary --}}
+                        <div class="w-full p-4 bg-white border rounded space-y-3">
+                            @if (!$appliedCoupon)
+                                <h3 class="font-medium">Have a coupon?</h3>
+                                <div class="flex gap-2">
+                                    <input wire:model.live="couponCode" type="text"
+                                        placeholder="Enter coupon code" class="w-full p-2 border rounded" />
+                                    <button wire:click="applyCoupon" type="button"
+                                        class="px-3 py-2 font-medium text-white bg-primary rounded">Apply</button>
+                                </div>
+                                @if ($couponError)
+                                    <p class="text-sm text-red-600">{{ $couponError }}</p>
+                                @endif
+                            @else
+                                <div class="flex items-center justify-between p-2 border rounded bg-green-50">
+                                    <div>
+                                        <div class="text-sm font-medium">Coupon applied</div>
+                                        <div class="text-sm text-gray-700">{{ $appliedCoupon->code }} •
+                                            {{ $appliedCoupon->percent }}% off</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm">Discount</div>
+                                        <div class="font-semibold text-green-700">{{ formatAsNaira($couponDiscount) }}
+                                        </div>
+                                        <button wire:click="removeCoupon"
+                                            class="text-sm text-red-600 mt-1">Remove</button>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="pt-2 text-sm">
+                                <p>Original Price: <span class="font-medium">{{ formatAsNaira($basePrice) }}</span>
+                                </p>
+                                <p>Online Discount: <span
+                                        class="font-medium">{{ formatAsNaira($onlineDiscountAmount) }}</span></p>
+                                <p>Coupon Discount: <span
+                                        class="font-medium">{{ formatAsNaira($couponDiscount ?? 0) }}</span></p>
+                                <p class="pt-1">Total Due: <span
+                                        class="font-bold">{{ formatAsNaira($finalPrice) }}</span></p>
+                            </div>
+                        </div>
                         <div class="flex flex-col md:flex-row flex-wrap gap-8 mx-auto justify-center pt-8 w-full">
                             <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                                 <button x-data="{ disabled: false }" x-bind:disabled="disabled"
@@ -159,12 +207,12 @@
                                     data-tooltip-placement="top" data-tooltip-target="guarantee"
                                     wire:click="addBooking('PayNow')" type="button"
                                     class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full flex items-center justify-center">
-                                    Reserve & Pay Now ( {{ formatAsNaira($discountedPrice * $days) }})
+                                    Reserve & Pay Now ( {{ formatAsNaira($finalPrice) }})
                                 </button>
                                 <span>Refundable</span>
                             </div>
 
-                            @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null)
+                            @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null && !$appliedCoupon)
                                 <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                                     <button x-data="{ disabled: false }" x-bind:disabled="disabled"
                                         x-on:click="disabled = true"
@@ -173,7 +221,7 @@
                                         data-tooltip-target="guarantee"
                                         class="relative flex items-center justify-center font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100 border-primary animate">
                                         Instant Pay
-                                        {{ formatAsNaira($nonRefundablePrice * $days) }}
+                                        {{ formatAsNaira($this->getNonRefundableFinalPrice() ?? $nonRefundablePrice * $days) }}
                                     </button>
                                     <span>(NonRefundable)</span>
                                 </div>

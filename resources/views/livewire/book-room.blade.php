@@ -90,16 +90,44 @@
                     </p>
                     {{-- <p class="text-xl font-medium">{{ formatAsNaira($category->price1) }}</p> --}}
                     <div class="p-0">
-                        <p class="flex items-center justify-between text-sm">
-                            <span>Walk-in Price</span>
-                            <span
-                                class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($category->price1 * $days * count($checked)) }}</span>
-                        </p>
-                        <p class="flex items-center justify-between text-sm">
-                            <span>Total Price</span>
-                            <span
-                                class="text-lg font-bold">{{ formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $hotel->online_price)) }}</span>
-                        </p>
+                        <div class="space-y-2 p-3 bg-white border rounded">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Original Price</span>
+                                <span class="text-sm font-medium">{{ formatAsNaira($basePrice) }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Online Discount</span>
+                                <span class="text-sm font-medium">- {{ formatAsNaira($onlineDiscountAmount) }}</span>
+                            </div>
+
+                            @if ($appliedCoupon)
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600">Coupon ({{ $appliedCoupon->code }})</span>
+                                        <span
+                                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">{{ $appliedCoupon->percent }}%
+                                            off</span>
+                                    </div>
+                                    <div class="text-sm font-medium text-green-700">-
+                                        {{ formatAsNaira($couponDiscount) }}</div>
+                                </div>
+                            @endif
+
+                            <div class="border-t pt-2 flex items-center justify-between">
+                                <span class="text-sm font-medium">Total Due</span>
+                                <span class="text-lg font-bold">{{ formatAsNaira($this->getFinalPrice()) }}</span>
+                            </div>
+
+                            @if ($appliedCoupon)
+                                <div class="pt-2 flex items-center justify-between">
+                                    <div class="text-sm text-gray-600">Applied Coupon</div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-sm font-medium">{{ $appliedCoupon->code }}</div>
+                                        <button wire:click="removeCoupon" class="text-sm text-red-600">Remove</button>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
