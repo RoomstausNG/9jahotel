@@ -2,149 +2,116 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Coupon extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'code',
-        'percent',
-        'type',
-        'valid_from',
-        'valid_till',
-        'limit_usage',
-        'highest_value',
-        'owner_id',
-        'status',
-        'usage_count',
-        'hotel_id',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
-        'valid_from' => 'date',
-        'valid_till' => 'date',
-        'highest_value' => 'decimal:2',
+        'valid_from' => 'datetime',
+        'valid_till' => 'datetime',
         'status' => 'boolean',
     ];
 
     /**
-     * Get the hotel that owns the coupon.
+     * Scope a query to only include valid coupons.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function hotel(): BelongsTo
+    public function scopeValid(Builder $query): Builder
     {
-        return $this->belongsTo(Hotel::class);
+        return $query->where('status', 1)
+            ->where('valid_from', '<=', Carbon::now())
+            ->where('valid_till', '>=', Carbon::now())
+            ->where(function ($q) {
+                $q->where('limit_usage', -1)
+                    ->orWhereRaw('usage_count < limit_usage');
+            });
     }
 
     /**
-     * Get the owner of the coupon.
+     * Scope a query to find a coupon by its code.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $code
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function owner(): BelongsTo
+    public function scopeByCode(Builder $query, string $code): Builder
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $query->where('code', $code);
     }
 
     /**
-     * Check if the coupon is valid for use.
+     * Check if the coupon is valid.
+     *
+     * @return bool
      */
     public function isValid(): bool
     {
-        // Check if coupon is active
         if (!$this->status) {
             return false;
         }
-
-        // Check date validity
-        $today = now()->toDateString();
-        if ($today < $this->valid_from || $today > $this->valid_till) {
+        if ($this->valid_from->isFuture() || $this->valid_till->isPast()) {
             return false;
         }
-
-        // Check usage limit (skip if unlimited usage: -1)
         if ($this->limit_usage !== -1 && $this->usage_count >= $this->limit_usage) {
             return false;
         }
-
         return true;
     }
 
     /**
-     * Calculate the discount amount for a given price.
-     */
-    public function calculateDiscount(float $originalPrice): float
-    {
-        if (!$this->isValid()) {
-            return 0.0;
-        }
-
-        // Calculate percentage discount
-        $percentageDiscount = $originalPrice * ($this->percent / 100);
-
-        // Apply highest value limit if set
-        if ($this->highest_value && $percentageDiscount > (float)$this->highest_value) {
-            return (float)$this->highest_value;
-        }
-
-        return $percentageDiscount;
-    }
-
-    /**
-     * Increment the usage count.
-     */
-    public function incrementUsage(): void
-    {
-        $this->increment('usage_count');
-    }
-
-    /**
-     * Get validation error message.
+     * Get the validation message for an invalid coupon.
+     *
+     * @return string
      */
     public function getValidationMessage(): string
     {
         if (!$this->status) {
-            return 'This coupon is no longer active.';
+            return 'This coupon is inactive.';
         }
-
-        $today = now()->toDateString();
-        if ($today < $this->valid_from) {
+        if ($this->valid_from->isFuture()) {
             return 'This coupon is not yet valid.';
         }
-
-        if ($today > $this->valid_till) {
+        if ($this->valid_till->isPast()) {
             return 'This coupon has expired.';
         }
-
         if ($this->limit_usage !== -1 && $this->usage_count >= $this->limit_usage) {
             return 'This coupon has reached its usage limit.';
         }
+        return 'The coupon is invalid.';
+    }
 
-        return 'This coupon is invalid.';
+
+    /**
+     * Calculate the discount for a given amount.
+     *
+     * @param float $originalPrice
+     * @return float
+     */
+    public function calculateDiscount(float $originalPrice): float
+    {
+        $discount = $originalPrice * ($this->percent / 100);
+
+        if ($this->highest_value !== null && $discount > $this->highest_value) {
+            return (float) $this->highest_value;
+        }
+
+        return (float) $discount;
     }
 
     /**
-     * Scope to find valid coupons.
+     * Increment the usage count of the coupon.
      */
-    public function scopeValid($query)
+    public function incrementUsageCount(): void
     {
-        $today = now()->toDateString();
-        
-        return $query->where('status', 1)
-                    ->where('valid_from', '<=', $today)
-                    ->where('valid_till', '>=', $today)
-                    ->where(function ($q) {
-                        $q->where('limit_usage', -1)
-                          ->orWhereRaw('usage_count < limit_usage');
-                    });
-    }
-
-    /**
-     * Scope to find coupons by code.
-     */
-    public function scopeByCode($query, string $code)
-    {
-        return $query->where('code', $code);
+        $this->increment('usage_count');
     }
 }

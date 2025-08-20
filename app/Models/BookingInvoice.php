@@ -12,26 +12,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Coupon;
 
 class BookingInvoice extends Model
 {
     use HasFactory, SoftDeletes, BelongToHotel;
-    
-    protected $fillable = [
-        'customer_id',
-        'hotel_id',
-        'amount',
-        'type',
-        'status',
-        'payment_method',
-        'checked_in',
-        'checked_out',
-        'coupon_id',
-        'commission_amount',
-        'hotel_payable',
-        'reference',
-        'date_paid'
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -39,6 +25,9 @@ class BookingInvoice extends Model
         'checked_out' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'sub_total' => 'float',
+        'amount' => 'float',
+        'online_discount' => 'float',
     ];
 
 
@@ -179,28 +168,63 @@ class BookingInvoice extends Model
      */
     public function calculateAndSaveCommission()
     {
-        // Load hotel relationship if not already loaded
-        if (!$this->relationLoaded('hotel') && $this->hotel_id) {
+        // Load relationships if not already loaded
+        if (!$this->relationLoaded('hotel')) {
             $this->load('hotel');
         }
+        if (!$this->relationLoaded('bookings.bookable')) {
+            $this->load('bookings.bookable');
+        }
+        if ($this->coupon_id && !$this->relationLoaded('coupon')) {
+            $this->load('coupon');
+        }
 
-        // Skip calculation if no hotel or amount
-        if (!$this->hotel || !$this->amount) {
+        // Skip calculation if no hotel or bookings
+        if (!$this->hotel || $this->bookings->isEmpty()) {
             return;
         }
 
-        // Get the commission percentage from hotel (default to 10% if not set)
+        // Calculate the original base price from the bookings
+        $days = calculateDateDifferenceInDays($this->checked_in, $this->checked_out);
+        $basePrice = 0;
+        foreach ($this->bookings as $booking) {
+            if ($booking->bookable) {
+                // Assumes 'price1' for Room and 'price' for Hall
+                $priceField = $booking->bookable instanceof Room ? 'price1' : 'price';
+                $basePrice += $booking->bookable->{$priceField};
+            }
+        }
+        $basePrice *= $days;
+
+        // Get the hotel's commission percentage
         $percentage = $this->hotel->percentage_charge ?? 10;
 
-        // Calculate commission amount
-        $commissionAmount = ($percentage / 100) * $this->amount;
+        // Calculate initial commission based on the price BEFORE any discounts
+        $initialCommission = ($percentage / 100) * $basePrice;
 
-        // Calculate hotel payable (total amount minus commission)
-        $hotelPayable = $this->amount - $commissionAmount;
+        // Calculate hotel payable based on the price BEFORE any discounts.
+        // This amount is fixed and not affected by coupons.
+        $hotelPayable = $basePrice - $initialCommission;
 
-        // Update the fields
+        // The online discount is the difference between the base price and what would be paid without a coupon
+        $onlineDiscountValue = 0;
+        if (strtolower($this->type) === 'nonrefundable') {
+            $onlineDiscountValue = ($basePrice * ($this->hotel->non_refundable_price ?? 0)) / 100;
+        } else {
+            $onlineDiscountValue = ($basePrice * ($this->hotel->online_price ?? 0)) / 100;
+        }
+
+        // The coupon discount is the remaining difference
+        $priceAfterOnlineDiscount = $basePrice - $onlineDiscountValue;
+        $couponDiscount = $this->coupon_id ? ($priceAfterOnlineDiscount - $this->amount) : 0;
+
+        // The final commission for the platform is the initial commission minus the coupon value.
+        // The platform absorbs the coupon cost. This can be negative.
+        $finalCommission = $initialCommission - $couponDiscount;
+
+        // Update the invoice with the calculated amounts
         $this->update([
-            'commission_amount' => round($commissionAmount),
+            'commission_amount' => round($finalCommission),
             'hotel_payable' => round($hotelPayable)
         ]);
     }

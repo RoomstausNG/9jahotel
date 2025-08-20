@@ -93,6 +93,11 @@
                             <span
                                 class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($category->price1 * $days * count($checked)) }}</span>
                         </p>
+                        <p class="flex items-center justify-between text-sm">
+                            <span>Online Discount ({{ $hotel->online_price ?? 0 }}%)</span>
+                            <span
+                                class="text-lg font-medium text-green-600">-{{ formatAsNaira(($category->price1 * $days * count($checked) * ($hotel->online_price ?? 0)) / 100) }}</span>
+                        </p>
                         @if ($appliedCoupon && $couponDiscount > 0)
                             <p class="flex items-center justify-between text-sm">
                                 <span>Coupon Discount ({{ $appliedCoupon->percent }}%)</span>
@@ -100,8 +105,9 @@
                                     class="text-lg font-medium text-green-600">-{{ formatAsNaira($couponDiscount) }}</span>
                             </p>
                         @endif
+                        <hr class="my-2">
                         <p class="flex items-center justify-between text-sm">
-                            <span>Total Price</span>
+                            <span class="font-semibold">Final Price</span>
                             <span class="text-lg font-bold">
                                 {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira(calculateRemainingAmount($category->price1 * $days * count($checked), $hotel->online_price)) }}
                             </span>
@@ -252,11 +258,13 @@
                                 data-tooltip-placement="top" data-tooltip-target="guarantee"
                                 wire:click="addBooking('PayNow')" type="button"
                                 class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black md:max-w-max w-full flex items-center justify-center">
-                                Reserve & Pay Now ( {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }} )
+                                Reserve & Pay Now (
+                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }}
+                                )
                             </button>
                             <span>Refundable</span>
                         </div>
-                        @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null)
+                        @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null && !$appliedCoupon)
                             <div class="flex flex-col justify-center items-center w-full md:max-w-max">
                                 <button x-data="{ disabled: false }" x-bind:disabled="disabled"
                                     x-on:click="disabled = true"
@@ -266,9 +274,6 @@
                                     class="relative font-semibold p-3 px-6 md:max-w-max w-full text-primary rounded-sm bg-primary-100 border-primary animate flex items-center justify-center">
                                     Instant Pay
                                     {{ formatAsNaira($nonRefundablePrice * $days * count($checked)) }}
-                                    @if ($appliedCoupon)
-                                        <span class="text-xs text-gray-500 ml-1">(Coupon not applicable)</span>
-                                    @endif
                                 </button>
                                 <span>(NonRefundable)</span>
                             </div>
@@ -279,7 +284,9 @@
                                 data-tooltip-placement="top" data-tooltip-target="not-guarantee"
                                 wire:click="addBooking('PayAtHotel')" type="button"
                                 class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">
-                                Pay on arrival ( {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }} )
+                                Pay on arrival (
+                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days * count($checked)) }}
+                                )
                             </button>
                         </div>
                     </div>

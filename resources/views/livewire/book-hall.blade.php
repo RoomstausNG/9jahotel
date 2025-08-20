@@ -32,417 +32,349 @@
                             <span class="text-sm">Hall Name</span>
                             <span class="text-sm font-bold uppercase">{{ $hall->name }}</span>
                         </p>
-<<<<<<< HEAD
-                        <div class="flex items-center justify-between" x-data="{ editingCheckin: false }">
+                        <<<<<<< HEAD <div class="flex items-center justify-between" x-data="{ editingCheckin: false }">
                             <span class="text-sm">Checkin</span>
                             <div class="flex items-center">
-                                <span x-show="!editingCheckin" @click="editingCheckin = true" 
-                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
+                                <span x-show="!editingCheckin" @click="editingCheckin = true"
+                                    class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
                                     {{ getDateR(Session::get('checkin')) }}
                                 </span>
-                                <input x-show="editingCheckin" 
-                                       type="date" 
-                                       wire:model.live="checkinDate"
-                                       @blur="editingCheckin = false"
-                                       @keydown.enter="editingCheckin = false"
-                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
+                                <input x-show="editingCheckin" type="date" wire:model.live="checkinDate"
+                                    @blur="editingCheckin = false" @keydown.enter="editingCheckin = false"
+                                    class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
                             </div>
-                        </div>
-                        <div class="flex items-center justify-between" x-data="{ editingCheckout: false }">
-                            <span class="text-sm">Checkout</span>
-                            <div class="flex items-center">
-                                <span x-show="!editingCheckout" @click="editingCheckout = true"
-                                      class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
-                                    {{ getDateR(Session::get('checkout')) }}
-                                </span>
-                                <input x-show="editingCheckout" 
-                                       type="date" 
-                                       wire:model.live="checkoutDate"
-                                       @blur="editingCheckout = false"
-                                       @keydown.enter="editingCheckout = false"
-                                       class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
-=======
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm">Checkin</span>
-                            <div class="editable-date-container" data-date-type="checkin">
-                                <span
-                                    class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
-                                    id="checkin-display">{{ getDateR(Session::get('checkin')) }}</span>
-                                <input type="date" class="hidden date-input" id="checkin-input"
-                                    value="{{ Session::get('checkin') }}" min="{{ date('Y-m-d') }}">
-                                <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm">Checkout</span>
-                            <div class="editable-date-container" data-date-type="checkout">
-                                <span
-                                    class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
-                                    id="checkout-display">{{ getDateR(Session::get('checkout')) }}</span>
-                                <input type="date" class="hidden date-input" id="checkout-input"
-                                    value="{{ Session::get('checkout') }}"
-                                    min="{{ Session::get('checkin') ?: date('Y-m-d') }}">
-                                <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer" fill="currentColor"
-                                    viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
->>>>>>> 827d24c3 (date edit)
-                            </div>
-                        </div>
                     </div>
-
-                    <p class="flex justify-end px-4 py-[2px] max-w-max border bg-white font-medium">
-                        {{ $days }} night
-                    </p>
-                    <div class="p-0">
-                        <p class="flex items-center justify-between text-sm">
-                            <span>Walk-in Price</span>
-                            <span
-                                class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($hall->price * $days) }}</span>
-                        </p>
-                        @if ($appliedCoupon && $couponDiscount > 0)
-                            <p class="flex items-center justify-between text-sm">
-                                <span>Coupon Discount ({{ $appliedCoupon->percent }}%)</span>
-                                <span class="text-lg font-medium text-green-600">-{{ formatAsNaira($couponDiscount) }}</span>
-                            </p>
-                        @endif
-                        <p class="flex items-center justify-between text-sm">
-                            <span>Discounted Price</span>
-                            <span class="text-lg font-bold">
-                                {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days) }}
+                    <div class="flex items-center justify-between" x-data="{ editingCheckout: false }">
+                        <span class="text-sm">Checkout</span>
+                        <div class="flex items-center">
+                            <span x-show="!editingCheckout" @click="editingCheckout = true"
+                                class="text-sm font-bold cursor-pointer hover:text-primary hover:underline">
+                                {{ getDateR(Session::get('checkout')) }}
                             </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full space-y-8 overflow-hidden rounded-sm lg:flex-1">
-                <div class="gap-4 p-4 md:p-0 space-y-4 md:grid-cols-2 lg:grid-cols-4">
-                    <div class="w-full p-4 bg-white border rounded-lg shadow">
-                        <h2 class="text-lg font-semibold mb-2">Hall Details</h2>
-                        <p><span class="font-medium">Name:</span> {{ $hall->name }}</p>
-                        <p><span class="font-medium">Capacity:</span> {{ $hall->capacity }}</p>
-                        <p><span class="font-medium">Description:</span> {!! $hall->description !!}</p>
-                        <p><span class="font-medium">Status:</span> {{ ucfirst($hall->status) }}</p>
-                    </div>
-                </div>
-                <div class="w-full space-y-0">
-                    <h1 class="w-full px-4 py-3 font-medium bg-gray-100 border-b md:text-xl tex-lg">Your Details</h1>
-                    @if (auth()->guard('customers')->check())
-                        <div class="w-full">
-
-                        </div>
-                    @else
-                        <div class="w-full p-4 space-y-4">
-                            {{ $this->form }}
-                        </div>
-                    @endif
-
-                    @if (count($paymentMethods) > 0)
-                        <div class="w-full p-4 space-y-4">
-                            <h2 class="font-medium text-lg">Select Payment Method</h2>
-                            <div class="flex justify-between gap-8 flex-col md:flex-row">
-                                @foreach ($paymentMethods as $method)
-                                    <label
-                                        class="flex w-full items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
-                                        <input type="radio" wire:model.live="selectedPaymentMethod"
-                                            value="{{ $method->code }}" class="mr-2 text-primary">
-                                        <div class="flex items-center">
-                                            @if (in_array($method->code, ['paystack', 'opay']))
-                                                <img src="{{ asset('img/' . $method->code . '.png') }}"
-                                                    alt="{{ $method->name }}" class="h-8 mr-2">
-                                            @endif
-                                        </div>
-                                    </label>
-                                @endforeach
+                            <input x-show="editingCheckout" type="date" wire:model.live="checkoutDate"
+                                @blur="editingCheckout = false" @keydown.enter="editingCheckout = false"
+                                class="text-sm font-bold border-none p-0 focus:ring-0 w-auto min-w-0">
+                            =======
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">Checkin</span>
+                                <div class="editable-date-container" data-date-type="checkin">
+                                    <span
+                                        class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
+                                        id="checkin-display">{{ getDateR(Session::get('checkin')) }}</span>
+                                    <input type="date" class="hidden date-input" id="checkin-input"
+                                        value="{{ Session::get('checkin') }}" min="{{ date('Y-m-d') }}">
+                                    <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">Checkout</span>
+                                <div class="editable-date-container" data-date-type="checkout">
+                                    <span
+                                        class="editable-date cursor-pointer text-sm font-bold border border-gray-300 rounded px-2 py-1 hover:border-blue-500 transition-colors"
+                                        id="checkout-display">{{ getDateR(Session::get('checkout')) }}</span>
+                                    <input type="date" class="hidden date-input" id="checkout-input"
+                                        value="{{ Session::get('checkout') }}"
+                                        min="{{ Session::get('checkin') ?: date('Y-m-d') }}">
+                                    <svg class="inline-block w-4 h-4 ml-1 text-gray-400 cursor-pointer"
+                                        fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    >>>>>>> 827d24c3 (date edit)
+                                </div>
                             </div>
                         </div>
-                    @endif
 
-                    {{-- Coupon Code Section --}}
-                    <div class="w-full p-4 space-y-4 border-t">
-                        <h2 class="font-medium text-lg">Have a Coupon Code?</h2>
-                        
-                        @if (!$appliedCoupon)
-                            <div class="flex gap-2">
-                                <div class="flex-1">
-                                    <input type="text" 
-                                           wire:model.live="couponCode" 
-                                           placeholder="Enter coupon code"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                           @keydown.enter="$wire.applyCoupon()">
-                                </div>
-                                <button type="button" 
-                                        wire:click="applyCoupon"
-                                        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
-                                    Apply
-                                </button>
+                        <p class="flex justify-end px-4 py-[2px] max-w-max border bg-white font-medium">
+                            {{ $days }} night
+                        </p>
+                        <div class="p-0">
+                            <p class="flex items-center justify-between text-sm">
+                                <span>Walk-in Price</span>
+                                <span
+                                    class="text-lg font-medium text-gray-500 line-through ">{{ formatAsNaira($hall->price * $days) }}</span>
+                            </p>
+                            <p class="flex items-center justify-between text-sm">
+                                <span>Discounted Price</span>
+                                <span class="text-lg font-bold">{{ formatAsNaira($discountedPrice * $days) }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full space-y-8 overflow-hidden rounded-sm lg:flex-1">
+                    <div class="gap-4 p-4 md:p-0 space-y-4 md:grid-cols-2 lg:grid-cols-4">
+                        <div class="w-full p-4 bg-white border rounded-lg shadow">
+                            <h2 class="text-lg font-semibold mb-2">Hall Details</h2>
+                            <p><span class="font-medium">Name:</span> {{ $hall->name }}</p>
+                            <p><span class="font-medium">Capacity:</span> {{ $hall->capacity }}</p>
+                            <p><span class="font-medium">Description:</span> {!! $hall->description !!}</p>
+                            <p><span class="font-medium">Status:</span> {{ ucfirst($hall->status) }}</p>
+                        </div>
+                    </div>
+                    <div class="w-full space-y-0">
+                        <h1 class="w-full px-4 py-3 font-medium bg-gray-100 border-b md:text-xl tex-lg">Your Details
+                        </h1>
+                        @if (auth()->guard('customers')->check())
+                            <div class="w-full">
+
                             </div>
                         @else
-                            <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="text-green-800 font-medium">
-                                        Coupon "{{ $appliedCoupon->code }}" applied! 
-                                        You save {{ formatAsNaira($couponDiscount) }}
-                                    </span>
-                                </div>
-                                <button type="button" 
-                                        wire:click="removeCoupon"
-                                        class="text-red-500 hover:text-red-700 transition-colors"
-                                        title="Remove coupon">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </button>
+                            <div class="w-full p-4 space-y-4">
+                                {{ $this->form }}
                             </div>
                         @endif
 
-                        @if ($couponError)
-                            <div class="p-3 bg-red-50 border border-red-200 rounded-md">
-                                <div class="flex">
-                                    <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="text-red-800">{{ $couponError }}</span>
+                        @if (count($paymentMethods) > 0)
+                            <div class="w-full p-4 space-y-4">
+                                <h2 class="font-medium text-lg">Select Payment Method</h2>
+                                <div class="flex justify-between gap-8 flex-col md:flex-row">
+                                    @foreach ($paymentMethods as $method)
+                                        <label
+                                            class="flex w-full items-center p-3 border rounded cursor-pointer transition-all hover:bg-gray-50 {{ $selectedPaymentMethod == $method->code ? 'border-primary bg-primary-50' : 'border-gray-200' }}">
+                                            <input type="radio" wire:model.live="selectedPaymentMethod"
+                                                value="{{ $method->code }}" class="mr-2 text-primary">
+                                            <div class="flex items-center">
+                                                @if (in_array($method->code, ['paystack', 'opay']))
+                                                    <img src="{{ asset('img/' . $method->code . '.png') }}"
+                                                        alt="{{ $method->name }}" class="h-8 mr-2">
+                                                @endif
+                                            </div>
+                                        </label>
+                                    @endforeach
                                 </div>
                             </div>
                         @endif
-                    </div>
-                    <div class="flex flex-col md:flex-row flex-wrap gap-8 mx-auto justify-center pt-8 w-full">
-                        <div class="flex w-full md:max-w-max flex-col justify-center items-center">
-                            <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
-                                x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
-                                data-tooltip-placement="top" data-tooltip-target="guarantee"
-                                wire:click="addBooking('PayNow')" type="button"
-                                class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full flex items-center justify-center">
-                                Reserve & Pay Now ( {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days) }} )
-                            </button>
-                            <span>Refundable</span>
-                        </div>
-
-                        @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null)
+                        <div class="flex flex-col md:flex-row flex-wrap gap-8 mx-auto justify-center pt-8 w-full">
                             <div class="flex w-full md:max-w-max flex-col justify-center items-center">
                                 <button x-data="{ disabled: false }" x-bind:disabled="disabled"
                                     x-on:click="disabled = true"
                                     x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
-                                    wire:click="addBooking('NonRefundable')" data-tooltip-placement="top"
-                                    data-tooltip-target="guarantee"
-                                    class="relative flex items-center justify-center font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100 border-primary animate">
-                                    Instant Pay
-                                    {{ formatAsNaira($nonRefundablePrice * $days) }}
-                                    @if ($appliedCoupon)
-                                        <span class="text-xs text-gray-500 ml-1">(Coupon not applicable)</span>
-                                    @endif
+                                    data-tooltip-placement="top" data-tooltip-target="guarantee"
+                                    wire:click="addBooking('PayNow')" type="button"
+                                    class="px-6 py-2 mx-auto font-medium text-white border-2 rounded-sm bg-primary border-primary hover:text-black w-full flex items-center justify-center">
+                                    Reserve & Pay Now ( {{ formatAsNaira($discountedPrice * $days) }})
                                 </button>
-                                <span>(NonRefundable)</span>
+                                <span>Refundable</span>
                             </div>
-                        @endif
-                        <div class=" w-full md:max-w-max">
-                            <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
-                                x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
-                                data-tooltip-placement="top" data-tooltip-target="not-guarantee"
-                                wire:click="addBooking('PayAtHotel')" type="button"
-                                class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black w-full">
-                                Pay on arrival ( {{ $appliedCoupon ? formatAsNaira($this->getFinalPrice()) : formatAsNaira($discountedPrice * $days) }} )
-                            </button>
+
+                            @if ($hotel->non_refundable_price > 0 && !$hotel->non_refundable_price == null)
+                                <div class="flex w-full md:max-w-max flex-col justify-center items-center">
+                                    <button x-data="{ disabled: false }" x-bind:disabled="disabled"
+                                        x-on:click="disabled = true"
+                                        x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
+                                        wire:click="addBooking('NonRefundable')" data-tooltip-placement="top"
+                                        data-tooltip-target="guarantee"
+                                        class="relative flex items-center justify-center font-semibold w-full p-3 px-6 text-primary rounded-sm bg-primary-100 border-primary animate">
+                                        Instant Pay
+                                        {{ formatAsNaira($nonRefundablePrice * $days) }}
+                                    </button>
+                                    <span>(NonRefundable)</span>
+                                </div>
+                            @endif
+                            <div class=" w-full md:max-w-max">
+                                <button x-data="{ disabled: false }" x-bind:disabled="disabled"
+                                    x-on:click="disabled = true"
+                                    x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
+                                    data-tooltip-placement="top" data-tooltip-target="not-guarantee"
+                                    wire:click="addBooking('PayAtHotel')" type="button"
+                                    class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black w-full">
+                                    Pay on arrival ({{ formatAsNaira($discountedPrice * $days) }})
+                                </button>
+                            </div>
                         </div>
+
+                        <x-tooltip id="guarantee" content="Booking is GUARANTEED " />
+                        <x-tooltip id="not-guarantee" content="Booking is subject to Cancellation" />
                     </div>
 
-                    <x-tooltip id="guarantee" content="Booking is GUARANTEED " />
-                    <x-tooltip id="not-guarantee" content="Booking is subject to Cancellation" />
                 </div>
-
             </div>
         </div>
     </div>
-</div>
 
-@push('scripts')
-    <script>
-        document.addEventListener('livewire:initialized', () => {
-            @this.on('swal:success', (event) => {
-                Swal.fire(event.details)
-                setTimeout(() => {
-                    location.reload();
-                }, 10000);
+    @push('scripts')
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+                @this.on('swal:success', (event) => {
+                    Swal.fire(event.details)
+                    setTimeout(() => {
+                        location.reload();
+                    }, 10000);
+                });
             });
-        });
 
-        // Editable dates functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkinContainer = document.querySelector('[data-date-type="checkin"]');
-            const checkoutContainer = document.querySelector('[data-date-type="checkout"]');
+            // Editable dates functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                const checkinContainer = document.querySelector('[data-date-type="checkin"]');
+                const checkoutContainer = document.querySelector('[data-date-type="checkout"]');
 
-            function initializeDateEditor(container, dateType) {
-                const display = container.querySelector('.editable-date');
-                const input = container.querySelector('.date-input');
-                const icon = container.querySelector('svg');
+                function initializeDateEditor(container, dateType) {
+                    const display = container.querySelector('.editable-date');
+                    const input = container.querySelector('.date-input');
+                    const icon = container.querySelector('svg');
 
-                // Show input when clicking on display or icon
-                [display, icon].forEach(element => {
-                    element.addEventListener('click', function() {
-                        display.classList.add('hidden');
-                        input.classList.remove('hidden');
-                        input.focus();
+                    // Show input when clicking on display or icon
+                    [display, icon].forEach(element => {
+                        element.addEventListener('click', function() {
+                            display.classList.add('hidden');
+                            input.classList.remove('hidden');
+                            input.focus();
+                        });
                     });
-                });
 
-                // Handle date changes
-                input.addEventListener('change', function() {
-                    updateSession(dateType, this.value);
-                });
+                    // Handle date changes
+                    input.addEventListener('change', function() {
+                        updateSession(dateType, this.value);
+                    });
 
-                // Hide input on blur or enter
-                input.addEventListener('blur', hideInput);
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        hideInput();
-                    }
-                });
-
-                function hideInput() {
-                    input.classList.add('hidden');
-                    display.classList.remove('hidden');
-                }
-            }
-
-            function updateSession(key, value) {
-                // Add loading state
-                const container = document.querySelector(`[data-date-type="${key}"]`);
-                container.classList.add('date-updating');
-
-                fetch('{{ route('session.update-booking-dates') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            key: key,
-                            value: value
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        container.classList.remove('date-updating');
-
-                        if (data.status === 'success') {
-                            // Update displays with formatted dates
-                            updateDateDisplays(data.data);
-                            updateMinDates(data.data);
-
-                            // Show success feedback
-                            showFeedback('Date updated successfully!', 'success');
-
-                            // Reload page to refresh calculations
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 800);
-                        } else {
-                            showFeedback(data.message || 'Error updating date', 'error');
-                            // Revert input value
-                            loadDatesFromSession();
+                    // Hide input on blur or enter
+                    input.addEventListener('blur', hideInput);
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            hideInput();
                         }
-                    })
-                    .catch(error => {
-                        container.classList.remove('date-updating');
-                        console.error('Error:', error);
-                        showFeedback('Error updating date', 'error');
-                        loadDatesFromSession();
+                    });
+
+                    function hideInput() {
+                        input.classList.add('hidden');
+                        display.classList.remove('hidden');
+                    }
+                }
+
+                function updateSession(key, value) {
+                    // Add loading state
+                    const container = document.querySelector(`[data-date-type="${key}"]`);
+                    container.classList.add('date-updating');
+
+                    fetch('{{ route('session.update-booking-dates') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                key: key,
+                                value: value
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            container.classList.remove('date-updating');
+
+                            if (data.status === 'success') {
+                                // Update displays with formatted dates
+                                updateDateDisplays(data.data);
+                                updateMinDates(data.data);
+
+                                // Show success feedback
+                                showFeedback('Date updated successfully!', 'success');
+
+                                // Reload page to refresh calculations
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 800);
+                            } else {
+                                showFeedback(data.message || 'Error updating date', 'error');
+                                // Revert input value
+                                loadDatesFromSession();
+                            }
+                        })
+                        .catch(error => {
+                            container.classList.remove('date-updating');
+                            console.error('Error:', error);
+                            showFeedback('Error updating date', 'error');
+                            loadDatesFromSession();
+                        });
+                }
+
+                function showFeedback(message, type) {
+                    // Remove existing feedback
+                    const existingFeedback = document.querySelector('.date-feedback');
+                    if (existingFeedback) {
+                        existingFeedback.remove();
+                    }
+
+                    // Create feedback element
+                    const feedback = document.createElement('div');
+                    feedback.className =
+                        `date-feedback fixed top-4 right-4 px-4 py-2 rounded z-50 ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+                    feedback.textContent = message;
+                    document.body.appendChild(feedback);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        feedback.remove();
+                    }, 3000);
+                }
+
+                function updateDateDisplays(dates) {
+                    if (dates.checkin) {
+                        const checkinDate = new Date(dates.checkin);
+                        document.getElementById('checkin-display').textContent = checkinDate.toLocaleDateString(
+                            'en-GB');
+                        document.getElementById('checkin-input').value = dates.checkin;
+                    }
+                    if (dates.checkout) {
+                        const checkoutDate = new Date(dates.checkout);
+                        document.getElementById('checkout-display').textContent = checkoutDate.toLocaleDateString(
+                            'en-GB');
+                        document.getElementById('checkout-input').value = dates.checkout;
+                    }
+                }
+
+                function updateMinDates(dates) {
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('checkin-input').min = today;
+
+                    if (dates.checkin) {
+                        document.getElementById('checkout-input').min = dates.checkin;
+                    }
+                }
+
+                function loadDatesFromSession() {
+                    fetch('{{ route('session.get-booking-dates') }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            updateDateDisplays(data);
+                            updateMinDates(data);
+                        })
+                        .catch(error => console.error('Error loading session dates:', error));
+                }
+
+                // Initialize both date editors
+                if (checkinContainer) initializeDateEditor(checkinContainer, 'checkin');
+                if (checkoutContainer) initializeDateEditor(checkoutContainer, 'checkout');
+
+                // Load initial dates
+                loadDatesFromSession();
+            });
+        </script>
+
+        <script>
+            function makePayment(dat) {
+                const paystack = new PaystackPop();
+                paystack.newTransaction({
+                        key: 'pk_domain_xxxxxxxxxx',
+                        email: data.email,
+                        amount: data.amount,
+                        phone: data.phone,
+                        firstName: data.customer.firstName,
+                        lastName: data.customer.lastName,
+                        currency: 'NGN'
+                    },
+                    onSuccess: (transaction) => {
+                        // Payment complete! Reference: transaction.reference
+                    },
+                    onCancel: () => {
+                        // user closed popup
                     });
             }
-
-            function showFeedback(message, type) {
-                // Remove existing feedback
-                const existingFeedback = document.querySelector('.date-feedback');
-                if (existingFeedback) {
-                    existingFeedback.remove();
-                }
-
-                // Create feedback element
-                const feedback = document.createElement('div');
-                feedback.className =
-                    `date-feedback fixed top-4 right-4 px-4 py-2 rounded z-50 ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
-                feedback.textContent = message;
-                document.body.appendChild(feedback);
-
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    feedback.remove();
-                }, 3000);
-            }
-
-            function updateDateDisplays(dates) {
-                if (dates.checkin) {
-                    const checkinDate = new Date(dates.checkin);
-                    document.getElementById('checkin-display').textContent = checkinDate.toLocaleDateString(
-                    'en-GB');
-                    document.getElementById('checkin-input').value = dates.checkin;
-                }
-                if (dates.checkout) {
-                    const checkoutDate = new Date(dates.checkout);
-                    document.getElementById('checkout-display').textContent = checkoutDate.toLocaleDateString(
-                        'en-GB');
-                    document.getElementById('checkout-input').value = dates.checkout;
-                }
-            }
-
-            function updateMinDates(dates) {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('checkin-input').min = today;
-
-                if (dates.checkin) {
-                    document.getElementById('checkout-input').min = dates.checkin;
-                }
-            }
-
-            function loadDatesFromSession() {
-                fetch('{{ route('session.get-booking-dates') }}')
-                    .then(response => response.json())
-                    .then(data => {
-                        updateDateDisplays(data);
-                        updateMinDates(data);
-                    })
-                    .catch(error => console.error('Error loading session dates:', error));
-            }
-
-            // Initialize both date editors
-            if (checkinContainer) initializeDateEditor(checkinContainer, 'checkin');
-            if (checkoutContainer) initializeDateEditor(checkoutContainer, 'checkout');
-
-            // Load initial dates
-            loadDatesFromSession();
-        });
-    </script>
-
-    <script>
-        function makePayment(dat) {
-            const paystack = new PaystackPop();
-            paystack.newTransaction({
-                    key: 'pk_domain_xxxxxxxxxx',
-                    email: data.email,
-                    amount: data.amount,
-                    phone: data.phone,
-                    firstName: data.customer.firstName,
-                    lastName: data.customer.lastName,
-                    currency: 'NGN'
-                },
-                onSuccess: (transaction) => {
-                    // Payment complete! Reference: transaction.reference
-                },
-                onCancel: () => {
-                    // user closed popup
-                });
-        }
-    </script>
-@endpush
+        </script>
+    @endpush
