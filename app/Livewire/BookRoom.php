@@ -6,6 +6,7 @@ use App\Models\Room;
 use App\Models\Type;
 use App\Models\Booking;
 use App\Models\Invoice;
+use App\Models\Coupon;
 use Livewire\Component;
 use App\Models\Customer;
 use Filament\Forms\Form;
@@ -45,6 +46,13 @@ class BookRoom extends Component implements HasForms
     public $checkinDate;
     public $checkoutDate;
 
+    // Coupon properties
+    public $couponCode = '';
+    public $appliedCoupon = null;
+    public $couponDiscount = 0;
+    public $couponError = '';
+    public $showCouponSuccess = false;
+
     public function form(Form $form): Form
     {
         return $form
@@ -74,6 +82,94 @@ class BookRoom extends Component implements HasForms
         // ->statePath('data');
     }
 
+    /**
+     * Apply coupon code
+     */
+    public function applyCoupon()
+    {
+        $this->couponError = '';
+        $this->showCouponSuccess = false;
+
+        if (empty($this->couponCode)) {
+            $this->couponError = 'Please enter a coupon code.';
+            return;
+        }
+
+        // Find the coupon
+        $coupon = Coupon::byCode($this->couponCode)->first();
+
+        if (!$coupon) {
+            $this->couponError = 'Coupon code not found.';
+            return;
+        }
+
+        // Validate the coupon
+        if (!$coupon->isValid()) {
+            $this->couponError = $coupon->getValidationMessage();
+            return;
+        }
+
+        // Calculate discount
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->category->price1 * $days * count($this->checked);
+        $discount = $coupon->calculateDiscount($originalPrice);
+
+        $this->appliedCoupon = $coupon;
+        $this->couponDiscount = $discount;
+        $this->showCouponSuccess = true;
+        
+        // Dispatch event to update frontend
+        $this->dispatch('coupon-applied', [
+            'discount' => $discount,
+            'couponCode' => $this->couponCode
+        ]);
+    }
+
+    /**
+     * Remove applied coupon
+     */
+    public function removeCoupon()
+    {
+        $this->appliedCoupon = null;
+        $this->couponDiscount = 0;
+        $this->couponCode = '';
+        $this->couponError = '';
+        $this->showCouponSuccess = false;
+        
+        // Dispatch event to update frontend
+        $this->dispatch('coupon-removed');
+    }
+
+    /**
+     * Get the final price after discount
+     */
+    public function getFinalPrice(): float
+    {
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->category->price1 * $days * count($this->checked);
+        
+        // Apply platform discount first
+        $platformDiscountedPrice = calculateRemainingAmount($originalPrice, $this->category->hotel->online_price);
+        
+        // Then apply coupon discount (deducted from platform commission)
+        return $platformDiscountedPrice - $this->couponDiscount;
+    }
+
+    /**
+     * Get the non-refundable final price after discount
+     */
+    public function getNonRefundableFinalPrice(): float
+    {
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->category->price1 * $days * count($this->checked);
+        
+        // Apply platform discount first
+        $platformDiscountedPrice = calculateRemainingAmount($originalPrice, $this->category->hotel->non_refundable_price);
+        
+        // Then apply coupon discount (deducted from platform commission)
+        return $platformDiscountedPrice - $this->couponDiscount;
+    }
+
 
     public function addBooking($type)
     {
@@ -84,62 +180,78 @@ class BookRoom extends Component implements HasForms
                 'title' => 'No Room selected'
             ];
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
-        } else {
-            $rooms = Room::whereIn('id', $this->checked)->get();
-            $customer = $this->getOrCreateCustomer($this->form->getState());
-
-            $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
-
-            $data['checked_in'] = Session::get('checkin');
-            $data['checked_out'] = Session::get('checkout');
-            $data['payment_method'] = $this->selectedPaymentMethod; // Store selected payment method
-
-            if ($type == 'NonRefundable') {
-                $data['discount'] = $this->category->hotel->non_refundable_price;
-                $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->non_refundable_price);
-                $this->due = calculateRemainingAmount($this->category->price1 * $days * count($this->checked), $this->category->hotel->non_refundable_price);
-            } else {
-
-                $data['discount'] = $this->category->hotel->online_price;
-                $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->online_price);
-                $this->due = calculateRemainingAmount($this->category->price1 * $days * count($this->checked), $this->category->hotel->online_price);
-            }
-
-            $data['type'] = $type;
-
-            // booking invoice
-            $invoice = BookingInvoice::create([
-                'customer_id' => $customer->id,
-                'hotel_id' => $this->category->hotel_id,
-                'amount' => $this->due,
-                'type' => $data['type'],
-                'status' => 'unpaid',
-                'payment_method' => $this->selectedPaymentMethod, // Store selected payment method
-                'checked_in' => $data['checked_in'], // ensure checkin is saved
-                'checked_out' => $data['checked_out'], // ensure checkout is saved
-            ]);
-
-            // Calculate and save commission amounts
-            $invoice->calculateAndSaveCommission();
-
-            $data['booking_invoice_id'] = $invoice->id;
-
-            // create bookings
-            foreach ($rooms as $room) {
-                $data['bookable_id'] = $room->id;
-                $created = $this->createBooking($room, $data, $customer);
-            }
-
-            // associate customer if not exist before
-            $this->associateCustomer($customer->id);
         }
 
+        // Prevent coupon usage for non-refundable bookings
+        if ($type == 'NonRefundable' && $this->appliedCoupon) {
+            $details = [
+                'icon' => 'error',
+                'text' => 'Coupons cannot be applied to non-refundable bookings.',
+                'title' => 'Coupon Not Applicable'
+            ];
+            return $this->dispatch('swal:success', details: sweetAlert(...$details));
+        }
 
+        $rooms = Room::whereIn('id', $this->checked)->get();
+        $customer = $this->getOrCreateCustomer($this->form->getState());
 
-        // // update the due amount
-        // $booking = $this->calculateDue($created, $$this->category);
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+
+        $data['checked_in'] = Session::get('checkin');
+        $data['checked_out'] = Session::get('checkout');
+        $data['payment_method'] = $this->selectedPaymentMethod; // Store selected payment method
+        $data['coupon_id'] = $this->appliedCoupon ? $this->appliedCoupon->id : null; // Store coupon
+
+        if ($type == 'NonRefundable') {
+            $data['discount'] = $this->category->hotel->non_refundable_price;
+            $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->non_refundable_price);
+            $this->due = $this->getNonRefundableFinalPrice();
+        } else {
+            $data['discount'] = $this->category->hotel->online_price;
+            $data['due'] = calculateRemainingAmount($this->category->price1 * $days, $this->category->hotel->online_price);
+            $this->due = $this->getFinalPrice();
+        }
+
+        $data['type'] = $type;
+
+        // booking invoice
+        $invoice = BookingInvoice::create([
+            'customer_id' => $customer->id,
+            'hotel_id' => $this->category->hotel_id,
+            'amount' => $this->due,
+            'type' => $data['type'],
+            'status' => 'unpaid',
+            'payment_method' => $this->selectedPaymentMethod, // Store selected payment method
+            'checked_in' => $data['checked_in'], // ensure checkin is saved
+            'checked_out' => $data['checked_out'], // ensure checkout is saved
+            'coupon_id' => $data['coupon_id'], // Store coupon reference
+        ]);
+
+        // Calculate and save commission amounts
+        $invoice->calculateAndSaveCommission();
+
+        $data['booking_invoice_id'] = $invoice->id;
+
+        // create bookings
+        foreach ($rooms as $room) {
+            $data['bookable_id'] = $room->id;
+            $created = $this->createBooking($room, $data, $customer);
+        }
+
+        // associate customer if not exist before
+        $this->associateCustomer($customer->id);
+
+        // Increment coupon usage count if coupon was applied
+        if ($this->appliedCoupon && $type !== 'PayAtHotel') {
+            $this->appliedCoupon->incrementUsage();
+        }
 
         if ($type == 'PayAtHotel') {
+            // Increment coupon usage for pay at hotel as well
+            if ($this->appliedCoupon) {
+                $this->appliedCoupon->incrementUsage();
+            }
+            
             $details = [
                 'text' => 'Please check your email for confirmation
 Kindly note that UNPAID Bookings are subject to

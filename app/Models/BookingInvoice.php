@@ -16,7 +16,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class BookingInvoice extends Model
 {
     use HasFactory, SoftDeletes, BelongToHotel;
-    protected $guarded = [];
+    
+    protected $fillable = [
+        'customer_id',
+        'hotel_id',
+        'amount',
+        'type',
+        'status',
+        'payment_method',
+        'checked_in',
+        'checked_out',
+        'coupon_id',
+        'commission_amount',
+        'hotel_payable',
+        'reference',
+        'date_paid'
+    ];
 
     protected $casts = [
         'created_at' => 'datetime',
@@ -90,6 +105,11 @@ class BookingInvoice extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function refund()

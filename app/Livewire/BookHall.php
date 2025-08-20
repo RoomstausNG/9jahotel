@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Hall;
 use App\Models\Booking;
 use App\Models\Invoice;
+use App\Models\Coupon;
 use Livewire\Component;
 use App\Models\Customer;
 use Filament\Forms\Form;
@@ -38,6 +39,13 @@ class BookHall extends Component implements HasForms
 
     public $checkinDate;
     public $checkoutDate;
+
+    // Coupon properties
+    public $couponCode = '';
+    public $appliedCoupon = null;
+    public $couponDiscount = 0;
+    public $couponError = '';
+    public $showCouponSuccess = false;
 
     public function updatedCheckinDate($value)
     {
@@ -75,6 +83,94 @@ class BookHall extends Component implements HasForms
             ])->columns(2);
     }
 
+    /**
+     * Apply coupon code
+     */
+    public function applyCoupon()
+    {
+        $this->couponError = '';
+        $this->showCouponSuccess = false;
+
+        if (empty($this->couponCode)) {
+            $this->couponError = 'Please enter a coupon code.';
+            return;
+        }
+
+        // Find the coupon
+        $coupon = Coupon::byCode($this->couponCode)->first();
+
+        if (!$coupon) {
+            $this->couponError = 'Coupon code not found.';
+            return;
+        }
+
+        // Validate the coupon
+        if (!$coupon->isValid()) {
+            $this->couponError = $coupon->getValidationMessage();
+            return;
+        }
+
+        // Calculate discount
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->hall->price * $days;
+        $discount = $coupon->calculateDiscount($originalPrice);
+
+        $this->appliedCoupon = $coupon;
+        $this->couponDiscount = $discount;
+        $this->showCouponSuccess = true;
+        
+        // Dispatch event to update frontend
+        $this->dispatch('coupon-applied', [
+            'discount' => $discount,
+            'couponCode' => $this->couponCode
+        ]);
+    }
+
+    /**
+     * Remove applied coupon
+     */
+    public function removeCoupon()
+    {
+        $this->appliedCoupon = null;
+        $this->couponDiscount = 0;
+        $this->couponCode = '';
+        $this->couponError = '';
+        $this->showCouponSuccess = false;
+        
+        // Dispatch event to update frontend
+        $this->dispatch('coupon-removed');
+    }
+
+    /**
+     * Get the final price after discount
+     */
+    public function getFinalPrice(): float
+    {
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->hall->price * $days;
+        
+        // Apply platform discount first
+        $platformDiscountedPrice = calculateRemainingAmount($originalPrice, $this->hall->hotel->online_price);
+        
+        // Then apply coupon discount (deducted from platform commission)
+        return $platformDiscountedPrice - $this->couponDiscount;
+    }
+
+    /**
+     * Get the non-refundable final price after discount
+     */
+    public function getNonRefundableFinalPrice(): float
+    {
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        $originalPrice = $this->hall->price * $days;
+        
+        // Apply platform discount first
+        $platformDiscountedPrice = calculateRemainingAmount($originalPrice, $this->hall->hotel->non_refundable_price);
+        
+        // Then apply coupon discount (deducted from platform commission)
+        return $platformDiscountedPrice - $this->couponDiscount;
+    }
+
     public function addBooking($type)
     {
         if (!$this->hall) {
@@ -84,50 +180,71 @@ class BookHall extends Component implements HasForms
                 'title' => 'No Hall selected'
             ];
             return $this->dispatch('swal:success', details: sweetAlert(...$details));
+        }
+
+        // Prevent coupon usage for non-refundable bookings
+        if ($type == 'NonRefundable' && $this->appliedCoupon) {
+            $details = [
+                'icon' => 'error',
+                'text' => 'Coupons cannot be applied to non-refundable bookings.',
+                'title' => 'Coupon Not Applicable'
+            ];
+            return $this->dispatch('swal:success', details: sweetAlert(...$details));
+        }
+
+        $hall = $this->hall;
+        $customer = $this->getOrCreateCustomer($this->form->getState());
+
+        $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+
+        $data['checked_in'] = Session::get('checkin');
+        $data['checked_out'] = Session::get('checkout');
+        $data['coupon_id'] = $this->appliedCoupon ? $this->appliedCoupon->id : null; // Store coupon
+
+        if ($type == 'NonRefundable') {
+            $data['discount'] = $this->hall->hotel->non_refundable_price;
+            $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
+            $this->due = $this->getNonRefundableFinalPrice();
         } else {
-            $hall = $this->hall;
-            $customer = $this->getOrCreateCustomer($this->form->getState());
+            $data['discount'] = $this->hall->hotel->online_price;
+            $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->online_price);
+            $this->due = $this->getFinalPrice();
+        }
 
-            $days = calculateDateDifferenceInDays(Session::get('checkin'), Session::get('checkout'));
+        // booking invoice
+        $invoice = BookingInvoice::create([
+            'customer_id' => $customer->id,
+            'hotel_id' => $this->hall->hotel_id,
+            'amount' => $this->due,
+            'status' => 'unpaid',
+            'checked_in' => $data['checked_in'], // ensure checkin is saved
+            'checked_out' => $data['checked_out'], // ensure checkout is saved
+            'coupon_id' => $data['coupon_id'], // Store coupon reference
+        ]);
 
-            $data['checked_in'] = Session::get('checkin');
-            $data['checked_out'] = Session::get('checkout');
-            if ($type == 'NonRefundable') {
-                $data['discount'] = $this->hall->hotel->non_refundable_price;
-                $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
-                $this->due = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->non_refundable_price);
-            } else {
-                $data['discount'] = $this->hall->hotel->online_price;
-                $data['due'] = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->online_price);
-                $this->due = calculateRemainingAmount($this->hall->price * $days, $this->hall->hotel->online_price);
-            }
+        // Calculate and save commission amounts
+        $invoice->calculateAndSaveCommission();
 
-            // booking invoice
-            $invoice = BookingInvoice::create([
-                'customer_id' => $customer->id,
-                'hotel_id' => $this->hall->hotel_id,
-                'amount' => $this->due,
-                'status' => 'unpaid',
-                'checked_in' => $data['checked_in'], // ensure checkin is saved
-                'checked_out' => $data['checked_out'], // ensure checkout is saved
-            ]);
+        $data['booking_invoice_id'] = $invoice->id;
 
-            // Calculate and save commission amounts
-            $invoice->calculateAndSaveCommission();
+        // create bookings
+        $data['bookable_id'] = $hall->id;
+        $created = $this->createBooking($hall, $data, $customer);
 
-            $data['booking_invoice_id'] = $invoice->id;
+        // associate customer if not exist before
+        $this->associateCustomer($customer->id);
 
-            // create bookings
-
-            $data['bookable_id'] = $hall->id;
-            $created = $this->createBooking($hall, $data, $customer);
-
-
-            // associate customer if not exist before
-            $this->associateCustomer($customer->id);
+        // Increment coupon usage count if coupon was applied
+        if ($this->appliedCoupon && $type !== 'PayAtHotel') {
+            $this->appliedCoupon->incrementUsage();
         }
 
         if ($type == 'PayAtHotel') {
+            // Increment coupon usage for pay at hotel as well
+            if ($this->appliedCoupon) {
+                $this->appliedCoupon->incrementUsage();
+            }
+            
             $details = [
                 'text' => 'Please check your email for confirmation\nKindly note that UNPAID Bookings are subject to\ncancellation with or without notice by the Hotel.',
                 'title' => 'Your Booking is Received!'
