@@ -159,29 +159,69 @@ class BookingInvoice extends Model
      */
     public function calculateAndSaveCommission()
     {
-        // Load hotel relationship if not already loaded
+        // Ensure relations are loaded
         if (!$this->relationLoaded('hotel') && $this->hotel_id) {
             $this->load('hotel');
         }
 
-        // Skip calculation if no hotel or amount
-        if (!$this->hotel || !$this->amount) {
-            return;
+        // We'll try to compute the original (pre-coupon) amount from associated bookings.
+        // Original amount = sum(booking_base_price * days - online_discount_for_booking)
+        $originalAmount = 0.0;
+        if (!$this->relationLoaded('bookings')) {
+            $this->load('bookings.bookable');
         }
 
-        // Get the commission percentage from hotel (default to 10% if not set)
+        foreach ($this->bookings as $booking) {
+            $bookable = $booking->bookable;
+            if (!$bookable) {
+                continue;
+            }
+
+            // Determine price field: rooms use price1, halls may use price
+            $price = $bookable->price1 ?? $bookable->price ?? 0;
+            $days = calculateDateDifferenceInDays($booking->checked_in, $booking->checked_out);
+            $normal = $price * $days;
+            $onlineDiscountPercent = $booking->discount ?? 0; // percent stored on booking
+            $onlineDiscountAmount = ($normal * ($onlineDiscountPercent / 100));
+            $originalBookingAmount = $normal - $onlineDiscountAmount;
+            $originalAmount += $originalBookingAmount;
+        }
+
+        // If we could not derive an original amount (no bookings), fallback to previous logic using invoice amount
+        if ($originalAmount <= 0) {
+            // Fallback: use invoice amount as original (best-effort)
+            $originalAmount = $this->amount;
+        }
+
+        // Get commission percentage
         $percentage = $this->hotel->percentage_charge ?? 10;
 
-        // Calculate commission amount
-        $commissionAmount = ($percentage / 100) * $this->amount;
+        // Original commission based on pre-coupon amount
+        $originalCommission = ($percentage / 100) * $originalAmount;
 
-        // Calculate hotel payable (total amount minus commission)
-        $hotelPayable = $this->amount - $commissionAmount;
+        // Compute coupon discount against original amount if coupon set
+        $couponDiscount = 0.0;
+        if ($this->coupon_id) {
+            try {
+                $coupon = \App\Models\Coupon::find($this->coupon_id);
+                if ($coupon) {
+                    $couponDiscount = $coupon->calculateDiscount((float)$originalAmount);
+                }
+            } catch (\Exception $e) {
+                $couponDiscount = 0.0;
+            }
+        }
 
-        // Update the fields
+        // Commission after absorbing coupon discount (never negative)
+        $commissionAfterCoupon = max(0, $originalCommission - $couponDiscount);
+
+        // Hotel payable remains based on original pre-coupon calculation
+        $hotelPayable = $originalAmount - $originalCommission;
+
+        // Persist rounded values
         $this->update([
-            'commission_amount' => round($commissionAmount),
-            'hotel_payable' => round($hotelPayable)
+            'commission_amount' => round($commissionAfterCoupon, 2),
+            'hotel_payable' => round($hotelPayable, 2),
         ]);
     }
 
