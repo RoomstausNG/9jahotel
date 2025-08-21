@@ -268,18 +268,18 @@
                                 <span>(NonRefundable)</span>
                             </div>
                         @endif
-                        @if (!$appliedCoupon)
-                            <div class="w-full md:max-w-max">
-                                <button x-data="{ disabled: false }" x-bind:disabled="disabled"
-                                    x-on:click="disabled = true"
-                                    x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
-                                    data-tooltip-placement="top" data-tooltip-target="not-guarantee"
-                                    wire:click="addBooking('PayAtHotel')" type="button"
-                                    class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">
-                                    Pay on arrival ({{ formatAsNaira($this->getFinalPrice()) }})
-                                </button>
-                            </div>
-                        @endif
+                        <div class="w-full md:max-w-max">
+                            <button x-data="{ disabled: false }" x-bind:disabled="disabled" x-on:click="disabled = true"
+                                x-bind:class="disabled ? 'cursor-not-allowed opacity-50' : ''"
+                                data-tooltip-placement="top" data-tooltip-target="not-guarantee"
+                                wire:click="addBooking('PayAtHotel')" type="button"
+                                class="px-6 py-2 mx-auto font-medium rounded-sm text-primary border-2 border-primary bg-white hover:text-black md:max-w-max w-full">
+                                Pay on arrival ({{ formatAsNaira($basePrice - $onlineDiscountAmount) }})
+                            </button>
+                            @if ($appliedCoupon)
+                                <div class="text-xs text-gray-500 mt-1">Coupon does not apply to pay on arrival.</div>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- <div class="flex items-center justify-center -pt-8 p-0">
