@@ -1,0 +1,36 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+.qodo
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
+.qodo
+
+# Tauri files that should not be pushed
+src-tauri/target/
+src-tauri/gen/
+src-tauri/Cargo.lock
+src-tauri/WixTools/
+src-tauri/*.log
+src-tauri/.cargo/
+src-tauri/icons/
+src-tauri/binaries/

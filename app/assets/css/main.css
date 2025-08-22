@@ -1,0 +1,162 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+
+@theme static {
+  --color-primary: #014222;
+  --color-primary-50: #effef4;
+  --color-primary-100: #d9ffea;
+  --color-primary-200: #b5fdd5;
+  --color-primary-300: #7bfab5;
+  --color-primary-400: #3bed8d;
+  --color-primary-500: #014222;
+  --color-primary-600: #07b256;
+  --color-primary-700: #0a8b46;
+  --color-primary-800: #0e6d3b;
+  --color-primary-900: #0d5a33;
+  --color-primary-950: #014222;
+
+
+
+  --color-tael: #008282;
+  --color-tael-50: #eefffc;
+  --color-tael-100: #c5fffa;
+  --color-tael-200: #8bfff5;
+  --color-tael-300: #4afef0;
+  --color-tael-400: #15ece2;
+  --color-tael-500: #00d0c9;
+  --color-tael-600: #00a8a5;
+  --color-tael-700: #008282;
+  --color-tael-800: #066769;
+  --color-tael-900: #0a5757;
+  --color-tael-950: #003235;
+
+  --color-zuccini-50: #effef4;
+  --color-zuccini-100: #d9ffea;
+  --color-zuccini-200: #b5fdd5;
+  --color-zuccini-300: #7bfab5;
+  --color-zuccini-400: #3bed8d;
+  --color-zuccini-500: #014222;
+  --color-zuccini-600: #07b256;
+  --color-zuccini-700: #0a8b46;
+  --color-zuccini-800: #0e6d3b;
+  --color-zuccini-900: #0d5a33;
+  --color-zuccini-950: #014222;
+
+
+
+
+  --font-playfair: Playfair, serif;
+}
+
+.body,
+body,
+html {
+  background-color: var(--color-primary-950, #014222) !important;
+}
+
+
+/* Splash Screen Background Pattern */
+.bg-dots {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Homepage slideshow animations */
+.slideshow-enter-active {
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slideshow-leave-active {
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: absolute;
+  width: 100%;
+}
+
+.slideshow-enter-from {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+}
+
+.slideshow-leave-to {
+  opacity: 0;
+  transform: translateY(-30px) scale(0.95);
+}
+
+/* Enhanced button hover effects */
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient animation for background */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-gradient-animated {
+  background: linear-gradient(-45deg, var(--color-primary-600), var(--color-primary-500), var(--color-elephant-600), var(--color-primary-400));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* Prevent flash of unstyled content */
+html {
+  visibility: hidden;
+  color-scheme: light;
+  /* Force light color scheme */
+}
+
+html.nuxt-loading {
+  visibility: hidden;
+}
+
+/* Page transition styles */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter-from {
+  transform: translateX(100%);
+}
+
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+
+/* Force light mode - override dark mode media queries */
+* {
+  color-scheme: light !important;
+}
+
+html,
+body {
+  color-scheme: light !important;
+}
+
+/* Disable dark mode media queries */
+@media (prefers-color-scheme: dark) {
+  * {
+    color-scheme: light !important;
+  }
+}

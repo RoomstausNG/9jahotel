@@ -1,0 +1,51 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "tauri": "tauri",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.34",
+    "@iconify-json/simple-icons": "^1.2.30",
+    "@nuxt/fonts": "0.11.0",
+    "@nuxt/icon": "1.11.0",
+    "@nuxt/image": "1.10.0",
+    "@nuxt/scripts": "0.11.5",
+    "@nuxt/ui": "^3.0.2",
+    "@nuxtjs/device": "3.2.4",
+    "@paystack/inline-js": "^2.22.6",
+    "@pinia/nuxt": "^0.11.1",
+    "@unhead/vue": "^2.0.0-rc.8",
+    "@vueuse/nuxt": "13.0.0",
+    "canvas-confetti": "^1.9.3",
+    "leaflet": "^1.9.4",
+    "nuxt": "^3.16.2",
+    "nuxt-auth-utils": "0.5.18",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.3.0",
+    "sharp": "^0.34.2",
+    "tauri-plugin-store-api": "^0.0.0",
+    "vue": "^3.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@iconify-json/devicon": "^1.2.30",
+    "@iconify-json/material-symbols": "^1.2.28",
+    "@nuxt/eslint": "^1.3.0",
+    "@tauri-apps/cli": "^2.6.2",
+    "eslint": "^9.23.0",
+    "typescript": "^5.8.2"
+  },
+  "trustedDependencies": [
+    "@parcel/watcher",
+    "@tailwindcss/oxide"
+  ]
+}
