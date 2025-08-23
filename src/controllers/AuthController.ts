@@ -1,3 +1,21 @@
+  async deleteAccount(c: Context) {
+    try {
+      const user = c.get("user");
+      if (!user || !user.id) {
+        return ApiResponse.failure("User not authenticated", 401);
+      }
+
+      // Call service to delete user
+      const result = await this.authService.deleteAccount(user.id);
+      if (result.success) {
+        return ApiResponse.success(null, "Account deleted successfully");
+      } else {
+        return ApiResponse.failure(result.message || "Failed to delete account", 500);
+      }
+    } catch (error: any) {
+      return ApiResponse.failure(error.message || "Failed to delete account", 500);
+    }
+  }
 import { Context } from "hono";
 import { AuthService } from "../services/AuthService";
 import { ApiResponse } from "../utils/ApiResponse";
@@ -6,6 +24,24 @@ import { customerSchema } from "../validators/customer-schema";
 
 @injectable()
 export class AuthController {
+  async deleteAccount(c: Context) {
+    try {
+      const user = c.get("user");
+      if (!user || !user.id) {
+        return ApiResponse.failure("User not authenticated", 401);
+      }
+
+      // Call service to delete user
+      const result = await this.authService.deleteAccount(user.id);
+      if (result.success) {
+        return ApiResponse.success(null, "Account deleted successfully");
+      } else {
+        return ApiResponse.failure(result.message || "Failed to delete account", 500);
+      }
+    } catch (error: any) {
+      return ApiResponse.failure(error.message || "Failed to delete account", 500);
+    }
+  }
   constructor(@inject(AuthService) private authService: AuthService) {}
 
   async register(c: Context) {

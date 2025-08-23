@@ -1,3 +1,7 @@
+// ...existing code...
+
+// Delete account route
+authRoutes.delete("/delete-account", authMiddleware, (c) => authController.deleteAccount(c));
 import { zValidator } from "./../validators/validator-wrapper";
 import { Hono } from "hono";
 import { AuthController } from "../controllers/AuthController";
@@ -74,3 +78,5 @@ authRoutes.patch("/reset-password", zValidator("json", ResetPasswordDto), (c) =>
 );
 
 export default authRoutes;
+// Delete account route
+authRoutes.delete("/delete-account", authMiddleware, (c) => authController.deleteAccount(c));
