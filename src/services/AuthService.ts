@@ -38,17 +38,25 @@ export class AuthService {
   /**
    * Delete authenticated customer account by ID
    */
-  async deleteAccount(userId: number): Promise<{ success: boolean; message?: string }> {
+  async deleteAccount(
+    userId: number
+  ): Promise<{ success: boolean; message?: string }> {
     try {
       // Delete customer from database
       const result = await db.delete(customers).where(eq(customers.id, userId));
       if (result.affectedRows && result.affectedRows > 0) {
         return { success: true };
       } else {
-        return { success: false, message: "Account not found or already deleted" };
+        return {
+          success: false,
+          message: "Account not found or already deleted",
+        };
       }
     } catch (error: any) {
-      return { success: false, message: error.message || "Failed to delete account" };
+      return {
+        success: false,
+        message: error.message || "Failed to delete account",
+      };
     }
   }
   constructor(@inject(EmailService) private emailService: EmailService) {} // Inject EmailService

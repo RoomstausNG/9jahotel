@@ -1,7 +1,7 @@
 // ...existing code...
 
 // Delete account route
-authRoutes.delete("/delete-account", authMiddleware, (c) => authController.deleteAccount(c));
+
 import { zValidator } from "./../validators/validator-wrapper";
 import { Hono } from "hono";
 import { AuthController } from "../controllers/AuthController";
@@ -27,6 +27,10 @@ const authController = container.get(AuthController);
 // Customer registration and authentication routes
 authRoutes.post("/register", zValidator("json", CreateUserDto), (c) =>
   authController.register(c)
+);
+
+authRoutes.delete("/delete-account", authMiddleware, (c) =>
+  authController.deleteAccount(c)
 );
 
 authRoutes.post("/login", zValidator("json", LoginDto), (c) =>
@@ -79,4 +83,6 @@ authRoutes.patch("/reset-password", zValidator("json", ResetPasswordDto), (c) =>
 
 export default authRoutes;
 // Delete account route
-authRoutes.delete("/delete-account", authMiddleware, (c) => authController.deleteAccount(c));
+authRoutes.delete("/delete-account", authMiddleware, (c) =>
+  authController.deleteAccount(c)
+);
