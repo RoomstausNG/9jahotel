@@ -139,3 +139,4 @@ Route::get("/booking/refund/{invoice:reference}", RRequest::class)->name('bookin
 Route::get('/booking/failed', function () {
     return view('booking.failed');
 })->name('booking.failed');
+Route::get('/account-termination', \App\Livewire\AccountTermination::class)->name('account.termination');
