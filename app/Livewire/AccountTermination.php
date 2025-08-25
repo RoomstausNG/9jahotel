@@ -7,6 +7,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Bus;
+use Livewire\Attributes\Layout;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -37,6 +38,7 @@ class AccountTermination extends Component
         }
     }
 
+    #[Layout('components.layouts.frontend')]
     public function render()
     {
         return view('livewire.account-termination');
