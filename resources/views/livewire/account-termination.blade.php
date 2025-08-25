@@ -17,8 +17,16 @@
         @endif
     </div>
 </div>
-<script>
-    window.addEventListener('swal:success', event => {
-        alert(event.detail.text);
-    });
-</script>
+
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            @this.on('swal:success', (event) => {
+                Swal.fire(event.details)
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            });
+        });
+    </script>
+@endpush

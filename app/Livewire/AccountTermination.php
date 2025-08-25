@@ -33,9 +33,19 @@ class AccountTermination extends Component
             DeleteCustomerJob::dispatch($customer->id);
             $this->showConfirmation = true;
             $this->message = 'Your account deletion request has been received and will be processed shortly.';
+            $this->dispatchBrowserEvent('swal:success', [
+                'text' => $this->message,
+                'title' => 'Account Deletion Requested',
+            ]);
         } else {
+            $this->showConfirmation = false;
             $this->message = 'No account found with this email.';
+            $this->dispatchBrowserEvent('swal:success', [
+                'text' => $this->message,
+                'title' => 'Notice',
+            ]);
         }
+        $this->reset('email');
     }
 
     #[Layout('components.layouts.frontend')]
