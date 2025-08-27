@@ -356,9 +356,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 }
 
-const loginWithGoogle = () => console.log("Login with Google");
-const loginWithApple = () => console.log("Login with Apple");
-
 useHead({
   title: "Register - 9jahotel",
   meta: [

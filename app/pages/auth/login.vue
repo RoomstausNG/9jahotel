@@ -90,7 +90,7 @@
             {{ isLoading ? "Logging in..." : "Log In" }}
           </UButton>
         </UForm>
-        <div class="space-y-4">
+        <!-- <div class="space-y-4">
           <div class="relative">
             <div class="absolute inset-0 flex items-center">
               <div class="w-full border-t border-gray-300" />
@@ -129,7 +129,7 @@
               Sign Up
             </NuxtLink>
           </div>
-        </div>
+        </div> -->
       </div>
       <ContinueWithoutAccount />
     </div>
