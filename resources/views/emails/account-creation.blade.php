@@ -317,7 +317,7 @@
                         <tr style="border-collapse:collapse">
                             <td cellpadding="0" cellspacing="0" border="0"
                                 style="padding:0;Margin:0;line-height:1px;min-width:600px" height="0">
-                                <img src="https://roomstatus.ng/img/logo.png"
+                                <img src="https://9jahotel.com/img/9jahotel_logo.png"
                                     style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;max-height:0px;min-height:0px;min-width:600px;width:600px"
                                     alt="Al-Ansar Academy Suleja" width="600" height="1">
                             </td>
@@ -385,7 +385,8 @@
                                                                 <td align="center"
                                                                     style="padding:0;Margin:0;font-size:0px">
                                                                     <img class="adapt-img"
-                                                                        src="https://roomstatus.ng/img/logo.png" alt
+                                                                        src="https://9jahotel.com/img/9jahotel_logo.png"
+                                                                        alt
                                                                         style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
                                                                         width="80">
                                                                 </td>
