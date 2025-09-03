@@ -448,19 +448,40 @@
                                                                 <td class="es-m-txt-l" bgcolor="#ffffff"
                                                                     align="left"
                                                                     style="Margin:0;padding-top:20px;padding-bottom:20px;padding-left:30px;padding-right:30px">
+                                                                    @php $is9jahotelStaff = !$user->hotel || in_array($user->current_role, ['backoffice', 'back-office', 'marketer']); @endphp
                                                                     <p
                                                                         style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">
-                                                                        Welcome to {{ strtoupper($user->hotel->name) }}!
-                                                                        We’re excited to have you on board as our new
-                                                                        {{ $user->current_role }}. Your login details
-                                                                        are as follows:
-                                                                        hotel code {{ strtoupper($user->hotel->code) }}
-                                                                        ,
-                                                                        username
-                                                                        {{ $user->username }}. Please log in with your
-                                                                        designated hotel code and username. For your
-                                                                        password, please contact your manager or the
-                                                                        individual who set up your account.
+                                                                        @if ($is9jahotelStaff)
+                                                                            Welcome to 9jahotel!
+                                                                            We’re excited to have you on board as our
+                                                                            new
+                                                                            {{ $user->current_role }}. Your login
+                                                                            details
+                                                                            are as follows:
+                                                                            username
+                                                                            {{ $user->username }}. Please log in with
+                                                                            your
+                                                                            username. For your
+                                                                            password, please contact your manager or the
+                                                                            individual who set up your account.
+                                                                        @else
+                                                                            Welcome to
+                                                                            {{ strtoupper($user->hotel->name) }}!
+                                                                            We’re excited to have you on board as our
+                                                                            new
+                                                                            {{ $user->current_role }}. Your login
+                                                                            details
+                                                                            are as follows:
+                                                                            hotel code
+                                                                            {{ strtoupper($user->hotel->code) }}
+                                                                            ,
+                                                                            username
+                                                                            {{ $user->username }}. Please log in with
+                                                                            your
+                                                                            designated hotel code and username. For your
+                                                                            password, please contact your manager or the
+                                                                            individual who set up your account.
+                                                                        @endif
                                                                     </p>
                                                                 </td>
                                                             </tr>
