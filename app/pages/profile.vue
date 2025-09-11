@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-neutral-50 pb-24 px-3 overflow-y-auto">
+  <div class="min-h-screen bg-neutral-50 pb-24 px-5 pt-4 overflow-y-auto">
     <div class="mx-auto w-full">
       <!-- Profile Header -->
       <div class="bg-white rounded-xl shadow-lg mb-6">
@@ -304,7 +304,7 @@
         </UButton>
 
         <div class="mt-8 border-t border-neutral-200 pt-8">
-          <div class="text-center">
+          <div class="text-center p-5 rounded-lg shadow">
             <h3 class="text-lg font-semibold text-neutral-900 mb-4">
               Danger Zone
             </h3>
@@ -315,7 +315,7 @@
             <UButton
               variant="outline"
               color="error"
-              class="w-full max-w-md"
+              class="w-full max-w-md block"
               @click="confirmDeleteAccount"
             >
               <UIcon name="i-lucide-trash-2" class="mr-2" />
