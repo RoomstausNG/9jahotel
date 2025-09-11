@@ -69,16 +69,6 @@
                 <UIcon name="i-lucide-upload" class="mr-2" />
                 Update Picture
               </UButton>
-
-              <UButton
-                variant="outline"
-                color="error"
-                class="w-full block"
-                @click="confirmDeleteAccount"
-              >
-                <UIcon name="i-lucide-trash-2" class="mr-2" />
-                Delete Account
-              </UButton>
             </div>
 
             <input
@@ -312,6 +302,27 @@
           <UIcon name="i-lucide-save" class="mr-2" />
           Update Profile
         </UButton>
+
+        <div class="mt-8 border-t border-neutral-200 pt-8">
+          <div class="text-center">
+            <h3 class="text-lg font-semibold text-neutral-900 mb-4">
+              Danger Zone
+            </h3>
+            <p class="text-sm text-neutral-600 mb-6">
+              Once you delete your account, there is no going back. Please be
+              certain.
+            </p>
+            <UButton
+              variant="outline"
+              color="error"
+              class="w-full max-w-md"
+              @click="confirmDeleteAccount"
+            >
+              <UIcon name="i-lucide-trash-2" class="mr-2" />
+              Delete Account
+            </UButton>
+          </div>
+        </div>
       </div>
     </div>
 
