@@ -42,16 +42,24 @@ export class AuthService {
     userId: number
   ): Promise<{ success: boolean; message?: string }> {
     try {
-      // Delete customer from database
-      const result = await db.delete(customers).where(eq(customers.id, userId));
-      if (result.affectedRows && result.affectedRows > 0) {
-        return { success: true };
-      } else {
+      // Check if user exists before deleting
+      const existingUser = await db
+        .select({ id: customers.id })
+        .from(customers)
+        .where(eq(customers.id, userId))
+        .limit(1);
+
+      if (existingUser.length === 0) {
         return {
           success: false,
           message: "Account not found or already deleted",
         };
       }
+
+      // Delete customer from database
+      await db.delete(customers).where(eq(customers.id, userId));
+
+      return { success: true };
     } catch (error: any) {
       return {
         success: false,
