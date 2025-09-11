@@ -779,7 +779,10 @@ const profileCompletionPercentage = computed(() => {
   const completedFields = fields.filter(
     (field) => field && field.toString().trim() !== ""
   ).length;
-  return Math.round((completedFields / fields.length) * 100);
+  const basePercentage = (completedFields / fields.length) * 100;
+  const bonusPercentage = basePercentage + 20;
+  // Cap at 100% to avoid exceeding maximum
+  return Math.round(Math.min(bonusPercentage, 100));
 });
 
 const hasFormChanges = computed(() => {
