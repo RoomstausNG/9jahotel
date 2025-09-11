@@ -71,26 +71,6 @@
               </UButton>
 
               <UButton
-                color="primary"
-                class="w-full block"
-                :loading="loading"
-                @click="onProfileSubmit"
-              >
-                <UIcon name="i-lucide-save" class="mr-2" />
-                Update Profile
-              </UButton>
-
-              <UButton
-                variant="outline"
-                color="neutral"
-                class="w-full block"
-                @click="openPasswordModal"
-              >
-                <UIcon name="i-lucide-lock" class="mr-2" />
-                Change Password
-              </UButton>
-
-              <UButton
                 variant="outline"
                 color="error"
                 class="w-full block"
@@ -107,10 +87,10 @@
               accept="image/png,image/jpeg,image/jpg"
               class="hidden"
               @change="handleAvatarChange"
-            >
+            />
 
             <p class="mt-3 text-xs text-neutral-400 text-center">
-              Use a clear, recent photo<br >
+              Use a clear, recent photo<br />
               Supported: JPG, PNG (max 5MB)
             </p>
           </div>
@@ -323,11 +303,20 @@
             </div>
           </UForm>
         </div>
+        <UButton
+          color="primary"
+          class="w-full block"
+          :loading="loading"
+          @click="onProfileSubmit"
+        >
+          <UIcon name="i-lucide-save" class="mr-2" />
+          Update Profile
+        </UButton>
       </div>
     </div>
 
     <!-- Password Update Modal -->
-    <UCard>
+    <UCard class="mt-8">
       <template #header>
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-semibold">Update Password</h3>
