@@ -51,7 +51,7 @@
           <div
             class="h-full bg-white rounded-full transition-all duration-1000 ease-out"
             :style="{ width: `${progress}%` }"
-          ></div>
+          />
         </div>
 
         <!-- Loading Text -->

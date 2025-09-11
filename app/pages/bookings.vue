@@ -171,8 +171,8 @@
         <UButton
           icon="i-lucide-chevron-left"
           :disabled="meta.current_page === 1 || loading"
-          @click="changePage(meta.current_page - 1)"
           size="sm"
+          @click="changePage(meta.current_page - 1)"
         />
         <span class="text-sm font-medium"
           >Page {{ meta.current_page }} of {{ meta.total_pages }}</span
@@ -180,8 +180,8 @@
         <UButton
           icon="i-lucide-chevron-right"
           :disabled="meta.current_page === meta.total_pages || loading"
-          @click="changePage(meta.current_page + 1)"
           size="sm"
+          @click="changePage(meta.current_page + 1)"
         />
       </div>
 

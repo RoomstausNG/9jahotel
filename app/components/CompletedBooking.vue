@@ -7,9 +7,9 @@
           :src="booking.hotel.backgroundImage || defaultHotelImg"
           :alt="booking.hotel.name"
           class="w-full h-full object-cover"
-        />
+        >
         <!-- Dark overlay for better text visibility -->
-        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-40"/>
 
         <!-- Completed badge -->
         <div class="absolute top-4 left-4">

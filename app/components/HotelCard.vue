@@ -28,9 +28,9 @@
       <!-- Heart/Favorite Icon -->
       <FavoriteToggle
         class="absolute top-3 right-3 z-20"
-        :hotelId="hotel.id"
-        :initialFavorite="hotel.isFavourite"
-        @update:isFavorite="handleFavoriteChange"
+        :hotel-id="hotel.id"
+        :initial-favorite="hotel.isFavourite"
+        @update:is-favorite="handleFavoriteChange"
       />
     </div>
 
@@ -163,6 +163,9 @@
 <script setup lang="ts">
 import type { Hotel } from "~/types/hotel";
 
+import { ref, shallowRef } from "vue";
+import { today } from "@internationalized/date";
+
 const props = defineProps({
   hotel: {
     type: Object as PropType<Hotel>,
@@ -200,9 +203,6 @@ const toggleFavorite = () => {
     isFavorite: isFavorite.value,
   });
 };
-
-import { ref, shallowRef } from "vue";
-import { today } from "@internationalized/date";
 
 const datePopoverOpen = ref(false);
 const todayDate = today();

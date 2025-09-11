@@ -204,9 +204,10 @@
 import {
   DateFormatter,
   getLocalTimeZone,
-  today,
-  type CalendarDate,
+  today
+  
 } from "@internationalized/date";
+import type {CalendarDate} from "@internationalized/date";
 import type { Hotel, City } from "~/types/hotel";
 
 // Define RangeValue type locally since import is unavailable

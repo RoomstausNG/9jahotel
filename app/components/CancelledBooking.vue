@@ -7,9 +7,9 @@
           :src="booking.hotel.backgroundImage || defaultHotelImg"
           :alt="booking.hotel.name"
           class="w-full h-full object-cover"
-        />
+        >
         <!-- Dark overlay for cancelled bookings -->
-        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-30"/>
 
         <!-- Cancelled badge -->
         <div

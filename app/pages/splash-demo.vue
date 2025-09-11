@@ -20,7 +20,7 @@
             below.
           </p>
 
-          <UButton @click="showSplashDemo" color="primary" block>
+          <UButton color="primary" block @click="showSplashDemo">
             Show Splash Screen
           </UButton>
         </UCard>
@@ -35,10 +35,10 @@
           </p>
 
           <UButton
-            @click="showLoadingDemo"
             color="primary"
             variant="outline"
             block
+            @click="showLoadingDemo"
           >
             Show Loading Overlay
           </UButton>

@@ -28,7 +28,7 @@
             maxlength="1"
             class="w-10 h-12 text-center rounded bg-white/10 border border-white/30 text-xl font-mono"
             @input="onOtpInput(idx, $event)"
-          />
+          >
         </div>
         <div class="flex flex-col items-center mb-4">
           <span class="text-xs text-white/80">{{ timerDisplay }}</span>

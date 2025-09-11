@@ -9,10 +9,10 @@
       <div class="w-16 h-16 mx-auto mb-4 relative">
         <div
           class="absolute inset-0 border-4 border-primary-200 rounded-full"
-        ></div>
+        />
         <div
           class="absolute inset-0 border-4 border-primary-500 rounded-full animate-spin border-t-transparent"
-        ></div>
+        />
       </div>
 
       <!-- Loading Text -->

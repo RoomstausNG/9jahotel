@@ -38,8 +38,8 @@
       <UButton
         label="Load More"
         color="primary"
-        @click="loadMore"
         :loading="loadingMore"
+        @click="loadMore"
       />
     </div>
   </div>

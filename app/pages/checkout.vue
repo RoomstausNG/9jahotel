@@ -39,20 +39,20 @@
           <div
             class="bg-primary-500 h-2 rounded-full transition-all duration-1000 ease-out"
             :style="{ width: `${loadingProgress}%` }"
-          ></div>
+          />
         </div>
 
         <!-- Animated Dots -->
         <div class="flex justify-center space-x-1">
-          <div class="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-primary-400 rounded-full animate-bounce"/>
           <div
             class="w-2 h-2 bg-primary-400 rounded-full animate-bounce"
             style="animation-delay: 0.1s"
-          ></div>
+          />
           <div
             class="w-2 h-2 bg-primary-400 rounded-full animate-bounce"
             style="animation-delay: 0.2s"
-          ></div>
+          />
         </div>
 
         <!-- Warning Text -->

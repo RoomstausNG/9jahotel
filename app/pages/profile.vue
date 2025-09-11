@@ -26,7 +26,7 @@
             <div
               class="h-3 bg-primary-600 rounded-full transition-all duration-300"
               :style="{ width: profileCompletionPercentage + '%' }"
-            ></div>
+            />
           </div>
           <p class="text-xs text-neutral-500">
             Complete your profile for better service
@@ -58,16 +58,26 @@
             </h3>
             <p class="text-sm text-neutral-500 mb-4">{{ profile.email }}</p>
 
-            <div class="space-y-2">
+            <div class="space-y-3">
               <UButton
                 variant="outline"
                 color="primary"
                 class="w-full block"
-                @click="triggerAvatarInput"
                 :loading="avatarUploading"
+                @click="triggerAvatarInput"
               >
                 <UIcon name="i-lucide-upload" class="mr-2" />
                 Update Picture
+              </UButton>
+
+              <UButton
+                color="primary"
+                class="w-full block"
+                :loading="loading"
+                @click="onProfileSubmit"
+              >
+                <UIcon name="i-lucide-save" class="mr-2" />
+                Update Profile
               </UButton>
 
               <UButton
@@ -79,6 +89,16 @@
                 <UIcon name="i-lucide-lock" class="mr-2" />
                 Change Password
               </UButton>
+
+              <UButton
+                variant="outline"
+                color="error"
+                class="w-full block"
+                @click="confirmDeleteAccount"
+              >
+                <UIcon name="i-lucide-trash-2" class="mr-2" />
+                Delete Account
+              </UButton>
             </div>
 
             <input
@@ -87,10 +107,10 @@
               accept="image/png,image/jpeg,image/jpg"
               class="hidden"
               @change="handleAvatarChange"
-            />
+            >
 
             <p class="mt-3 text-xs text-neutral-400 text-center">
-              Use a clear, recent photo<br />
+              Use a clear, recent photo<br >
               Supported: JPG, PNG (max 5MB)
             </p>
           </div>
@@ -178,7 +198,7 @@
               <UFormField label="Date of Birth" name="dob">
                 <UPopover :popper="{ placement: 'bottom-start' }">
                   <UButton
-                    color="white"
+                    color="neutral"
                     variant="outline"
                     icon="i-lucide-calendar"
                     class="w-full justify-start"
@@ -221,7 +241,7 @@
                 <UTextarea
                   v-model="form.address"
                   placeholder="Enter your full address"
-                  rows="3"
+                  :rows="3"
                   class="w-full"
                 />
               </UFormField>
@@ -322,6 +342,12 @@
             placeholder="Enter current password"
             class="w-full"
           />
+          <p
+            v-if="passwordErrors.currentPassword"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ passwordErrors.currentPassword }}
+          </p>
         </UFormField>
 
         <UFormField label="New Password" name="newPassword" required>
@@ -331,6 +357,12 @@
             placeholder="Enter new password"
             class="w-full"
           />
+          <p
+            v-if="passwordErrors.newPassword"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ passwordErrors.newPassword }}
+          </p>
         </UFormField>
 
         <UFormField
@@ -344,6 +376,12 @@
             placeholder="Confirm new password"
             class="w-full"
           />
+          <p
+            v-if="passwordErrors.confirmPassword"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ passwordErrors.confirmPassword }}
+          </p>
         </UFormField>
       </div>
 
@@ -373,6 +411,7 @@ import {
   DateFormatter,
   getLocalTimeZone,
 } from "@internationalized/date";
+import { handleAuthFailure } from "@/utils/handleAuthFailure";
 
 definePageMeta({
   layout: "auth",
@@ -389,14 +428,110 @@ const loading = ref(false);
 const avatarUploading = ref(false);
 const citiesLoading = ref(false);
 const passwordLoading = ref(false);
+const passwordErrors = ref<Record<string, string>>({});
 
 // Toast notifications
 const toast = useToast();
 const passwordModalOpen = ref(false);
 
+// Types
+interface ProfileResponse {
+  success: boolean;
+  message?: string;
+  data?: ProfileData;
+  status?: number;
+  errors?: Record<string, string>;
+}
+
+interface ProfileData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  dob?: string;
+  gender?: string;
+  address?: string;
+  cityId?: number | null;
+  idType?: string;
+  idNumber?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  referralCode?: string;
+  avatarUrl?: string;
+  [key: string]: any; // For any other fields that might come from the API
+}
+
+interface SignatureResponse {
+  success: boolean;
+  message?: string;
+  data?: {
+    signature: string;
+    timestamp: number;
+    api_key: string;
+    cloud_name: string;
+    folder: string;
+    public_id: string;
+    overwrite: boolean;
+  };
+}
+
+interface AvatarUpdateResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
+
+interface CloudinaryResponse {
+  secure_url: string;
+  url: string;
+  public_id: string;
+  error?: {
+    message: string;
+  };
+}
+
+interface City {
+  id: number;
+  name: string;
+  label: string;
+  value: number;
+}
+
+interface ProfileData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  dob?: string;
+  gender?: string;
+  address?: string;
+  cityId?: number | null;
+  idType?: string;
+  idNumber?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  avatar?: string;
+  referralCode?: string;
+}
+
+interface ProfileForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  dob: string;
+  gender: string;
+  address: string;
+  cityId: number | null;
+  idType: string;
+  idNumber: string;
+  latitude: number | null;
+  longitude: number | null;
+}
+
 // Reactive data
-const profile = ref<any>({});
-const form = ref({
+const profile = ref<ProfileData>({});
+const form = ref<ProfileForm>({
   firstName: "",
   lastName: "",
   email: "",
@@ -412,7 +547,7 @@ const form = ref({
 });
 
 // Store original form values for comparison
-const originalForm = ref({
+const originalForm = ref<ProfileForm>({
   firstName: "",
   lastName: "",
   email: "",
@@ -507,8 +642,8 @@ const idTypeOptions = [
   { label: "Voter ID", value: "Voter ID" },
 ];
 
-const cities = ref<any[]>([]);
-const selectedCity = ref<any>(null);
+const cities = ref<City[]>([]);
+const selectedCity = ref<City | null>(null);
 const searchLocation = ref("");
 
 // Watch searchLocation and fetch cities when it changes
@@ -560,9 +695,17 @@ async function fetchCities() {
     const search = searchLocation.value
       ? `?search=${encodeURIComponent(searchLocation.value)}`
       : "";
-    const res = await $fetch(`${apiBaseUrl}/allcity${search}`, {
-      method: "GET",
-    });
+    const res = await $fetch<ProfileResponse>(
+      `${apiBaseUrl}/allcity${search}`,
+      {
+        method: "GET",
+        onResponseError({ response }) {
+          if (response.status === 401) {
+            handleAuthFailure();
+          }
+        },
+      }
+    );
     if (res.success && res.data && Array.isArray(res.data.cities)) {
       cities.value = res.data.cities.map((city: any) => ({
         id: city.id,
@@ -593,7 +736,7 @@ async function handleAvatarChange(event: Event) {
     toast.add({
       title: "Error",
       description: "File size must be less than 5MB",
-      color: "red",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
     return;
@@ -604,7 +747,7 @@ async function handleAvatarChange(event: Event) {
     toast.add({
       title: "Error",
       description: "Please select a valid image file",
-      color: "red",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
     return;
@@ -620,34 +763,105 @@ async function uploadAvatar(file: File) {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found.");
 
-    const formData = new FormData();
-    formData.append("avatar", file);
+    // 1. Get signature from backend
+    const signatureResponse = await $fetch<SignatureResponse>(
+      `${apiBaseUrl}/users/generate-signature`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        onResponseError({ response }) {
+          if (response.status === 401) {
+            handleAuthFailure();
+          }
+        },
+      }
+    );
 
-    const res = await $fetch(`${apiBaseUrl}/profile/avatar`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (res.success && res.data) {
-      profile.value = res.data;
-      mapProfileToForm(res.data);
-      toast.add({
-        title: "Success",
-        description: "Profile picture updated successfully!",
-        color: "green",
-        icon: "i-lucide-check-circle",
-      });
-    } else {
-      throw new Error(res.message || "Failed to update avatar");
+    if (!signatureResponse.success || !signatureResponse.data) {
+      throw new Error(
+        signatureResponse.message || "Failed to get upload signature"
+      );
     }
-  } catch (e: any) {
+
+    const signatureData = signatureResponse.data;
+
+    // 2. Prepare form data for Cloudinary upload
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", signatureData.api_key);
+    formData.append("timestamp", signatureData.timestamp.toString());
+    formData.append("signature", signatureData.signature);
+    formData.append("folder", signatureData.folder);
+    formData.append("public_id", signatureData.public_id);
+    formData.append("overwrite", signatureData.overwrite.toString());
+
+    // 3. Upload directly to Cloudinary
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/${signatureData.cloud_name}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const cloudinaryData =
+      (await cloudinaryResponse.json()) as CloudinaryResponse;
+
+    if (!cloudinaryResponse.ok) {
+      throw new Error(
+        cloudinaryData.error?.message || "Failed to upload to Cloudinary"
+      );
+    }
+
+    // 4. Update user's avatar URL in backend
+    const avatarUpdateResponse = await $fetch<AvatarUpdateResponse>(
+      `${apiBaseUrl}/users/update-avatar-url`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: {
+          url: cloudinaryData.secure_url,
+        },
+        onResponseError({ response }) {
+          if (response.status === 401) {
+            handleAuthFailure();
+          }
+        },
+      }
+    );
+
+    if (!avatarUpdateResponse.success) {
+      throw new Error(
+        avatarUpdateResponse.message || "Failed to update avatar URL"
+      );
+    }
+
+    // 5. Immediately update the avatar in the UI
+    profile.value.avatar = cloudinaryData.secure_url;
+
+    // 6. Update localStorage with new user data in the background
+    if (avatarUpdateResponse.data && avatarUpdateResponse.data.user) {
+      const userData = JSON.stringify(avatarUpdateResponse.data.user);
+      localStorage.setItem("user", userData);
+    }
+
+    toast.add({
+      title: "Success",
+      description: "Profile picture updated successfully!",
+      color: "success",
+      icon: "i-lucide-check-circle",
+    });
+  } catch (error: unknown) {
+    const err = error as Error;
     toast.add({
       title: "Error",
-      description: e.message || "Failed to update avatar",
-      color: "red",
+      description: err.message || "Failed to update avatar",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
   } finally {
@@ -677,23 +891,25 @@ async function onPasswordSubmit() {
   // Validate form first
   try {
     passwordSchema.parse(passwordForm.value);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const zodError = error as { errors?: Array<{ message: string }> };
     toast.add({
       title: "Validation Error",
-      description: error.errors[0]?.message || "Please check your inputs",
-      color: "red",
+      description: zodError.errors?.[0]?.message || "Please check your inputs",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
     return;
   }
 
   passwordLoading.value = true;
+  passwordErrors.value = {};
 
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found.");
 
-    const res = await $fetch(`${apiBaseUrl}/update-password`, {
+    const res = await $fetch<ProfileResponse>(`${apiBaseUrl}/update-password`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -704,24 +920,51 @@ async function onPasswordSubmit() {
         newPassword: passwordForm.value.newPassword,
         confirmPassword: passwordForm.value.confirmPassword,
       },
+      onResponseError({ response }) {
+        // Handle 401 unauthorized errors
+        if (response.status === 401) {
+          handleAuthFailure();
+          return;
+        }
+
+        // Handle 422 validation errors
+        if (response.status === 422 && response._data?.errors) {
+          passwordErrors.value = response._data.errors;
+          toast.add({
+            title: "Validation Error",
+            description: response._data.message || "Please check your inputs",
+            color: "error",
+            icon: "i-lucide-alert-circle",
+          });
+        }
+      },
     });
 
     if (res.success) {
       toast.add({
         title: "Success",
         description: "Password updated successfully!",
-        color: "green",
+        color: "success",
         icon: "i-lucide-check-circle",
       });
       closePasswordModal();
+    } else if (res.status === 422 && res.errors) {
+      passwordErrors.value = res.errors;
+      toast.add({
+        title: "Validation Error",
+        description: res.message || "Please check your inputs",
+        color: "error",
+        icon: "i-lucide-alert-circle",
+      });
     } else {
       throw new Error(res.message || "Failed to update password");
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const error = e as Error;
     toast.add({
       title: "Error",
-      description: e.message || "Failed to update password",
-      color: "red",
+      description: error.message || "Failed to update password",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
   } finally {
@@ -731,18 +974,75 @@ async function onPasswordSubmit() {
 
 async function copyReferralCode() {
   try {
+    if (!profile.value.referralCode) {
+      throw new Error("No referral code available");
+    }
     await navigator.clipboard.writeText(profile.value.referralCode);
     toast.add({
       title: "Success",
       description: "Referral code copied to clipboard!",
-      color: "green",
+      color: "success",
       icon: "i-lucide-check-circle",
     });
   } catch {
     toast.add({
       title: "Error",
       description: "Failed to copy referral code",
-      color: "red",
+      color: "error",
+      icon: "i-lucide-alert-circle",
+    });
+  }
+}
+
+function confirmDeleteAccount() {
+  if (
+    confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    )
+  ) {
+    deleteAccount();
+  }
+}
+
+async function deleteAccount() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found.");
+
+    const res = await $fetch<ProfileResponse>(`${apiBaseUrl}/delete-account`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      onResponseError({ response }) {
+        if (response.status === 401) {
+          handleAuthFailure();
+          return;
+        }
+      },
+    });
+
+    if (res.success) {
+      toast.add({
+        title: "Success",
+        description: "Account deleted successfully",
+        color: "success",
+        icon: "i-lucide-check-circle",
+      });
+
+      // Clear storage and redirect to home
+      localStorage.clear();
+      sessionStorage.clear();
+      await navigateTo("/");
+    } else {
+      throw new Error(res.message || "Failed to delete account");
+    }
+  } catch (e: unknown) {
+    const error = e as Error;
+    toast.add({
+      title: "Error",
+      description: error.message || "Failed to delete account",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
   }
@@ -752,7 +1052,7 @@ function resetForm() {
   mapProfileToForm(profile.value);
 }
 
-function mapProfileToForm(data: any) {
+function mapProfileToForm(data: ProfileData) {
   form.value = {
     firstName: data.firstName || "",
     lastName: data.lastName || "",
@@ -771,7 +1071,12 @@ function mapProfileToForm(data: any) {
   // Set calendar date from form dob
   if (data.dob) {
     try {
-      dobCalendarDate.value = CalendarDate.fromString(data.dob);
+      const [year, month, day] = data.dob.split("-").map(Number);
+      if (year && month && day) {
+        dobCalendarDate.value = new CalendarDate(year, month, day);
+      } else {
+        dobCalendarDate.value = null;
+      }
     } catch {
       dobCalendarDate.value = null;
     }
@@ -797,10 +1102,15 @@ async function fetchProfile() {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found.");
 
-    const res = await $fetch(`${apiBaseUrl}/profile`, {
+    const res = await $fetch<ProfileResponse>(`${apiBaseUrl}/profile`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+      onResponseError({ response }) {
+        if (response.status === 401) {
+          handleAuthFailure();
+        }
       },
     });
 
@@ -810,11 +1120,12 @@ async function fetchProfile() {
     } else {
       throw new Error(res.message || "Failed to fetch profile");
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const error = e as Error;
     toast.add({
       title: "Error",
-      description: e.message || "Failed to fetch profile",
-      color: "red",
+      description: error.message || "Failed to fetch profile",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
   } finally {
@@ -852,7 +1163,7 @@ async function onProfileSubmit() {
       )
     );
 
-    const res = await $fetch(`${apiBaseUrl}/profile/update`, {
+    const res = await $fetch<ProfileResponse>(`${apiBaseUrl}/profile/update`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -860,6 +1171,13 @@ async function onProfileSubmit() {
       },
       body,
       onResponseError({ response }) {
+        // Handle 401 unauthorized errors
+        if (response.status === 401) {
+          handleAuthFailure();
+          return;
+        }
+
+        // Handle 422 validation errors
         if (response.status === 422 && response._data?.errors) {
           formErrors.value = response._data.errors;
           toast.add({
@@ -878,7 +1196,7 @@ async function onProfileSubmit() {
       toast.add({
         title: "Success",
         description: "Profile updated successfully!",
-        color: "green",
+        color: "success",
         icon: "i-lucide-check-circle",
       });
     } else if (res.status === 422 && res.errors) {
@@ -892,11 +1210,12 @@ async function onProfileSubmit() {
     } else {
       throw new Error(res.message || "Failed to update profile");
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const error = e as Error;
     toast.add({
       title: "Error",
-      description: e.message || "Failed to update profile",
-      color: "red",
+      description: error.message || "Failed to update profile",
+      color: "error",
       icon: "i-lucide-alert-circle",
     });
   } finally {
