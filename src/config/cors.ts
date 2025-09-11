@@ -41,7 +41,7 @@ export const corsConfig = {
   /**
    * Allowed HTTP methods for CORS requests
    */
-  allowedMethods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+  allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 
   /**
    * Allowed headers for CORS requests
