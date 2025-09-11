@@ -4,7 +4,7 @@ import { env } from "../config/env";
 import { Readable } from "stream"; // Import Readable if using streams
 
 // Helper function to convert buffer to readable stream if needed by upload_stream
-function bufferToStream(buffer: Buffer): Readable {
+export function bufferToStream(buffer: Buffer): Readable {
   const stream = new Readable();
   stream.push(buffer);
   stream.push(null); // Signal end of stream
@@ -129,4 +129,36 @@ export async function uploadAndTransformImage(
     // bufferToStream(fileBuffer).pipe(uploadStream);
     uploadStream.end(fileBuffer);
   });
+}
+
+/**
+ * Generates a Cloudinary upload signature
+ * @param params Parameters to include in the signature (e.g., folder, public_id)
+ * @returns { signature: string, timestamp: number }
+ */
+export function generateCloudinarySignature(params: Record<string, any> = {}): {
+  signature: string;
+  timestamp: number;
+} {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const apiSecret = env("CLOUDINARY_API_SECRET");
+
+  // Sort params alphabetically
+  const sortedParams = Object.keys(params)
+    .sort()
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+
+  const stringToSign = sortedParams
+    ? `${sortedParams}&timestamp=${timestamp}${apiSecret}`
+    : `timestamp=${timestamp}${apiSecret}`;
+
+  // Use crypto to create SHA-1 hash
+  const crypto = require("crypto");
+  const signature = crypto
+    .createHash("sha1")
+    .update(stringToSign)
+    .digest("hex");
+
+  return { signature, timestamp };
 }

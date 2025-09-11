@@ -3,6 +3,14 @@ import { AuthService } from "../services/AuthService";
 import { ApiResponse } from "../utils/ApiResponse";
 import { inject, injectable } from "inversify";
 import { customerSchema } from "../validators/customer-schema";
+import {
+  generateCloudinarySignature,
+  bufferToStream,
+} from "../utils/cloudinaryUtils";
+import cloudinary from "../config/cloudinary";
+import { UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
+import { container } from "../container";
+import { UserService } from "../services/UserService";
 
 @injectable()
 export class AuthController {
@@ -102,20 +110,72 @@ export class AuthController {
         );
       }
 
-      // Check file size (example: max 5MB) - Middleware might handle this better
-      const maxSize = 512 * 1024; // 512KB
+      // Check file size (max 1MB) - Middleware might handle this better
+      const maxSize = 1024 * 1024; // 1MB
       if ((file as File).size > maxSize) {
-        return ApiResponse.failure("File size exceeds the 512KB limit.", 400, {
-          avatar: "File size too large. Maximum allowed size is 512KB.",
+        return ApiResponse.failure("File size exceeds the 1MB limit.", 400, {
+          avatar: "File size too large. Maximum allowed size is 1MB.",
         });
       }
 
-      const result = await this.authService.updateAvatar(file, c);
+      // Convert file to buffer
+      const fileBuffer = Buffer.from(await (file as File).arrayBuffer());
 
-      return ApiResponse.success(result, "Avatar updated successfully");
+      // Generate signature for signed upload
+      const user = c.get("user");
+      const params = {
+        folder: `avatars/${user.id}`,
+        public_id: user.referralCode ?? `${user.id}_avatar`,
+        overwrite: true,
+      };
+
+      const { signature, timestamp } = generateCloudinarySignature(params);
+
+      // Add signature to upload options
+      const uploadOptions = {
+        ...params,
+        signature,
+        timestamp,
+        api_key: env("CLOUDINARY_API_KEY"),
+        transformation: [
+          { gravity: "face", height: 300, width: 300, crop: "thumb" },
+          { radius: 1000 },
+          { overlay: { resource_type: "image", public_id: "logo_kbhbqo" } },
+          {
+            flags: "layer_apply",
+            gravity: "south_east",
+            x: 10,
+            y: 10,
+            width: 50,
+          },
+          { opacity: 100 },
+          { quality: "auto" },
+          { fetch_format: "webp" },
+        ],
+      };
+
+      // Upload with signed params
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          uploadOptions,
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as UploadApiResponse);
+          }
+        );
+        bufferToStream(fileBuffer).pipe(uploadStream);
+      });
+
+      // Update database using UserService
+      const userService = container.get(UserService);
+      const updatedUser = await userService.updateAvatarUrl(
+        user.id,
+        result.secure_url
+      );
+
+      return ApiResponse.success(updatedUser, "Avatar updated successfully");
     } catch (error: any) {
-      console.error("Avatar Upload Error:", error); // Log the actual error
-      // Provide a more generic error to the client
+      console.error("Avatar Upload Error:", error);
       return ApiResponse.failure(
         error.message || "Failed to update avatar",
         500

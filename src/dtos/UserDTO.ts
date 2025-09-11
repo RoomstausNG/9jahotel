@@ -185,6 +185,10 @@ export const ForgetPasswordDto = z.object({
 });
 
 // Type inference
+export const UpdateAvatarUrlDto = z.object({
+  url: z.string().url("Invalid URL format").min(1, "URL is required"),
+});
+
 export type CreateUserDtoType = z.infer<typeof CreateUserDto>;
 export type UpdateUserDtoType = z.infer<typeof UpdateUserDto>;
 export type UserResponseDtoType = z.infer<typeof UserResponseDto>;
@@ -195,3 +199,4 @@ export type ForgetPasswordDtoType = z.infer<typeof ForgetPasswordDto>;
 export type LocationUpdateDtoType = z.infer<typeof LocationUpdateDto>;
 export type ProfileUpdateDtoType = z.infer<typeof ProfileUpdateDto>;
 export type SocialLoginDtoType = z.infer<typeof SocialLoginDto>;
+export type UpdateAvatarUrlDtoType = z.infer<typeof UpdateAvatarUrlDto>;

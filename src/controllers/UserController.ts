@@ -2,6 +2,8 @@ import { inject, injectable } from "inversify";
 import { Context } from "hono";
 import { UserService } from "../services/UserService";
 import { ApiResponse } from "../utils/ApiResponse";
+import { generateCloudinarySignature } from "../utils/cloudinaryUtils";
+import { env } from "../config/env";
 
 @injectable()
 export class UserController {
@@ -59,6 +61,73 @@ export class UserController {
       return ApiResponse.success(user, "User created successfully", 201);
     } catch (error: any) {
       return ApiResponse.failure(error.message, 400);
+    }
+  }
+
+  async generateSignature(c: Context) {
+    try {
+      const user = c.get("user");
+      if (!user || !user.id) {
+        return ApiResponse.failure("User not authenticated", 401);
+      }
+
+      const params = {
+        folder: `avatars/${user.id}`,
+        public_id: user.referralCode ?? `${user.id}_avatar`,
+        overwrite: true,
+      };
+
+      const { signature, timestamp } = generateCloudinarySignature(params);
+
+      return ApiResponse.success(
+        {
+          signature,
+          timestamp,
+          api_key: env("CLOUDINARY_API_KEY"),
+          cloud_name: env("CLOUDINARY_CLOUD_NAME"),
+          ...params,
+        },
+        "Signature generated successfully"
+      );
+    } catch (error: any) {
+      return ApiResponse.failure(
+        error.message || "Failed to generate signature",
+        500
+      );
+    }
+  }
+
+  async updateAvatarUrl(c: Context) {
+    try {
+      const user = c.get("user");
+      if (!user || !user.id) {
+        return ApiResponse.failure("User not authenticated", 401);
+      }
+
+      const body = await c.req.json();
+      const { url } = body;
+
+      if (!url) {
+        return ApiResponse.failure("URL is required", 400);
+      }
+
+      // Ensure user.id is a number
+      const userId = Number(user.id);
+      if (isNaN(userId)) {
+        return ApiResponse.failure("Invalid user ID", 400);
+      }
+
+      const updatedUser = await this.userService.updateAvatarUrl(userId, url);
+      return ApiResponse.success(
+        updatedUser,
+        "Avatar URL updated successfully"
+      );
+    } catch (error: any) {
+      console.error("Avatar update error:", error);
+      return ApiResponse.failure(
+        error.message || "Failed to update avatar URL",
+        500
+      );
     }
   }
 }
