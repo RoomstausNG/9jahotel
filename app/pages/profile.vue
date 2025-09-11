@@ -165,7 +165,7 @@
                 </template>
               </UFormField>
 
-              <UFormField label="Date of Birth" name="dob">
+              <!-- <UFormField label="Date of Birth" name="dob">
                 <UPopover :popper="{ placement: 'bottom-start' }">
                   <UButton
                     color="neutral"
@@ -187,9 +187,9 @@
                     >Used for age verification only</span
                   >
                 </template>
-              </UFormField>
+              </UFormField> -->
 
-              <UFormField label="Gender" name="gender">
+              <!-- <UFormField label="Gender" name="gender">
                 <USelect
                   v-model="form.gender"
                   :items="genderOptions"
@@ -199,7 +199,7 @@
                 <template #hint>
                   <span class="text-xs text-neutral-500">Optional</span>
                 </template>
-              </UFormField>
+              </UFormField> -->
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -216,7 +216,7 @@
                 />
               </UFormField>
 
-              <UFormField label="City" name="cityId">
+              <!-- <UFormField label="City" name="cityId">
                 <USelectMenu
                   v-model="selectedCity"
                   v-model:search-term="searchLocation"
@@ -231,7 +231,7 @@
                   icon="i-lucide-map-pin"
                   class="w-full"
                 />
-              </UFormField>
+              </UFormField> -->
             </div>
 
             <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -316,7 +316,7 @@
               variant="outline"
               color="error"
               class="w-full max-w-md block"
-              @click="confirmDeleteAccount"
+              @click="openDeleteDialog"
             >
               <UIcon name="i-lucide-trash-2" class="mr-2" />
               Delete Account
@@ -401,6 +401,78 @@
         </div>
       </template>
     </UCard>
+
+    <!-- VueUse Confirm Dialog for Delete Account -->
+    <Teleport to="body">
+      <div
+        v-if="isRevealed"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      >
+        <div
+          class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+        >
+          <!-- Header -->
+          <div class="px-6 py-4 border-b border-neutral-200 bg-red-50">
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="w-6 h-6 text-red-600"
+              />
+              <h3 class="text-lg font-semibold text-red-900">Delete Account</h3>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="px-6 py-6 space-y-4">
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div class="flex items-start gap-3">
+                <UIcon
+                  name="i-lucide-alert-triangle"
+                  class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0"
+                />
+                <div>
+                  <h4 class="font-medium text-red-900 mb-1">Warning</h4>
+                  <p class="text-sm text-red-700">
+                    This action cannot be undone. This will permanently delete
+                    your account and remove all your data from our servers.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-sm text-neutral-600">
+                Please type <strong>DELETE</strong> to confirm:
+              </p>
+              <UInput
+                v-model="deleteConfirmation"
+                placeholder="Type DELETE to confirm"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="px-6 py-4 bg-neutral-50 border-t border-neutral-200">
+            <div class="flex gap-3 justify-end">
+              <UButton type="button" variant="ghost" @click="cancel">
+                Cancel
+              </UButton>
+              <UButton
+                type="button"
+                color="error"
+                :disabled="deleteConfirmation !== 'DELETE'"
+                :loading="deleteAccountLoading"
+                @click="confirmDelete"
+              >
+                <UIcon name="i-lucide-trash-2" class="mr-2" />
+                Delete Account
+              </UButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -429,10 +501,40 @@ const avatarUploading = ref(false);
 const citiesLoading = ref(false);
 const passwordLoading = ref(false);
 const passwordErrors = ref<Record<string, string>>({});
+const deleteAccountLoading = ref(false);
 
 // Toast notifications
 const toast = useToast();
 const passwordModalOpen = ref(false);
+
+// VueUse Confirm Dialog for delete account
+const deleteConfirmation = ref("");
+const { isRevealed, reveal, confirm, cancel, onConfirm, onCancel } =
+  useConfirmDialog();
+
+// Set up delete confirmation handlers
+onConfirm(async () => {
+  if (deleteConfirmation.value === "DELETE") {
+    await deleteAccount();
+  }
+  deleteConfirmation.value = "";
+});
+
+onCancel(() => {
+  deleteConfirmation.value = "";
+});
+
+async function openDeleteDialog() {
+  deleteConfirmation.value = "";
+  const { isCanceled } = await reveal();
+  if (!isCanceled) {
+    // This will be handled by onConfirm
+  }
+}
+
+async function confirmDelete() {
+  confirm();
+}
 
 // Types
 interface ProfileResponse {
@@ -994,18 +1096,9 @@ async function copyReferralCode() {
   }
 }
 
-function confirmDeleteAccount() {
-  if (
-    confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    )
-  ) {
-    deleteAccount();
-  }
-}
-
 async function deleteAccount() {
   try {
+    deleteAccountLoading.value = true;
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found.");
 
@@ -1045,6 +1138,8 @@ async function deleteAccount() {
       color: "error",
       icon: "i-lucide-alert-circle",
     });
+  } finally {
+    deleteAccountLoading.value = false;
   }
 }
 
