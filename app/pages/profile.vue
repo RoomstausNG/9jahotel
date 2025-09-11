@@ -1063,9 +1063,106 @@ async function deleteAccount() {
         icon: "i-lucide-check-circle",
       });
 
-      // Clear storage and redirect to home
-      localStorage.clear();
-      sessionStorage.clear();
+      // THOROUGH STORAGE DELETION - Clear all possible storage mechanisms
+      try {
+        // 1. Clear localStorage completely
+        localStorage.clear();
+
+        // 2. Clear sessionStorage completely
+        sessionStorage.clear();
+
+        // 3. Clear specific auth-related items (double check)
+        const authKeys = [
+          "token",
+          "user",
+          "auth",
+          "authToken",
+          "accessToken",
+          "refreshToken",
+          "userToken",
+          "jwt",
+          "session",
+          "profile",
+          "userData",
+          "currentUser",
+          "loginData",
+        ];
+        authKeys.forEach((key) => {
+          localStorage.removeItem(key);
+          sessionStorage.removeItem(key);
+        });
+
+        // 4. Clear any IndexedDB databases (if used)
+        if ("indexedDB" in window) {
+          try {
+            // Get all databases and delete them
+            const databases = await indexedDB.databases();
+            await Promise.all(
+              databases.map((db) => {
+                if (db.name) {
+                  const deleteReq = indexedDB.deleteDatabase(db.name);
+                  return new Promise((resolve, reject) => {
+                    deleteReq.onsuccess = () => resolve(true);
+                    deleteReq.onerror = () => reject(deleteReq.error);
+                  });
+                }
+              })
+            );
+          } catch (idbError) {
+            console.warn("IndexedDB cleanup failed:", idbError);
+          }
+        }
+
+        // 5. Clear all cookies (if accessible)
+        if (typeof document !== "undefined") {
+          document.cookie.split(";").forEach((cookie) => {
+            const eqPos = cookie.indexOf("=");
+            const name =
+              eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            // Clear cookie for current domain
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
+            // Clear cookie for parent domain (if subdomain)
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname};`;
+            // Clear cookie for root domain
+            const rootDomain = window.location.hostname
+              .split(".")
+              .slice(-2)
+              .join(".");
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${rootDomain};`;
+          });
+        }
+
+        // 6. Clear any Web Storage API caches
+        if ("caches" in window) {
+          caches.keys().then((names) => {
+            names.forEach((name) => {
+              caches.delete(name);
+            });
+          });
+        }
+
+        // 7. Clear any service worker registrations
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach((registration) => {
+              registration.unregister();
+            });
+          });
+        }
+
+        console.log("✅ Complete storage cleanup completed successfully");
+      } catch (cleanupError) {
+        console.error(
+          "⚠️ Some storage cleanup operations failed:",
+          cleanupError
+        );
+        // Continue with navigation even if cleanup partially fails
+      }
+
+      // 8. Force a small delay to ensure cleanup completes
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // 9. Navigate to home page
       await navigateTo("/");
     } else {
       throw new Error(res.message || "Failed to delete account");
