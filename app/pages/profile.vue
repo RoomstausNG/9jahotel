@@ -291,17 +291,17 @@
                 {{ error }}
               </div>
             </div>
+            <UButton
+              color="primary"
+              class="w-full block"
+              :loading="loading"
+              @click="onProfileSubmit"
+            >
+              <UIcon name="i-lucide-save" class="mr-2" />
+              Update Profile
+            </UButton>
           </UForm>
         </div>
-        <UButton
-          color="primary"
-          class="w-full block"
-          :loading="loading"
-          @click="onProfileSubmit"
-        >
-          <UIcon name="i-lucide-save" class="mr-2" />
-          Update Profile
-        </UButton>
 
         <div class="mt-8 border-t border-neutral-200 pt-8">
           <div class="text-center p-5 rounded-lg shadow">
@@ -478,11 +478,6 @@
 
 <script setup lang="ts">
 import { z } from "zod";
-import {
-  CalendarDate,
-  DateFormatter,
-  getLocalTimeZone,
-} from "@internationalized/date";
 import { handleAuthFailure } from "@/utils/handleAuthFailure";
 
 definePageMeta({
@@ -560,7 +555,7 @@ interface ProfileData {
   longitude?: number | null;
   referralCode?: string;
   avatarUrl?: string;
-  [key: string]: any; // For any other fields that might come from the API
+  [key: string]: unknown; // For any other fields that might come from the API
 }
 
 interface SignatureResponse {
@@ -580,7 +575,10 @@ interface SignatureResponse {
 interface AvatarUpdateResponse {
   success: boolean;
   message?: string;
-  data?: any;
+  data?: {
+    user?: Record<string, unknown>;
+    [key: string]: unknown;
+  };
 }
 
 interface CloudinaryResponse {
@@ -671,39 +669,6 @@ const passwordForm = ref({
   confirmPassword: "",
 });
 
-// Date handling
-const dobCalendarDate = ref<CalendarDate | null>(null);
-const dateFormatter = new DateFormatter("en-US", { dateStyle: "medium" });
-
-// Max date for calendar (today)
-const maxCalendarDate = computed(() => {
-  const today = new Date();
-  return new CalendarDate(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    today.getDate()
-  );
-});
-
-// Display text for DOB button
-const dobDisplay = computed(() => {
-  if (dobCalendarDate.value) {
-    return dateFormatter.format(
-      dobCalendarDate.value.toDate(getLocalTimeZone())
-    );
-  }
-  return "Select your date of birth";
-});
-
-// Watch calendar date changes and sync with form
-watch(dobCalendarDate, (newDate) => {
-  if (newDate) {
-    form.value.dob = newDate.toString();
-  } else {
-    form.value.dob = "";
-  }
-});
-
 // Form schemas
 const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -731,25 +696,12 @@ const passwordSchema = z
     path: ["confirmPassword"],
   });
 
-// Options
-const genderOptions = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-];
-
-const idTypeOptions = [
-  { label: "National ID", value: "National ID" },
-  { label: "Passport", value: "Passport" },
-  { label: "Driver's License", value: "Driver's License" },
-  { label: "Voter ID", value: "Voter ID" },
-];
-
 const cities = ref<City[]>([]);
 const selectedCity = ref<City | null>(null);
 const searchLocation = ref("");
 
 // Watch searchLocation and fetch cities when it changes
-watch(searchLocation, (val) => {
+watch(searchLocation, (_val) => {
   fetchCities();
 });
 
@@ -785,15 +737,7 @@ const profileCompletionPercentage = computed(() => {
   return Math.round(Math.min(bonusPercentage, 100));
 });
 
-const hasFormChanges = computed(() => {
-  return JSON.stringify(form.value) !== JSON.stringify(originalForm.value);
-});
-
 // Methods
-function clearSearchText() {
-  searchLocation.value = "";
-}
-
 async function fetchCities() {
   citiesLoading.value = true;
   try {
@@ -812,16 +756,18 @@ async function fetchCities() {
       }
     );
     if (res.success && res.data && Array.isArray(res.data.cities)) {
-      cities.value = res.data.cities.map((city: any) => ({
-        id: city.id,
-        name: city.name,
-        label: city.name,
-        value: city.id,
-      }));
+      cities.value = res.data.cities.map(
+        (city: { id: number; name: string }) => ({
+          id: city.id,
+          name: city.name,
+          label: city.name,
+          value: city.id,
+        })
+      );
     } else {
       cities.value = [];
     }
-  } catch (e) {
+  } catch {
     cities.value = [];
   } finally {
     citiesLoading.value = false;
@@ -972,15 +918,6 @@ async function uploadAvatar(file: File) {
   } finally {
     avatarUploading.value = false;
   }
-}
-
-function openPasswordModal() {
-  passwordModalOpen.value = true;
-  passwordForm.value = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  };
 }
 
 function closePasswordModal() {
@@ -1146,10 +1083,6 @@ async function deleteAccount() {
   }
 }
 
-function resetForm() {
-  mapProfileToForm(profile.value);
-}
-
 function mapProfileToForm(data: ProfileData) {
   form.value = {
     firstName: data.firstName || "",
@@ -1165,22 +1098,6 @@ function mapProfileToForm(data: ProfileData) {
     latitude: data.latitude || null,
     longitude: data.longitude || null,
   };
-
-  // Set calendar date from form dob
-  if (data.dob) {
-    try {
-      const [year, month, day] = data.dob.split("-").map(Number);
-      if (year && month && day) {
-        dobCalendarDate.value = new CalendarDate(year, month, day);
-      } else {
-        dobCalendarDate.value = null;
-      }
-    } catch {
-      dobCalendarDate.value = null;
-    }
-  } else {
-    dobCalendarDate.value = null;
-  }
 
   // Set selectedCity from cityId
   if (data.cityId && cities.value.length > 0) {
