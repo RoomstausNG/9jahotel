@@ -15,6 +15,7 @@ export class CustomerResource {
       latitude: customer.latitude,
       longitude: customer.longitude,
       tokenVersion: customer.token_version,
+      gender: customer.gender,
     };
   }
 
