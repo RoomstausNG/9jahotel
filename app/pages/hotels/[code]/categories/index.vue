@@ -115,7 +115,7 @@
                       ₦{{ room.price.toLocaleString() }}
                     </span>
                     <span
-                      class="text-primary-600 block leading-4 font-bold text-lg"
+                      class="text-primary-600 text-center block leading-4 font-bold"
                     >
                       ₦{{
                         calculateDiscountedPrice(
