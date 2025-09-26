@@ -49,13 +49,15 @@
             </div>
             <div class="mt-2">
               <div
-                class="bg-primary-500 text-white text-xs px-2 py-1 rounded-sm inline-block font-medium"
+                class="bg-primary-500 text-white text-xs px-2 py-1 rounded-sm font-medium"
               >
-                {{ categoryName }} (₦{{
+                {{ categoryName }}<br>
+                ₦{{
                   selectedRooms.length > 0
                     ? (selectedRooms[0].price || 0).toLocaleString()
                     : "0"
-                }}) - Room {{ selectedRoomNumbers.join(", ") }}
+                }}<br>
+                Room {{ selectedRoomNumbers.join(", ") }}
               </div>
             </div>
             <div class="mt-2 text-sm text-black">
