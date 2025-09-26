@@ -75,7 +75,7 @@
       <p class="mt-2 text-sm text-gray-600">
         {{ error?.message || "The hotel data is unavailable." }}
       </p>
-      <UButton class="mt-4" @click="$router.back()">Go Back</UButton>
+      <UButton class="mt-4" @click="goBack()">Go Back</UButton>
     </div>
   </div>
 
@@ -357,6 +357,7 @@ definePageMeta({
 setPageLayout(computed(() => (user.value ? "auth" : "default")));
 
 const route = useRoute();
+const router = useRouter();
 const config = useRuntimeConfig();
 const baseURL = config.public.apiBase || "/api";
 
@@ -364,7 +365,7 @@ const hotelCode = route.params.code;
 
 const goBack = () => {
   if (typeof window !== 'undefined' && window.history.length > 1) {
-    $router.back();
+    router.back();
   } else {
     navigateTo('/');
   }

@@ -136,25 +136,15 @@
           </div>
         </div>
 
-        <UPopover v-model:open="datePopoverOpen">
-          <UButton
-            color="primary"
-            variant="solid"
-            size="sm"
-            class="px-2"
-            @click.stop="handleViewDealClick"
-          >
-            View Deal
-          </UButton>
-          <template #content>
-            <UCalendar
-              v-model="dateRange"
-              class="p-2"
-              :min-value="minDate"
-              range
-            />
-          </template>
-        </UPopover>
+        <UButton
+          color="primary"
+          variant="solid"
+          size="sm"
+          class="px-2"
+          @click.stop="handleViewDealClick"
+        >
+          View Deal
+        </UButton>
       </div>
     </div>
   </div>
@@ -162,8 +152,6 @@
 
 <script setup lang="ts">
 import type { Hotel } from "~/types/hotel";
-
-import { today } from "@internationalized/date";
 
 const props = defineProps({
   hotel: {
@@ -174,8 +162,12 @@ const props = defineProps({
 
 const emit = defineEmits(["favorite-toggled", "hotel-clicked"]);
 
-// Local favorite state, initialized from prop
-const isFavorite = ref(props.hotel.isFavourite);
+const handleFavoriteChange = (isFavorite: boolean) => {
+  emit("favorite-toggled", {
+    hotelId: props.hotel.id,
+    isFavorite,
+  });
+};
 
 // Calculate discounted price
 const calculateDiscountedPrice = (
@@ -194,20 +186,6 @@ const formatPrice = (price: number): string => {
   return price.toLocaleString();
 };
 
-// Toggle favorite status
-const toggleFavorite = () => {
-  isFavorite.value = !isFavorite.value;
-  emit("favorite-toggled", {
-    hotelId: props.hotel.id,
-    isFavorite: isFavorite.value,
-  });
-};
-
-const datePopoverOpen = ref(false);
-const todayDate = today();
-const tomorrowDate = todayDate.add({ days: 1 });
-const minDate = todayDate;
-const dateRange = shallowRef({ start: todayDate, end: tomorrowDate });
 
 const handleViewDealClick = () => {
   emit("hotel-clicked", props.hotel);
@@ -233,29 +211,6 @@ const handleViewDealClick = () => {
     return;
   }
 
-  // Otherwise, show date picker popover
-  datePopoverOpen.value = true;
 };
 
-// Watch for date selection to auto-close popover and navigate
-watch(
-  dateRange,
-  (newValue) => {
-    if (newValue?.start && newValue?.end && datePopoverOpen.value) {
-      datePopoverOpen.value = false;
-      // Format dates as yyyy-mm-dd
-      const checkIn = newValue.start.toDate().toISOString().slice(0, 10);
-      const checkOut = newValue.end.toDate().toISOString().slice(0, 10);
-      // Save to localStorage so details page can read it
-      localStorage.setItem(
-        "hotelSearchParams",
-        JSON.stringify({ checkIn, checkOut })
-      );
-      navigateTo(
-        `/hotels/${props.hotel.code}?checkIn=${checkIn}&checkOut=${checkOut}`
-      );
-    }
-  },
-  { deep: true }
-);
 </script>
