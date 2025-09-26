@@ -3,8 +3,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   // Enable SSG
   ssr: false,
-  // Enables the development server to be discoverable by other devices when running on iOS physical devices
-  devServer: { port: 4000, host: process.env.TAURI_DEV_HOST || "localhost" },
   vite: {
     // Better support for Tauri CLI output
     clearScreen: false,
@@ -16,6 +14,11 @@ export default defineNuxtConfig({
       // Tauri requires a consistent port
       strictPort: true,
     },
+  },
+  // Avoids error [unhandledRejection] EMFILE: too many open files, watch
+  ignore: ["**/src-tauri/**"],
+  devServer: {
+    host: "0",
   },
   modules: [
     "@nuxt/ui",
