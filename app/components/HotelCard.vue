@@ -163,7 +163,6 @@
 <script setup lang="ts">
 import type { Hotel } from "~/types/hotel";
 
-import { ref, shallowRef } from "vue";
 import { today } from "@internationalized/date";
 
 const props = defineProps({
@@ -229,7 +228,7 @@ const handleViewDealClick = () => {
   // If both dates exist, navigate directly
   if (checkIn && checkOut) {
     navigateTo(
-      `/hotels/${props.hotel.code}/categories?checkIn=${checkIn}&checkOut=${checkOut}`
+      `/hotels/${props.hotel.code}?checkIn=${checkIn}&checkOut=${checkOut}`
     );
     return;
   }
@@ -253,7 +252,7 @@ watch(
         JSON.stringify({ checkIn, checkOut })
       );
       navigateTo(
-        `/hotels/${props.hotel.code}/categories?checkIn=${checkIn}&checkOut=${checkOut}`
+        `/hotels/${props.hotel.code}?checkIn=${checkIn}&checkOut=${checkOut}`
       );
     }
   },

@@ -69,7 +69,7 @@
         </div>
       </div>
       <div v-else class="h-full overflow-y-auto">
-        <div class="px-4 py-6">
+        <div class="px-4 text-center py-6">
           <!-- Available Rooms Section -->
           <h3 class="text-white font-medium mb-4 leading-1 pb-0 m-0">
             Available Rooms

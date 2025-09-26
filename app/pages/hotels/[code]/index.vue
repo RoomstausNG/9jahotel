@@ -88,7 +88,7 @@
         icon="i-lucide-arrow-left"
         variant="ghost"
         color="white"
-        @click="$router.back()"
+        @click="goBack()"
       />
       <div class="flex items-center space-x-3">
         <UButton
@@ -362,6 +362,29 @@ const baseURL = config.public.apiBase || "/api";
 
 const hotelCode = route.params.code;
 
+const goBack = () => {
+  if (typeof window !== 'undefined' && window.history.length > 1) {
+    $router.back();
+  } else {
+    navigateTo('/');
+  }
+};
+
+// Read checkIn and checkOut from query params and save to localStorage
+if (route.query.checkIn && route.query.checkOut) {
+  try {
+    localStorage.setItem(
+      "hotelSearchParams",
+      JSON.stringify({
+        checkIn: route.query.checkIn,
+        checkOut: route.query.checkOut,
+      })
+    );
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 const { data, pending, error } = await useFetch(
   `${baseURL}/hotels/${hotelCode}`
 );
@@ -512,7 +535,9 @@ watch(
         const bgImage =
           newHotel.image || (newHotel.images && newHotel.images[0]) || "";
         localStorage.setItem("hotelImage", bgImage);
-      } catch {}
+      } catch {
+        // Ignore storage errors
+      }
     }
   },
   { immediate: true }

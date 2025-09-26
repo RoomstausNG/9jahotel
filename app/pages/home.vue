@@ -67,7 +67,7 @@
       <div
         class="bg-white/40 backdrop-blur-xs border border-white rounded-xl p-4 space-y-5"
       >
-        <h2 class="font-semibold text-neutral-900 mb-8">
+        <h2 class="font-semibold text-center text-neutral-900 mb-8">
           Find Your Perfect Stay
         </h2>
         <!-- Location Search -->
@@ -204,10 +204,9 @@
 import {
   DateFormatter,
   getLocalTimeZone,
-  today
-  
+  today,
 } from "@internationalized/date";
-import type {CalendarDate} from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
 import type { Hotel, City } from "~/types/hotel";
 
 // Define RangeValue type locally since import is unavailable
