@@ -3,7 +3,7 @@
     class="mobile-app-layout max-w-lg border-2 w-screen mx-auto lg: h-screen relative overflow-hidden flex flex-col"
   >
     <main
-      class="flex-1 py-6 bg-cover relative overflow-y-auto bg-[url('https://res.cloudinary.com/dcm83lp3b/image/upload/v1752508514/slide_image_upd9ht.webp')]"
+      class="flex-1 bg-cover relative overflow-y-auto bg-[url('https://res.cloudinary.com/dcm83lp3b/image/upload/v1752508514/slide_image_upd9ht.webp')]"
     >
       <slot />
     </main>

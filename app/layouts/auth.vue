@@ -115,7 +115,7 @@
     <main
       class="flex-1 pt-[70px] pb-20 overflow-y-auto backdrop-brightness-90 bg-gradient-to-br from-primary/20 to-primary-900/30 backdrop-blur"
     >
-      <div class="h-full w-full py-6 relative">
+      <div class="h-full w-full relative">
         <slot />
       </div>
     </main>
