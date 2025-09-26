@@ -1,8 +1,10 @@
 services:
   app:
-    image: localhost:5000/9jahotel:v1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "3003:3003"
+      - "${PORT}:3003"
     deploy:
       mode: replicated
       replicas: 2
