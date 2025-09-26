@@ -19,6 +19,8 @@ import bookingRoutes from "./routes/booking-routes";
 import { customerRoutes } from "./routes/customer-routes";
 import { EmailService } from "./services/EmailService";
 import { corsConfig } from "./config/cors";
+import { db } from "./config/database";
+import { sql } from "drizzle-orm";
 
 // Import email worker to start it
 import "./jobs/email-processor";
@@ -50,7 +52,7 @@ app.use(
     exposeHeaders: corsConfig.exposedHeaders,
     credentials: corsConfig.credentials,
     maxAge: corsConfig.maxAge,
-  })
+  }),
 );
 
 // use Global errors handlers
@@ -67,7 +69,7 @@ app.get("/", (c) => {
       description:
         "The latest version for production server will be v1.wakalor.com, therefore pls keep it in mind",
     },
-    200
+    200,
   );
 });
 
@@ -91,8 +93,15 @@ app.route("/users", userRoutes);
 app.route("/", authRoutes);
 
 // heath check
-app.get("/health", (c) => {
-  return c.text("OK", 200); // Respond with status 200 for health checks
+app.get("/health", async (c) => {
+  try {
+    // Test database connection
+    await db.execute(sql`SELECT 1`);
+    return c.text("OK", 200); // Respond with status 200 for health checks
+  } catch (error) {
+    console.error("Database connection failed:", error);
+    return c.text("Database connection failed", 500);
+  }
 });
 
 const emailService = new EmailService();
@@ -112,7 +121,7 @@ app.get("/test-email", async (c) => {
     });
     return ApiResponse.success(
       null,
-      "Test email sent to fedumsoftware@gmail.com"
+      "Test email sent to fedumsoftware@gmail.com",
     );
   } catch (error: any) {
     return ApiResponse.failure(error.message, 500);

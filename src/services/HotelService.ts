@@ -37,7 +37,7 @@ export class HotelService {
     maxPrice?: number,
     checkIn?: string,
     checkOut?: string,
-    customerId?: number // Add customerId for cache key
+    customerId?: number, // Add customerId for cache key
   ) {
     const sortParam = sortBy ? `${sortBy}:${sortOrder || "asc"}` : "name:asc";
     const priceParam =
@@ -54,7 +54,7 @@ export class HotelService {
 
   private async invalidateCityHotelCache(
     cityId: number,
-    customerId?: number
+    customerId?: number,
   ): Promise<void> {
     // Invalidate both guest and user cache for this city
     const patterns = [
@@ -67,8 +67,8 @@ export class HotelService {
         await redis.del(keys);
         console.log(
           `Invalidated cache for city ${cityId} (${pattern}): ${keys.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       }
     }
@@ -87,7 +87,7 @@ export class HotelService {
     maxPrice?: number,
     userLatitude?: number,
     userLongitude?: number,
-    customerId?: number // Add customerId for favorite detection
+    customerId?: number, // Add customerId for favorite detection
   ) {
     const searchKey = search?.toLowerCase().trim() || "";
     const cacheKey = this.getListHotelsCacheKey(
@@ -101,7 +101,7 @@ export class HotelService {
       maxPrice,
       checkIn,
       checkOut,
-      customerId // Pass customerId for cache key
+      customerId, // Pass customerId for cache key
     );
 
     try {
@@ -156,7 +156,7 @@ export class HotelService {
 
     if (searchKey) {
       conditions.push(
-        sql`LOWER(${hotels.name}) LIKE LOWER(${`%${searchKey}%`})`
+        sql`LOWER(${hotels.name}) LIKE LOWER(${`%${searchKey}%`})`,
       );
     }
 
@@ -205,8 +205,8 @@ export class HotelService {
         distance: distanceCalculation,
         isFavourite: customerId
           ? sql<boolean>`EXISTS(
-              SELECT 1 FROM favourites 
-              WHERE favourites.customer_id = ${customerId} 
+              SELECT 1 FROM favourites
+              WHERE favourites.customer_id = ${customerId}
               AND favourites.hotel_id = ${hotels.id}
             )`.as("isFavourite")
           : sql<boolean>`false`.as("isFavourite"),
@@ -228,7 +228,7 @@ export class HotelService {
         hotels.status,
         hotels.star_rating,
         cities.id,
-        cities.name
+        cities.name,
       );
 
     // Add sorting
@@ -306,7 +306,7 @@ export class HotelService {
       results,
       total[0].count,
       page,
-      perPage
+      perPage,
     );
 
     try {
@@ -314,7 +314,7 @@ export class HotelService {
         cacheKey,
         JSON.stringify(responseData),
         "EX",
-        this.CACHE_EXPIRATION_SECONDS
+        this.CACHE_EXPIRATION_SECONDS,
       );
       console.log(`Cached data for key: ${cacheKey}`);
     } catch (error) {
@@ -369,8 +369,8 @@ export class HotelService {
         and(
           eq(hotels.code, hotelId),
           eq(hotels.status, "active"),
-          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
-        )
+          sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
+        ),
       ) // Only show active hotels with valid prices
       .limit(1);
 
@@ -395,8 +395,8 @@ export class HotelService {
         .where(
           and(
             eq(images.imageable_type, "App\\Models\\Hotel"), // Ensure this type string is correct
-            eq(images.imageable_id, hotelDetails.id)
-          )
+            eq(images.imageable_id, hotelDetails.id),
+          ),
         );
       const fetchedImages = await imagesQuery;
       imageUrls = fetchedImages
@@ -463,8 +463,8 @@ export class HotelService {
           .where(
             and(
               eq(favourites.hotel_id, hotelDetails.id),
-              eq(favourites.customer_id, customerId)
-            )
+              eq(favourites.customer_id, customerId),
+            ),
           );
 
         const favouriteResult = await favouriteQuery;
@@ -491,7 +491,7 @@ export class HotelService {
       hotelDetails,
       reviewsSummary,
       isFavourite,
-      formattedAmenities
+      formattedAmenities,
     );
 
     try {
@@ -499,7 +499,7 @@ export class HotelService {
         cacheKey,
         JSON.stringify(response),
         "EX",
-        this.CACHE_EXPIRATION_SECONDS
+        this.CACHE_EXPIRATION_SECONDS,
       );
       console.log(`Cached data for key: ${cacheKey}`);
     } catch (error) {
@@ -513,7 +513,7 @@ export class HotelService {
   async getHotelTypesByCode(
     hotelCode: string,
     checkIn: string,
-    checkOut: string
+    checkOut: string,
   ) {
     const hotelResult = await db
       .select({ id: hotels.id })
@@ -522,8 +522,8 @@ export class HotelService {
         and(
           eq(hotels.code, hotelCode),
           eq(hotels.status, "active"),
-          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
-        )
+          sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
+        ),
       ) // Only show active hotels with valid prices
       .limit(1);
 
@@ -543,7 +543,10 @@ export class HotelService {
         price: types.price1,
         onlinePercentage: hotels.online_price,
         nonRefundablePercentage: hotels.non_refundable_price,
-        images: sql`JSON_ARRAYAGG(rooms.image)`.as("images"),
+        images:
+          sql`JSON_ARRAYAGG(COALESCE(rooms.image, COALESCE(hotels.background_image, hotels.logo)))`.as(
+            "images",
+          ),
         // images: sql`JSON_ARRAYAGG(DISTINCT rooms.image)`.as("images"),
         // Use a subquery within COUNT to check availability per room
         availableRoom: sql<number>`(
@@ -564,14 +567,14 @@ export class HotelService {
       })
       .from(types)
       .innerJoin(hotels, eq(types.hotel_id, hotels.id))
-      .leftJoin(rooms, and(eq(types.id, rooms.type_id), isNotNull(rooms.image)))
+      .leftJoin(rooms, eq(types.id, rooms.type_id))
       .where(eq(types.hotel_id, hotelId))
       .groupBy(
         types.id,
         types.name,
         types.price1, // Include price in group by as it's selected
         hotels.online_price,
-        hotels.non_refundable_price
+        hotels.non_refundable_price,
       )
       .orderBy(types.name);
 
@@ -602,7 +605,7 @@ export class HotelService {
   async getAvailableRoomsByType(
     typeId: number,
     checkIn: string,
-    checkOut: string
+    checkOut: string,
   ) {
     // 1. Find the hotel_id associated with the typeId
     const typeInfo = await db
@@ -621,7 +624,12 @@ export class HotelService {
       .select({
         id: rooms.id,
         roomNumber: rooms.number,
-        image: rooms.image,
+        image:
+          sql`COALESCE(rooms.image, COALESCE(hotels.background_image, hotels.logo))`.as(
+            "image",
+          ),
+        background_image: hotels.background_image,
+        logo: hotels.logo,
         price: types.price1,
         onlinePercentage: hotels.online_price,
         nonRefundablePercentage: hotels.non_refundable_price,
@@ -642,8 +650,8 @@ export class HotelService {
               AND b.status IN ('paid', 'unpaid', 'checkedin', 'checkedout')
               AND b.checked_in < ${checkOut}
               AND b.checked_out > ${checkIn}
-          )`
-        )
+          )`,
+        ),
       )
       .orderBy(rooms.number);
 
@@ -664,7 +672,7 @@ export class HotelService {
     sortBy?: "room_lowest_price" | "star_rating" | "distance" | "name",
     sortOrder?: "asc" | "desc",
     minPrice?: number,
-    maxPrice?: number
+    maxPrice?: number,
   ) {
     if (!latitude || !longitude) return;
 
@@ -741,8 +749,8 @@ export class HotelService {
         distance: distanceSql.as("distance"),
         isFavourite: customerId
           ? sql<boolean>`EXISTS(
-            SELECT 1 FROM favourites 
-            WHERE favourites.customer_id = ${customerId} 
+            SELECT 1 FROM favourites
+            WHERE favourites.customer_id = ${customerId}
             AND favourites.hotel_id = ${hotels.id}
           )`.as("isFavourite")
           : sql<boolean>`false`.as("isFavourite"),
@@ -801,7 +809,7 @@ export class HotelService {
   private getListFavouritesCacheKey(
     customerId: number,
     page: number,
-    perPage: number
+    perPage: number,
   ): string {
     return `favourites:customer:${customerId}:page:${page}:perPage:${perPage}`;
   }
@@ -813,8 +821,8 @@ export class HotelService {
       await redis.del(keys);
       console.log(
         `Invalidated favourites cache for customer ${customerId}: ${keys.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
     }
   }
@@ -823,7 +831,7 @@ export class HotelService {
     customerId: number,
     page: number,
     perPage: number,
-    c: Context
+    c: Context,
   ) {
     const cacheKey = this.getListFavouritesCacheKey(customerId, page, perPage);
 
@@ -875,8 +883,8 @@ export class HotelService {
         and(
           eq(favourites.customer_id, customerId),
           eq(hotels.status, "active"),
-          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
-        )
+          sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
+        ),
       ) // Only show active hotels with valid prices
       .groupBy(hotels.id)
       .orderBy(hotels.name)
@@ -892,15 +900,15 @@ export class HotelService {
         and(
           eq(favourites.customer_id, customerId),
           eq(hotels.status, "active"),
-          sql`${hotels.room_lowest_price} > 0` // Only show hotels with valid room prices
-        )
+          sql`${hotels.room_lowest_price} > 0`, // Only show hotels with valid room prices
+        ),
       );
 
     const responseData = HotelResource.toCollection(
       results,
       total[0].count,
       page,
-      perPage
+      perPage,
     );
 
     try {
@@ -909,7 +917,7 @@ export class HotelService {
         cacheKey,
         JSON.stringify(responseData),
         "EX",
-        this.CACHE_EXPIRATION_SECONDS
+        this.CACHE_EXPIRATION_SECONDS,
       );
       console.log(`Cached favourites data for key: ${cacheKey}`);
     } catch (error) {
@@ -929,8 +937,8 @@ export class HotelService {
         and(
           eq(hotels.id, hotelId),
           eq(hotels.status, "active"),
-          sql`${hotels.room_lowest_price} > 0` // Only allow favouriting hotels with valid room prices
-        )
+          sql`${hotels.room_lowest_price} > 0`, // Only allow favouriting hotels with valid room prices
+        ),
       ) // Only allow favouriting active hotels with valid prices
       .limit(1);
 
@@ -947,8 +955,8 @@ export class HotelService {
       .where(
         and(
           eq(favourites.customer_id, customerId),
-          eq(favourites.hotel_id, hotelId) // Corrected column name
-        )
+          eq(favourites.hotel_id, hotelId), // Corrected column name
+        ),
       )
       .limit(1);
 
@@ -958,8 +966,8 @@ export class HotelService {
       await db.delete(favourites).where(
         and(
           eq(favourites.customer_id, customerId),
-          eq(favourites.hotel_id, hotelId) // Corrected column name
-        )
+          eq(favourites.hotel_id, hotelId), // Corrected column name
+        ),
       );
       message = "Hotel removed from favourites.";
     } else {
@@ -973,7 +981,7 @@ export class HotelService {
     // Invalidate relevant caches
     const invalidationPromises = [];
     invalidationPromises.push(
-      this.invalidateCityHotelCache(cityId, customerId)
+      this.invalidateCityHotelCache(cityId, customerId),
     );
     // Always invalidate the user's favourites cache
     invalidationPromises.push(this.invalidateFavouritesCache(customerId));
@@ -1032,8 +1040,8 @@ export class HotelService {
           and(
             eq(rooms.id, roomId),
             eq(hotels.status, "active"),
-            sql`${hotels.room_lowest_price} > 0` // Only show rooms from hotels with valid room prices
-          )
+            sql`${hotels.room_lowest_price} > 0`, // Only show rooms from hotels with valid room prices
+          ),
         ) // Only show rooms from active hotels
         .limit(1);
 
@@ -1052,7 +1060,7 @@ export class HotelService {
       console.error(`Error fetching room details for ID ${roomId}:`, error);
       // Re-throw a more specific error or handle as appropriate
       throw new Error(
-        `Could not fetch details for room with ID ${roomId}. Reason: ${error.message}`
+        `Could not fetch details for room with ID ${roomId}. Reason: ${error.message}`,
       );
     }
   }

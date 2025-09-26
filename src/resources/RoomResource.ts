@@ -5,6 +5,8 @@ interface RawRoomData {
   id: number;
   roomNumber: string | null; // Assuming 'number' column in rooms table is string type
   image: string | null;
+  background_image: string | null;
+  logo: string | null;
   price: number | null;
   onlinePercentage: number | null;
   nonRefundablePercentage: number | null;
@@ -32,7 +34,11 @@ export class RoomResource {
       number: room.roomNumber,
       imageUrl: room.image
         ? getCloudinaryImage(room.image)
-        : `${env("APP_URL")}/img/logo.png`,
+        : room.background_image
+          ? getCloudinaryImage(room.background_image)
+          : room.logo
+            ? getCloudinaryImage(room.logo)
+            : `${env("APP_URL")}/img/logo.png`,
       price: room.price,
       onlinePercentage: room.onlinePercentage,
       nonRefundablePercentage: room.nonRefundablePercentage,
