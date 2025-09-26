@@ -357,18 +357,13 @@ definePageMeta({
 setPageLayout(computed(() => (user.value ? "auth" : "default")));
 
 const route = useRoute();
-const router = useRouter();
 const config = useRuntimeConfig();
 const baseURL = config.public.apiBase || "/api";
 
 const hotelCode = route.params.code;
 
 const goBack = () => {
-  if (typeof window !== 'undefined' && window.history.length > 1) {
-    router.back();
-  } else {
-    navigateTo('/');
-  }
+  navigateTo('/');
 };
 
 // Read checkIn and checkOut from query params and save to localStorage
