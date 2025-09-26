@@ -52,12 +52,12 @@ export class HotelController {
         maxPrice,
         latitude,
         longitude,
-        customerId // Pass customerId for favorite detection
+        customerId, // Pass customerId for favorite detection
       );
 
       return ApiResponse.success(
         hotels,
-        "Hotels for city fetched successfully"
+        "Hotels for city fetched successfully",
       );
     } catch (error: any) {
       // Handle Zod validation errors
@@ -65,14 +65,14 @@ export class HotelController {
         return ApiResponse.failure(
           "Validation error",
           400,
-          error.flatten().fieldErrors
+          error.flatten().fieldErrors,
         );
       }
 
       // Handle potential service errors
       return ApiResponse.failure(
         error.message || "Failed to fetch hotels",
-        500
+        500,
       );
     }
   }
@@ -109,7 +109,7 @@ export class HotelController {
         sortBy,
         sortOrder,
         minPrice,
-        maxPrice
+        maxPrice,
       );
 
       return ApiResponse.success(hotels, "Hotels fetched successfully");
@@ -119,13 +119,13 @@ export class HotelController {
         return ApiResponse.failure(
           "Validation error",
           400,
-          error.flatten().fieldErrors
+          error.flatten().fieldErrors,
         );
       }
 
       return ApiResponse.failure(
         error.message || "Failed to fetch nearby hotels",
-        500
+        500,
       );
     }
   }
@@ -140,11 +140,11 @@ export class HotelController {
         userId,
         page,
         perPage,
-        c
+        c,
       );
       return ApiResponse.success(
         hotels,
-        "Favorite hotels fetched successfully"
+        "Favorite hotels fetched successfully",
       );
     } catch (error: any) {
       return ApiResponse.failure(error.message, 500);
@@ -176,11 +176,11 @@ export class HotelController {
       }
       const result = await this.hotelService.toggleHotelFavourite(
         userId,
-        Number(hotelId)
+        Number(hotelId),
       );
       return ApiResponse.success(
         result,
-        "Hotel favorite status toggled successfully"
+        "Hotel favorite status toggled successfully",
       );
     } catch (error: any) {
       return ApiResponse.failure(error.message, 500);
@@ -196,12 +196,12 @@ export class HotelController {
       const types = await this.hotelService.getHotelTypesByCode(
         code,
         checkIn.toISOString(),
-        checkOut.toISOString()
+        checkOut.toISOString(),
       );
 
       return ApiResponse.success(
         types,
-        "Hotel room categories fetched successfully"
+        "Hotel room categories fetched successfully",
       );
     } catch (error: any) {
       // Handle specific errors like "Hotel not found" potentially with 404
@@ -210,7 +210,7 @@ export class HotelController {
       }
       return ApiResponse.failure(
         error.message || "Failed to fetch hotel types",
-        500
+        500,
       );
     }
   }
@@ -224,13 +224,13 @@ export class HotelController {
       const rooms = await this.hotelService.getAvailableRoomsByType(
         typeId,
         checkIn.toISOString(),
-        checkOut.toISOString()
+        checkOut.toISOString(),
       );
 
       // The service method throws if type not found, caught below
       return ApiResponse.success(
         rooms,
-        "Available rooms for the type fetched successfully"
+        "Available rooms for the type fetched successfully",
       );
     } catch (error: any) {
       // Handle specific errors like "Room type not found" with 404
@@ -242,12 +242,12 @@ export class HotelController {
         return ApiResponse.failure(
           "Validation failed",
           400,
-          error.flatten().fieldErrors
+          error.flatten().fieldErrors,
         );
       }
       return ApiResponse.failure(
         error.message || "Failed to fetch available rooms",
-        500
+        500,
       );
     }
   }
@@ -265,7 +265,7 @@ export class HotelController {
       return ApiResponse.success(
         booking,
         `Room booked successfully with booking code ${booking.code}`,
-        201
+        201,
       );
     } catch (error: any) {
       if (error.message) {

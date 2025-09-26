@@ -60,7 +60,7 @@ export class HotelService {
     const patterns = [
       `hotels:city:${cityId}:*user:guest`,
       customerId ? `hotels:city:${cityId}:*user:${customerId}` : null,
-    ].filter(Boolean);
+    ].filter((p): p is string => p !== null);
     for (const pattern of patterns) {
       const keys = await redis.keys(pattern);
       if (keys.length > 0) {
