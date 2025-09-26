@@ -331,7 +331,6 @@ const getDeviceLocation = (): {
 
       return locationData.coordinates;
     } catch (error) {
-      console.error("Error reading device location:", error);
       localStorage.removeItem(DEVICE_LOCATION_KEY);
       return null;
     }
@@ -362,8 +361,6 @@ const getCityFromCoordinates = async (coords: {
       }
     );
 
-    console.log("OpenStreetMap response:", response);
-
     const address = response.address;
     const cityName =
       address.city ||
@@ -374,7 +371,6 @@ const getCityFromCoordinates = async (coords: {
 
     return cityName || null;
   } catch (error) {
-    console.error("OpenStreetMap API error:", error);
     return null;
   }
 };
@@ -403,7 +399,6 @@ const requestFreshLocation = async () => {
       searchLocation.value = cityName;
     }
   } catch (error) {
-    console.error("Fresh location request failed:", error);
   } finally {
     geolocationLoading.value = false;
   }
@@ -507,7 +502,6 @@ const guestConfig = reactive<GuestConfig>({
 
 // Hotel interaction handlers
 const handleFavoriteToggle = (data: { hotel: Hotel; isFavorite: boolean }) => {
-  console.log("Favorite toggled:", data);
   toast.add({
     title: data.isFavorite ? "Added to favorites" : "Removed from favorites",
     description: `${data.hotel.name} ${
@@ -518,7 +512,6 @@ const handleFavoriteToggle = (data: { hotel: Hotel; isFavorite: boolean }) => {
 };
 
 const handleHotelClick = (hotel: Hotel) => {
-  console.log("Hotel clicked:", hotel);
   // Navigation is handled by the HotelCard component
 };
 
@@ -632,7 +625,6 @@ const fetchNearbyHotels = async () => {
       nearbyHotels.value = [];
     }
   } catch (error) {
-    console.error("Error fetching nearby hotels:", error);
     nearbyHotels.value = [];
   } finally {
     nearbyHotelsLoading.value = false;
@@ -763,14 +755,12 @@ onMounted(() => {
 
   // Step 2: 🚨 AUTOMATIC PERMISSION REQUEST (when no stored location exists)
   setTimeout(async () => {
-    console.log("🚨 AUTOMATICALLY REQUESTING LOCATION PERMISSION...");
     geolocationLoading.value = true;
     isGeolocating.value = true;
 
     try {
       // 🔔 THIS IS WHERE THE BROWSER PROMPTS FOR LOCATION PERMISSION
       const coords = await requestLocation();
-      console.log("✅ Permission granted! Fresh device coordinates:", coords);
 
       // Store coordinates temporarily in session
       userCoordinates.value = coords;

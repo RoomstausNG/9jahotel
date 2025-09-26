@@ -6,7 +6,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("app:error", (error) => {
     // Check if it's a fetch error with 401 status
     if ((error as FetchError).statusCode === 401) {
-      console.error("Authentication error detected in app hook:", error);
       handleAuthFailure();
     }
   });
@@ -16,7 +15,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   const fetchOptions = {
     onResponseError({ response }) {
       if (response.status === 401) {
-        console.error("Authentication error detected:", response);
         handleAuthFailure();
       }
     },
