@@ -7,6 +7,7 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class HotelExporter extends Exporter
 {
@@ -14,7 +15,7 @@ class HotelExporter extends Exporter
 
     public static function modifyQuery(Builder $query): Builder
     {
-        return $query->with(["city.state"]);
+        return $query->with(["city"]);
     }
 
     public static function getColumns(): array
@@ -25,9 +26,17 @@ class HotelExporter extends Exporter
             ExportColumn::make("city_name_with_state")
                 ->label("City and State")
                 ->state(function (Hotel $record): string {
-                    $city = $record->city->name;
-                    $state = $record->city->state?->name;
-                    return $state ? "{$city}, {$state}" : $city;
+                    $city = $record->city;
+                    if ($city) {
+                        $state = DB::table("states")
+                            ->where("id", $city->state_id)
+                            ->first();
+                        $stateName = $state ? $state->name : "";
+                        return $stateName
+                            ? "{$city->name}, {$stateName}"
+                            : $city->name;
+                    }
+                    return "";
                 }),
             ExportColumn::make("email")->label("Email Address"),
             ExportColumn::make("telephone")->label("Phone"),
