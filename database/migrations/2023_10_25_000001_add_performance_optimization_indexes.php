@@ -13,33 +13,63 @@ class AddPerformanceOptimizationIndexes extends Migration
     {
         // Add indexes for performance optimization on hotels table
         Schema::table('hotels', function (Blueprint $table) {
-            $table->index('name');
-            $table->index('city_id');
-            $table->index('email');
-            $table->index('status');
-            $table->index('created_at');
+            if (!Schema::hasIndex('hotels', 'hotels_name_index')) {
+                $table->index('name');
+            }
+            if (!Schema::hasIndex('hotels', 'hotels_city_id_index')) {
+                $table->index('city_id');
+            }
+            if (!Schema::hasIndex('hotels', 'hotels_email_index')) {
+                $table->index('email');
+            }
+            if (!Schema::hasIndex('hotels', 'hotels_status_index')) {
+                $table->index('status');
+            }
+            if (!Schema::hasIndex('hotels', 'hotels_created_at_index')) {
+                $table->index('created_at');
+            }
         });
 
         // Add indexes for performance optimization on bookings table
         Schema::table('bookings', function (Blueprint $table) {
-            $table->index('hotel_id');
-            $table->index('customer_id');
-            $table->index('checkin');
-            $table->index('checkout');
-            $table->index('status');
+            if (!Schema::hasIndex('bookings', 'bookings_hotel_id_index')) {
+                $table->index('hotel_id');
+            }
+            if (!Schema::hasIndex('bookings', 'bookings_customer_id_index')) {
+                $table->index('customer_id');
+            }
+            if (!Schema::hasIndex('bookings', 'bookings_checked_in_index')) {
+                $table->index('checked_in');
+            }
+            if (!Schema::hasIndex('bookings', 'bookings_checked_out_index')) {
+                $table->index('checked_out');
+            }
+            if (!Schema::hasIndex('bookings', 'bookings_status_index')) {
+                $table->index('status');
+            }
         });
 
         // Add indexes for performance optimization on users table
         Schema::table('users', function (Blueprint $table) {
-            $table->index('email');
-            $table->index('firstname');
-            $table->index('lastname');
+            if (!Schema::hasIndex('users', 'users_email_index')) {
+                $table->index('email');
+            }
+            if (!Schema::hasIndex('users', 'users_firstname_index')) {
+                $table->index('firstname');
+            }
+            if (!Schema::hasIndex('users', 'users_lastname_index')) {
+                $table->index('lastname');
+            }
         });
 
         // Add indexes for performance optimization on customers table
         Schema::table('customers', function (Blueprint $table) {
-            $table->index('email');
-            $table->index('phone');
+            if (!Schema::hasIndex('customers', 'customers_email_index')) {
+                $table->index('email');
+            }
+            if (!Schema::hasIndex('customers', 'customers_phone_index')) {
+                $table->index('phone');
+            }
         });
 
         // Add any other commonly queried fields as needed
@@ -50,32 +80,62 @@ class AddPerformanceOptimizationIndexes extends Migration
      */
     public function down(): void
     {
-        // Drop the indexes in reverse order
+        // Drop the indexes in reverse order, checking if they exist
         Schema::table('hotels', function (Blueprint $table) {
-            $table->dropIndex(['name']);
-            $table->dropIndex(['city_id']);
-            $table->dropIndex(['email']);
-            $table->dropIndex(['status']);
-            $table->dropIndex(['created_at']);
+            if (Schema::hasIndex('hotels', 'hotels_name_index')) {
+                $table->dropIndex(['name']);
+            }
+            if (Schema::hasIndex('hotels', 'hotels_city_id_index')) {
+                $table->dropIndex(['city_id']);
+            }
+            if (Schema::hasIndex('hotels', 'hotels_email_index')) {
+                $table->dropIndex(['email']);
+            }
+            if (Schema::hasIndex('hotels', 'hotels_status_index')) {
+                $table->dropIndex(['status']);
+            }
+            if (Schema::hasIndex('hotels', 'hotels_created_at_index')) {
+                $table->dropIndex(['created_at']);
+            }
         });
 
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropIndex(['hotel_id']);
-            $table->dropIndex(['customer_id']);
-            $table->dropIndex(['checkin']);
-            $table->dropIndex(['checkout']);
-            $table->dropIndex(['status']);
+            if (Schema::hasIndex('bookings', 'bookings_hotel_id_index')) {
+                $table->dropIndex(['hotel_id']);
+            }
+            if (Schema::hasIndex('bookings', 'bookings_customer_id_index')) {
+                $table->dropIndex(['customer_id']);
+            }
+            if (Schema::hasIndex('bookings', 'bookings_checked_in_index')) {
+                $table->dropIndex(['checked_in']);
+            }
+            if (Schema::hasIndex('bookings', 'bookings_checked_out_index')) {
+                $table->dropIndex(['checked_out']);
+            }
+            if (Schema::hasIndex('bookings', 'bookings_status_index')) {
+                $table->dropIndex(['status']);
+            }
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['email']);
-            $table->dropIndex(['firstname']);
-            $table->dropIndex(['lastname']);
+            if (Schema::hasIndex('users', 'users_email_index')) {
+                $table->dropIndex(['email']);
+            }
+            if (Schema::hasIndex('users', 'users_firstname_index')) {
+                $table->dropIndex(['firstname']);
+            }
+            if (Schema::hasIndex('users', 'users_lastname_index')) {
+                $table->dropIndex(['lastname']);
+            }
         });
 
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropIndex(['email']);
-            $table->dropIndex(['phone']);
+            if (Schema::hasIndex('customers', 'customers_email_index')) {
+                $table->dropIndex(['email']);
+            }
+            if (Schema::hasIndex('customers', 'customers_phone_index')) {
+                $table->dropIndex(['phone']);
+            }
         });
     }
 }
