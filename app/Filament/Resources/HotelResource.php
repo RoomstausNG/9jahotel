@@ -21,7 +21,9 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Filters\SelectFilter;
+use App\Filament\Exports\HotelExporter;
 use Illuminate\Database\Eloquent\Builder;
 use Mokhosh\FilamentRating\Components\Rating;
 use App\Filament\Resources\HotelResource\Pages;
@@ -357,6 +359,8 @@ class HotelResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    ExportBulkAction::make()
+                        ->exporter(HotelExporter::class),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
