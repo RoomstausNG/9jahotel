@@ -20,8 +20,6 @@ class HotelExporter extends Exporter
                 ->label('Address'),
             ExportColumn::make('city.name')
                 ->label('City'),
-            ExportColumn::make('city.state.name')
-                ->label('State'),
             ExportColumn::make('email')
                 ->label('Email Address'),
             ExportColumn::make('telephone')
