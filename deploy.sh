@@ -3,7 +3,7 @@
 set -e  # exit immediately if any command fails
 
 # --- Git Operations ---
-echo "📦 Pulling latest changes from git..."
+echo "📦 Pulling latest changes from git."
 git reset --hard HEAD
 git pull production event
 # Get the short commit hash for tagging
