@@ -269,13 +269,8 @@ export class EventController {
         type: "broadcast",
         data: {
           hotelcode: validatedData.hotelcode,
-          roomnumber: null, // Not applicable for hotel-wide broadcast
-          macaddress: null, // Not applicable for hotel-wide broadcast
-          fullname: null, // Not applicable for hotel-wide broadcast
-          checkintime: null, // Not applicable for hotel-wide broadcast
-          checkouttime: null, // Not applicable for hotel-wide broadcast
           message: validatedData.message,
-          tvid: null, // Not applicable for hotel-wide broadcast
+          ...(validatedData.title && { title: validatedData.title }),
         }
       });
 
@@ -293,7 +288,7 @@ export class EventController {
       if (error.name === "ZodError") {
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
-      return ApiResponse.failure(error.message || "Internal server error", 500);
+      return ApiResponse.failure(error.message || "Internal server error:", 500);
     }
   }
 }

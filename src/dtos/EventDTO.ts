@@ -63,4 +63,5 @@ export const CheckoutDTO = z.object({
 export const BroadcastAllDTO = z.object({
   hotelcode: z.string().min(1, "Hotel code is required"),
   message: z.string().min(1, "Message is required"),
+  title: z.string().optional(),
 });
