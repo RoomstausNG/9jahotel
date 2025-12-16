@@ -35,7 +35,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6382:6379"
+      - "6383:6379"
     deploy:
       mode: replicated
       replicas: 1
