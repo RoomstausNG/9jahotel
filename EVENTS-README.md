@@ -23,7 +23,24 @@ Only minimal database operations are performed:
 
 ## API Endpoints
 
-All endpoints are prefixed with `/api/events/` and are unprotected. Guest information and broadcast data is provided via POST request parameters.
+All endpoints start with `/api/events/`.
+
+## Quick Reference
+
+| Action | HTTP Endpoint | Socket Event |
+|--------|--------------|--------------|
+| Register TV | `POST /tv-registration` | `tv-notification` (type: connected OR registration) |
+| Check-in | `POST /check-in` | `tv-notification` (type: check-in) |
+| Reminder | `POST /reminder` | `tv-notification` (type: reminder) |
+| Checkout | `POST /checkout` | `tv-notification` (type: checkout) |
+| Broadcast | `POST /broadcast-all` | `tv-notification` (type: broadcast) |
+
+### Frontend Listener
+Listen for `tv-notification` on:
+- Room: `smart-tv:<mac_address>` (for specific events)
+- Room: `hotel:<hotel_code>` (for broadcasts)
+
+## API Endpoints
 
 ### 1. TV Registration
 **Endpoint**: `POST /api/events/tv-registration`
@@ -49,7 +66,7 @@ Registers a TV with the system and establishes room connections.
   "data": {
     "tvId": 123,
     "sanitizedMac": "AD6BBGTEKEF",
-    "tvRoom": "smart-tv+AD6BBGTEKEF",
+    "tvRoom": "smart-tv:AD6BBGTEKEF",
     "hotelRoom": "hotel:ZCHS241"
   }
 }
@@ -228,52 +245,45 @@ socket.on('checkout-error', (error) => { /* handle error */ });
 socket.on('broadcast-all-error', (error) => { /* handle error */ });
 ```
 
-## Frontend Listening Events
+### Unified TV Event Listener
+All events (check-in, checkout, reminder, broadcast) are now emitted as a single `tv-notification` event. The payload contains a `type` field to distinguish the event.
 
-TV applications should listen for broadcast messages in their respective rooms:
-
-### TV-Specific Events
 ```javascript
-// TV registration events
-socket.on('tv-registered', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, ipaddress, tvid, status, timestamp }
-  console.log(`TV registered: ${data.tvid} in room ${data.roomnumber}`);
-});
+// Listen on TV-specific room (smart-tv:sanitizedMacAddress) OR hotel room
+socket.on('tv-notification', (payload) => {
+  const { type, data } = payload;
+  
+  switch (type) {
+    case 'registration':
+      // data: { hotelcode, roomnumber, macaddress, ipaddress, tvid, status: "active", timestamp }
+      console.log(`TV registered: ${data.tvid}`);
+      break;
 
-socket.on('tv-connected', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, tvid, status, timestamp }
-  console.log(`TV connected: ${data.tvid} in hotel ${data.hotelcode}`);
-});
-
-// Individual TV events
-socket.on('check-in', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  displayWelcomeMessage(data.message);
-});
-
-socket.on('reminder', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  // Note: fullname, checkintime, tvid may be null for reminder events
-  displayReminder(data.message);
-});
-
-socket.on('check-out', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  // Note: checkintime, tvid may be null for checkout events
-  displayCheckoutMessage(data.message);
-});
-```
-
-### Hotel-Wide Events
-```javascript
-// Connect to hotel room (after registration)
-socket.emit('join', `hotel:${hotelCode}`);
-
-// Listen for hotel-wide broadcasts
-socket.on('broadcast', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  // Note: roomnumber, macaddress, fullname, checkintime, checkouttime, tvid are null for broadcast events
-  displayAnnouncement(data.message);
+    case 'connected':
+      // data: { tvid, status: "active", message }
+      console.log(`TV connected: ${data.message}`);
+      break;
+      
+    case 'check-in':
+      // data: { hotelcode, roomnumber, message, fullname, checkintime, checkouttime, ... }
+      displayWelcomeMessage(data.message);
+      break;
+      
+    case 'reminder':
+      // data: { message, checkouttime, ... }
+      displayReminder(data.message);
+      break;
+      
+    case 'checkout':
+      // data: { message, checkouttime, ... }
+      displayCheckoutMessage(data.message);
+      break;
+      
+    case 'broadcast':
+      // data: { message, hotelcode, ... }
+      displayAnnouncement(data.message);
+      break;
+  }
 });
 ```
 
@@ -309,50 +319,13 @@ MAC addresses are validated flexibly - any format is accepted (e.g., `AD:6B:BG:T
 - Storing the clean format in the database
 - Using the sanitized format in room names and event emissions
 
-## Frontend Events to Listen To
-
-Frontend applications should listen for the following Socket.IO events:
-
-### **TV Connection Events**
+### **Unified Event Handling**
 ```javascript
-// Listen on TV-specific room (smart-tv+sanitizedMacAddress)
-socket.on('tv-registered', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, ipaddress, tvid, status: "registered", timestamp }
-  console.log(`TV ${data.tvid} registered`);
-});
-
-// Listen on hotel room (hotel:hotelcode) - for all TVs in hotel
-socket.on('tv-connected', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, tvid, status: "online", timestamp }
-  console.log(`TV ${data.tvid} connected to hotel`);
-});
-```
-
-### **Guest Events (Individual TV Room)**
-```javascript
-// Listen on TV-specific room
-socket.on('check-in', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  displayWelcomeMessage(data);
-});
-
-socket.on('reminder', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  displayReminder(data);
-});
-
-socket.on('check-out', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  displayCheckoutMessage(data);
-});
-```
-
-### **Hotel-wide Broadcast Events**
-```javascript
-// Listen on hotel room
-socket.on('broadcast', (data) => {
-  // data: { hotelcode, roomnumber, macaddress, fullname, checkintime, checkouttime, message, tvid }
-  displayAnnouncement(data);
+// Listen on TV-specific room AND hotel room
+socket.on('tv-notification', (payload) => {
+  const { type, data } = payload;
+  console.log(`Received ${type} event:`, data);
+  // Handle UI updates based on type
 });
 ```
 

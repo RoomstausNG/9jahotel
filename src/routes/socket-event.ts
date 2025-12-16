@@ -18,7 +18,7 @@
  * - disconnect: Handles user disconnection and updates status
  *
  * TV Events:
- * - tv-registration: Registers a TV with hotel and room, joins rooms (smart-tv+macAddress, hotel:hotelcode)
+ * - tv-registration: Registers a TV with hotel and room, joins rooms (smart-tv:macAddress, hotel:hotelcode)
  * - check-in: Processes guest check-in and broadcasts welcome message to TV
  * - reminder: Sends reminder notifications to specific TV (checkout_2h, checkout_1h)
  * - checkout: Processes guest checkout and broadcasts thank you message to TV
@@ -80,7 +80,51 @@ io.on("connection", (socket) => {
           json: async () => Promise.resolve(data),
         },
       };
-      const result = await eventController.registerTV(mockContext as any);
+      const response = await eventController.registerTV(mockContext as any);
+      
+      let result;
+      if (response && typeof (response as any).json === 'function') {
+         result = await (response as any).json();
+      } else if (response instanceof Response) {
+        result = await response.json();
+      } else {
+        result = response;
+      }
+
+      if (result.success && result.data) {
+        // Join rooms
+        const { tvRoom, hotelRoom } = result.data;
+        if (tvRoom) socket.join(tvRoom);
+        if (hotelRoom) socket.join(hotelRoom);
+        console.log(`Socket ${socket.id} joined rooms: ${tvRoom}, ${hotelRoom}`);
+        
+        // Emit connected event specifically to this socket
+        socket.emit("tv-notification", {
+          type: "connected",
+          data: {
+            tvid: result.data.tvId,
+            status: "active",
+            message: "TV is now connected and active",
+          }
+        });
+
+        // If new, also emit registration event to this socket
+        if (result.data.isNew) {
+          socket.emit("tv-notification", {
+            type: "registration",
+            data: {
+              tvid: result.data.tvId,
+              macaddress: result.data.sanitizedMac,
+              status: "active",
+              timestamp: new Date().toISOString(),
+              hotelcode: data.hotelcode,
+              roomnumber: data.roomnumber,
+              ipaddress: data.ipaddress
+            }
+          });
+        }
+      }
+      
       socket.emit("tv-registration-success", result);
     } catch (error: any) {
       socket.emit("tv-registration-error", { error: error.message });
@@ -94,7 +138,15 @@ io.on("connection", (socket) => {
           json: async () => Promise.resolve(data),
         },
       };
-      const result = await eventController.checkIn(mockContext as any);
+      const response = await eventController.checkIn(mockContext as any);
+      let result;
+      if (response && typeof (response as any).json === 'function') {
+         result = await (response as any).json();
+      } else if (response instanceof Response) {
+        result = await response.json();
+      } else {
+        result = response;
+      }
       socket.emit("check-in-success", result);
     } catch (error: any) {
       socket.emit("check-in-error", { error: error.message });
@@ -108,7 +160,15 @@ io.on("connection", (socket) => {
           json: async () => Promise.resolve(data),
         },
       };
-      const result = await eventController.sendReminder(mockContext as any);
+      const response = await eventController.sendReminder(mockContext as any);
+      let result;
+      if (response && typeof (response as any).json === 'function') {
+         result = await (response as any).json();
+      } else if (response instanceof Response) {
+        result = await response.json();
+      } else {
+        result = response;
+      }
       socket.emit("reminder-success", result);
     } catch (error: any) {
       socket.emit("reminder-error", { error: error.message });
@@ -122,7 +182,15 @@ io.on("connection", (socket) => {
           json: async () => Promise.resolve(data),
         },
       };
-      const result = await eventController.checkOut(mockContext as any);
+      const response = await eventController.checkOut(mockContext as any);
+      let result;
+      if (response && typeof (response as any).json === 'function') {
+         result = await (response as any).json();
+      } else if (response instanceof Response) {
+        result = await response.json();
+      } else {
+        result = response;
+      }
       socket.emit("checkout-success", result);
     } catch (error: any) {
       socket.emit("checkout-error", { error: error.message });
@@ -136,7 +204,15 @@ io.on("connection", (socket) => {
           json: async () => Promise.resolve(data),
         },
       };
-      const result = await eventController.broadcastAll(mockContext as any);
+      const response = await eventController.broadcastAll(mockContext as any);
+      let result;
+      if (response && typeof (response as any).json === 'function') {
+         result = await (response as any).json();
+      } else if (response instanceof Response) {
+        result = await response.json();
+      } else {
+        result = response;
+      }
       socket.emit("broadcast-all-success", result);
     } catch (error: any) {
       socket.emit("broadcast-all-error", { error: error.message });

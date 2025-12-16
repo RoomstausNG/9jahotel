@@ -30,7 +30,7 @@ export class EventController {
       const result = await this.tvService.registerTV(validatedData);
 
       // Join Socket.IO rooms
-      const tvRoom = `smart-tv+${result.sanitizedMac}`;
+      const tvRoom = `smart-tv:${result.sanitizedMac}`;
       const hotelRoom = `hotel:${result.hotel.code}`;
 
       // Note: In a real implementation, you'd get the socket from the TV connection
@@ -40,15 +40,30 @@ export class EventController {
         `TV ${result.tv.id} registered in rooms: ${tvRoom}, ${hotelRoom}`,
       );
 
-      // Emit registration event to the TV room
-      io.to(tvRoom).emit("tv-registered", {
-        hotelcode: validatedData.hotelcode,
-        roomnumber: validatedData.roomnumber,
-        macaddress: result.sanitizedMac,
-        ipaddress: validatedData.ipaddress,
-        tvid: result.tv.id,
-        status: "registered",
-        timestamp: new Date().toISOString(),
+      // Emit registration event (only if new)
+      if (result.isNew) {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "registration",
+          data: {
+            hotelcode: validatedData.hotelcode,
+            roomnumber: validatedData.roomnumber,
+            macaddress: result.sanitizedMac,
+            ipaddress: validatedData.ipaddress,
+            tvid: result.tv.id,
+            status: "active",
+            timestamp: new Date().toISOString(),
+          }
+        });
+      }
+
+      // Also emit connected event to TV room as requested
+      io.to(tvRoom).emit("tv-notification", {
+        type: "connected",
+        data: {
+          tvid: result.tv.id,
+          status: "active",
+          message: "TV is now connected and active",
+        }
       });
 
       // Emit to hotel room about new TV registration
@@ -57,7 +72,7 @@ export class EventController {
         roomnumber: validatedData.roomnumber,
         macaddress: result.sanitizedMac,
         tvid: result.tv.id,
-        status: "online",
+        status: "active",
         timestamp: new Date().toISOString(),
       });
 
@@ -67,6 +82,7 @@ export class EventController {
           sanitizedMac: result.sanitizedMac,
           tvRoom,
           hotelRoom,
+          isNew: result.isNew,
         },
         "TV registered successfully",
         201,
@@ -98,16 +114,20 @@ export class EventController {
       const welcomeMessage = `Welcome, ${validatedData.fullname}! Your check-in at ${validatedData.checkindatetime} is confirmed. Enjoy your stay until ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      const tvRoom = `smart-tv+${result.sanitizedMac}`;
-      io.to(tvRoom).emit("check-in", {
-        hotelcode: validatedData.hotelcode,
-        roomnumber: validatedData.roomnumber,
-        macaddress: result.sanitizedMac,
-        fullname: validatedData.fullname,
-        checkintime: validatedData.checkindatetime,
-        checkouttime: validatedData.checkoutdatetime,
-        message: welcomeMessage,
-        tvid: validatedData.tvid,
+      // Broadcast to TV room
+      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      io.to(tvRoom).emit("tv-notification", {
+        type: "check-in",
+        data: {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: validatedData.fullname,
+          checkintime: validatedData.checkindatetime,
+          checkouttime: validatedData.checkoutdatetime,
+          message: welcomeMessage,
+          tvid: validatedData.tvid,
+        }
       });
 
       console.log(`Check-in broadcasted to room: ${tvRoom}`);
@@ -146,16 +166,20 @@ export class EventController {
       const reminderMessage = `Reminder: You have ${validatedData.reminderType === "checkout_2h" ? "2 hours" : "1 hour"} until checkout at ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      const tvRoom = `smart-tv+${result.sanitizedMac}`;
-      io.to(tvRoom).emit("reminder", {
-        hotelcode: validatedData.hotelcode,
-        roomnumber: validatedData.roomnumber,
-        macaddress: result.sanitizedMac,
-        fullname: null, // Not available in reminder
-        checkintime: null, // Not available in reminder
-        checkouttime: validatedData.checkoutdatetime,
-        message: reminderMessage,
-        tvid: result.tvId, // Now available from service
+      // Broadcast to TV room
+      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      io.to(tvRoom).emit("tv-notification", {
+        type: "reminder",
+        data: {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: null, // Not available in reminder
+          checkintime: null, // Not available in reminder
+          checkouttime: validatedData.checkoutdatetime,
+          message: reminderMessage,
+          tvid: result.tvId, // Now available from service
+        }
       });
 
       console.log(`Reminder broadcasted to room: ${tvRoom}`);
@@ -194,16 +218,20 @@ export class EventController {
       const checkoutMessage = `Thank you for your stay, ${validatedData.fullname}! Checkout completed at ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      const tvRoom = `smart-tv+${result.sanitizedMac}`;
-      io.to(tvRoom).emit("check-out", {
-        hotelcode: validatedData.hotelcode,
-        roomnumber: validatedData.roomnumber,
-        macaddress: result.sanitizedMac,
-        fullname: validatedData.fullname,
-        checkintime: null, // Not available in checkout
-        checkouttime: validatedData.checkoutdatetime,
-        message: checkoutMessage,
-        tvid: result.tvId, // Now available from service
+      // Broadcast to TV room
+      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      io.to(tvRoom).emit("tv-notification", {
+        type: "checkout",
+        data: {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: validatedData.fullname,
+          checkintime: null, // Not available in checkout
+          checkouttime: validatedData.checkoutdatetime,
+          message: checkoutMessage,
+          tvid: result.tvId, // Now available from service
+        }
       });
 
       console.log(`Checkout broadcasted to room: ${tvRoom}`);
@@ -237,15 +265,18 @@ export class EventController {
 
       // Broadcast to hotel room (no database operations)
       const hotelRoom = `hotel:${validatedData.hotelcode}`;
-      io.to(hotelRoom).emit("broadcast", {
-        hotelcode: validatedData.hotelcode,
-        roomnumber: null, // Not applicable for hotel-wide broadcast
-        macaddress: null, // Not applicable for hotel-wide broadcast
-        fullname: null, // Not applicable for hotel-wide broadcast
-        checkintime: null, // Not applicable for hotel-wide broadcast
-        checkouttime: null, // Not applicable for hotel-wide broadcast
-        message: validatedData.message,
-        tvid: null, // Not applicable for hotel-wide broadcast
+      io.to(hotelRoom).emit("tv-notification", {
+        type: "broadcast",
+        data: {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: null, // Not applicable for hotel-wide broadcast
+          macaddress: null, // Not applicable for hotel-wide broadcast
+          fullname: null, // Not applicable for hotel-wide broadcast
+          checkintime: null, // Not applicable for hotel-wide broadcast
+          checkouttime: null, // Not applicable for hotel-wide broadcast
+          message: validatedData.message,
+          tvid: null, // Not applicable for hotel-wide broadcast
+        }
       });
 
       console.log(`Broadcast sent to hotel room: ${hotelRoom}`);

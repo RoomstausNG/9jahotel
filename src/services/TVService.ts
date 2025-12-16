@@ -120,23 +120,41 @@ export class TVService {
     // Check if TV already exists
     let tv = await this.findTVByMacAddress(sanitizedMac);
 
-    const now = new Date().toISOString();
+    // Use MySQL compatible datetime format (YYYY-MM-DD HH:mm:ss)
+    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
+    let isNew = false;
+    
     if (tv) {
-      // Update existing TV
-      await db
-        .update(smart_tvs)
-        .set({
-          room_id: room.id,
-          ip_address: ipaddress,
-          hotel_id: hotel.id,
-          last_seen_at: now,
-          updated_at: now,
-        })
-        .where(eq(smart_tvs.id, tv.id));
+      // Check if existing TV matches the current registration details
+      if (tv.hotel_id === hotel.id && tv.room_id === room.id) {
+        // ... (existing update logic)
+          await db
+          .update(smart_tvs)
+          .set({
+            last_seen_at: now,
+             ip_address: ipaddress, // Update IP just in case
+             status: 'active',
+          })
+          .where(eq(smart_tvs.id, tv.id));
+      } else {
+        // ... (existing update logic)
+        await db
+          .update(smart_tvs)
+          .set({
+            room_id: room.id,
+            ip_address: ipaddress,
+            hotel_id: hotel.id,
+            last_seen_at: now,
+            updated_at: now,
+            status: 'active',
+          })
+          .where(eq(smart_tvs.id, tv.id));
+      }
     } else {
+      isNew = true;
       // Create new TV
-      const result = await db
+      const [result] = await db
         .insert(smart_tvs)
         .values({
           room_id: room.id,
@@ -147,10 +165,17 @@ export class TVService {
           last_seen_at: now,
           created_at: now,
           updated_at: now,
-        })
-        .returning();
+          status: 'active',
+        });
 
-      tv = result[0];
+      // Fetch the created TV
+      const newTv = await db
+        .select()
+        .from(smart_tvs)
+        .where(eq(smart_tvs.id, result.insertId))
+        .limit(1);
+
+      tv = newTv[0];
     }
 
     return {
@@ -158,6 +183,7 @@ export class TVService {
       hotel,
       room,
       sanitizedMac,
+      isNew,
     };
   }
 
@@ -179,7 +205,7 @@ export class TVService {
     await db
       .update(smart_tvs)
       .set({
-        last_seen_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString().slice(0, 19).replace("T", " "),
       })
       .where(eq(smart_tvs.id, tv.id));
 
@@ -204,7 +230,7 @@ export class TVService {
     await db
       .update(smart_tvs)
       .set({
-        last_seen_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString().slice(0, 19).replace("T", " "),
       })
       .where(eq(smart_tvs.id, tv.id));
 
@@ -229,7 +255,7 @@ export class TVService {
     await db
       .update(smart_tvs)
       .set({
-        last_seen_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString().slice(0, 19).replace("T", " "),
       })
       .where(eq(smart_tvs.id, tv.id));
 
