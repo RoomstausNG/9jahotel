@@ -21,6 +21,7 @@ import { EmailService } from "./services/EmailService";
 import { corsConfig } from "./config/cors";
 import { db } from "./config/database";
 import { sql } from "drizzle-orm";
+import eventRoutes from "./routes/event-routes";
 
 // Import email worker to start it
 import "./jobs/email-processor";
@@ -107,6 +108,7 @@ app.get("/health", async (c) => {
 const emailService = new EmailService();
 
 app.route("/", paymentRoutes);
+app.route("/events", eventRoutes);
 app.get("/test-email", async (c) => {
   try {
     await emailService.sendTemplateEmail({

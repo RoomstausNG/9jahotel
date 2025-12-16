@@ -1,9 +1,9 @@
 /**
  * Socket.IO Events Documentation
  *
- * This file handles real-time communication events for the chat application.
+ * This file handles real-time communication events for the chat application and TV events.
  *
- * Key Events:
+ * Chat Events:
  * - handshake: Authenticates user and joins their personal room (user:{userId})
  * - joinConversation: Joins a conversation room (conversation:{conversationId})
  * - leaveConversation: Leaves a conversation room
@@ -16,6 +16,13 @@
  * - deleteMessage: Deletes a message and emits to conversation room
  * - markMessageAsRead: Marks message as read and emits "messageRead" to conversation room
  * - disconnect: Handles user disconnection and updates status
+ *
+ * TV Events:
+ * - tv-registration: Registers a TV with hotel and room, joins rooms (smart-tv+macAddress, hotel:hotelcode)
+ * - check-in: Processes guest check-in and broadcasts welcome message to TV
+ * - reminder: Sends reminder notifications to specific TV (checkout_2h, checkout_1h)
+ * - checkout: Processes guest checkout and broadcasts thank you message to TV
+ * - broadcast-all: Broadcasts custom message to all TVs in a hotel
  *
  * New Events Added:
  * - newMessage: Emitted to recipient's user room when a new message is sent
@@ -36,6 +43,8 @@ import { eq } from "drizzle-orm";
 import { dbPool } from "../config/database";
 import { redis } from "../config/redis";
 import { withTimeout } from "../config/redis";
+import { container } from "../container";
+import { EventController } from "../controllers/EventController";
 
 const io = new Server({
   cors: {
@@ -59,6 +68,80 @@ io.on("connection", (socket) => {
   socket.on("handshake", async (userId: string) => {});
 
   socket.on("leaveConversation", (conversationId) => {});
+
+  // TV Event Handlers
+  const eventController = container.get(EventController);
+
+  socket.on("tv-registration", async (data) => {
+    try {
+      // For Socket.IO, we'll simulate a context-like object
+      const mockContext = {
+        req: {
+          json: async () => Promise.resolve(data),
+        },
+      };
+      const result = await eventController.registerTV(mockContext as any);
+      socket.emit("tv-registration-success", result);
+    } catch (error: any) {
+      socket.emit("tv-registration-error", { error: error.message });
+    }
+  });
+
+  socket.on("check-in", async (data) => {
+    try {
+      const mockContext = {
+        req: {
+          json: async () => Promise.resolve(data),
+        },
+      };
+      const result = await eventController.checkIn(mockContext as any);
+      socket.emit("check-in-success", result);
+    } catch (error: any) {
+      socket.emit("check-in-error", { error: error.message });
+    }
+  });
+
+  socket.on("reminder", async (data) => {
+    try {
+      const mockContext = {
+        req: {
+          json: async () => Promise.resolve(data),
+        },
+      };
+      const result = await eventController.sendReminder(mockContext as any);
+      socket.emit("reminder-success", result);
+    } catch (error: any) {
+      socket.emit("reminder-error", { error: error.message });
+    }
+  });
+
+  socket.on("checkout", async (data) => {
+    try {
+      const mockContext = {
+        req: {
+          json: async () => Promise.resolve(data),
+        },
+      };
+      const result = await eventController.checkOut(mockContext as any);
+      socket.emit("checkout-success", result);
+    } catch (error: any) {
+      socket.emit("checkout-error", { error: error.message });
+    }
+  });
+
+  socket.on("broadcast-all", async (data) => {
+    try {
+      const mockContext = {
+        req: {
+          json: async () => Promise.resolve(data),
+        },
+      };
+      const result = await eventController.broadcastAll(mockContext as any);
+      socket.emit("broadcast-all-success", result);
+    } catch (error: any) {
+      socket.emit("broadcast-all-error", { error: error.message });
+    }
+  });
 
   // Handle disconnect event to mark user offline
   socket.on("disconnect", async () => {

@@ -14,6 +14,8 @@ import { BookingController } from "./controllers/BookingController";
 import { CustomerService } from "./services/CustomerService";
 import { CustomerController } from "./controllers/CustomerController";
 import { PaymentController } from "./controllers/PaymentController";
+import { TVService } from "./services/TVService";
+import { EventController } from "./controllers/EventController";
 
 // Create the container
 const container = new Container();
@@ -27,6 +29,7 @@ container.bind<HotelService>(HotelService).toSelf().inSingletonScope();
 container.bind<BookingService>(BookingService).toSelf().inSingletonScope();
 container.bind<PaymentService>(PaymentService).toSelf().inSingletonScope();
 container.bind<CustomerService>(CustomerService).toSelf().inSingletonScope();
+container.bind<TVService>(TVService).toSelf().inSingletonScope();
 
 // Bind controllers
 container.bind<UserController>(UserController).toSelf().inSingletonScope();
@@ -48,5 +51,6 @@ container
   .bind<CustomerController>(CustomerController)
   .toSelf()
   .inSingletonScope();
+container.bind<EventController>(EventController).toSelf().inSingletonScope();
 
 export { container };
