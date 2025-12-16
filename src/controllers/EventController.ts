@@ -107,6 +107,7 @@ export class EventController {
 
       // Validate input
       const validatedData = CheckInDTO.parse(data);
+      console.log(`✓ Check-in data validation successful for room: ${validatedData.roomnumber}`);
 
       // Update TV last seen (no other database operations)
       const result = await this.tvService.checkIn(validatedData);
@@ -116,21 +117,25 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      io.to(tvRoom).emit("tv-notification", {
-        type: "check-in",
-        data: {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: validatedData.fullname,
-          checkintime: validatedData.checkindatetime,
-          checkouttime: validatedData.checkoutdatetime,
-          message: welcomeMessage,
-          tvid: validatedData.tvid,
-        }
-      });
-
-      console.log(`✓ Check-in event broadcast successfully to room: ${tvRoom}`);
+      try {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "check-in",
+          data: {
+            hotelcode: validatedData.hotelcode,
+            roomnumber: validatedData.roomnumber,
+            macaddress: result.sanitizedMac,
+            fullname: validatedData.fullname,
+            checkintime: validatedData.checkindatetime,
+            checkouttime: validatedData.checkoutdatetime,
+            message: welcomeMessage,
+            tvid: validatedData.tvid,
+          }
+        });
+        console.log(`✓ Check-in event broadcast successfully to room: ${tvRoom}`);
+      } catch (broadcastError: any) {
+        console.error(`✗ Check-in broadcast failed to room: ${tvRoom}`, broadcastError);
+        throw new Error(`Broadcast failed: ${broadcastError.message}`);
+      }
 
       return ApiResponse.success(
         {
@@ -140,24 +145,30 @@ export class EventController {
         "Check-in processed successfully",
       );
     } catch (error: any) {
-      console.error("✗ Check-in Error:", error);
+      console.error("✗ Check-in endpoint failed:", error);
       
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
-        io.to(tvRoom).emit("tv-notification", {
-          type: "error",
-          data: {
-            event: "check-in",
-            message: error.message || "Check-in failed",
-            timestamp: new Date().toISOString(),
-          }
-        });
-        console.log(`✗ Check-in error event broadcast to room: ${tvRoom}`);
+        try {
+          io.to(tvRoom).emit("tv-notification", {
+            type: "error",
+            data: {
+              event: "check-in",
+              message: error.message || "Check-in failed",
+              timestamp: new Date().toISOString(),
+            }
+          });
+          console.log(`✓ Check-in error event broadcast to room: ${tvRoom}`);
+        } catch (errorBroadcastError: any) {
+          console.error(`✗ Failed to broadcast check-in error to room: ${tvRoom}`, errorBroadcastError);
+        }
       }
       
       if (error.name === "ZodError") {
+        console.error("✗ Check-in validation failed:", error.errors);
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
+      console.error("✗ Check-in returning error response:", error.message);
       return ApiResponse.failure(error.message || "Internal server error", 500);
     }
   }
@@ -173,6 +184,7 @@ export class EventController {
 
       // Validate input
       const validatedData = ReminderDTO.parse(data);
+      console.log(`✓ Reminder data validation successful for room: ${validatedData.roomnumber}`);
 
       // Update TV last seen (no other database operations)
       const result = await this.tvService.getTVForBroadcast(validatedData);
@@ -182,21 +194,25 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      io.to(tvRoom).emit("tv-notification", {
-        type: "reminder",
-        data: {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: null, // Not available in reminder
-          checkintime: null, // Not available in reminder
-          checkouttime: validatedData.checkoutdatetime,
-          message: reminderMessage,
-          tvid: result.tvId, // Now available from service
-        }
-      });
-
-      console.log(`✓ Reminder event broadcast successfully to room: ${tvRoom}`);
+      try {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "reminder",
+          data: {
+            hotelcode: validatedData.hotelcode,
+            roomnumber: validatedData.roomnumber,
+            macaddress: result.sanitizedMac,
+            fullname: null, // Not available in reminder
+            checkintime: null, // Not available in reminder
+            checkouttime: validatedData.checkoutdatetime,
+            message: reminderMessage,
+            tvid: result.tvId, // Now available from service
+          }
+        });
+        console.log(`✓ Reminder event broadcast successfully to room: ${tvRoom}`);
+      } catch (broadcastError: any) {
+        console.error(`✗ Reminder broadcast failed to room: ${tvRoom}`, broadcastError);
+        throw new Error(`Broadcast failed: ${broadcastError.message}`);
+      }
 
       return ApiResponse.success(
         {
@@ -206,24 +222,30 @@ export class EventController {
         "Reminder sent successfully",
       );
     } catch (error: any) {
-      console.error("✗ Reminder Error:", error);
+      console.error("✗ Reminder endpoint failed:", error);
       
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
-        io.to(tvRoom).emit("tv-notification", {
-          type: "error",
-          data: {
-            event: "reminder",
-            message: error.message || "Reminder failed",
-            timestamp: new Date().toISOString(),
-          }
-        });
-        console.log(`✗ Reminder error event broadcast to room: ${tvRoom}`);
+        try {
+          io.to(tvRoom).emit("tv-notification", {
+            type: "error",
+            data: {
+              event: "reminder",
+              message: error.message || "Reminder failed",
+              timestamp: new Date().toISOString(),
+            }
+          });
+          console.log(`✓ Reminder error event broadcast to room: ${tvRoom}`);
+        } catch (errorBroadcastError: any) {
+          console.error(`✗ Failed to broadcast reminder error to room: ${tvRoom}`, errorBroadcastError);
+        }
       }
       
       if (error.name === "ZodError") {
+        console.error("✗ Reminder validation failed:", error.errors);
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
+      console.error("✗ Reminder returning error response:", error.message);
       return ApiResponse.failure(error.message || "Internal server error", 500);
     }
   }
@@ -239,6 +261,7 @@ export class EventController {
 
       // Validate input
       const validatedData = CheckoutDTO.parse(data);
+      console.log(`✓ Checkout data validation successful for room: ${validatedData.roomnumber}`);
 
       // Update TV last seen (no other database operations)
       const result = await this.tvService.checkOut(validatedData);
@@ -248,21 +271,25 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      io.to(tvRoom).emit("tv-notification", {
-        type: "checkout",
-        data: {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: validatedData.fullname,
-          checkintime: null, // Not available in checkout
-          checkouttime: validatedData.checkoutdatetime,
-          message: checkoutMessage,
-          tvid: result.tvId, // Now available from service
-        }
-      });
-
-      console.log(`✓ Checkout event broadcast successfully to room: ${tvRoom}`);
+      try {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "checkout",
+          data: {
+            hotelcode: validatedData.hotelcode,
+            roomnumber: validatedData.roomnumber,
+            macaddress: result.sanitizedMac,
+            fullname: validatedData.fullname,
+            checkintime: null, // Not available in checkout
+            checkouttime: validatedData.checkoutdatetime,
+            message: checkoutMessage,
+            tvid: result.tvId, // Now available from service
+          }
+        });
+        console.log(`✓ Checkout event broadcast successfully to room: ${tvRoom}`);
+      } catch (broadcastError: any) {
+        console.error(`✗ Checkout broadcast failed to room: ${tvRoom}`, broadcastError);
+        throw new Error(`Broadcast failed: ${broadcastError.message}`);
+      }
 
       return ApiResponse.success(
         {
@@ -272,24 +299,30 @@ export class EventController {
         "Checkout processed successfully",
       );
     } catch (error: any) {
-      console.error("✗ Checkout Error:", error);
+      console.error("✗ Checkout endpoint failed:", error);
       
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
-        io.to(tvRoom).emit("tv-notification", {
-          type: "error",
-          data: {
-            event: "checkout",
-            message: error.message || "Checkout failed",
-            timestamp: new Date().toISOString(),
-          }
-        });
-        console.log(`✗ Checkout error event broadcast to room: ${tvRoom}`);
+        try {
+          io.to(tvRoom).emit("tv-notification", {
+            type: "error",
+            data: {
+              event: "checkout",
+              message: error.message || "Checkout failed",
+              timestamp: new Date().toISOString(),
+            }
+          });
+          console.log(`✓ Checkout error event broadcast to room: ${tvRoom}`);
+        } catch (errorBroadcastError: any) {
+          console.error(`✗ Failed to broadcast checkout error to room: ${tvRoom}`, errorBroadcastError);
+        }
       }
       
       if (error.name === "ZodError") {
+        console.error("✗ Checkout validation failed:", error.errors);
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
+      console.error("✗ Checkout returning error response:", error.message);
       return ApiResponse.failure(error.message || "Internal server error", 500);
     }
   }
