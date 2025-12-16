@@ -101,6 +101,7 @@ export class EventController {
    * POST /events/check-in
    */
   async checkIn(c: Context) {
+    let tvRoom: string | undefined;
     try {
       const data = await c.req.json();
 
@@ -114,8 +115,7 @@ export class EventController {
       const welcomeMessage = `Welcome, ${validatedData.fullname}! Your check-in at ${validatedData.checkindatetime} is confirmed. Enjoy your stay until ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      // Broadcast to TV room
-      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      tvRoom = `smart-tv:${result.sanitizedMac}`;
       io.to(tvRoom).emit("tv-notification", {
         type: "check-in",
         data: {
@@ -130,7 +130,7 @@ export class EventController {
         }
       });
 
-      console.log(`Check-in broadcasted to room: ${tvRoom}`);
+      console.log(`✓ Check-in event broadcast successfully to room: ${tvRoom}`);
 
       return ApiResponse.success(
         {
@@ -140,7 +140,21 @@ export class EventController {
         "Check-in processed successfully",
       );
     } catch (error: any) {
-      console.error("Check-in Error:", error);
+      console.error("✗ Check-in Error:", error);
+      
+      // Emit error to TV room if we have the room identifier
+      if (tvRoom) {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "error",
+          data: {
+            event: "check-in",
+            message: error.message || "Check-in failed",
+            timestamp: new Date().toISOString(),
+          }
+        });
+        console.log(`✗ Check-in error event broadcast to room: ${tvRoom}`);
+      }
+      
       if (error.name === "ZodError") {
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
@@ -153,6 +167,7 @@ export class EventController {
    * POST /events/reminder
    */
   async sendReminder(c: Context) {
+    let tvRoom: string | undefined;
     try {
       const data = await c.req.json();
 
@@ -166,8 +181,7 @@ export class EventController {
       const reminderMessage = `Reminder: You have ${validatedData.reminderType === "checkout_2h" ? "2 hours" : "1 hour"} until checkout at ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      // Broadcast to TV room
-      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      tvRoom = `smart-tv:${result.sanitizedMac}`;
       io.to(tvRoom).emit("tv-notification", {
         type: "reminder",
         data: {
@@ -182,7 +196,7 @@ export class EventController {
         }
       });
 
-      console.log(`Reminder broadcasted to room: ${tvRoom}`);
+      console.log(`✓ Reminder event broadcast successfully to room: ${tvRoom}`);
 
       return ApiResponse.success(
         {
@@ -192,7 +206,21 @@ export class EventController {
         "Reminder sent successfully",
       );
     } catch (error: any) {
-      console.error("Reminder Error:", error);
+      console.error("✗ Reminder Error:", error);
+      
+      // Emit error to TV room if we have the room identifier
+      if (tvRoom) {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "error",
+          data: {
+            event: "reminder",
+            message: error.message || "Reminder failed",
+            timestamp: new Date().toISOString(),
+          }
+        });
+        console.log(`✗ Reminder error event broadcast to room: ${tvRoom}`);
+      }
+      
       if (error.name === "ZodError") {
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
@@ -205,6 +233,7 @@ export class EventController {
    * POST /events/checkout
    */
   async checkOut(c: Context) {
+    let tvRoom: string | undefined;
     try {
       const data = await c.req.json();
 
@@ -218,8 +247,7 @@ export class EventController {
       const checkoutMessage = `Thank you for your stay, ${validatedData.fullname}! Checkout completed at ${validatedData.checkoutdatetime}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
-      // Broadcast to TV room
-      const tvRoom = `smart-tv:${result.sanitizedMac}`;
+      tvRoom = `smart-tv:${result.sanitizedMac}`;
       io.to(tvRoom).emit("tv-notification", {
         type: "checkout",
         data: {
@@ -234,7 +262,7 @@ export class EventController {
         }
       });
 
-      console.log(`Checkout broadcasted to room: ${tvRoom}`);
+      console.log(`✓ Checkout event broadcast successfully to room: ${tvRoom}`);
 
       return ApiResponse.success(
         {
@@ -244,7 +272,21 @@ export class EventController {
         "Checkout processed successfully",
       );
     } catch (error: any) {
-      console.error("Checkout Error:", error);
+      console.error("✗ Checkout Error:", error);
+      
+      // Emit error to TV room if we have the room identifier
+      if (tvRoom) {
+        io.to(tvRoom).emit("tv-notification", {
+          type: "error",
+          data: {
+            event: "checkout",
+            message: error.message || "Checkout failed",
+            timestamp: new Date().toISOString(),
+          }
+        });
+        console.log(`✗ Checkout error event broadcast to room: ${tvRoom}`);
+      }
+      
       if (error.name === "ZodError") {
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
