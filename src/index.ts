@@ -138,6 +138,7 @@ import "./routes/socket-events";
 import { engine, websocket } from "./routes/socket-event";
 export default {
   PORT,
+  idleTimeout: 30, // must be greater than ping interval
   hostname: "0.0.0.0",
   fetch(req: any, server: any) {
     const url = new URL(req.url);
