@@ -68,3 +68,15 @@ export const redisConnection = {
   enableReadyCheck: false, // BullMQ recommendation
   maxmemoryPolicy: "noeviction", // BullMQ recommendation
 };
+
+export async function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("Redis timeout")), ms),
+    ),
+  ]);
+}

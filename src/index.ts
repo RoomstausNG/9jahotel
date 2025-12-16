@@ -133,10 +133,21 @@ app.notFound((c) => {
   return ApiResponse.failure("Resource/Endpoint Not Found", 404);
 });
 
+// sockets events
+import "./routes/socket-events";
+import { engine, websocket } from "./routes/socket-event";
 export default {
-  fetch: app.fetch,
   PORT,
   hostname: "0.0.0.0",
+  fetch(req: any, server: any) {
+    const url = new URL(req.url);
+    if (url.pathname === "/socket.io/") {
+      return engine.handleRequest(req, server);
+    }
+    return app.fetch(req, server);
+  },
+
+  websocket,
 };
 
 console.log(`Server running on port ${PORT}`);
