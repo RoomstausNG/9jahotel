@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, primaryKey, bigint, varchar, text, json, char, timestamp, foreignKey, unique, int, date, decimal, mysqlEnum, tinyint, longtext, time, mediumtext } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, primaryKey, bigint, varchar, text, json, char, timestamp, foreignKey, unique, int, date, decimal, mysqlEnum, tinyint, longtext, time, mediumtext, mediumint, binary, datetime } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const activity_log = mysqlTable("activity_log", {
@@ -16,9 +16,9 @@ export const activity_log = mysqlTable("activity_log", {
 	updated_at: timestamp({ mode: 'string' }),
 },
 (table) => [
-	index("activity_log_log_name_index").on(table.log_name),
-	index("causer").on(table.causer_type, table.causer_id),
 	index("subject").on(table.subject_type, table.subject_id),
+	index("causer").on(table.causer_type, table.causer_id),
+	index("activity_log_log_name_index").on(table.log_name),
 	primaryKey({ columns: [table.id], name: "activity_log_id"}),
 ]);
 
@@ -91,8 +91,8 @@ export const booking_notifications = mysqlTable("booking_notifications", {
 	updated_at: timestamp({ mode: 'string' }),
 },
 (table) => [
-	index("booking_notifications_created_at_index").on(table.created_at),
 	index("booking_notifications_hotel_id_is_read_index").on(table.hotel_id, table.is_read),
+	index("booking_notifications_created_at_index").on(table.created_at),
 	primaryKey({ columns: [table.id], name: "booking_notifications_id"}),
 ]);
 
@@ -109,6 +109,7 @@ export const bookings = mysqlTable("bookings", {
 	// you can use { mode: 'date' }, if you want to have Date as type for this column
 	checked_out: date({ mode: 'string' }).notNull(),
 	status: varchar({ length: 255 }).default('booked'),
+	archived: tinyint().default(0).notNull(),
 	type: varchar({ length: 255 }).default('room'),
 	agent_id: bigint({ mode: "number", unsigned: true }).references(() => users.id, { onDelete: "set null" } ),
 	customer_id: bigint({ mode: "number", unsigned: true }).notNull().references(() => customers.id, { onDelete: "cascade" } ),
@@ -120,6 +121,12 @@ export const bookings = mysqlTable("bookings", {
 	booking_invoice_id: bigint({ mode: "number", unsigned: true }).references(() => booking_invoices.id, { onDelete: "cascade" } ),
 },
 (table) => [
+	index("bookings_hotel_id_index").on(table.hotel_id),
+	index("bookings_customer_id_index").on(table.customer_id),
+	index("bookings_checked_in_index").on(table.checked_in),
+	index("bookings_checked_out_index").on(table.checked_out),
+	index("bookings_status_index").on(table.status),
+	index("bookings_code_index").on(table.code),
 	primaryKey({ columns: [table.id], name: "bookings_id"}),
 	unique("bookings_code_unique").on(table.code),
 ]);
@@ -278,6 +285,9 @@ export const customers = mysqlTable("customers", {
 	social_provider: text(),
 },
 (table) => [
+	index("customers_email_index").on(table.email),
+	index("customers_phone_index").on(table.phone),
+	index("customers_id_number_index").on(table.id_number),
 	primaryKey({ columns: [table.id], name: "customers_id"}),
 ]);
 
@@ -395,6 +405,8 @@ export const floors = mysqlTable("floors", {
 	updated_at: timestamp({ mode: 'string' }),
 },
 (table) => [
+	index("floors_name_index").on(table.name),
+	index("floors_hotel_id_index").on(table.hotel_id),
 	primaryKey({ columns: [table.id], name: "floors_id"}),
 	unique("floors_name_unique").on(table.name),
 ]);
@@ -568,8 +580,17 @@ export const hotels = mysqlTable("hotels", {
 },
 (table) => [
 	index("idx_name").on(table.name),
+	index("hotels_name_index").on(table.name),
+	index("hotels_city_id_index").on(table.city_id),
+	index("hotels_email_index").on(table.email),
+	index("hotels_status_index").on(table.status),
+	index("hotels_created_at_index").on(table.created_at),
+	index("hotels_address_index").on(table.address),
+	index("hotels_telephone_index").on(table.telephone),
+	index("hotels_code_index").on(table.code),
 	primaryKey({ columns: [table.id], name: "hotels_id"}),
 	unique("hotels_code_unique").on(table.code),
+	unique("hotels_email_unique").on(table.email),
 ]);
 
 export const images = mysqlTable("images", {
@@ -866,8 +887,8 @@ export const powers = mysqlTable("powers", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "powers_id"}),
-	unique("powers_icon_unique").on(table.icon),
 	unique("powers_name_unique").on(table.name),
+	unique("powers_icon_unique").on(table.icon),
 	unique("powers_number_unique").on(table.number),
 ]);
 
@@ -894,6 +915,56 @@ export const profiles = mysqlTable("profiles", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "profiles_id"}),
+]);
+
+export const pulse_aggregates = mysqlTable("pulse_aggregates", {
+	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	bucket: int({ unsigned: true }).notNull(),
+	period: mediumint({ unsigned: true }).notNull(),
+	type: varchar({ length: 255 }).notNull(),
+	key: mediumtext().notNull(),
+	key_hash: binary({ length: 16 }).generatedAlwaysAs(sql`unhex(md5(\`key\`))`, { mode: "virtual" }),
+	aggregate: varchar({ length: 255 }).notNull(),
+	value: decimal({ precision: 20, scale: 2 }).notNull(),
+	count: int({ unsigned: true }),
+},
+(table) => [
+	index("pulse_aggregates_period_bucket_index").on(table.period, table.bucket),
+	index("pulse_aggregates_type_index").on(table.type),
+	index("pulse_aggregates_period_type_aggregate_bucket_index").on(table.period, table.type, table.aggregate, table.bucket),
+	primaryKey({ columns: [table.id], name: "pulse_aggregates_id"}),
+	unique("pulse_aggregates_bucket_period_type_aggregate_key_hash_unique").on(table.bucket, table.period, table.type, table.aggregate, table.key_hash),
+]);
+
+export const pulse_entries = mysqlTable("pulse_entries", {
+	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	timestamp: int({ unsigned: true }).notNull(),
+	type: varchar({ length: 255 }).notNull(),
+	key: mediumtext().notNull(),
+	key_hash: binary({ length: 16 }).generatedAlwaysAs(sql`unhex(md5(\`key\`))`, { mode: "virtual" }),
+	value: bigint({ mode: "number" }),
+},
+(table) => [
+	index("pulse_entries_timestamp_index").on(table.timestamp),
+	index("pulse_entries_type_index").on(table.type),
+	index("pulse_entries_key_hash_index").on(table.key_hash),
+	index("pulse_entries_timestamp_type_key_hash_value_index").on(table.timestamp, table.type, table.key_hash, table.value),
+	primaryKey({ columns: [table.id], name: "pulse_entries_id"}),
+]);
+
+export const pulse_values = mysqlTable("pulse_values", {
+	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	timestamp: int({ unsigned: true }).notNull(),
+	type: varchar({ length: 255 }).notNull(),
+	key: mediumtext().notNull(),
+	key_hash: binary({ length: 16 }).generatedAlwaysAs(sql`unhex(md5(\`key\`))`, { mode: "virtual" }),
+	value: mediumtext().notNull(),
+},
+(table) => [
+	index("pulse_values_timestamp_index").on(table.timestamp),
+	index("pulse_values_type_index").on(table.type),
+	primaryKey({ columns: [table.id], name: "pulse_values_id"}),
+	unique("pulse_values_type_key_hash_unique").on(table.type, table.key_hash),
 ]);
 
 export const questions = mysqlTable("questions", {
@@ -1012,6 +1083,32 @@ export const sales = mysqlTable("sales", {
 	unique("sales_code_unique").on(table.code),
 ]);
 
+export const smart_tvs = mysqlTable("smart_tvs", {
+	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	room_id: bigint({ mode: "number", unsigned: true }).notNull().references(() => rooms.id, { onDelete: "cascade" } ),
+	name: varchar({ length: 255 }).notNull(),
+	ip_address: varchar({ length: 255 }),
+	mac_address: varchar({ length: 255 }).notNull(),
+	api_endpoint: varchar({ length: 255 }),
+	brand: varchar({ length: 255 }),
+	model: varchar({ length: 255 }),
+	status: mysqlEnum(['active','inactive','offline']).default('offline').notNull(),
+	last_seen_at: timestamp({ mode: 'string' }),
+	created_at: timestamp({ mode: 'string' }),
+	updated_at: timestamp({ mode: 'string' }),
+	hotel_id: bigint({ mode: "number", unsigned: true }).references(() => hotels.id, { onDelete: "cascade" } ),
+},
+(table) => [
+	index("smart_tvs_room_id_status_index").on(table.room_id, table.status),
+	index("smart_tvs_ip_address_index").on(table.ip_address),
+	index("smart_tvs_mac_address_index").on(table.mac_address),
+	index("smart_tvs_brand_index").on(table.brand),
+	index("smart_tvs_last_seen_at_index").on(table.last_seen_at),
+	index("smart_tvs_hotel_id_index").on(table.hotel_id),
+	primaryKey({ columns: [table.id], name: "smart_tvs_id"}),
+	unique("smart_tvs_mac_address_unique").on(table.mac_address),
+]);
+
 export const states = mysqlTable("states", {
 	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
 	country_id: bigint({ mode: "number", unsigned: true }).notNull(),
@@ -1077,6 +1174,41 @@ export const teams = mysqlTable("teams", {
 	unique("teams_code_unique").on(table.code),
 ]);
 
+export const telescope_entries = mysqlTable("telescope_entries", {
+	sequence: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
+	uuid: char({ length: 36 }).notNull(),
+	batch_id: char({ length: 36 }).notNull(),
+	family_hash: varchar({ length: 255 }),
+	should_display_on_index: tinyint().default(1).notNull(),
+	type: varchar({ length: 20 }).notNull(),
+	content: longtext().notNull(),
+	created_at: datetime({ mode: 'string'}),
+},
+(table) => [
+	index("telescope_entries_batch_id_index").on(table.batch_id),
+	index("telescope_entries_family_hash_index").on(table.family_hash),
+	index("telescope_entries_created_at_index").on(table.created_at),
+	index("telescope_entries_type_should_display_on_index_index").on(table.type, table.should_display_on_index),
+	primaryKey({ columns: [table.sequence], name: "telescope_entries_sequence"}),
+	unique("telescope_entries_uuid_unique").on(table.uuid),
+]);
+
+export const telescope_entries_tags = mysqlTable("telescope_entries_tags", {
+	entry_uuid: char({ length: 36 }).notNull().references(() => telescope_entries.uuid, { onDelete: "cascade" } ),
+	tag: varchar({ length: 255 }).notNull(),
+},
+(table) => [
+	index("telescope_entries_tags_tag_index").on(table.tag),
+	primaryKey({ columns: [table.entry_uuid, table.tag], name: "telescope_entries_tags_entry_uuid_tag"}),
+]);
+
+export const telescope_monitoring = mysqlTable("telescope_monitoring", {
+	tag: varchar({ length: 255 }).notNull(),
+},
+(table) => [
+	primaryKey({ columns: [table.tag], name: "telescope_monitoring_tag"}),
+]);
+
 export const timezones = mysqlTable("timezones", {
 	id: bigint({ mode: "number", unsigned: true }).autoincrement().notNull(),
 	country_id: bigint({ mode: "number", unsigned: true }).notNull(),
@@ -1100,8 +1232,8 @@ export const transactions = mysqlTable("transactions", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "transactions_id"}),
-	unique("transactions_amount_unique").on(table.amount),
 	unique("transactions_reference_unique").on(table.reference),
+	unique("transactions_amount_unique").on(table.amount),
 ]);
 
 export const types = mysqlTable("types", {
@@ -1187,10 +1319,13 @@ export const users = mysqlTable("users", {
 (table) => [
 	index("idx_firstname").on(table.firstname),
 	index("idx_lastname").on(table.lastname),
+	index("users_email_index").on(table.email),
+	index("users_firstname_index").on(table.firstname),
+	index("users_lastname_index").on(table.lastname),
 	primaryKey({ columns: [table.id], name: "users_id"}),
-	unique("users_email_unique").on(table.email),
-	unique("users_phone_unique").on(table.phone),
 	unique("users_username_unique").on(table.username),
+	unique("users_phone_unique").on(table.phone),
+	unique("users_email_unique").on(table.email),
 ]);
 
 export const videos = mysqlTable("videos", {

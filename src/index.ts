@@ -134,7 +134,7 @@ app.notFound((c) => {
 });
 
 // sockets events
-import "./routes/socket-events";
+import "./routes/socket-event";
 import { engine, websocket } from "./routes/socket-event";
 export default {
   PORT,

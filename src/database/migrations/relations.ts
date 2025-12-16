@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { amenities, amenity_hotel, hotels, coupons, booking_invoices, customers, users, bookings, cities, businesses, categories, credit_payments, customer_hotel, countries, states, departments, expenditures, exports, imports, failed_import_rows, faqs, questions, favourites, finances, floors, group_bookings, group_booking_hotel, halls, types, hotel_galleries, hotel_user, powers, teams, images, invoices, general_items, items, revenues, permissions, model_has_permissions, roles, model_has_roles, orders, pages, payment_methods, profiles, ratings, refunds, role_has_permissions, rooms, sales, statuses, suppliers, team_user, transactions, videos } from "./schema";
+import { amenities, amenity_hotel, hotels, coupons, booking_invoices, customers, users, bookings, cities, businesses, categories, credit_payments, customer_hotel, countries, states, departments, expenditures, exports, imports, failed_import_rows, faqs, questions, favourites, finances, floors, group_bookings, group_booking_hotel, halls, types, hotel_galleries, hotel_user, powers, teams, images, invoices, general_items, items, revenues, permissions, model_has_permissions, roles, model_has_roles, orders, pages, payment_methods, profiles, ratings, refunds, role_has_permissions, rooms, sales, smart_tvs, statuses, suppliers, team_user, telescope_entries, telescope_entries_tags, transactions, videos } from "./schema";
 
 export const amenitiesRelations = relations(amenities, ({one, many}) => ({
 	amenity: one(amenities, {
@@ -82,6 +82,7 @@ export const hotelsRelations = relations(hotels, ({one, many}) => ({
 	revenues: many(revenues),
 	rooms: many(rooms),
 	sales: many(sales),
+	smart_tvs: many(smart_tvs),
 	suppliers: many(suppliers),
 	transactions: many(transactions),
 	types: many(types),
@@ -573,6 +574,7 @@ export const roomsRelations = relations(rooms, ({one, many}) => ({
 		fields: [rooms.type_id],
 		references: [types.id]
 	}),
+	smart_tvs: many(smart_tvs),
 	statuses: many(statuses),
 }));
 
@@ -592,6 +594,17 @@ export const salesRelations = relations(sales, ({one}) => ({
 	hotel: one(hotels, {
 		fields: [sales.hotel_id],
 		references: [hotels.id]
+	}),
+}));
+
+export const smart_tvsRelations = relations(smart_tvs, ({one}) => ({
+	hotel: one(hotels, {
+		fields: [smart_tvs.hotel_id],
+		references: [hotels.id]
+	}),
+	room: one(rooms, {
+		fields: [smart_tvs.room_id],
+		references: [rooms.id]
 	}),
 }));
 
@@ -630,6 +643,17 @@ export const team_userRelations = relations(team_user, ({one}) => ({
 		fields: [team_user.team_id],
 		references: [teams.id]
 	}),
+}));
+
+export const telescope_entries_tagsRelations = relations(telescope_entries_tags, ({one}) => ({
+	telescope_entry: one(telescope_entries, {
+		fields: [telescope_entries_tags.entry_uuid],
+		references: [telescope_entries.uuid]
+	}),
+}));
+
+export const telescope_entriesRelations = relations(telescope_entries, ({many}) => ({
+	telescope_entries_tags: many(telescope_entries_tags),
 }));
 
 export const transactionsRelations = relations(transactions, ({one}) => ({
