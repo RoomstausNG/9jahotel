@@ -20,8 +20,8 @@ COPY --from=builder /app/src ./src
 COPY .env .env
 COPY wait-for-redis.sh /usr/local/bin/wait-for-redis.sh
 RUN chmod +x /usr/local/bin/wait-for-redis.sh
-EXPOSE 3003
+EXPOSE 3006
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://127.0.0.1:3003/health || exit 1
+    CMD curl -f http://127.0.0.1:3006/health || exit 1
 ENTRYPOINT ["/usr/local/bin/wait-for-redis.sh"]
 CMD ["bun", "dist/index.js"]

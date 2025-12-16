@@ -11,7 +11,7 @@ REGISTRY_IMAGE="$LOCAL_REGISTRY/9jahotel:v1.0.0"
 echo "📥 Resetting and pulling latest code from Git..."
 git reset --hard HEAD
 RETRIES=3
-until git pull production api_v1 || [ $RETRIES -eq 0 ]; do
+until git pull production event || [ $RETRIES -eq 0 ]; do
   RETRIES=$((RETRIES-1))
   echo "❌ Git pull failed. Retrying... ($RETRIES attempts left)"
   sleep 5
@@ -63,7 +63,7 @@ docker ps --filter "name=${APP_NAME}_" --format "table {{.Names}}\t{{.Status}}\t
 echo "🏥 Checking application health..."
 ATTEMPTS=0
 MAX_ATTEMPTS=3
-until $(curl --output /dev/null --silent --fail http://localhost:3003/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
+until $(curl --output /dev/null --silent --fail http://localhost:3006/health) || [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; do
   ATTEMPTS=$((ATTEMPTS+1))
   echo "  Health check attempt $ATTEMPTS of $MAX_ATTEMPTS..."
   echo "📦 Active containers for '$APP_NAME':"

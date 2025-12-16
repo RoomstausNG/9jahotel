@@ -4,7 +4,7 @@
 // import * as mysql from "mysql2/promise";
 
 // const dbUrl = env("DATABASE_URL");
-// const PORT = env("PORT", "3003");
+// const PORT = env("PORT", "3006");
 
 // const JWT_SECRET = env("JWT_SECRET", "supersecret");
 

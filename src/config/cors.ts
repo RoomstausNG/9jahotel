@@ -16,7 +16,7 @@ export const corsConfig = {
       "http://localhost:3000", // Local development
       "http://localhost:3001", // Local development (alternative port)
       "http://localhost:3002", // Local development (alternative port)
-      "http://localhost:3003", // Local development (alternative port)
+      "http://localhost:3006", // Local development (alternative port)
       "http://127.0.0.1:3000", // Local development (IP)
       "http://127.0.0.1:3001", // Local development (IP alternative port)
       "capacitor://localhost", // Capacitor mobile apps

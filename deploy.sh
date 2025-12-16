@@ -5,7 +5,7 @@ set -e  # exit immediately if any command fails
 # --- Git Operations ---
 echo "📦 Pulling latest changes from git..."
 git reset --hard HEAD
-git pull production api_v1
+git pull production event
 # Get the short commit hash for tagging
 GIT_HASH=$(git rev-parse --short HEAD)
 echo "🏷️ Using Git Hash for tag: $GIT_HASH"
