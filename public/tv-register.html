@@ -616,6 +616,13 @@
             }
             macAddress = storedMAC;
             document.getElementById('macaddress').textContent = macAddress;
+            
+            // Auto-populate room number if available
+            const storedRoom = localStorage.getItem('tv_room_number');
+            if (storedRoom) {
+                const roomInput = document.getElementById('roomnumber');
+                if (roomInput) roomInput.value = storedRoom;
+            }
 
             // Get IP address
             ipAddress = await getIPAddress();
@@ -665,10 +672,11 @@
                 handleNotification(data);
             });
 
-            // Listen for TV connected events
+            // Listen for TV connected events (Logs only, don't disturb UI)
             socket.on('tv-connected', (data) => {
-                console.log('TV Connected event:', data);
-                handleConnected(data);
+                console.log('TV Connected event (Hotel broadcast):', data);
+                // Do not display result, as it unhides the info grid and breaks TV mode
+                // handleConnected(data); 
             });
 
             // Listen for failure events (Unified)
@@ -763,6 +771,10 @@
                 if (document.querySelector('header')) {
                     document.querySelector('header').style.display = 'none';
                 }
+                // HIDE STATUS SECTION
+                if (document.querySelector('.status-section')) {
+                    document.querySelector('.status-section').style.display = 'none';
+                }
                 
                 // Show hero success state if not already there
                 const container = document.querySelector('.container');
@@ -806,6 +818,9 @@
                     <div class="advanced-section">
                         <button id="advanced-toggle" class="text-btn">Advanced Options</button>
                         <div id="advanced-controls" class="advanced-controls" style="display: none;">
+                            <div style="margin-bottom: 15px;">
+                                <button id="toggle-logs-btn" class="text-btn" style="color: var(--primary);">Show Debug Logs</button>
+                            </div>
                             <button id="delete-btn" class="danger-btn">
                                 <span class="icon">🗑️</span> Delete TV
                             </button>
@@ -826,13 +841,25 @@
                     controls.style.display = isHidden ? 'block' : 'none';
                     e.target.textContent = isHidden ? 'Hide Options' : 'Advanced Options';
                 });
+                
+                document.getElementById('toggle-logs-btn').addEventListener('click', (e) => {
+                    const results = document.getElementById('results');
+                    const isHidden = results.style.display === 'none';
+                    results.style.display = isHidden ? 'block' : 'none';
+                    e.target.textContent = isHidden ? 'Hide Debug Logs' : 'Show Debug Logs';
+                });
 
                 document.getElementById('delete-btn').addEventListener('click', () => {
                     const room = prompt('To confirm deletion, please type the room number:');
-                    if (room === eventData.roomnumber) {
-                        socket.emit('delete-tv', { macaddress: macAddress, hotelcode: HOTEL_CODE });
-                    } else if (room !== null) {
-                        alert('Incorrect room number. Deletion cancelled.');
+                    if (room) {
+                        socket.emit('delete-tv', { 
+                            macaddress: macAddress, 
+                            hotelcode: HOTEL_CODE,
+                            roomConfirmation: room 
+                        });
+                        
+                        // Clear all storage as requested
+                        localStorage.clear();
                     }
                 });
                 
@@ -879,12 +906,34 @@
                     <div class="result-details">${message}</div>
                     ${data ? `
                         <div class="result-data">
-                            ${Object.entries(data).map(([key, value]) => `
-                                <div class="result-data-item">
-                                    <span class="result-data-label">${key}:</span>
-                                    <span class="result-data-value">${value}</span>
-                                </div>
-                            `).join('')}
+                            ${Object.entries(data).map(([key, value]) => {
+                                if (typeof value === 'object' && value !== null) {
+                                    value = JSON.stringify(value);
+                                }
+                                
+                                // Format dates to be human friendly
+                                if ((key.toLowerCase().includes('time') || key.toLowerCase().includes('date') || key === 'timestamp') && value) {
+                                    const date = new Date(value);
+                                    if (!isNaN(date.getTime())) {
+                                        value = date.toLocaleString('en-US', { 
+                                            weekday: 'long', 
+                                            year: 'numeric', 
+                                            month: 'long', 
+                                            day: 'numeric', 
+                                            hour: 'numeric', 
+                                            minute: 'numeric',
+                                            hour12: true 
+                                        });
+                                    }
+                                }
+                                
+                                return `
+                                    <div class="result-data-item">
+                                        <span class="result-data-label">${key}:</span>
+                                        <span class="result-data-value">${value}</span>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     ` : ''}
                 </div>
@@ -952,6 +1001,12 @@
                     if (result.success || result.data) {
                          const data = result.data || result;
                          displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', data);
+                         
+                         // Save room number for future convenience
+                         const roomInput = document.getElementById('roomnumber');
+                         if (roomInput && roomInput.value) {
+                             localStorage.setItem('tv_room_number', roomInput.value);
+                         }
                     } else {
                         // If the RPC call failed (e.g. validation error returned in API response format)
                         displayResult('error', 'Request Rejected', result.message || 'Registration request rejected by server', result.data || result.errors);

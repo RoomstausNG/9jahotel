@@ -35,7 +35,7 @@ const app = new Hono();
 app.use('/public/*', serveStatic({ root: './' }));
 
 // API routes with basePath
-const apiApp = new Hono().basePath("/api");
+const apiApp = new Hono();
 
 // CORS configuration for mobile app support
 apiApp.use(
