@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,9 +86,11 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: black; /* Deep black for TV feel */
-            border: 10px solid #222; /* Bezel */
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            background: black;
+            /* Deep black for TV feel */
+            border: 10px solid #222;
+            /* Bezel */
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
 
         @keyframes slideIn {
@@ -95,6 +98,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -243,8 +247,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .status-indicator.connected {
@@ -269,6 +280,7 @@
                 opacity: 0;
                 transform: scale(0.95);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -370,147 +382,167 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-            a {
-                color: var(--primary);
-                text-decoration: none;
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .connected-hero {
+            text-align: center;
+            padding: 40px 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .hero-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px hsla(220, 90%, 56%, 0.3));
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
             }
-            
-            .connected-hero {
-                text-align: center;
-                padding: 40px 0;
-                animation: fadeIn 0.5s ease-out;
+
+            50% {
+                transform: translateY(-10px);
             }
-            
-            .hero-icon {
-                font-size: 80px;
-                margin-bottom: 20px;
-                animation: float 3s ease-in-out infinite;
-                filter: drop-shadow(0 0 20px hsla(220, 90%, 56%, 0.3));
+        }
+
+        .hero-title {
+            color: var(--success);
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px hsla(142, 71%, 45%, 0.3);
+        }
+
+        .hero-subtitle {
+            color: var(--text-primary);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .hero-mac {
+            font-family: 'Courier New', monospace;
+            color: var(--text-secondary);
+            background: var(--bg-dark);
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .controls-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .power-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, hsl(0, 84%, 60%) 0%, hsl(0, 84%, 45%) 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px hsla(0, 84%, 60%, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .power-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 50%;
+        }
+
+        .power-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px hsla(0, 84%, 60%, 0.6);
+        }
+
+        .power-btn:active {
+            transform: scale(0.95);
+        }
+
+        .advanced-section {
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .text-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+
+        .text-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .advanced-controls {
+            margin-top: 20px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
-            
-            @keyframes float {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            
-            .hero-title {
-                color: var(--success);
-                font-size: 32px;
-                margin-bottom: 10px;
-                text-shadow: 0 0 20px hsla(142, 71%, 45%, 0.3);
-            }
-            
-            .hero-subtitle {
-                color: var(--text-primary);
-                font-size: 18px;
-                margin-bottom: 8px;
-            }
-            
-            .hero-mac {
-                font-family: 'Courier New', monospace;
-                color: var(--text-secondary);
-                background: var(--bg-dark);
-                display: inline-block;
-                padding: 6px 12px;
-                border-radius: 20px;
-                font-size: 14px;
-                border: 1px solid var(--border);
-            }
-            
-            .controls-grid {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                margin-top: 40px;
-            }
-            
-            .power-btn {
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                border: none;
-                background: linear-gradient(135deg, hsl(0, 84%, 60%) 0%, hsl(0, 84%, 45%) 100%);
-                color: white;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 10px 30px hsla(0, 84%, 60%, 0.4);
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .power-btn::after {
-                content: '';
-                position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: linear-gradient(rgba(255,255,255,0.2), transparent);
-                border-radius: 50%;
-            }
-            
-            .power-btn:hover {
-                transform: scale(1.1);
-                box-shadow: 0 15px 40px hsla(0, 84%, 60%, 0.6);
-            }
-            
-            .power-btn:active {
-                transform: scale(0.95);
-            }
-            
-            .advanced-section {
-                margin-top: 40px;
-                border-top: 1px solid var(--border);
-                padding-top: 20px;
-            }
-            
-            .text-btn {
-                background: none;
-                border: none;
-                color: var(--text-secondary);
-                font-size: 12px;
-                cursor: pointer;
-                text-decoration: underline;
-                transition: color 0.3s;
-            }
-            
-            .text-btn:hover {
-                color: var(--text-primary);
-            }
-            
-            .advanced-controls {
-                margin-top: 20px;
-                animation: slideDown 0.3s ease-out;
-            }
-            
-            @keyframes slideDown {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .danger-btn {
-                background: transparent;
-                border: 1px solid var(--error);
-                color: var(--error);
-                padding: 10px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 14px;
-                transition: all 0.3s;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .danger-btn:hover {
-                background: var(--error);
-                color: white;
-            }
+        }
+
+        .danger-btn {
+            background: transparent;
+            border: 1px solid var(--error);
+            color: var(--error);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .danger-btn:hover {
+            background: var(--error);
+            color: white;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -543,14 +575,8 @@
         <form id="registration-form">
             <div class="form-group">
                 <label for="roomnumber">Room Number</label>
-                <input 
-                    type="text" 
-                    id="roomnumber" 
-                    name="roomnumber" 
-                    placeholder="Enter room number (e.g., 101)" 
-                    required
-                    autocomplete="off"
-                >
+                <input type="text" id="roomnumber" name="roomnumber" placeholder="Enter room number (e.g., 101)"
+                    required autocomplete="off">
             </div>
 
             <button type="submit" class="btn" id="submit-btn">
@@ -558,7 +584,7 @@
             </button>
         </form>
 
-        <div class="status-section">
+        <div class="status-section" id="status-section" style="display: none;">
             <div class="status-header">
                 Registration Status
             </div>
@@ -571,8 +597,10 @@
     </div>
 
     <!-- Socket.IO Client -->
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
-    
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+        integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
+        crossorigin="anonymous"></script>
+
     <script>
         // Configuration
         console.log('%c 9jahotel TV Client v1.2 Loaded ', 'background: #222; color: #bada55; padding: 4px; border-radius: 4px;');
@@ -621,6 +649,13 @@
             ipAddress = await getIPAddress();
             document.getElementById('ipaddress').textContent = ipAddress;
 
+            // Auto-populate room number
+            const storedRoom = localStorage.getItem('tv_room_number');
+            if (storedRoom) {
+                const roomInput = document.getElementById('roomnumber');
+                if (roomInput) roomInput.value = storedRoom;
+            }
+
             // Initialize Socket.IO
             initSocket();
         }
@@ -630,13 +665,13 @@
             // Check for env variable SERVER_URL or use current origin with port 3003
             // Valid fallback for development (file:// or localhost)
             let defaultUrl = 'http://localhost:3003';
-            
+
             if (window.location.protocol.startsWith('http')) {
                 defaultUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
             }
-            
+
             const serverUrl = window.SERVER_URL || defaultUrl;
-            
+
             console.log('Connecting to socket server:', serverUrl);
 
             socket = io(serverUrl, {
@@ -649,7 +684,7 @@
             socket.on('connect', () => {
                 console.log('Socket connected');
                 updateSocketStatus(true);
-                
+
                 // Note: We don't auto-join rooms here, we wait for registration
                 // Or if we have stored session data, we might want to re-join
             });
@@ -676,7 +711,7 @@
                 console.error('Registration failure:', data);
                 handleRegistrationFailure(data);
             });
-            
+
             // Listen for delete events
             socket.on('delete-tv-success', (data) => {
                 console.log('TV Deleted:', data);
@@ -688,7 +723,7 @@
         function updateSocketStatus(connected) {
             const indicator = document.getElementById('socket-indicator');
             const status = document.getElementById('socket-status');
-            
+
             if (connected) {
                 indicator.classList.remove('disconnected');
                 indicator.classList.add('connected');
@@ -705,12 +740,12 @@
             const type = data.type;
             const eventData = data.data || data;
             const hero = document.getElementById('connected-hero');
-            
+
             // If already connected and in TV mode, update the display directly
             if (hero && type !== 'deleted' && type !== 'error') {
                 const messageEl = hero.querySelector('.hero-message');
                 const titleEl = hero.querySelector('.hero-title');
-                
+
                 if (eventData.message && messageEl) {
                     // Update the message
                     messageEl.textContent = eventData.message;
@@ -718,14 +753,14 @@
                     messageEl.offsetHeight; /* trigger reflow */
                     messageEl.style.animation = 'fadeIn 0.5s';
                 }
-                
+
                 if (eventData.title && titleEl) {
                     titleEl.textContent = eventData.title;
                 }
-                
+
                 // If it's the connected event itself, just ensure we are in a good state
                 if (type === 'connected') {
-                     // Ensure controls are visible/reset if valid
+                    // Ensure controls are visible/reset if valid
                 }
                 return;
             }
@@ -735,10 +770,17 @@
             } else if (type === 'connected') {
                 // HIDE REGISTRATION FORM ON SUCCESSFUL CONNECTION
                 document.getElementById('registration-form').style.display = 'none';
-                
+
                 // HIDE PREVIOUS RESULTS
-                document.getElementById('results').style.display = 'none';
-                
+                document.getElementById('registration-form').style.display = 'none';
+
+                // HIDE PREVIOUS RESULTS AND STATUS SECTION
+                if (document.getElementById('status-section')) {
+                    document.getElementById('status-section').style.display = 'none';
+                }
+                const resultsEl = document.getElementById('results');
+                if (resultsEl) resultsEl.style.display = 'none';
+
                 // HIDE INFO GRID (MAC, IP, Tv Status)
                 if (document.querySelector('.info-grid')) {
                     document.querySelector('.info-grid').style.display = 'none';
@@ -746,19 +788,19 @@
                 if (document.querySelector('header')) {
                     document.querySelector('header').style.display = 'none';
                 }
-                
+
                 // Show hero success state if not already there
                 const container = document.querySelector('.container');
-                
+
                 // Enforce TV mode styling
                 container.classList.add('tv-mode');
-                
+
                 // DEBUG LOGGING
                 console.log('Rendering Connected Hero with data:', eventData);
                 console.log('Message to display:', eventData.message);
-                
+
                 let heroEl = document.getElementById('connected-hero');
-                
+
                 if (!heroEl) {
                     heroEl = document.createElement('div');
                     heroEl.id = 'connected-hero';
@@ -795,7 +837,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 // Add event listeners for new buttons
                 document.getElementById('disconnect-btn').addEventListener('click', () => {
                     if (confirm('Are you sure you want to disconnect this TV?')) {
@@ -818,16 +860,16 @@
                         alert('Incorrect room number. Deletion cancelled.');
                     }
                 });
-                
+
             } else if (type === 'error') {
                 // If connected, show error as alert or overlay? For now, standard result card might be hidden by TV mode
                 // Ideally, show error in message area but with error color
                 if (hero) {
-                     const messageEl = hero.querySelector('.hero-message');
-                     if (messageEl) {
-                         messageEl.style.color = 'var(--error)';
-                         messageEl.textContent = eventData.message || 'An error occurred';
-                     }
+                    const messageEl = hero.querySelector('.hero-message');
+                    if (messageEl) {
+                        messageEl.style.color = 'var(--error)';
+                        messageEl.textContent = eventData.message || 'An error occurred';
+                    }
                 } else {
                     displayResult('error', 'Error', eventData.message || 'An error occurred', eventData);
                 }
@@ -847,7 +889,7 @@
         // Handle registration failure
         function handleRegistrationFailure(data) {
             displayResult('error', 'Registration Failed', data.error || 'Registration failed', data);
-            
+
             // Re-enable submit button so user can try again
             const submitBtn = document.getElementById('submit-btn');
             if (submitBtn) {
@@ -858,11 +900,20 @@
 
         // Display result
         function displayResult(type, title, message, data) {
+            const statusSection = document.getElementById('status-section');
+            if (statusSection) {
+                statusSection.style.display = 'block';
+            }
+
             const resultsDiv = document.getElementById('results');
+            if (!resultsDiv) {
+                console.error('Results div not found');
+                return;
+            }
             resultsDiv.style.display = 'block'; // Ensure visibility
-            
+
             const iconSymbol = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
-            
+
             resultsDiv.innerHTML = `
                 <div class="result-card ${type}">
                     <div class="result-header">
@@ -887,10 +938,10 @@
         // Handle form submission
         document.getElementById('registration-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const roomnumber = document.getElementById('roomnumber').value.trim();
             const submitBtn = document.getElementById('submit-btn');
-            
+
             if (!roomnumber) {
                 alert('Please enter a room number');
                 return;
@@ -899,6 +950,9 @@
             // Disable button and show loading
             submitBtn.disabled = true;
             submitBtn.innerHTML = 'Registering<span class="loading"></span>';
+
+            // Save room number
+            localStorage.setItem('tv_room_number', roomnumber);
 
             // Show pending status
             displayResult('warning', 'Registering...', 'Sending registration request to server', {
@@ -941,14 +995,14 @@
                 socket.once('tv-registration-success', (result) => {
                     clearTimeout(timeoutId);
                     console.log('Registration ACK received:', result);
-                    
+
                     if (result.success) {
-                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', result.data);
+                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', null);
                     } else {
                         // If the RPC call failed (e.g. validation error returned in API response format)
                         displayResult('error', 'Request Rejected', result.message || 'Registration request rejected by server', result.data || result.errors);
                     }
-                    
+
                     // Re-enable button
                     document.getElementById('submit-btn').disabled = false;
                     document.getElementById('submit-btn').textContent = 'Register/Connect TV';
@@ -958,7 +1012,7 @@
                     clearTimeout(timeoutId);
                     console.error('Socket registration error:', error);
                     displayResult('error', 'Socket Error', error.error || 'Failed to send registration request', null);
-                    
+
                     // Re-enable button
                     document.getElementById('submit-btn').disabled = false;
                     document.getElementById('submit-btn').textContent = 'Register/Connect TV';
@@ -967,7 +1021,7 @@
             } catch (error) {
                 console.error('Registration error:', error);
                 displayResult('error', 'Connection Error', error.message || 'Failed to connect to server', null);
-                
+
                 // Re-enable button
                 document.getElementById('submit-btn').disabled = false;
                 document.getElementById('submit-btn').textContent = 'Register/Connect TV';
@@ -978,4 +1032,5 @@
         init();
     </script>
 </body>
+
 </html>
