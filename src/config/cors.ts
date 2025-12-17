@@ -10,32 +10,7 @@ export const corsConfig = {
    * Includes frontend URL, mobile app schemes, and development URLs
    */
   getAllowedOrigins: () => {
-    const baseOrigins = [
-      env("FRONTEND_URL", "https://example.com"),
-      "http://localhost:4000", // Local development
-      "http://localhost:3000", // Local development
-      "http://localhost:3001", // Local development (alternative port)
-      "http://localhost:3002", // Local development (alternative port)
-      "http://localhost:3006", // Local development (alternative port)
-      "http://127.0.0.1:3000", // Local development (IP)
-      "http://127.0.0.1:3001", // Local development (IP alternative port)
-      "capacitor://localhost", // Capacitor mobile apps
-      "ionic://localhost", // Ionic mobile apps
-      "tauri://localhost", // Tauri desktop apps
-      "https://tauri.localhost", // Tauri desktop apps (secure)
-      "http://localhost", // Mobile development
-      "https://localhost", // Mobile development with HTTPS
-    ];
-
-    // Add custom mobile app origins from environment if provided
-    const customOrigins = env("MOBILE_APP_ORIGINS", "") as string;
-    if (customOrigins) {
-      baseOrigins.push(
-        ...customOrigins.split(",").map((origin: string) => origin.trim())
-      );
-    }
-
-    return baseOrigins;
+    return ["*"];
   },
 
   /**
@@ -81,35 +56,6 @@ export const corsConfig = {
    * @returns boolean - Whether the origin is allowed
    */
   isOriginAllowed: (origin: string | undefined): boolean => {
-    if (!origin) return true; // Allow requests with no origin (mobile apps, Postman, etc.)
-
-    // In development, allow all origins
-    if (process.env.NODE_ENV === "development") {
-      return true;
-    }
-
-    const allowedOrigins = corsConfig.getAllowedOrigins();
-
-    // Check exact match
-    if (allowedOrigins.includes(origin)) {
-      return true;
-    }
-
-    // Check for mobile app schemes
-    if (origin.startsWith("capacitor://") || origin.startsWith("ionic://")) {
-      return true;
-    }
-
-    // Check for Tauri app schemes
-    if (origin.startsWith("tauri://") || origin.startsWith("https://tauri.")) {
-      return true;
-    }
-
-    // Check for file:// scheme (mobile apps)
-    if (origin.startsWith("file://")) {
-      return true;
-    }
-
-    return false;
+    return true; // Allow all origins
   },
 };

@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Registration - Smart Hotel System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: hsl(220, 90%, 56%);
+            --primary-dark: hsl(220, 90%, 46%);
+            --success: hsl(142, 71%, 45%);
+            --error: hsl(0, 84%, 60%);
+            --warning: hsl(38, 92%, 50%);
+            --bg-dark: hsl(220, 26%, 14%);
+            --bg-card: hsl(220, 26%, 18%);
+            --bg-hover: hsl(220, 26%, 22%);
+            --text-primary: hsl(0, 0%, 98%);
+            --text-secondary: hsl(220, 9%, 65%);
+            --border: hsl(220, 26%, 26%);
+            --glass-bg: hsla(220, 26%, 18%, 0.8);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, hsl(220, 26%, 10%) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, hsla(220, 90%, 56%, 0.15) 0%, transparent 70%);
+            top: -250px;
+            right: -250px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, hsla(142, 71%, 45%, 0.1) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90vw;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+            transition: all 0.5s ease;
+        }
+
+        /* TV Mode for Connected State */
+        .container.tv-mode {
+            aspect-ratio: 16/9;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: black; /* Deep black for TV feel */
+            border: 10px solid #222; /* Bezel */
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, hsl(200, 90%, 56%) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px hsla(220, 90%, 56%, 0.1);
+            background: var(--bg-hover);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px hsla(220, 90%, 56%, 0.3);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px hsla(220, 90%, 56%, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .status-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-indicator.connected {
+            background: var(--success);
+        }
+
+        .status-indicator.disconnected {
+            background: var(--error);
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result-card.success {
+            border-color: var(--success);
+            background: hsla(142, 71%, 45%, 0.05);
+        }
+
+        .result-card.error {
+            border-color: var(--error);
+            background: hsla(0, 84%, 60%, 0.05);
+        }
+
+        .result-card.warning {
+            border-color: var(--warning);
+            background: hsla(38, 92%, 50%, 0.05);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .result-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .result-icon.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .result-icon.error {
+            background: var(--error);
+            color: white;
+        }
+
+        .result-icon.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .result-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .result-details {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .result-data {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .result-data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .result-data-label {
+            color: var(--text-secondary);
+        }
+
+        .result-data-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--text-secondary);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+            a {
+                color: var(--primary);
+                text-decoration: none;
+            }
+            
+            .connected-hero {
+                text-align: center;
+                padding: 40px 0;
+                animation: fadeIn 0.5s ease-out;
+            }
+            
+            .hero-icon {
+                font-size: 80px;
+                margin-bottom: 20px;
+                animation: float 3s ease-in-out infinite;
+                filter: drop-shadow(0 0 20px hsla(220, 90%, 56%, 0.3));
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .hero-title {
+                color: var(--success);
+                font-size: 32px;
+                margin-bottom: 10px;
+                text-shadow: 0 0 20px hsla(142, 71%, 45%, 0.3);
+            }
+            
+            .hero-subtitle {
+                color: var(--text-primary);
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+            
+            .hero-mac {
+                font-family: 'Courier New', monospace;
+                color: var(--text-secondary);
+                background: var(--bg-dark);
+                display: inline-block;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+                border: 1px solid var(--border);
+            }
+            
+            .controls-grid {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 40px;
+            }
+            
+            .power-btn {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: none;
+                background: linear-gradient(135deg, hsl(0, 84%, 60%) 0%, hsl(0, 84%, 45%) 100%);
+                color: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 10px 30px hsla(0, 84%, 60%, 0.4);
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .power-btn::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: linear-gradient(rgba(255,255,255,0.2), transparent);
+                border-radius: 50%;
+            }
+            
+            .power-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 15px 40px hsla(0, 84%, 60%, 0.6);
+            }
+            
+            .power-btn:active {
+                transform: scale(0.95);
+            }
+            
+            .advanced-section {
+                margin-top: 40px;
+                border-top: 1px solid var(--border);
+                padding-top: 20px;
+            }
+            
+            .text-btn {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                font-size: 12px;
+                cursor: pointer;
+                text-decoration: underline;
+                transition: color 0.3s;
+            }
+            
+            .text-btn:hover {
+                color: var(--text-primary);
+            }
+            
+            .advanced-controls {
+                margin-top: 20px;
+                animation: slideDown 0.3s ease-out;
+            }
+            
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .danger-btn {
+                background: transparent;
+                border: 1px solid var(--error);
+                color: var(--error);
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .danger-btn:hover {
+                background: var(--error);
+                color: white;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖥️ Smart TV Registration</h1>
+            <p class="subtitle">Hotel Management System</p>
+        </header>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-label">Hotel Code</div>
+                <div class="info-value" id="hotelcode">ZCHS241</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">MAC Address</div>
+                <div class="info-value" id="macaddress">Loading...</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">IP Address</div>
+                <div class="info-value" id="ipaddress">Loading...</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Tv Status</div>
+                <div class="info-value" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="status-indicator disconnected" id="socket-indicator"></span>
+                    <span id="socket-status">Disconnected</span>
+                </div>
+            </div>
+        </div>
+
+        <form id="registration-form">
+            <div class="form-group">
+                <label for="roomnumber">Room Number</label>
+                <input 
+                    type="text" 
+                    id="roomnumber" 
+                    name="roomnumber" 
+                    placeholder="Enter room number (e.g., 101)" 
+                    required
+                    autocomplete="off"
+                >
+            </div>
+
+            <button type="submit" class="btn" id="submit-btn">
+                Register/Connect TV
+            </button>
+        </form>
+
+        <div class="status-section">
+            <div class="status-header">
+                Registration Status
+            </div>
+            <div id="results">
+                <div class="result-details" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                    No registration attempts yet
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    
+    <script>
+        // Configuration
+        const HOTEL_CODE = 'ZCHS241';
+        // Use the current hostname but force port 3003 as requested
+        const SOCKET_URL = window.location.protocol + '//' + window.location.hostname + ':3003';
+
+        // State
+        let macAddress = '';
+        let ipAddress = '';
+        let socket = null;
+
+        // Generate a unique MAC address using crypto API (more robust)
+        function generateMAC() {
+            const bytes = new Uint8Array(6);
+            window.crypto.getRandomValues(bytes);
+            return Array.from(bytes)
+                .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+                .join(':');
+        }
+
+        // Get IP address using external API
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP:', error);
+                return '0.0.0.0';
+            }
+        }
+
+        // Initialize
+        async function init() {
+            // Generate/Get MAC address
+            let storedMAC = localStorage.getItem('tv_mac_address');
+            if (!storedMAC) {
+                storedMAC = generateMAC();
+                localStorage.setItem('tv_mac_address', storedMAC);
+            }
+            macAddress = storedMAC;
+            document.getElementById('macaddress').textContent = macAddress;
+
+            // Get IP address
+            ipAddress = await getIPAddress();
+            document.getElementById('ipaddress').textContent = ipAddress;
+
+            // Initialize Socket.IO
+            initSocket();
+        }
+
+        // Initialize Socket.IO
+        function initSocket() {
+            // Check for env variable SERVER_URL or use current origin with port 3003
+            const defaultUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
+            const serverUrl = window.SERVER_URL || defaultUrl;
+            
+            console.log('Connecting to socket server:', serverUrl);
+
+            socket = io(serverUrl, {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: 5
+            });
+
+            socket.on('connect', () => {
+                console.log('Socket connected');
+                updateSocketStatus(true);
+                
+                // Note: We don't auto-join rooms here, we wait for registration
+                // Or if we have stored session data, we might want to re-join
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Socket disconnected');
+                updateSocketStatus(false);
+            });
+
+            // Listen for TV notification events
+            socket.on('tv-notification', (data) => {
+                console.log('TV Notification received:', data);
+                handleNotification(data);
+            });
+
+            // Listen for TV connected events
+            socket.on('tv-connected', (data) => {
+                console.log('TV Connected event:', data);
+                handleConnected(data);
+            });
+
+            // Listen for registration failure events
+            socket.on('tv-registration-failure', (data) => {
+                console.error('Registration failure:', data);
+                handleRegistrationFailure(data);
+            });
+            
+            // Listen for delete events
+            socket.on('delete-tv-success', (data) => {
+                console.log('TV Deleted:', data);
+                location.reload(); // Reset state
+            });
+        }
+
+        // Update Tv Status indicator
+        function updateSocketStatus(connected) {
+            const indicator = document.getElementById('socket-indicator');
+            const status = document.getElementById('socket-status');
+            
+            if (connected) {
+                indicator.classList.remove('disconnected');
+                indicator.classList.add('connected');
+                status.textContent = 'Connected';
+            } else {
+                indicator.classList.remove('connected');
+                indicator.classList.add('disconnected');
+                status.textContent = 'Disconnected';
+            }
+        }
+
+        // Handle TV notification
+        function handleNotification(data) {
+            const type = data.type;
+            const eventData = data.data || data;
+            const hero = document.getElementById('connected-hero');
+            
+            // If already connected and in TV mode, update the display directly
+            if (hero && type !== 'deleted' && type !== 'error') {
+                const messageEl = hero.querySelector('.hero-message');
+                const titleEl = hero.querySelector('.hero-title');
+                
+                if (eventData.message && messageEl) {
+                    // Update the message
+                    messageEl.textContent = eventData.message;
+                    messageEl.style.animation = 'none';
+                    messageEl.offsetHeight; /* trigger reflow */
+                    messageEl.style.animation = 'fadeIn 0.5s';
+                }
+                
+                if (eventData.title && titleEl) {
+                    titleEl.textContent = eventData.title;
+                }
+                
+                // If it's the connected event itself, just ensure we are in a good state
+                if (type === 'connected') {
+                     // Ensure controls are visible/reset if valid
+                }
+                return;
+            }
+
+            if (type === 'registration') {
+                displayResult('success', 'TV Registered (NEW)', 'Registration event received. Waiting for connected event...', eventData);
+            } else if (type === 'connected') {
+                // HIDE REGISTRATION FORM ON SUCCESSFUL CONNECTION
+                document.getElementById('registration-form').style.display = 'none';
+                
+                // HIDE PREVIOUS RESULTS
+                document.getElementById('results').style.display = 'none';
+                
+                // HIDE INFO GRID (MAC, IP, Tv Status)
+                if (document.querySelector('.info-grid')) {
+                    document.querySelector('.info-grid').style.display = 'none';
+                }
+                if (document.querySelector('header')) {
+                    document.querySelector('header').style.display = 'none';
+                }
+                
+                // Show hero success state if not already there
+                const container = document.querySelector('.container');
+                
+                // Enforce TV mode styling
+                container.classList.add('tv-mode');
+                
+                let heroEl = document.getElementById('connected-hero');
+                
+                if (!heroEl) {
+                    heroEl = document.createElement('div');
+                    heroEl.id = 'connected-hero';
+                    heroEl.className = 'connected-hero';
+                    // Insert before results
+                    const results = document.getElementById('results');
+                    results.parentNode.insertBefore(heroEl, results);
+                }
+
+                heroEl.innerHTML = `
+                    <div class="hero-icon">📺</div>
+                    <h2 class="hero-title">${eventData.title || 'TV Active'}</h2>
+                    <p class="hero-subtitle">Connected to Room ${eventData.roomnumber || 'Unknown'}</p>
+                    <div class="hero-mac">${eventData.macaddress || ''}</div>
+                    <p class="hero-message" style="color: var(--success); margin-top: 20px; font-size: 24px; font-weight: 500;">
+                        ${eventData.message || 'TV is now connected and active'}
+                    </p>
+                    
+                    <div class="controls-grid">
+                        <button id="disconnect-btn" class="power-btn" title="Disconnect TV">
+                            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                                <line x1="12" y1="2" x2="12" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="advanced-section">
+                        <button id="advanced-toggle" class="text-btn">Advanced Options</button>
+                        <div id="advanced-controls" class="advanced-controls" style="display: none;">
+                            <button id="delete-btn" class="danger-btn">
+                                <span class="icon">🗑️</span> Delete TV
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners for new buttons
+                document.getElementById('disconnect-btn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to disconnect this TV?')) {
+                        socket.emit('disconnect-tv', { macaddress: macAddress });
+                    }
+                });
+
+                document.getElementById('advanced-toggle').addEventListener('click', (e) => {
+                    const controls = document.getElementById('advanced-controls');
+                    const isHidden = controls.style.display === 'none';
+                    controls.style.display = isHidden ? 'block' : 'none';
+                    e.target.textContent = isHidden ? 'Hide Options' : 'Advanced Options';
+                });
+
+                document.getElementById('delete-btn').addEventListener('click', () => {
+                    const room = prompt('To confirm deletion, please type the room number:');
+                    if (room === eventData.roomnumber) {
+                        socket.emit('delete-tv', { macaddress: macAddress, hotelcode: HOTEL_CODE });
+                    } else if (room !== null) {
+                        alert('Incorrect room number. Deletion cancelled.');
+                    }
+                });
+                
+            } else if (type === 'error') {
+                // If connected, show error as alert or overlay? For now, standard result card might be hidden by TV mode
+                // Ideally, show error in message area but with error color
+                if (hero) {
+                     const messageEl = hero.querySelector('.hero-message');
+                     if (messageEl) {
+                         messageEl.style.color = 'var(--error)';
+                         messageEl.textContent = eventData.message || 'An error occurred';
+                     }
+                } else {
+                    displayResult('error', 'Error', eventData.message || 'An error occurred', eventData);
+                }
+            } else if (type === 'deleted') {
+                alert('This TV has been deleted from the system.');
+                location.reload();
+            } else {
+                displayResult('warning', 'Event Received', `Received ${type} event`, eventData);
+            }
+        }
+
+        // Handle TV connected event
+        function handleConnected(data) {
+            displayResult('success', 'Hotel Notification', 'TV connection broadcasted to hotel', data);
+        }
+
+        // Handle registration failure
+        function handleRegistrationFailure(data) {
+            displayResult('error', 'Registration Failed', data.error || 'Registration failed', data);
+        }
+
+        // Display result
+        function displayResult(type, title, message, data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block'; // Ensure visibility
+            
+            const iconSymbol = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
+            
+            resultsDiv.innerHTML = `
+                <div class="result-card ${type}">
+                    <div class="result-header">
+                        <div class="result-icon ${type}">${iconSymbol}</div>
+                        <div class="result-title">${title}</div>
+                    </div>
+                    <div class="result-details">${message}</div>
+                    ${data ? `
+                        <div class="result-data">
+                            ${Object.entries(data).map(([key, value]) => `
+                                <div class="result-data-item">
+                                    <span class="result-data-label">${key}:</span>
+                                    <span class="result-data-value">${value}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Handle form submission
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const roomnumber = document.getElementById('roomnumber').value.trim();
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (!roomnumber) {
+                alert('Please enter a room number');
+                return;
+            }
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Registering<span class="loading"></span>';
+
+            // Show pending status
+            displayResult('warning', 'Registering...', 'Sending registration request to server', {
+                hotelcode: HOTEL_CODE,
+                roomnumber: roomnumber,
+                macaddress: macAddress,
+                ipaddress: ipAddress
+            });
+
+            try {
+                // Send registration request via Socket.IO (Primary method)
+                console.log('Sending registration via Socket.IO:', {
+                    hotelcode: HOTEL_CODE,
+                    roomnumber: roomnumber,
+                    macaddress: macAddress,
+                    ipaddress: ipAddress
+                });
+
+                if (!socket || !socket.connected) {
+                    throw new Error('Socket not connected. Please wait for connection.');
+                }
+
+                socket.emit('tv-registration', {
+                    hotelcode: HOTEL_CODE,
+                    roomnumber: roomnumber,
+                    macaddress: macAddress,
+                    ipaddress: ipAddress
+                });
+
+                // Set a timeout for the ACK
+                const timeoutId = setTimeout(() => {
+                    if (!document.getElementById('submit-btn').disabled) return; // Already handled
+                    displayResult('warning', 'Request Timeout', 'No acknowledgement from server (Request sent via Socket)', null);
+                    document.getElementById('submit-btn').disabled = false;
+                    document.getElementById('submit-btn').textContent = 'Register/Connect TV';
+                }, 5000);
+
+                // Listen for ACK (Success/Failure of the request delivery)
+                // Note: The actual processing results come via tv-notification or tv-registration-failure
+                socket.once('tv-registration-success', (result) => {
+                    clearTimeout(timeoutId);
+                    console.log('Registration ACK received:', result);
+                    
+                    if (result.success) {
+                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', result.data);
+                    } else {
+                        // If the RPC call failed (e.g. validation error returned in API response format)
+                        displayResult('error', 'Request Rejected', result.message || 'Registration request rejected by server', result.data || result.errors);
+                    }
+                    
+                    // Re-enable button
+                    document.getElementById('submit-btn').disabled = false;
+                    document.getElementById('submit-btn').textContent = 'Register/Connect TV';
+                });
+
+                socket.once('tv-registration-error', (error) => {
+                    clearTimeout(timeoutId);
+                    console.error('Socket registration error:', error);
+                    displayResult('error', 'Socket Error', error.error || 'Failed to send registration request', null);
+                    
+                    // Re-enable button
+                    document.getElementById('submit-btn').disabled = false;
+                    document.getElementById('submit-btn').textContent = 'Register/Connect TV';
+                });
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                displayResult('error', 'Connection Error', error.message || 'Failed to connect to server', null);
+                
+                // Re-enable button
+                document.getElementById('submit-btn').disabled = false;
+                document.getElementById('submit-btn').textContent = 'Register/Connect TV';
+            }
+        });
+
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>

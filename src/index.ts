@@ -8,6 +8,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { serveStatic } from "hono/bun";
 import { PORT } from "./config/constants";
 import userRoutes from "./routes/user-routes";
 import authRoutes from "./routes/auth-routes";
@@ -28,10 +29,16 @@ import "./jobs/email-processor";
 
 import paymentRoutes from "./routes/payment-routes";
 
-const app = new Hono().basePath("/api");
+const app = new Hono();
+
+// Serve static files from public directory (before basePath)
+app.use('/public/*', serveStatic({ root: './' }));
+
+// API routes with basePath
+const apiApp = new Hono().basePath("/api");
 
 // CORS configuration for mobile app support
-app.use(
+apiApp.use(
   "*",
   cors({
     origin: (origin, c) => {
@@ -57,11 +64,11 @@ app.use(
 );
 
 // use Global errors handlers
-app.use(errorHandler);
-app.use(prettyJSON());
-app.use(logger());
+apiApp.use(errorHandler);
+apiApp.use(prettyJSON());
+apiApp.use(logger());
 
-app.get("/", (c) => {
+apiApp.get("/", (c) => {
   return c.json(
     {
       version: "v0",
@@ -75,26 +82,26 @@ app.get("/", (c) => {
 });
 
 // location and hotels endpoint
-app.route("/bookings", bookingRoutes);
+apiApp.route("/bookings", bookingRoutes);
 
-app.route("/", hotelRoutes);
+apiApp.route("/", hotelRoutes);
 
 // customer endpoint (public, not guarded by auth)
-app.route("/customers", customerRoutes);
+apiApp.route("/customers", customerRoutes);
 
-app.get("/clear-caches", (c) => {
+apiApp.get("/clear-caches", (c) => {
   const done = redis.flushall();
   return ApiResponse.success(null, "All saved cache cleared successfully");
 });
 
 // user endpoint
-app.route("/users", userRoutes);
+apiApp.route("/users", userRoutes);
 
 // auth endpoint
-app.route("/", authRoutes);
+apiApp.route("/", authRoutes);
 
 // heath check
-app.get("/health", async (c) => {
+apiApp.get("/health", async (c) => {
   try {
     // Test database connection
     await db.execute(sql`SELECT 1`);
@@ -107,9 +114,9 @@ app.get("/health", async (c) => {
 
 const emailService = new EmailService();
 
-app.route("/", paymentRoutes);
-app.route("/events", eventRoutes);
-app.get("/test-email", async (c) => {
+apiApp.route("/", paymentRoutes);
+apiApp.route("/events", eventRoutes);
+apiApp.get("/test-email", async (c) => {
   try {
     await emailService.sendTemplateEmail({
       to: "fedumsoftware@gmail.com",
@@ -131,9 +138,12 @@ app.get("/test-email", async (c) => {
 });
 
 // Not found errorHandler
-app.notFound((c) => {
+apiApp.notFound((c) => {
   return ApiResponse.failure("Resource/Endpoint Not Found", 404);
 });
+
+// Mount API app
+app.route("/api", apiApp);
 
 // sockets events
 import "./routes/socket-event";

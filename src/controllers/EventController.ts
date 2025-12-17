@@ -20,30 +20,35 @@ export class EventController {
    * POST /events/tv-registration
    */
   async registerTV(c: Context) {
-    let validatedData: any;
+    let rawData: any = {};
     let sanitizedMac: string | undefined;
     let tvRoom: string | undefined;
     let hotelRoom: string | undefined;
 
     try {
-      const data = await c.req.json();
+      rawData = await c.req.json();
+      
+      // Attempt to extract critical data for error reporting even before validation
+      if (rawData.macaddress) {
+        sanitizedMac = rawData.macaddress.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+        tvRoom = `smart-tv:${sanitizedMac}`;
+      }
+      
+      if (rawData.hotelcode) {
+        hotelRoom = `hotel:${rawData.hotelcode}`;
+      }
 
       // Validate input
-      validatedData = TVRegistrationDTO.parse(data);
+      const validatedData = TVRegistrationDTO.parse(rawData);
+      
+      // Update sanitizedMac and rooms with validated data
+      sanitizedMac = validatedData.macaddress.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+      tvRoom = `smart-tv:${sanitizedMac}`;
+      hotelRoom = `hotel:${validatedData.hotelcode}`;
       
       // Register TV
       const result = await this.tvService.registerTV(validatedData);
       
-      // Store for error handling
-      sanitizedMac = result.sanitizedMac;
-
-      // Join Socket.IO rooms
-      tvRoom = `smart-tv:${result.sanitizedMac}`;
-      hotelRoom = `hotel:${result.hotel.code}`;
-
-      // Note: In a real implementation, you'd get the socket from the TV connection
-      // For now, we'll just log the rooms that should be joined
-
       // Log successful registration with details
       if (result.isNew) {
         console.log(`✓ TV registration successful (NEW): ID=${result.tv.id}, MAC=${result.sanitizedMac}, Room=${validatedData.roomnumber}, Hotel=${validatedData.hotelcode}, Rooms=[${tvRoom}, ${hotelRoom}]`);
@@ -68,18 +73,43 @@ export class EventController {
           }
         });
         console.log(`✓ Registration event emitted to room: ${tvRoom}`);
-      }
 
-      // Also emit connected event to TV room as requested
-      io.to(tvRoom).emit("tv-notification", {
-        type: "connected",
-        data: {
-          tvid: result.tv.id,
-          status: "active",
-          message: "TV is now connected and active",
-        }
-      });
-      console.log(`✓ Connected event emitted to room: ${tvRoom}`);
+        // Wait 5 seconds before sending connected event for new TVs
+        // Capture tvRoom and tvId in closure to avoid undefined issues
+        const roomForCallback = tvRoom;
+        const tvIdForCallback = result.tv.id;
+        // Capture data for callback
+        const connectedData = {
+            tvid: tvIdForCallback,
+            macaddress: result.sanitizedMac,
+            roomnumber: validatedData.roomnumber,
+            hotelcode: validatedData.hotelcode,
+            status: "active",
+            message: "TV is now connected and active",
+        };
+        
+        setTimeout(() => {
+          io.to(roomForCallback).emit("tv-notification", {
+            type: "connected",
+            data: connectedData
+          });
+          console.log(`✓ Connected event emitted to room: ${roomForCallback} (after 5-second delay)`);
+        }, 5000);
+      } else {
+        // For reconnections and room updates, send only connected event immediately
+        io.to(tvRoom).emit("tv-notification", {
+          type: "connected",
+          data: {
+            tvid: result.tv.id,
+            macaddress: result.sanitizedMac,
+            roomnumber: validatedData.roomnumber,
+            hotelcode: validatedData.hotelcode,
+            status: "active",
+            message: "TV is now connected and active",
+          }
+        });
+        console.log(`✓ Connected event emitted to room: ${tvRoom} (immediate - reconnection/room update)`);
+      }
 
       // Emit to hotel room about new TV registration
       io.to(hotelRoom).emit("tv-connected", {
@@ -105,48 +135,125 @@ export class EventController {
         201,
       );
     } catch (error: any) {
-      console.error("✗ TV Registration Error:", error.message || error);
-      
-      // Emit failure event to both TV room and hotel room if we have the necessary data
-      if (sanitizedMac && validatedData) {
-        tvRoom = tvRoom || `smart-tv:${sanitizedMac}`;
-        hotelRoom = hotelRoom || `hotel:${validatedData.hotelcode}`;
-        
-        const failureData = {
-          error: error.message || "TV registration failed",
-          macaddress: sanitizedMac,
-          roomnumber: validatedData.roomnumber,
-          hotelcode: validatedData.hotelcode,
-          ipaddress: validatedData.ipaddress,
-          timestamp: new Date().toISOString(),
-        };
+      let errorMessage = error.message || "TV registration failed";
+      let validationErrors = undefined;
 
+      if (error.name === "ZodError") {
+        errorMessage = "Validation error";
+        validationErrors = error.errors;
+        // Format validation errors for the event message
+        if (error.errors && error.errors.length > 0) {
+          const details = error.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
+          errorMessage = `Validation error: ${details}`;
+        }
+      }
+
+      console.error(`✗ TV Registration Error: ${errorMessage}`);
+      
+      // Emit failure event to both TV room and hotel room if we have ANY room info
+      // Use whatever data we managed to extract (raw or validated)
+      const failureData = {
+        error: errorMessage,
+        macaddress: sanitizedMac || rawData.macaddress || 'unknown',
+        roomnumber: rawData.roomnumber || 'unknown',
+        hotelcode: rawData.hotelcode || 'unknown',
+        ipaddress: rawData.ipaddress || 'unknown',
+        timestamp: new Date().toISOString(),
+        validationErrors: validationErrors
+      };
+
+      // Try to emit to TV room if we can determine it
+      if (tvRoom) {
         try {
-          // Emit to TV room
           io.to(tvRoom).emit("tv-registration-failure", failureData);
           console.log(`✓ Failure event emitted to TV room: ${tvRoom}`, failureData);
         } catch (emitError: any) {
           console.error(`✗ Failed to emit failure event to TV room: ${tvRoom}`, emitError);
         }
+      }
 
+      // Try to emit to hotel room if we can determine it
+      if (hotelRoom) {
         try {
-          // Emit to hotel room
           io.to(hotelRoom).emit("tv-registration-failure", failureData);
           console.log(`✓ Failure event emitted to hotel room: ${hotelRoom}`, failureData);
         } catch (emitError: any) {
           console.error(`✗ Failed to emit failure event to hotel room: ${hotelRoom}`, emitError);
         }
-      } else {
-        console.error("✗ Cannot emit failure event - insufficient data (MAC or validated data missing)");
+      }
+      
+      if (!tvRoom && !hotelRoom) {
+        console.error("✗ Cannot emit failure event - insufficient data to determine target rooms");
       }
 
       if (error.name === "ZodError") {
-        console.error("✗ Validation error details:", error.errors);
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
       
-      console.error("✗ Returning error response to client:", error.message || "Internal server error");
-      return ApiResponse.failure(error.message || "Internal server error", 500);
+      return ApiResponse.failure(errorMessage, 500);
+    }
+  }
+
+  /**
+   * Delete a registered TV
+   */
+  async deleteTV(c: Context) {
+    try {
+      const data = await c.req.json();
+      const { macaddress, hotelcode } = data;
+
+      if (!macaddress || !hotelcode) {
+        return ApiResponse.failure("MAC address and Hotel Code are required", 400);
+      }
+
+      await this.tvService.deleteTV(macaddress, hotelcode);
+      
+      const sanitizedMac = macaddress.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+      const tvRoom = `smart-tv:${sanitizedMac}`;
+      
+      // Emit deleted event
+      io.to(tvRoom).emit("tv-notification", {
+        type: "deleted",
+        data: {
+          message: "TV has been deleted",
+          macaddress: sanitizedMac,
+          hotelcode
+        }
+      });
+
+      return ApiResponse.success({ deleted: true, mac: sanitizedMac }, "TV deleted successfully");
+    } catch (error: any) {
+      console.error("Delete TV Error:", error.message);
+      return ApiResponse.failure(error.message, 500);
+    }
+  }
+
+  /**
+   * Update TV details (Change TV)
+   * This basically re-registers/updates the TV with new details
+   */
+  async updateTV(c: Context) {
+    // Re-use registerTV logic as it handles updates gracefully
+    return this.registerTV(c);
+  }
+
+  /**
+   * Handle disconnected TV explicitly
+   */
+  async disconnectTV(c: Context) {
+    try {
+      const data = await c.req.json();
+      const { macaddress } = data;
+      
+      if (macaddress) {
+        const sanitizedMac = macaddress.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+        console.log(`✓ TV disconnected explicitly: ${sanitizedMac}`);
+        // Can add logic here to update status to 'offline' in DB if needed
+      }
+
+      return ApiResponse.success({ disconnected: true }, "TV disconnected");
+    } catch (error: any) {
+      return ApiResponse.failure(error.message, 500);
     }
   }
 

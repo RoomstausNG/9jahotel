@@ -74,12 +74,28 @@ io.on("connection", (socket) => {
 
   socket.on("tv-registration", async (data) => {
     try {
-      // For Socket.IO, we'll simulate a context-like object
+      // 1. Join rooms immediately based on raw data to ensure we receive controller-emitted events
+      if (data.macaddress) {
+        const sanitizedMac = data.macaddress.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+        const tvRoom = `smart-tv:${sanitizedMac}`;
+        socket.join(tvRoom);
+        console.log(`Socket ${socket.id} joined TV room: ${tvRoom}`);
+      }
+      
+      if (data.hotelcode) {
+        const hotelRoom = `hotel:${data.hotelcode}`;
+        socket.join(hotelRoom);
+        console.log(`Socket ${socket.id} joined Hotel room: ${hotelRoom}`);
+      }
+
+      // 2. Call EventController - it handles validation, logic, 5s delay, and emits events to rooms
+      // Since we joined the rooms above, this socket will receive those events automatically
       const mockContext = {
         req: {
           json: async () => Promise.resolve(data),
         },
       };
+      
       const response = await eventController.registerTV(mockContext as any);
       
       let result;
@@ -91,42 +107,12 @@ io.on("connection", (socket) => {
         result = response;
       }
 
-      if (result.success && result.data) {
-        // Join rooms
-        const { tvRoom, hotelRoom } = result.data;
-        if (tvRoom) socket.join(tvRoom);
-        if (hotelRoom) socket.join(hotelRoom);
-        console.log(`Socket ${socket.id} joined rooms: ${tvRoom}, ${hotelRoom}`);
-        
-        // Emit connected event specifically to this socket
-        socket.emit("tv-notification", {
-          type: "connected",
-          data: {
-            tvid: result.data.tvId,
-            status: "active",
-            message: "TV is now connected and active",
-          }
-        });
-
-        // If new, also emit registration event to this socket
-        if (result.data.isNew) {
-          socket.emit("tv-notification", {
-            type: "registration",
-            data: {
-              tvid: result.data.tvId,
-              macaddress: result.data.sanitizedMac,
-              status: "active",
-              timestamp: new Date().toISOString(),
-              hotelcode: data.hotelcode,
-              roomnumber: data.roomnumber,
-              ipaddress: data.ipaddress
-            }
-          });
-        }
-      }
-      
+      // 3. Emit ACK to the client (success or failure response from controller)
+      // Note: The actual "tv-notification" events are emitted by the controller
       socket.emit("tv-registration-success", result);
+      
     } catch (error: any) {
+      console.error("Socket TV Registration Error:", error);
       socket.emit("tv-registration-error", { error: error.message });
     }
   });

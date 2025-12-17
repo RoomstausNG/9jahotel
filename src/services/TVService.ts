@@ -176,13 +176,31 @@ export class TVService {
     } else {
       // New TV - create it
       isNew = true;
-      console.log(`✓ New TV created: MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
+      // New TV - create it
+      isNew = true;
+      
+      // Calculate next sequential name (TV1-101, TV2-101, etc.)
+      const existingTVs = await db
+        .select()
+        .from(smart_tvs)
+        .where(eq(smart_tvs.room_id, room.id));
+
+      let index = 1;
+      let tvName = `TV${index}-${room.number}`;
+      
+      // Find first available index
+      while (existingTVs.some(tv => tv.name === tvName)) {
+        index++;
+        tvName = `TV${index}-${room.number}`;
+      }
+      
+      console.log(`✓ New TV created: Name=${tvName}, MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
       
       const [result] = await db
         .insert(smart_tvs)
         .values({
           room_id: room.id,
-          name: `TV-${room.number}`,
+          name: tvName,
           ip_address: ipaddress,
           mac_address: sanitizedMac,
           hotel_id: hotel.id,
@@ -302,5 +320,33 @@ export class TVService {
       .where(eq(smart_tvs.hotel_id, hotel.id));
 
     return tvs;
+  }
+  /**
+   * Delete a TV
+   */
+  async deleteTV(macAddress: string, hotelCode: string) {
+    const sanitizedMac = this.sanitizeMacAddress(macAddress);
+
+    // Find hotel first
+    const hotel = await this.findHotelByCode(hotelCode);
+    if (!hotel) {
+      throw new Error("Hotel not found");
+    }
+
+    // Find TV
+    const tv = await this.findTVByMacAddress(sanitizedMac);
+    if (!tv) {
+      throw new Error("TV not found");
+    }
+
+    // Verify TV belongs to this hotel
+    if (tv.hotel_id !== hotel.id) {
+      throw new Error("TV does not belong to this hotel");
+    }
+
+    // Delete TV
+    await db.delete(smart_tvs).where(eq(smart_tvs.id, tv.id));
+
+    return { success: true, mac: sanitizedMac };
   }
 }
