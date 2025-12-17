@@ -124,21 +124,39 @@ export class TVService {
     const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
     let isNew = false;
+    let roomUpdated = false;
     
     if (tv) {
-      // Check if existing TV matches the current registration details
+      // TV exists - check if room assignment changed
       if (tv.hotel_id === hotel.id && tv.room_id === room.id) {
-        // ... (existing update logic)
-          await db
+        // Same TV, same room - just update last seen and IP
+        console.log(`✓ TV reconnection: MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
+        
+        await db
           .update(smart_tvs)
           .set({
             last_seen_at: now,
-             ip_address: ipaddress, // Update IP just in case
-             status: 'active',
+            ip_address: ipaddress, // Update IP just in case
+            status: 'active',
           })
           .where(eq(smart_tvs.id, tv.id));
+
+        // Refresh TV data
+        const updatedTv = await this.findTVByMacAddress(sanitizedMac);
+        tv = updatedTv || tv;
       } else {
-        // ... (existing update logic)
+        // Same MAC but different room - update room assignment
+        roomUpdated = true;
+        
+        // Get old room number for logging
+        const oldRoom = await db
+          .select()
+          .from(rooms)
+          .where(eq(rooms.id, tv.room_id))
+          .limit(1);
+        
+        console.log(`✓ TV room updated: MAC=${sanitizedMac}, From Room=${oldRoom[0]?.number || 'unknown'} to Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
+        
         await db
           .update(smart_tvs)
           .set({
@@ -150,10 +168,16 @@ export class TVService {
             status: 'active',
           })
           .where(eq(smart_tvs.id, tv.id));
+
+        // Refresh TV data
+        const updatedTv = await this.findTVByMacAddress(sanitizedMac);
+        tv = updatedTv || tv;
       }
     } else {
+      // New TV - create it
       isNew = true;
-      // Create new TV
+      console.log(`✓ New TV created: MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
+      
       const [result] = await db
         .insert(smart_tvs)
         .values({
@@ -184,6 +208,7 @@ export class TVService {
       room,
       sanitizedMac,
       isNew,
+      roomUpdated,
     };
   }
 

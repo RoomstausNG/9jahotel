@@ -20,25 +20,38 @@ export class EventController {
    * POST /events/tv-registration
    */
   async registerTV(c: Context) {
+    let validatedData: any;
+    let sanitizedMac: string | undefined;
+    let tvRoom: string | undefined;
+    let hotelRoom: string | undefined;
+
     try {
       const data = await c.req.json();
 
       // Validate input
-      const validatedData = TVRegistrationDTO.parse(data);
-
+      validatedData = TVRegistrationDTO.parse(data);
+      
       // Register TV
       const result = await this.tvService.registerTV(validatedData);
+      
+      // Store for error handling
+      sanitizedMac = result.sanitizedMac;
 
       // Join Socket.IO rooms
-      const tvRoom = `smart-tv:${result.sanitizedMac}`;
-      const hotelRoom = `hotel:${result.hotel.code}`;
+      tvRoom = `smart-tv:${result.sanitizedMac}`;
+      hotelRoom = `hotel:${result.hotel.code}`;
 
       // Note: In a real implementation, you'd get the socket from the TV connection
       // For now, we'll just log the rooms that should be joined
 
-      console.log(
-        `TV ${result.tv.id} registered in rooms: ${tvRoom}, ${hotelRoom}`,
-      );
+      // Log successful registration with details
+      if (result.isNew) {
+        console.log(`✓ TV registration successful (NEW): ID=${result.tv.id}, MAC=${result.sanitizedMac}, Room=${validatedData.roomnumber}, Hotel=${validatedData.hotelcode}, Rooms=[${tvRoom}, ${hotelRoom}]`);
+      } else if (result.roomUpdated) {
+        console.log(`✓ TV registration successful (ROOM UPDATED): ID=${result.tv.id}, MAC=${result.sanitizedMac}, Room=${validatedData.roomnumber}, Hotel=${validatedData.hotelcode}, Rooms=[${tvRoom}, ${hotelRoom}]`);
+      } else {
+        console.log(`✓ TV registration successful (RECONNECTION): ID=${result.tv.id}, MAC=${result.sanitizedMac}, Room=${validatedData.roomnumber}, Hotel=${validatedData.hotelcode}, Rooms=[${tvRoom}, ${hotelRoom}]`);
+      }
 
       // Emit registration event (only if new)
       if (result.isNew) {
@@ -54,6 +67,7 @@ export class EventController {
             timestamp: new Date().toISOString(),
           }
         });
+        console.log(`✓ Registration event emitted to room: ${tvRoom}`);
       }
 
       // Also emit connected event to TV room as requested
@@ -65,6 +79,7 @@ export class EventController {
           message: "TV is now connected and active",
         }
       });
+      console.log(`✓ Connected event emitted to room: ${tvRoom}`);
 
       // Emit to hotel room about new TV registration
       io.to(hotelRoom).emit("tv-connected", {
@@ -75,6 +90,7 @@ export class EventController {
         status: "active",
         timestamp: new Date().toISOString(),
       });
+      console.log(`✓ TV connection event emitted to hotel room: ${hotelRoom}`);
 
       return ApiResponse.success(
         {
@@ -83,15 +99,53 @@ export class EventController {
           tvRoom,
           hotelRoom,
           isNew: result.isNew,
+          roomUpdated: result.roomUpdated,
         },
         "TV registered successfully",
         201,
       );
     } catch (error: any) {
-      console.error("TV Registration Error:", error);
+      console.error("✗ TV Registration Error:", error.message || error);
+      
+      // Emit failure event to both TV room and hotel room if we have the necessary data
+      if (sanitizedMac && validatedData) {
+        tvRoom = tvRoom || `smart-tv:${sanitizedMac}`;
+        hotelRoom = hotelRoom || `hotel:${validatedData.hotelcode}`;
+        
+        const failureData = {
+          error: error.message || "TV registration failed",
+          macaddress: sanitizedMac,
+          roomnumber: validatedData.roomnumber,
+          hotelcode: validatedData.hotelcode,
+          ipaddress: validatedData.ipaddress,
+          timestamp: new Date().toISOString(),
+        };
+
+        try {
+          // Emit to TV room
+          io.to(tvRoom).emit("tv-registration-failure", failureData);
+          console.log(`✓ Failure event emitted to TV room: ${tvRoom}`, failureData);
+        } catch (emitError: any) {
+          console.error(`✗ Failed to emit failure event to TV room: ${tvRoom}`, emitError);
+        }
+
+        try {
+          // Emit to hotel room
+          io.to(hotelRoom).emit("tv-registration-failure", failureData);
+          console.log(`✓ Failure event emitted to hotel room: ${hotelRoom}`, failureData);
+        } catch (emitError: any) {
+          console.error(`✗ Failed to emit failure event to hotel room: ${hotelRoom}`, emitError);
+        }
+      } else {
+        console.error("✗ Cannot emit failure event - insufficient data (MAC or validated data missing)");
+      }
+
       if (error.name === "ZodError") {
+        console.error("✗ Validation error details:", error.errors);
         return ApiResponse.failure("Validation error", 422, error.errors);
       }
+      
+      console.error("✗ Returning error response to client:", error.message || "Internal server error");
       return ApiResponse.failure(error.message || "Internal server error", 500);
     }
   }
