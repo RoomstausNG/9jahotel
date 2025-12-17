@@ -113,7 +113,7 @@ io.on("connection", (socket) => {
       
     } catch (error: any) {
       console.error("Socket TV Registration Error:", error);
-      socket.emit("tv-registration-error", { error: error.message });
+      socket.emit("failure", { context: "registration", error: error.message });
     }
   });
 
@@ -135,7 +135,7 @@ io.on("connection", (socket) => {
       }
       socket.emit("check-in-success", result);
     } catch (error: any) {
-      socket.emit("check-in-error", { error: error.message });
+      socket.emit("failure", { context: "check-in", error: error.message });
     }
   });
 
@@ -157,7 +157,7 @@ io.on("connection", (socket) => {
       }
       socket.emit("reminder-success", result);
     } catch (error: any) {
-      socket.emit("reminder-error", { error: error.message });
+      socket.emit("failure", { context: "reminder", error: error.message });
     }
   });
 
@@ -179,7 +179,7 @@ io.on("connection", (socket) => {
       }
       socket.emit("checkout-success", result);
     } catch (error: any) {
-      socket.emit("checkout-error", { error: error.message });
+      socket.emit("failure", { context: "checkout", error: error.message });
     }
   });
 
@@ -201,7 +201,7 @@ io.on("connection", (socket) => {
       }
       socket.emit("broadcast-all-success", result);
     } catch (error: any) {
-      socket.emit("broadcast-all-error", { error: error.message });
+      socket.emit("failure", { context: "broadcast-all", error: error.message });
     }
   });
 

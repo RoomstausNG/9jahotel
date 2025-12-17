@@ -671,10 +671,10 @@
                 handleConnected(data);
             });
 
-            // Listen for registration failure events
-            socket.on('tv-registration-failure', (data) => {
-                console.error('Registration failure:', data);
-                handleRegistrationFailure(data);
+            // Listen for failure events (Unified)
+            socket.on('failure', (data) => {
+                console.error('Failure event received:', data);
+                handleFailure(data);
             });
             
             // Listen for delete events
@@ -682,6 +682,19 @@
                 console.log('TV Deleted:', data);
                 location.reload(); // Reset state
             });
+        }
+        
+        // Handle failure (Unified)
+        function handleFailure(data) {
+            const context = data.context ? ` (${data.context})` : '';
+            displayResult('error', `Error${context}`, data.message || data.error || 'An error occurred', data);
+            
+            // Re-enable submit button so user can try again
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register/Connect TV';
+            }
         }
 
         // Update Tv Status indicator
@@ -707,26 +720,30 @@
             const hero = document.getElementById('connected-hero');
             
             // If already connected and in TV mode, update the display directly
-            if (hero && type !== 'deleted' && type !== 'error') {
+            if (hero && type !== 'deleted') {
                 const messageEl = hero.querySelector('.hero-message');
                 const titleEl = hero.querySelector('.hero-title');
                 
+                // ALWAYS display message if present in ANY notification type
                 if (eventData.message && messageEl) {
-                    // Update the message
                     messageEl.textContent = eventData.message;
+                    // Reset animation to draw attention
                     messageEl.style.animation = 'none';
                     messageEl.offsetHeight; /* trigger reflow */
                     messageEl.style.animation = 'fadeIn 0.5s';
+                    
+                    // Set color based on type
+                    if (type === 'error' || type === 'failure') {
+                        messageEl.style.color = 'var(--error)';
+                    } else {
+                        messageEl.style.color = 'var(--success)';
+                    }
                 }
                 
                 if (eventData.title && titleEl) {
                     titleEl.textContent = eventData.title;
                 }
                 
-                // If it's the connected event itself, just ensure we are in a good state
-                if (type === 'connected') {
-                     // Ensure controls are visible/reset if valid
-                }
                 return;
             }
 
@@ -844,17 +861,7 @@
             displayResult('success', 'Hotel Notification', 'TV connection broadcasted to hotel', data);
         }
 
-        // Handle registration failure
-        function handleRegistrationFailure(data) {
-            displayResult('error', 'Registration Failed', data.error || 'Registration failed', data);
-            
-            // Re-enable submit button so user can try again
-            const submitBtn = document.getElementById('submit-btn');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Register/Connect TV';
-            }
-        }
+
 
         // Display result
         function displayResult(type, title, message, data) {
@@ -942,8 +949,9 @@
                     clearTimeout(timeoutId);
                     console.log('Registration ACK received:', result);
                     
-                    if (result.success) {
-                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', result.data);
+                    if (result.success || result.data) {
+                         const data = result.data || result;
+                         displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', data);
                     } else {
                         // If the RPC call failed (e.g. validation error returned in API response format)
                         displayResult('error', 'Request Rejected', result.message || 'Registration request rejected by server', result.data || result.errors);
@@ -954,16 +962,10 @@
                     document.getElementById('submit-btn').textContent = 'Register/Connect TV';
                 });
 
-                socket.once('tv-registration-error', (error) => {
+                socket.once('failure', (error) => {
                     clearTimeout(timeoutId);
-                    console.error('Socket registration error:', error);
-                    displayResult('error', 'Socket Error', error.error || 'Failed to send registration request', null);
-                    
-                    // Re-enable button
-                    document.getElementById('submit-btn').disabled = false;
-                    document.getElementById('submit-btn').textContent = 'Register/Connect TV';
+                    handleFailure(error); // Use unified handler
                 });
-
             } catch (error) {
                 console.error('Registration error:', error);
                 displayResult('error', 'Connection Error', error.message || 'Failed to connect to server', null);

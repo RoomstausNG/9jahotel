@@ -153,7 +153,9 @@ export class EventController {
       // Emit failure event to both TV room and hotel room if we have ANY room info
       // Use whatever data we managed to extract (raw or validated)
       const failureData = {
-        error: errorMessage,
+        context: "registration",
+        message: errorMessage,
+        error: errorMessage, // Keep error for backward compatibility or clarity
         macaddress: sanitizedMac || rawData.macaddress || 'unknown',
         roomnumber: rawData.roomnumber || 'unknown',
         hotelcode: rawData.hotelcode || 'unknown',
@@ -165,7 +167,7 @@ export class EventController {
       // Try to emit to TV room if we can determine it
       if (tvRoom) {
         try {
-          io.to(tvRoom).emit("tv-registration-failure", failureData);
+          io.to(tvRoom).emit("failure", failureData);
           console.log(`✓ Failure event emitted to TV room: ${tvRoom}`, failureData);
         } catch (emitError: any) {
           console.error(`✗ Failed to emit failure event to TV room: ${tvRoom}`, emitError);
@@ -175,7 +177,7 @@ export class EventController {
       // Try to emit to hotel room if we can determine it
       if (hotelRoom) {
         try {
-          io.to(hotelRoom).emit("tv-registration-failure", failureData);
+          io.to(hotelRoom).emit("failure", failureData);
           console.log(`✓ Failure event emitted to hotel room: ${hotelRoom}`, failureData);
         } catch (emitError: any) {
           console.error(`✗ Failed to emit failure event to hotel room: ${hotelRoom}`, emitError);
@@ -311,17 +313,14 @@ export class EventController {
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
         try {
-          io.to(tvRoom).emit("tv-notification", {
-            type: "error",
-            data: {
-              event: "check-in",
+          io.to(tvRoom).emit("failure", {
+              context: "check-in",
               message: error.message || "Check-in failed",
               timestamp: new Date().toISOString(),
-            }
           });
-          console.log(`✓ Check-in error event broadcast to room: ${tvRoom}`);
+          console.log(`✓ Check-in failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
-          console.error(`✗ Failed to broadcast check-in error to room: ${tvRoom}`, errorBroadcastError);
+          console.error(`✗ Failed to broadcast check-in failure to room: ${tvRoom}`, errorBroadcastError);
         }
       }
       
@@ -388,17 +387,14 @@ export class EventController {
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
         try {
-          io.to(tvRoom).emit("tv-notification", {
-            type: "error",
-            data: {
-              event: "reminder",
-              message: error.message || "Reminder failed",
-              timestamp: new Date().toISOString(),
-            }
+          io.to(tvRoom).emit("failure", {
+            context: "reminder",
+            message: error.message || "Reminder failed",
+            timestamp: new Date().toISOString(),
           });
-          console.log(`✓ Reminder error event broadcast to room: ${tvRoom}`);
+          console.log(`✓ Reminder failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
-          console.error(`✗ Failed to broadcast reminder error to room: ${tvRoom}`, errorBroadcastError);
+          console.error(`✗ Failed to broadcast reminder failure to room: ${tvRoom}`, errorBroadcastError);
         }
       }
       
@@ -465,17 +461,14 @@ export class EventController {
       // Emit error to TV room if we have the room identifier
       if (tvRoom) {
         try {
-          io.to(tvRoom).emit("tv-notification", {
-            type: "error",
-            data: {
-              event: "checkout",
-              message: error.message || "Checkout failed",
-              timestamp: new Date().toISOString(),
-            }
+          io.to(tvRoom).emit("failure", {
+            context: "checkout",
+            message: error.message || "Checkout failed",
+            timestamp: new Date().toISOString(),
           });
-          console.log(`✓ Checkout error event broadcast to room: ${tvRoom}`);
+          console.log(`✓ Checkout failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
-          console.error(`✗ Failed to broadcast checkout error to room: ${tvRoom}`, errorBroadcastError);
+          console.error(`✗ Failed to broadcast checkout failure to room: ${tvRoom}`, errorBroadcastError);
         }
       }
       
