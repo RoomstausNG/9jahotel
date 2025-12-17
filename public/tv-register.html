@@ -669,15 +669,19 @@
 
         // Initialize Socket.IO
         function initSocket() {
-            // Check for env variable SERVER_URL or use current origin with port 3003
-            // Valid fallback for development (file:// or localhost)
-            let defaultUrl = 'http://localhost:3003';
+            // Use SERVER_URL if provided, otherwise build default URL
+            let serverUrl;
 
-            if (window.location.protocol.startsWith('http')) {
-                defaultUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
+            if (window.SERVER_URL) {
+                // Use the provided SERVER_URL directly (for production)
+                serverUrl = window.SERVER_URL;
+            } else if (window.location.protocol.startsWith('http')) {
+                // Development: use current host with port 3003
+                serverUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
+            } else {
+                // Fallback for file:// protocol
+                serverUrl = 'http://localhost:3003';
             }
-
-            const serverUrl = window.SERVER_URL || defaultUrl;
 
             console.log('Connecting to socket server:', serverUrl);
 
