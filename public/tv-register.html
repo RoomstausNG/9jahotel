@@ -893,45 +893,8 @@
         // Display result
         function displayResult(type, title, message, data) {
             const resultsDiv = document.getElementById('results');
-            // Only show results if NOT connected (unless explicitly toggled)
-            // But we update the content anyway in case they toggle it
             
             const iconSymbol = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
-            
-            let dataHtml = '';
-            if (data) {
-                dataHtml = '<div class="result-data">';
-                dataHtml += Object.entries(data).map(([key, value]) => {
-                    let displayValue = value;
-                    if (typeof value === 'object' && value !== null) {
-                        displayValue = JSON.stringify(value);
-                    }
-                    
-                    // Format dates to be human friendly
-                    if ((key.toLowerCase().includes('time') || key.toLowerCase().includes('date') || key === 'timestamp') && value) {
-                        const date = new Date(value);
-                        if (!isNaN(date.getTime())) {
-                            displayValue = date.toLocaleString('en-US', { 
-                                weekday: 'long', 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric', 
-                                hour: 'numeric', 
-                                minute: 'numeric',
-                                hour12: true 
-                            });
-                        }
-                    }
-                    
-                    return `
-                        <div class="result-data-item">
-                            <span class="result-data-label">${key}:</span>
-                            <span class="result-data-value">${displayValue}</span>
-                        </div>
-                    `;
-                }).join('');
-                dataHtml += '</div>';
-            }
             
             resultsDiv.innerHTML = `
                 <div class="result-card ${type}">
@@ -940,12 +903,20 @@
                         <div class="result-title">${title}</div>
                     </div>
                     <div class="result-details">${message}</div>
-                    ${dataHtml}
+                    ${data ? `
+                        <div class="result-data">
+                            ${Object.entries(data).map(([key, value]) => `
+                                <div class="result-data-item">
+                                    <span class="result-data-label">${key}:</span>
+                                    <span class="result-data-value">${value}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
                 </div>
             `;
             
             // If we are NOT in TV mode (connected), show the results
-            // If we ARE in TV mode, the toggle button controls visibility, so we don't force it here
             const container = document.querySelector('.container');
             if (!container.classList.contains('tv-mode')) {
                 resultsDiv.style.display = 'block';
