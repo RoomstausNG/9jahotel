@@ -575,6 +575,7 @@
     
     <script>
         // Configuration
+        console.log('%c 9jahotel TV Client v1.2 Loaded ', 'background: #222; color: #bada55; padding: 4px; border-radius: 4px;');
         const HOTEL_CODE = 'ZCHS241';
         // Use the current hostname but force port 3003 as requested
         const SOCKET_URL = window.location.protocol + '//' + window.location.hostname + ':3003';
@@ -627,7 +628,13 @@
         // Initialize Socket.IO
         function initSocket() {
             // Check for env variable SERVER_URL or use current origin with port 3003
-            const defaultUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
+            // Valid fallback for development (file:// or localhost)
+            let defaultUrl = 'http://localhost:3003';
+            
+            if (window.location.protocol.startsWith('http')) {
+                defaultUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
+            }
+            
             const serverUrl = window.SERVER_URL || defaultUrl;
             
             console.log('Connecting to socket server:', serverUrl);
@@ -746,6 +753,10 @@
                 // Enforce TV mode styling
                 container.classList.add('tv-mode');
                 
+                // DEBUG LOGGING
+                console.log('Rendering Connected Hero with data:', eventData);
+                console.log('Message to display:', eventData.message);
+                
                 let heroEl = document.getElementById('connected-hero');
                 
                 if (!heroEl) {
@@ -836,6 +847,13 @@
         // Handle registration failure
         function handleRegistrationFailure(data) {
             displayResult('error', 'Registration Failed', data.error || 'Registration failed', data);
+            
+            // Re-enable submit button so user can try again
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register/Connect TV';
+            }
         }
 
         // Display result
