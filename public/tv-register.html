@@ -656,12 +656,7 @@
             ipAddress = await getIPAddress();
             document.getElementById('ipaddress').textContent = ipAddress;
 
-            // Auto-populate room number
-            const storedRoom = localStorage.getItem('tv_room_number');
-            if (storedRoom) {
-                const roomInput = document.getElementById('roomnumber');
-                if (roomInput) roomInput.value = storedRoom;
-            }
+
 
             // Initialize Socket.IO
             initSocket();
@@ -1042,7 +1037,7 @@
                     console.log('Registration ACK received:', result);
 
                     if (result.success) {
-                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', result.data);
+                        displayResult('success', 'Request Received', 'Server acknowledged registration request. Waiting for events...', null);
                     } else {
                         // If the RPC call failed (e.g. validation error returned in API response format)
                         displayResult('error', 'Request Rejected', result.message || 'Registration request rejected by server', result.data || result.errors);
