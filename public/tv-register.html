@@ -677,10 +677,10 @@
                 serverUrl = window.SERVER_URL;
             } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 // Local development: use localhost with port 3003
-                serverUrl = 'http://localhost:3003';
+                serverUrl = 'localhost:3003';
             } else {
                 // Production default: event.9jahotel.com
-                serverUrl = 'https://event.9jahotel.com';
+                serverUrl = 'event.9jahotel.com';
             }
 
             console.log('Connecting to socket server:', serverUrl);
