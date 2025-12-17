@@ -669,18 +669,18 @@
 
         // Initialize Socket.IO
         function initSocket() {
-            // Use SERVER_URL if provided, otherwise build default URL
+            // Use SERVER_URL if provided, otherwise use production default
             let serverUrl;
 
             if (window.SERVER_URL) {
-                // Use the provided SERVER_URL directly (for production)
+                // Use the provided SERVER_URL directly
                 serverUrl = window.SERVER_URL;
-            } else if (window.location.protocol.startsWith('http')) {
-                // Development: use current host with port 3003
-                serverUrl = window.location.protocol + '//' + window.location.hostname + ':3003';
-            } else {
-                // Fallback for file:// protocol
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                // Local development: use localhost with port 3003
                 serverUrl = 'http://localhost:3003';
+            } else {
+                // Production default: event.9jahotel.com
+                serverUrl = 'https://event.9jahotel.com';
             }
 
             console.log('Connecting to socket server:', serverUrl);
