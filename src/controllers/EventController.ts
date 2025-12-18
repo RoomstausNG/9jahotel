@@ -322,12 +322,15 @@ export class EventController {
       const result = await this.tvService.checkIn(validatedData);
 
       // Craft welcome message using request data
+      const normalizedCheckinCheckoutTime = normalizeCheckoutTimeToNoon(
+        validatedData.checkoutdatetime
+      );
       const welcomeMessage = `Welcome, ${
         validatedData.fullname
       }! Your check-in at ${formatDateToHumanReadable(
         validatedData.checkindatetime
       )} is confirmed. Enjoy your stay until ${formatDateToHumanReadable(
-        validatedData.checkoutdatetime
+        normalizedCheckinCheckoutTime
       )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
@@ -344,7 +347,7 @@ export class EventController {
               validatedData.checkindatetime
             ),
             checkouttime: formatDateToHumanReadable(
-              validatedData.checkoutdatetime
+              normalizedCheckinCheckoutTime
             ),
             message: welcomeMessage,
             tvid: validatedData.tvid,
