@@ -36,6 +36,24 @@ export const calculateDiscountedAmount = (
 };
 
 /**
+ * Format a date string to a human-readable format
+ * @param dateString - ISO date string
+ * @returns Formatted date string like "December 18, 2025 at 9:10 AM"
+ */
+export const formatDateToHumanReadable = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleString("en-US", {
+    timeZone: "Africa/Lagos",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+/**
  * FIXED: Calculate hotel payable and commission with correct business logic
  * Hotel payable is FIXED, platform commission varies with coupons
  */
