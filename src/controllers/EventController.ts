@@ -177,7 +177,7 @@ export class EventController {
         roomnumber: rawData.roomnumber || "unknown",
         hotelcode: rawData.hotelcode || "unknown",
         ipaddress: rawData.ipaddress || "unknown",
-        timestamp: new Date().toISOString(),
+        timestamp: formatDateToHumanReadable(new Date().toISOString()),
         validationErrors: validationErrors,
       };
 
@@ -337,8 +337,12 @@ export class EventController {
             roomnumber: validatedData.roomnumber,
             macaddress: result.sanitizedMac,
             fullname: validatedData.fullname,
-            checkintime: validatedData.checkindatetime,
-            checkouttime: validatedData.checkoutdatetime,
+            checkintime: formatDateToHumanReadable(
+              validatedData.checkindatetime
+            ),
+            checkouttime: formatDateToHumanReadable(
+              validatedData.checkoutdatetime
+            ),
             message: welcomeMessage,
             tvid: validatedData.tvid,
           },
@@ -370,7 +374,7 @@ export class EventController {
           io.to(tvRoom).emit("failure", {
             context: "check-in",
             message: error.message || "Check-in failed",
-            timestamp: new Date().toISOString(),
+            timestamp: formatDateToHumanReadable(new Date().toISOString()),
           });
           console.log(`✓ Check-in failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
@@ -426,7 +430,9 @@ export class EventController {
             macaddress: result.sanitizedMac,
             fullname: null, // Not available in reminder
             checkintime: null, // Not available in reminder
-            checkouttime: validatedData.checkoutdatetime,
+            checkouttime: formatDateToHumanReadable(
+              validatedData.checkoutdatetime
+            ),
             message: reminderMessage,
             tvid: result.tvId, // Now available from service
           },
@@ -458,7 +464,7 @@ export class EventController {
           io.to(tvRoom).emit("failure", {
             context: "reminder",
             message: error.message || "Reminder failed",
-            timestamp: new Date().toISOString(),
+            timestamp: formatDateToHumanReadable(new Date().toISOString()),
           });
           console.log(`✓ Reminder failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
@@ -514,7 +520,9 @@ export class EventController {
             macaddress: result.sanitizedMac,
             fullname: validatedData.fullname,
             checkintime: null, // Not available in checkout
-            checkouttime: validatedData.checkoutdatetime,
+            checkouttime: formatDateToHumanReadable(
+              validatedData.checkoutdatetime
+            ),
             message: checkoutMessage,
             tvid: result.tvId, // Now available from service
           },
@@ -546,7 +554,7 @@ export class EventController {
           io.to(tvRoom).emit("failure", {
             context: "checkout",
             message: error.message || "Checkout failed",
-            timestamp: new Date().toISOString(),
+            timestamp: formatDateToHumanReadable(new Date().toISOString()),
           });
           console.log(`✓ Checkout failure event broadcast to room: ${tvRoom}`);
         } catch (errorBroadcastError: any) {
