@@ -321,11 +321,11 @@ export class EventController {
       // Craft welcome message using request data
       const welcomeMessage = `Welcome, ${
         validatedData.fullname
-      }! Your check-in at ${
+      }! Your check-in at ${formatDateToHumanReadable(
         validatedData.checkindatetime
-      } is confirmed. Enjoy your stay until ${validatedData.checkoutdatetime}.${
-        validatedData.message ? ` ${validatedData.message}` : ""
-      }`;
+      )} is confirmed. Enjoy your stay until ${formatDateToHumanReadable(
+        validatedData.checkoutdatetime
+      )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
@@ -415,9 +415,9 @@ export class EventController {
       // Craft reminder message using request data
       const reminderMessage = `Reminder: You have ${
         validatedData.reminderType === "checkout_2h" ? "2 hours" : "1 hour"
-      } until checkout at ${validatedData.checkoutdatetime}.${
-        validatedData.message ? ` ${validatedData.message}` : ""
-      }`;
+      } until checkout at ${formatDateToHumanReadable(
+        validatedData.checkoutdatetime
+      )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
@@ -505,9 +505,9 @@ export class EventController {
       // Craft checkout message using request data
       const checkoutMessage = `Thank you for your stay, ${
         validatedData.fullname
-      }! Checkout completed at ${validatedData.checkoutdatetime}.${
-        validatedData.message ? ` ${validatedData.message}` : ""
-      }`;
+      }! Checkout completed at ${formatDateToHumanReadable(
+        validatedData.checkoutdatetime
+      )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
