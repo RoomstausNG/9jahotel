@@ -54,6 +54,17 @@ export const formatDateToHumanReadable = (dateString: string): string => {
 };
 
 /**
+ * Normalize a checkout date to always be at 12:00 PM (noon)
+ * @param dateString - ISO date string
+ * @returns ISO date string with time set to 12:00:00
+ */
+export const normalizeCheckoutTimeToNoon = (dateString: string): string => {
+  const date = new Date(dateString);
+  date.setHours(12, 0, 0, 0); // Set to 12:00:00.000
+  return date.toISOString();
+};
+
+/**
  * FIXED: Calculate hotel payable and commission with correct business logic
  * Hotel payable is FIXED, platform commission varies with coupons
  */

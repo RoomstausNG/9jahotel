@@ -2,7 +2,10 @@ import { Context } from "hono";
 import { inject, injectable } from "inversify";
 import { TVService } from "../services/TVService";
 import { ApiResponse } from "../utils/ApiResponse";
-import { formatDateToHumanReadable } from "../utils/DateAmountUtils";
+import {
+  formatDateToHumanReadable,
+  normalizeCheckoutTimeToNoon,
+} from "../utils/DateAmountUtils";
 import {
   TVRegistrationDTO,
   CheckInDTO,
@@ -413,10 +416,13 @@ export class EventController {
       const result = await this.tvService.getTVForBroadcast(validatedData);
 
       // Craft reminder message using request data
+      const normalizedReminderCheckoutTime = normalizeCheckoutTimeToNoon(
+        validatedData.checkoutdatetime
+      );
       const reminderMessage = `Reminder: You have ${
         validatedData.reminderType === "checkout_2h" ? "2 hours" : "1 hour"
       } until checkout at ${formatDateToHumanReadable(
-        validatedData.checkoutdatetime
+        normalizedReminderCheckoutTime
       )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
@@ -431,7 +437,7 @@ export class EventController {
             fullname: null, // Not available in reminder
             checkintime: null, // Not available in reminder
             checkouttime: formatDateToHumanReadable(
-              validatedData.checkoutdatetime
+              normalizedReminderCheckoutTime
             ),
             message: reminderMessage,
             tvid: result.tvId, // Now available from service
@@ -503,10 +509,13 @@ export class EventController {
       const result = await this.tvService.checkOut(validatedData);
 
       // Craft checkout message using request data
+      const normalizedCheckoutTime = normalizeCheckoutTimeToNoon(
+        validatedData.checkoutdatetime
+      );
       const checkoutMessage = `Thank you for your stay, ${
         validatedData.fullname
       }! Checkout completed at ${formatDateToHumanReadable(
-        validatedData.checkoutdatetime
+        normalizedCheckoutTime
       )}.${validatedData.message ? ` ${validatedData.message}` : ""}`;
 
       // Broadcast to TV room
@@ -520,9 +529,7 @@ export class EventController {
             macaddress: result.sanitizedMac,
             fullname: validatedData.fullname,
             checkintime: null, // Not available in checkout
-            checkouttime: formatDateToHumanReadable(
-              validatedData.checkoutdatetime
-            ),
+            checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
             message: checkoutMessage,
             tvid: result.tvId, // Now available from service
           },
