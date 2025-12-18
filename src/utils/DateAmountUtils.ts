@@ -54,13 +54,13 @@ export const formatDateToHumanReadable = (dateString: string): string => {
 };
 
 /**
- * Normalize a checkout date to always be at 12:00 PM (noon)
+ * Normalize a checkout date to always be at 12:00 PM (noon) in WAT timezone
  * @param dateString - ISO date string
- * @returns ISO date string with time set to 12:00:00
+ * @returns ISO date string with time set to 11:00:00 UTC (which becomes 12:00:00 WAT)
  */
 export const normalizeCheckoutTimeToNoon = (dateString: string): string => {
   const date = new Date(dateString);
-  date.setHours(12, 0, 0, 0); // Set to 12:00:00.000
+  date.setHours(11, 0, 0, 0); // Set to 11:00:00 UTC (which is 12:00:00 WAT)
   return date.toISOString();
 };
 
