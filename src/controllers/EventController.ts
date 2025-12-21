@@ -14,6 +14,11 @@ import {
   BroadcastAllDTO,
 } from "../dtos/EventDTO";
 import { io } from "../routes/socket-event";
+import {
+  queueTVNotification,
+  getPendingNotifications,
+  markNotificationProcessed,
+} from "../jobs/tv-notification-queue";
 
 @injectable()
 export class EventController {
@@ -102,7 +107,7 @@ export class EventController {
           message: "TV is now connected and active",
         };
 
-        setTimeout(() => {
+        setTimeout(async () => {
           io.to(roomForCallback).emit("tv-notification", {
             type: "connected",
             data: connectedData,
@@ -110,6 +115,21 @@ export class EventController {
           console.log(
             `✓ Connected event emitted to room: ${roomForCallback} (after 5-second delay)`
           );
+
+          // Send any queued notifications for this TV
+          const pendingNotifications = await getPendingNotifications(
+            result.sanitizedMac
+          );
+          for (const job of pendingNotifications) {
+            io.to(roomForCallback).emit("tv-notification", {
+              type: job.data.eventType,
+              data: job.data.data,
+            });
+            await markNotificationProcessed(job.id);
+            console.log(
+              `✓ Queued notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
+            );
+          }
         }, 5000);
       } else {
         // For reconnections and room updates, send only connected event immediately
@@ -127,6 +147,23 @@ export class EventController {
         console.log(
           `✓ Connected event emitted to room: ${tvRoom} (immediate - reconnection/room update)`
         );
+
+        // Send any queued notifications for this TV
+        const pendingNotifications = await getPendingNotifications(
+          result.sanitizedMac
+        );
+        for (const job of pendingNotifications) {
+          io.to(tvRoom).emit("tv-notification", {
+            type: job.data.eventType,
+            data: job.data.data,
+          });
+          if (job.id) {
+            await markNotificationProcessed(job.id);
+          }
+          console.log(
+            `✓ Queued notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
+          );
+        }
       }
 
       // Emit to hotel room about new TV registration
@@ -336,25 +373,32 @@ export class EventController {
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
       try {
+        const notificationData = {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: validatedData.fullname,
+          checkintime: formatDateToHumanReadable(validatedData.checkindatetime),
+          checkouttime: formatDateToHumanReadable(
+            normalizedCheckinCheckoutTime
+          ),
+          message: welcomeMessage,
+          tvid: validatedData.tvid,
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
+        };
+
         io.to(tvRoom).emit("tv-notification", {
           type: "check-in",
-          data: {
-            hotelcode: validatedData.hotelcode,
-            roomnumber: validatedData.roomnumber,
-            macaddress: result.sanitizedMac,
-            fullname: validatedData.fullname,
-            checkintime: formatDateToHumanReadable(
-              validatedData.checkindatetime
-            ),
-            checkouttime: formatDateToHumanReadable(
-              normalizedCheckinCheckoutTime
-            ),
-            message: welcomeMessage,
-            tvid: validatedData.tvid,
-            hotelname: result.hotelname,
-            address: result.address,
-            phone: result.phone,
-          },
+          data: notificationData,
+        });
+
+        // Queue the notification for offline TVs
+        await queueTVNotification({
+          macaddress: result.sanitizedMac,
+          eventType: "check-in",
+          data: notificationData,
         });
         console.log(
           `✓ Check-in event broadcast successfully to room: ${tvRoom}`
@@ -437,23 +481,32 @@ export class EventController {
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
       try {
+        const notificationData = {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: null, // Not available in reminder
+          checkintime: null, // Not available in reminder
+          checkouttime: formatDateToHumanReadable(
+            normalizedReminderCheckoutTime
+          ),
+          message: reminderMessage,
+          tvid: result.tvId, // Now available from service
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
+        };
+
         io.to(tvRoom).emit("tv-notification", {
           type: "reminder",
-          data: {
-            hotelcode: validatedData.hotelcode,
-            roomnumber: validatedData.roomnumber,
-            macaddress: result.sanitizedMac,
-            fullname: null, // Not available in reminder
-            checkintime: null, // Not available in reminder
-            checkouttime: formatDateToHumanReadable(
-              normalizedReminderCheckoutTime
-            ),
-            message: reminderMessage,
-            tvid: result.tvId, // Now available from service
-            hotelname: result.hotelname,
-            address: result.address,
-            phone: result.phone,
-          },
+          data: notificationData,
+        });
+
+        // Queue the notification for offline TVs
+        await queueTVNotification({
+          macaddress: result.sanitizedMac,
+          eventType: "reminder",
+          data: notificationData,
         });
         console.log(
           `✓ Reminder event broadcast successfully to room: ${tvRoom}`
@@ -536,21 +589,30 @@ export class EventController {
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
       try {
+        const notificationData = {
+          hotelcode: validatedData.hotelcode,
+          roomnumber: validatedData.roomnumber,
+          macaddress: result.sanitizedMac,
+          fullname: validatedData.fullname,
+          checkintime: null, // Not available in checkout
+          checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
+          message: checkoutMessage,
+          tvid: result.tvId, // Now available from service
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
+        };
+
         io.to(tvRoom).emit("tv-notification", {
           type: "checkout",
-          data: {
-            hotelcode: validatedData.hotelcode,
-            roomnumber: validatedData.roomnumber,
-            macaddress: result.sanitizedMac,
-            fullname: validatedData.fullname,
-            checkintime: null, // Not available in checkout
-            checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
-            message: checkoutMessage,
-            tvid: result.tvId, // Now available from service
-            hotelname: result.hotelname,
-            address: result.address,
-            phone: result.phone,
-          },
+          data: notificationData,
+        });
+
+        // Queue the notification for offline TVs
+        await queueTVNotification({
+          macaddress: result.sanitizedMac,
+          eventType: "checkout",
+          data: notificationData,
         });
         console.log(
           `✓ Checkout event broadcast successfully to room: ${tvRoom}`

@@ -60,7 +60,7 @@ export const formatDateToHumanReadable = (dateString: string): string => {
  */
 export const normalizeCheckoutTimeToNoon = (dateString: string): string => {
   const date = new Date(dateString);
-  date.setHours(11, 0, 0, 0); // Set to 11:00:00 UTC (which is 12:00:00 WAT)
+  date.setHours(12, 0, 0, 0); // Set to 11:00:00 UTC (which is 12:00:00 WAT)
   return date.toISOString();
 };
 
