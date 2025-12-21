@@ -351,6 +351,9 @@ export class EventController {
             ),
             message: welcomeMessage,
             tvid: validatedData.tvid,
+            hotelname: result.hotelname,
+            address: result.address,
+            phone: result.phone,
           },
         });
         console.log(
@@ -368,6 +371,9 @@ export class EventController {
         {
           tvId: result.tvId,
           message: welcomeMessage,
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
         },
         "Check-in processed successfully"
       );
@@ -444,6 +450,9 @@ export class EventController {
             ),
             message: reminderMessage,
             tvid: result.tvId, // Now available from service
+            hotelname: result.hotelname,
+            address: result.address,
+            phone: result.phone,
           },
         });
         console.log(
@@ -461,6 +470,9 @@ export class EventController {
         {
           tvId: result.tvId,
           message: reminderMessage,
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
         },
         "Reminder sent successfully"
       );
@@ -535,6 +547,9 @@ export class EventController {
             checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
             message: checkoutMessage,
             tvid: result.tvId, // Now available from service
+            hotelname: result.hotelname,
+            address: result.address,
+            phone: result.phone,
           },
         });
         console.log(
@@ -552,6 +567,9 @@ export class EventController {
         {
           tvId: result.tvId,
           message: checkoutMessage,
+          hotelname: result.hotelname,
+          address: result.address,
+          phone: result.phone,
         },
         "Checkout processed successfully"
       );
@@ -595,6 +613,14 @@ export class EventController {
       // Validate input
       const validatedData = BroadcastAllDTO.parse(data);
 
+      // Fetch hotel details
+      const hotel = await this.tvService.findHotelByCode(
+        validatedData.hotelcode
+      );
+      if (!hotel) {
+        throw new Error("Hotel not found");
+      }
+
       // Broadcast to hotel room (no database operations)
       const hotelRoom = `hotel:${validatedData.hotelcode}`;
       io.to(hotelRoom).emit("tv-notification", {
@@ -603,6 +629,9 @@ export class EventController {
           hotelcode: validatedData.hotelcode,
           message: validatedData.message,
           ...(validatedData.title && { title: validatedData.title }),
+          hotelname: hotel.name,
+          address: hotel.address,
+          phone: hotel.telephone,
         },
       });
 
@@ -612,6 +641,9 @@ export class EventController {
         {
           hotelCode: validatedData.hotelcode,
           message: validatedData.message,
+          hotelname: hotel.name,
+          address: hotel.address,
+          phone: hotel.telephone,
         },
         "Broadcast sent successfully"
       );

@@ -20,6 +20,9 @@ export interface CheckInData {
   tvid: string;
   checkindatetime: string;
   checkoutdatetime: string;
+  hotelname?: string;
+  address?: string;
+  phone?: string;
 }
 
 export interface ReminderData {
@@ -29,6 +32,9 @@ export interface ReminderData {
   macaddress: string;
   checkoutdatetime: string;
   message?: string;
+  hotelname?: string;
+  address?: string;
+  phone?: string;
 }
 
 export interface CheckoutData {
@@ -38,11 +44,17 @@ export interface CheckoutData {
   macaddress: string;
   checkoutdatetime: string;
   message?: string;
+  hotelname?: string;
+  address?: string;
+  phone?: string;
 }
 
 export interface BroadcastData {
   hotelcode: string;
   message: string;
+  hotelname?: string;
+  address?: string;
+  phone?: string;
 }
 
 @injectable()
@@ -65,6 +77,19 @@ export class TVService {
       .select()
       .from(hotels)
       .where(eq(hotels.code, hotelcode))
+      .limit(1);
+
+    return hotel[0] || null;
+  }
+
+  /**
+   * Find hotel by ID
+   */
+  async findHotelById(hotelId: number) {
+    const hotel = await db
+      .select()
+      .from(hotels)
+      .where(eq(hotels.id, hotelId))
       .limit(1);
 
     return hotel[0] || null;
@@ -125,19 +150,21 @@ export class TVService {
 
     let isNew = false;
     let roomUpdated = false;
-    
+
     if (tv) {
       // TV exists - check if room assignment changed
       if (tv.hotel_id === hotel.id && tv.room_id === room.id) {
         // Same TV, same room - just update last seen and IP
-        console.log(`✓ TV reconnection: MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
-        
+        console.log(
+          `✓ TV reconnection: MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`
+        );
+
         await db
           .update(smart_tvs)
           .set({
             last_seen_at: now,
             ip_address: ipaddress, // Update IP just in case
-            status: 'active',
+            status: "active",
           })
           .where(eq(smart_tvs.id, tv.id));
 
@@ -147,16 +174,20 @@ export class TVService {
       } else {
         // Same MAC but different room - update room assignment
         roomUpdated = true;
-        
+
         // Get old room number for logging
         const oldRoom = await db
           .select()
           .from(rooms)
           .where(eq(rooms.id, tv.room_id))
           .limit(1);
-        
-        console.log(`✓ TV room updated: MAC=${sanitizedMac}, From Room=${oldRoom[0]?.number || 'unknown'} to Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
-        
+
+        console.log(
+          `✓ TV room updated: MAC=${sanitizedMac}, From Room=${
+            oldRoom[0]?.number || "unknown"
+          } to Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`
+        );
+
         await db
           .update(smart_tvs)
           .set({
@@ -165,7 +196,7 @@ export class TVService {
             hotel_id: hotel.id,
             last_seen_at: now,
             updated_at: now,
-            status: 'active',
+            status: "active",
           })
           .where(eq(smart_tvs.id, tv.id));
 
@@ -178,7 +209,7 @@ export class TVService {
       isNew = true;
       // New TV - create it
       isNew = true;
-      
+
       // Calculate next sequential name (TV1-101, TV2-101, etc.)
       const existingTVs = await db
         .select()
@@ -187,28 +218,28 @@ export class TVService {
 
       let index = 1;
       let tvName = `TV${index}-${room.number}`;
-      
+
       // Find first available index
-      while (existingTVs.some(tv => tv.name === tvName)) {
+      while (existingTVs.some((tv) => tv.name === tvName)) {
         index++;
         tvName = `TV${index}-${room.number}`;
       }
-      
-      console.log(`✓ New TV created: Name=${tvName}, MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`);
-      
-      const [result] = await db
-        .insert(smart_tvs)
-        .values({
-          room_id: room.id,
-          name: tvName,
-          ip_address: ipaddress,
-          mac_address: sanitizedMac,
-          hotel_id: hotel.id,
-          last_seen_at: now,
-          created_at: now,
-          updated_at: now,
-          status: 'active',
-        });
+
+      console.log(
+        `✓ New TV created: Name=${tvName}, MAC=${sanitizedMac}, Room=${roomnumber}, Hotel=${hotelcode}, IP=${ipaddress}`
+      );
+
+      const [result] = await db.insert(smart_tvs).values({
+        room_id: room.id,
+        name: tvName,
+        ip_address: ipaddress,
+        mac_address: sanitizedMac,
+        hotel_id: hotel.id,
+        last_seen_at: now,
+        created_at: now,
+        updated_at: now,
+        status: "active",
+      });
 
       // Fetch the created TV
       const newTv = await db
@@ -244,6 +275,12 @@ export class TVService {
       throw new Error("TV not found");
     }
 
+    // Find hotel details
+    const hotel = await this.findHotelById(tv.hotel_id);
+    if (!hotel) {
+      throw new Error("Hotel not found");
+    }
+
     // Update last seen
     await db
       .update(smart_tvs)
@@ -252,7 +289,13 @@ export class TVService {
       })
       .where(eq(smart_tvs.id, tv.id));
 
-    return { tvId: tv.id, sanitizedMac };
+    return {
+      tvId: tv.id,
+      sanitizedMac,
+      hotelname: hotel.name,
+      address: hotel.address,
+      phone: hotel.telephone,
+    };
   }
 
   /**
@@ -269,6 +312,12 @@ export class TVService {
       throw new Error("TV not found");
     }
 
+    // Find hotel details
+    const hotel = await this.findHotelById(tv.hotel_id);
+    if (!hotel) {
+      throw new Error("Hotel not found");
+    }
+
     // Update last seen
     await db
       .update(smart_tvs)
@@ -277,7 +326,13 @@ export class TVService {
       })
       .where(eq(smart_tvs.id, tv.id));
 
-    return { tvId: tv.id, sanitizedMac };
+    return {
+      tvId: tv.id,
+      sanitizedMac,
+      hotelname: hotel.name,
+      address: hotel.address,
+      phone: hotel.telephone,
+    };
   }
 
   /**
@@ -294,6 +349,12 @@ export class TVService {
       throw new Error("TV not found");
     }
 
+    // Find hotel details
+    const hotel = await this.findHotelById(tv.hotel_id);
+    if (!hotel) {
+      throw new Error("Hotel not found");
+    }
+
     // Update last seen
     await db
       .update(smart_tvs)
@@ -302,7 +363,13 @@ export class TVService {
       })
       .where(eq(smart_tvs.id, tv.id));
 
-    return { tvId: tv.id, sanitizedMac };
+    return {
+      tvId: tv.id,
+      sanitizedMac,
+      hotelname: hotel.name,
+      address: hotel.address,
+      phone: hotel.telephone,
+    };
   }
 
   /**

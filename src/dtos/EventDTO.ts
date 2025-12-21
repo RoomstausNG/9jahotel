@@ -27,6 +27,9 @@ export const CheckInDTO = z.object({
     .string()
     .min(1, "Check-out date time is required")
     .refine((val) => !isNaN(Date.parse(val)), "Invalid ISO 8601 date format"),
+  hotelname: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 // Reminder Event DTO
@@ -44,6 +47,9 @@ export const ReminderDTO = z.object({
     .min(1, "Check-out date time is required")
     .refine((val) => !isNaN(Date.parse(val)), "Invalid ISO 8601 date format"),
   message: z.string().optional(),
+  hotelname: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 // Checkout Event DTO
@@ -57,6 +63,9 @@ export const CheckoutDTO = z.object({
     .min(1, "Check-out date time is required")
     .refine((val) => !isNaN(Date.parse(val)), "Invalid ISO 8601 date format"),
   message: z.string().optional(),
+  hotelname: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 // Broadcast All Event DTO
@@ -64,4 +73,7 @@ export const BroadcastAllDTO = z.object({
   hotelcode: z.string().min(1, "Hotel code is required"),
   message: z.string().min(1, "Message is required"),
   title: z.string().optional(),
+  hotelname: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
 });
