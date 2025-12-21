@@ -25,7 +25,46 @@ Once all messages are successfully sent to the TV:
 - The system **deletes** the list for that TV.
 - This ensures the TV doesn't get the same "Welcome" message twice if it reconnects again later.
 
-## 3. Why This Works Perfectly Now (Bulletproof) ✅
+## 3. How it's Implemented (The Code) 💻
+
+Here is exactly how the code works in a simple way.
+
+### A. Saving a Message (The "Drop-off")
+When a TV is offline, we use the `RPUSH` command to add the message to the bottom of the TV's list.
+
+```typescript
+// Inside tv-notification-queue.ts
+export const queueTVNotification = async (data) => {
+  const key = `tv:buffer:${data.macaddress}`;
+  const payload = JSON.stringify(data);
+
+  // 1. Push message to the Redis List
+  await redis.rpush(key, payload);
+  
+  // 2. Set an expiry so it doesn't stay forever (24 hours)
+  await redis.expire(key, 86400); 
+};
+```
+
+### B. Fetching and Cleaning (The "Pickup")
+When the TV connects, we get all messages with `LRANGE` and then delete the list with `DEL`.
+
+```typescript
+// Inside EventController.ts (Simplified)
+const messages = await getPendingNotifications(macaddress);
+
+if (messages.length > 0) {
+  for (const msg of messages) {
+    // 1. Send each message to the TV
+    socket.emit("tv-notification", msg.data);
+  }
+  
+  // 2. Clear the box so messages aren't sent twice
+  await markNotificationProcessed(macaddress); 
+}
+```
+
+## 4. Why This Works Perfectly Now (Bulletproof) ✅
 - **Invisible to Workers**: There are no background "workers" that can accidentally delete or move your messages.
 - **Direct & Fast**: We talk directly to Redis. If the code says it's saved, it's 100% in the database.
 - **Easy to See**: You can check if a TV has messages waiting by running this command in your terminal:
