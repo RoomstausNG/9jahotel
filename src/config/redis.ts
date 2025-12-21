@@ -64,9 +64,8 @@ export const redisConnection = {
   port: Number(env("REDIS_PORT", "6379")),
   password: env("REDIS_PASSWORD", ""),
   db: Number(env("REDIS_DB", "0")),
-  maxRetriesPerRequest: null, // BullMQ recommendation
-  enableReadyCheck: false, // BullMQ recommendation
-  maxmemoryPolicy: "noeviction", // BullMQ recommendation
+  maxRetriesPerRequest: null, // BullMQ recommendation: disable retries for blocking commands
+  enableReadyCheck: false, // BullMQ recommendation: skip ready check
 };
 
 export async function withTimeout<T>(

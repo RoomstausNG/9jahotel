@@ -1,55 +1,87 @@
-import { Queue } from "bullmq";
-import { redisConnection } from "../config/redis";
-
-export const tvNotificationQueue = new Queue("tvNotificationQueue", {
-  connection: redisConnection,
-  defaultJobOptions: {
-    removeOnComplete: 50, // Keep last 50 completed jobs
-    removeOnFail: 20, // Keep last 20 failed jobs
-    attempts: 3, // Retry failed jobs up to 3 times
-    backoff: {
-      type: "exponential",
-      delay: 2000, // Start with 2 second delay
-    },
-  },
-});
+import { redis } from "../config/redis";
 
 // Interface for TV notification jobs
 export interface TVNotificationJob {
   macaddress: string;
   eventType: string;
   data: Record<string, any>;
+  timestamp: number; // When the job was created
 }
 
-// Add TV notification to queue
+/**
+ * Professional Redis-Direct Buffer Implementation
+ * 
+ * We use a Redis List for each TV (keyed by MAC address).
+ * This is 100% transparent and bypasses BullMQ persistence issues.
+ */
+
+// Buffer a notification for a TV in a Redis List
 export const queueTVNotification = async (data: TVNotificationJob) => {
-  await tvNotificationQueue.add("sendTVNotification", data, {
-    priority: 10, // High priority for real-time notifications
+  const key = `tv:buffer:${data.macaddress}`;
+  const payload = JSON.stringify({
+    eventType: data.eventType,
+    data: data.data,
+    timestamp: data.timestamp
   });
-};
 
-// Get pending notifications for a TV
-export const getPendingNotifications = async (macaddress: string) => {
-  const jobs = await tvNotificationQueue.getJobs(
-    ["waiting", "delayed"],
-    0,
-    100
+  // Push to end of list
+  await redis.rpush(key, payload);
+  // Set 24 hour expiry on the buffer
+  await redis.expire(key, 86400);
+
+  const count = await redis.llen(key);
+  console.log(
+    `📋 Notification buffered (Redis List): MAC=${data.macaddress}, Type=${data.eventType}, BufferCount=${count}`
   );
-  return jobs.filter((job) => job.data.macaddress === macaddress);
+  
+  return true;
 };
 
-// Remove processed notifications for a TV
-export const removeProcessedNotifications = async (macaddress: string) => {
-  const jobs = await tvNotificationQueue.getJobs(["completed"], 0, 100);
-  const toRemove = jobs.filter((job) => job.data.macaddress === macaddress);
-  await Promise.all(toRemove.map((job) => job.remove()));
+// Retrieve all buffered notifications for a TV
+export const getPendingNotifications = async (macaddress: string) => {
+  const key = `tv:buffer:${macaddress}`;
+  
+  // Get all items from the list
+  const items = await redis.lrange(key, 0, -1);
+  
+  console.log(
+    `🔍 Searching Redis Buffer for MAC=${macaddress}, Found ${items.length} messages.`
+  );
+
+  const decodedJobs = items.map((item, index) => {
+    try {
+      const parsed = JSON.parse(item);
+      return {
+        id: `msg:${index}`, // Synthetic ID for logging
+        data: parsed
+      };
+    } catch (e) {
+      console.error(`❌ Error parsing buffered message for ${macaddress}`, e);
+      return null;
+    }
+  }).filter(Boolean);
+
+  return decodedJobs;
 };
 
-// Mark notification as processed (move to completed)
-export const markNotificationProcessed = async (jobId: string | undefined) => {
-  if (!jobId) return;
-  const job = await tvNotificationQueue.getJob(jobId);
-  if (job) {
-    await job.moveToCompleted("processed", job.token || "");
-  }
+// Clear the entire buffer for a TV
+export const markNotificationProcessed = async (macaddress: string) => {
+  if (!macaddress) return;
+  const key = `tv:buffer:${macaddress}`;
+  await redis.del(key);
+  console.log(`✅ Redis Buffer cleared for MAC=${macaddress}`);
 };
+
+/**
+ * Redundant functions maintained for compatibility with EventController,
+ * but functionally no-ops or simplified in the list approach.
+ */
+export const markNotificationDelivered = async (macaddress: string, id: string) => {
+  // In the list approach, we clear the whole list at once.
+  // Individual tracking is less necessary, but we'll leave it empty.
+};
+
+export const isNotificationDelivered = async (macaddress: string, id: string) => {
+  return false; // List items are either there or cleared.
+};
+

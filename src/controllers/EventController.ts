@@ -18,11 +18,20 @@ import {
   queueTVNotification,
   getPendingNotifications,
   markNotificationProcessed,
+  markNotificationDelivered,
+  isNotificationDelivered,
 } from "../jobs/tv-notification-queue";
 
 @injectable()
 export class EventController {
   constructor(@inject(TVService) private tvService: TVService) {}
+
+  /**
+   * Check if a room has connected clients
+   */
+  private isRoomOnline(room: string): boolean {
+    return (io.sockets.adapter.rooms.get(room)?.size ?? 0) > 0;
+  }
 
   /**
    * TV Registration Endpoint
@@ -116,22 +125,33 @@ export class EventController {
             `✓ Connected event emitted to room: ${roomForCallback} (after 5-second delay)`
           );
 
-          // Send any queued notifications for this TV
+          // Send any queued notifications for this TV (Redis List buffer)
           const pendingNotifications = await getPendingNotifications(
             result.sanitizedMac
           );
-          console.log(
-            `Found ${pendingNotifications.length} queued notifications for TV: ${result.sanitizedMac}`
-          );
-          for (const job of pendingNotifications) {
-            io.to(roomForCallback).emit("tv-notification", {
-              type: job.data.eventType,
-              data: job.data.data,
-            });
-            await markNotificationProcessed(job.id);
-            console.log(
-              `✓ Queued notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
-            );
+          
+          if (pendingNotifications.length > 0) {
+            const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+            
+            for (const job of pendingNotifications) {
+              if (job && job.data.timestamp && job.data.timestamp > twentyFourHoursAgo) {
+                try {
+                  io.to(roomForCallback).emit("tv-notification", {
+                    type: job.data.eventType,
+                    data: job.data.data,
+                  });
+                  console.log(
+                    `✓ Buffered notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
+                  );
+                } catch (emitError: any) {
+                  console.error(
+                    `✗ Failed to emit buffered notification to TV: ${result.sanitizedMac}, type: ${job.data.eventType}, error: ${emitError.message}`
+                  );
+                }
+              }
+            }
+            // Clear the buffer after attempting to send all
+            await markNotificationProcessed(result.sanitizedMac);
           }
         }, 5000);
       } else {
@@ -151,22 +171,33 @@ export class EventController {
           `✓ Connected event emitted to room: ${tvRoom} (immediate - reconnection/room update)`
         );
 
-        // Send any queued notifications for this TV
+        // Send any queued notifications for this TV (Redis List buffer)
         const pendingNotifications = await getPendingNotifications(
           result.sanitizedMac
         );
-        console.log(
-          `Found ${pendingNotifications.length} queued notifications for TV: ${result.sanitizedMac}`
-        );
-        for (const job of pendingNotifications) {
-          io.to(tvRoom).emit("tv-notification", {
-            type: job.data.eventType,
-            data: job.data.data,
-          });
-          await markNotificationProcessed(job.id);
-          console.log(
-            `✓ Queued notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
-          );
+
+        if (pendingNotifications.length > 0) {
+          const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+
+          for (const job of pendingNotifications) {
+            if (job && job.data.timestamp && job.data.timestamp > twentyFourHoursAgo) {
+              try {
+                io.to(tvRoom).emit("tv-notification", {
+                  type: job.data.eventType,
+                  data: job.data.data,
+                });
+                console.log(
+                  `✓ Buffered notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
+                );
+              } catch (emitError: any) {
+                console.error(
+                  `✗ Failed to emit buffered notification to TV: ${result.sanitizedMac}, type: ${job.data.eventType}, error: ${emitError.message}`
+                );
+              }
+            }
+          }
+          // Clear the buffer after attempting to send all
+          await markNotificationProcessed(result.sanitizedMac);
         }
       }
 
@@ -376,50 +407,48 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      try {
-        const notificationData = {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: validatedData.fullname,
-          checkintime: formatDateToHumanReadable(validatedData.checkindatetime),
-          checkouttime: formatDateToHumanReadable(
-            normalizedCheckinCheckoutTime
-          ),
-          message: welcomeMessage,
-          tvid: validatedData.tvid,
-          hotelname: result.hotelname,
-          address: result.address,
-          phone: result.phone,
-        };
+      const notificationData = {
+        hotelcode: validatedData.hotelcode,
+        roomnumber: validatedData.roomnumber,
+        macaddress: result.sanitizedMac,
+        fullname: validatedData.fullname,
+        checkintime: formatDateToHumanReadable(validatedData.checkindatetime),
+        checkouttime: formatDateToHumanReadable(normalizedCheckinCheckoutTime),
+        message: welcomeMessage,
+        tvid: validatedData.tvid,
+        hotelname: result.hotelname,
+        address: result.address,
+        phone: result.phone,
+      };
 
+      // Check if TV is online
+      if (this.isRoomOnline(tvRoom)) {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is online - sending notification immediately`
+        );
         io.to(tvRoom).emit("tv-notification", {
           type: "check-in",
           data: notificationData,
         });
-
+      } else {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is offline - queuing notification`
+        );
         // Queue the notification for offline TVs
         try {
           await queueTVNotification({
             macaddress: result.sanitizedMac,
             eventType: "check-in",
             data: notificationData,
+            timestamp: Date.now(),
           });
           console.log(
-            `✓ Check-in notification queued for TV: ${result.sanitizedMac}`
+            `✓ Check-in notification queued for offline TV: ${result.sanitizedMac}`
           );
         } catch (queueError: any) {
           console.error(`✗ Failed to queue check-in notification:`, queueError);
+          throw new Error(`Queue failed: ${queueError.message}`);
         }
-        console.log(
-          `✓ Check-in event broadcast successfully to room: ${tvRoom}`
-        );
-      } catch (broadcastError: any) {
-        console.error(
-          `✗ Check-in broadcast failed to room: ${tvRoom}`,
-          broadcastError
-        );
-        throw new Error(`Broadcast failed: ${broadcastError.message}`);
       }
 
       return ApiResponse.success(
@@ -491,50 +520,48 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      try {
-        const notificationData = {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: null, // Not available in reminder
-          checkintime: null, // Not available in reminder
-          checkouttime: formatDateToHumanReadable(
-            normalizedReminderCheckoutTime
-          ),
-          message: reminderMessage,
-          tvid: result.tvId, // Now available from service
-          hotelname: result.hotelname,
-          address: result.address,
-          phone: result.phone,
-        };
+      const notificationData = {
+        hotelcode: validatedData.hotelcode,
+        roomnumber: validatedData.roomnumber,
+        macaddress: result.sanitizedMac,
+        fullname: null, // Not available in reminder
+        checkintime: null, // Not available in reminder
+        checkouttime: formatDateToHumanReadable(normalizedReminderCheckoutTime),
+        message: reminderMessage,
+        tvid: result.tvId, // Now available from service
+        hotelname: result.hotelname,
+        address: result.address,
+        phone: result.phone,
+      };
 
+      // Check if TV is online
+      if (this.isRoomOnline(tvRoom)) {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is online - sending reminder immediately`
+        );
         io.to(tvRoom).emit("tv-notification", {
           type: "reminder",
           data: notificationData,
         });
-
+      } else {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is offline - queuing reminder`
+        );
         // Queue the notification for offline TVs
         try {
           await queueTVNotification({
             macaddress: result.sanitizedMac,
             eventType: "reminder",
             data: notificationData,
+            timestamp: Date.now(),
           });
           console.log(
-            `✓ Reminder notification queued for TV: ${result.sanitizedMac}`
+            `✓ Reminder notification queued for offline TV: ${result.sanitizedMac}`
           );
         } catch (queueError: any) {
           console.error(`✗ Failed to queue reminder notification:`, queueError);
+          throw new Error(`Queue failed: ${queueError.message}`);
         }
-        console.log(
-          `✓ Reminder event broadcast successfully to room: ${tvRoom}`
-        );
-      } catch (broadcastError: any) {
-        console.error(
-          `✗ Reminder broadcast failed to room: ${tvRoom}`,
-          broadcastError
-        );
-        throw new Error(`Broadcast failed: ${broadcastError.message}`);
       }
 
       return ApiResponse.success(
@@ -606,48 +633,48 @@ export class EventController {
 
       // Broadcast to TV room
       tvRoom = `smart-tv:${result.sanitizedMac}`;
-      try {
-        const notificationData = {
-          hotelcode: validatedData.hotelcode,
-          roomnumber: validatedData.roomnumber,
-          macaddress: result.sanitizedMac,
-          fullname: validatedData.fullname,
-          checkintime: null, // Not available in checkout
-          checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
-          message: checkoutMessage,
-          tvid: result.tvId, // Now available from service
-          hotelname: result.hotelname,
-          address: result.address,
-          phone: result.phone,
-        };
+      const notificationData = {
+        hotelcode: validatedData.hotelcode,
+        roomnumber: validatedData.roomnumber,
+        macaddress: result.sanitizedMac,
+        fullname: validatedData.fullname,
+        checkintime: null, // Not available in checkout
+        checkouttime: formatDateToHumanReadable(normalizedCheckoutTime),
+        message: checkoutMessage,
+        tvid: result.tvId, // Now available from service
+        hotelname: result.hotelname,
+        address: result.address,
+        phone: result.phone,
+      };
 
+      // Check if TV is online
+      if (this.isRoomOnline(tvRoom)) {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is online - sending checkout immediately`
+        );
         io.to(tvRoom).emit("tv-notification", {
           type: "checkout",
           data: notificationData,
         });
-
+      } else {
+        console.log(
+          `📺 TV ${result.sanitizedMac} is offline - queuing checkout`
+        );
         // Queue the notification for offline TVs
         try {
           await queueTVNotification({
             macaddress: result.sanitizedMac,
             eventType: "checkout",
             data: notificationData,
+            timestamp: Date.now(),
           });
           console.log(
-            `✓ Checkout notification queued for TV: ${result.sanitizedMac}`
+            `✓ Checkout notification queued for offline TV: ${result.sanitizedMac}`
           );
         } catch (queueError: any) {
           console.error(`✗ Failed to queue checkout notification:`, queueError);
+          throw new Error(`Queue failed: ${queueError.message}`);
         }
-        console.log(
-          `✓ Checkout event broadcast successfully to room: ${tvRoom}`
-        );
-      } catch (broadcastError: any) {
-        console.error(
-          `✗ Checkout broadcast failed to room: ${tvRoom}`,
-          broadcastError
-        );
-        throw new Error(`Broadcast failed: ${broadcastError.message}`);
       }
 
       return ApiResponse.success(
