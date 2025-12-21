@@ -120,6 +120,9 @@ export class EventController {
           const pendingNotifications = await getPendingNotifications(
             result.sanitizedMac
           );
+          console.log(
+            `Found ${pendingNotifications.length} queued notifications for TV: ${result.sanitizedMac}`
+          );
           for (const job of pendingNotifications) {
             io.to(roomForCallback).emit("tv-notification", {
               type: job.data.eventType,
@@ -152,14 +155,15 @@ export class EventController {
         const pendingNotifications = await getPendingNotifications(
           result.sanitizedMac
         );
+        console.log(
+          `Found ${pendingNotifications.length} queued notifications for TV: ${result.sanitizedMac}`
+        );
         for (const job of pendingNotifications) {
           io.to(tvRoom).emit("tv-notification", {
             type: job.data.eventType,
             data: job.data.data,
           });
-          if (job.id) {
-            await markNotificationProcessed(job.id);
-          }
+          await markNotificationProcessed(job.id);
           console.log(
             `✓ Queued notification sent to TV: ${result.sanitizedMac}, type: ${job.data.eventType}`
           );
@@ -395,11 +399,18 @@ export class EventController {
         });
 
         // Queue the notification for offline TVs
-        await queueTVNotification({
-          macaddress: result.sanitizedMac,
-          eventType: "check-in",
-          data: notificationData,
-        });
+        try {
+          await queueTVNotification({
+            macaddress: result.sanitizedMac,
+            eventType: "check-in",
+            data: notificationData,
+          });
+          console.log(
+            `✓ Check-in notification queued for TV: ${result.sanitizedMac}`
+          );
+        } catch (queueError: any) {
+          console.error(`✗ Failed to queue check-in notification:`, queueError);
+        }
         console.log(
           `✓ Check-in event broadcast successfully to room: ${tvRoom}`
         );
@@ -503,11 +514,18 @@ export class EventController {
         });
 
         // Queue the notification for offline TVs
-        await queueTVNotification({
-          macaddress: result.sanitizedMac,
-          eventType: "reminder",
-          data: notificationData,
-        });
+        try {
+          await queueTVNotification({
+            macaddress: result.sanitizedMac,
+            eventType: "reminder",
+            data: notificationData,
+          });
+          console.log(
+            `✓ Reminder notification queued for TV: ${result.sanitizedMac}`
+          );
+        } catch (queueError: any) {
+          console.error(`✗ Failed to queue reminder notification:`, queueError);
+        }
         console.log(
           `✓ Reminder event broadcast successfully to room: ${tvRoom}`
         );
@@ -609,11 +627,18 @@ export class EventController {
         });
 
         // Queue the notification for offline TVs
-        await queueTVNotification({
-          macaddress: result.sanitizedMac,
-          eventType: "checkout",
-          data: notificationData,
-        });
+        try {
+          await queueTVNotification({
+            macaddress: result.sanitizedMac,
+            eventType: "checkout",
+            data: notificationData,
+          });
+          console.log(
+            `✓ Checkout notification queued for TV: ${result.sanitizedMac}`
+          );
+        } catch (queueError: any) {
+          console.error(`✗ Failed to queue checkout notification:`, queueError);
+        }
         console.log(
           `✓ Checkout event broadcast successfully to room: ${tvRoom}`
         );

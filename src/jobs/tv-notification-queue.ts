@@ -46,7 +46,8 @@ export const removeProcessedNotifications = async (macaddress: string) => {
 };
 
 // Mark notification as processed (move to completed)
-export const markNotificationProcessed = async (jobId: string) => {
+export const markNotificationProcessed = async (jobId: string | undefined) => {
+  if (!jobId) return;
   const job = await tvNotificationQueue.getJob(jobId);
   if (job) {
     await job.moveToCompleted("processed", job.token || "");
