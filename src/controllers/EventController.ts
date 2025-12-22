@@ -524,11 +524,11 @@ export class EventController {
         hotelcode: validatedData.hotelcode,
         roomnumber: validatedData.roomnumber,
         macaddress: result.sanitizedMac,
-        fullname: null, // Not available in reminder
-        checkintime: null, // Not available in reminder
+        fullname: "Guest", // Default to Guest if not available
+        checkintime: null,
         checkouttime: formatDateToHumanReadable(normalizedReminderCheckoutTime),
         message: reminderMessage,
-        tvid: result.tvId, // Now available from service
+        tvid: result.tvId,
         hotelname: result.hotelname,
         address: result.address,
         phone: result.phone,
@@ -735,7 +735,48 @@ export class EventController {
         throw new Error("Hotel not found");
       }
 
-      // Broadcast to hotel room (no database operations)
+      // Fetch all TVs for this hotel
+      const tvs = await this.tvService.getHotelTVs(validatedData.hotelcode);
+      console.log(`📢 Processing broadcast for ${tvs.length} TVs in hotel ${validatedData.hotelcode}`);
+
+      // Performance: Process each TV (online check + emit or queue)
+      for (const tv of tvs) {
+        const tvRoom = `smart-tv:${tv.mac_address}`;
+        const notificationData = {
+          hotelcode: validatedData.hotelcode,
+          message: validatedData.message,
+          ...(validatedData.title && { title: validatedData.title }),
+          hotelname: hotel.name,
+          address: hotel.address,
+          phone: hotel.telephone,
+          fullname: "Guest", // Broadcasts are usually for all guests
+          macaddress: tv.mac_address,
+          tvid: tv.id
+        };
+
+        if (this.isRoomOnline(tvRoom)) {
+          console.log(`📺 TV ${tv.mac_address} is online - sending broadcast immediately`);
+          io.to(tvRoom).emit("tv-notification", {
+            type: "broadcast",
+            data: notificationData,
+          });
+        } else {
+          console.log(`📺 TV ${tv.mac_address} is offline - queuing broadcast`);
+          try {
+            await queueTVNotification({
+              macaddress: tv.mac_address,
+              eventType: "broadcast",
+              data: notificationData,
+              timestamp: Date.now(),
+            });
+          } catch (queueError: any) {
+            console.error(`✗ Failed to queue broadcast for TV ${tv.mac_address}:`, queueError.message);
+            // We continue with other TVs even if one fails to queue
+          }
+        }
+      }
+
+      // Still emit to the hotel room for dashboard monitoring if needed
       const hotelRoom = `hotel:${validatedData.hotelcode}`;
       io.to(hotelRoom).emit("tv-notification", {
         type: "broadcast",
@@ -749,17 +790,16 @@ export class EventController {
         },
       });
 
-      console.log(`Broadcast sent to hotel room: ${hotelRoom}`);
+      console.log(`✓ Broadcast processed for all TVs in hotel room: ${hotelRoom}`);
 
       return ApiResponse.success(
         {
           hotelCode: validatedData.hotelcode,
           message: validatedData.message,
+          totalTVs: tvs.length,
           hotelname: hotel.name,
-          address: hotel.address,
-          phone: hotel.telephone,
         },
-        "Broadcast sent successfully"
+        "Broadcast processed successfully"
       );
     } catch (error: any) {
       console.error("Broadcast Error:", error);

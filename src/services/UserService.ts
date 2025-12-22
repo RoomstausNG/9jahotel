@@ -45,8 +45,8 @@ export class UserService {
   }
 
   async createUser(data: any) {
-    const newUserId = await db.insert(users).values(data).$returningId();
-    return this.getUserById(newUserId[0] as number);
+    const [result] = await db.insert(users).values(data);
+    return this.getUserById(result.insertId);
   }
   async updateAvatarUrl(userId: number, avatarUrl: string) {
     // Update the user avatar
