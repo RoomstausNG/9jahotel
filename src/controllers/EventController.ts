@@ -12,6 +12,7 @@ import {
   ReminderDTO,
   CheckoutDTO,
   BroadcastAllDTO,
+  BroadcastAllType,
 } from "../dtos/EventDTO";
 import { io } from "../routes/socket-event";
 import {
@@ -725,50 +726,56 @@ export class EventController {
       const data = await c.req.json();
 
       // Validate input
-      const validatedData = BroadcastAllDTO.parse(data);
+      const validatedData: BroadcastAllType = BroadcastAllDTO.parse(data);
 
-      // Fetch hotel details
-      const hotel = await this.tvService.findHotelByCode(
-        validatedData.hotelcode
-      );
-      if (!hotel) {
-        throw new Error("Hotel not found");
-      }
-
-      // Determine which TVs to target based on 'type'
       let tvs = [];
-      if (validatedData.type === "macaddress" && validatedData.macaddress) {
+      let hotel = null;
+
+      if (validatedData.macaddress) {
+        // Target specific TV
         const sanitizedMac = validatedData.macaddress
           .replace(/[^a-zA-Z0-9]/g, "")
           .toUpperCase();
+        
         const tv = await this.tvService.findTVByMacAddress(sanitizedMac);
         if (!tv) {
           throw new Error("TV with specified MAC address not found");
         }
-        if (tv.hotel_id !== hotel.id) {
-          throw new Error("Specified TV does not belong to this hotel");
+
+        // Fetch hotel for this specific TV
+        hotel = await this.tvService.findHotelById(tv.hotel_id);
+        if (!hotel) {
+          throw new Error("Hotel associated with this TV not found");
         }
+
         tvs = [tv];
         console.log(`📢 Processing targeted broadcast for TV: ${sanitizedMac}`);
-      } else {
-        // Fetch all TVs for this hotel (default behavior)
+      } else if (validatedData.hotelcode) {
+        // Target all TVs in hotel
+        hotel = await this.tvService.findHotelByCode(validatedData.hotelcode);
+        if (!hotel) {
+          throw new Error("Hotel not found");
+        }
+
         tvs = await this.tvService.getHotelTVs(validatedData.hotelcode);
         console.log(
-          `📢 Processing broadcast for ${tvs.length} TVs in hotel ${validatedData.hotelcode}`
+          `📢 Processing hotel-wide broadcast for ${tvs.length} TVs in hotel ${validatedData.hotelcode}`
         );
+      } else {
+        throw new Error("Either MAC address or Hotel code must be provided");
       }
 
       // Performance: Process each TV (online check + emit or queue)
       for (const tv of tvs) {
         const tvRoom = `smart-tv:${tv.mac_address}`;
         const notificationData = {
-          hotelcode: validatedData.hotelcode,
+          hotelcode: hotel.code,
           message: validatedData.message,
-          ...(validatedData.title && { title: validatedData.title }),
+          ...(validatedData.title ? { title: validatedData.title } : {}),
           hotelname: hotel.name,
           address: hotel.address,
           phone: hotel.telephone,
-          fullname: "Guest", // Broadcasts are usually for all guests
+          fullname: "Guest",
           macaddress: tv.mac_address,
           tvid: tv.id
         };
@@ -790,26 +797,11 @@ export class EventController {
             });
           } catch (queueError: any) {
             console.error(`✗ Failed to queue broadcast for TV ${tv.mac_address}:`, queueError.message);
-            // We continue with other TVs even if one fails to queue
           }
         }
       }
 
-      // Still emit to the hotel room for dashboard monitoring if needed
-      const hotelRoom = `hotel:${validatedData.hotelcode}`;
-      io.to(hotelRoom).emit("tv-notification", {
-        type: "broadcast",
-        data: {
-          hotelcode: validatedData.hotelcode,
-          message: validatedData.message,
-          ...(validatedData.title && { title: validatedData.title }),
-          hotelname: hotel.name,
-          address: hotel.address,
-          phone: hotel.telephone,
-        },
-      });
-
-      console.log(`✓ Broadcast processed for all TVs in hotel room: ${hotelRoom}`);
+      console.log(`✓ Broadcast processed successfully`);
 
       return ApiResponse.success(
         {
