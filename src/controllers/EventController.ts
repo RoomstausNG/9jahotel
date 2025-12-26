@@ -735,9 +735,28 @@ export class EventController {
         throw new Error("Hotel not found");
       }
 
-      // Fetch all TVs for this hotel
-      const tvs = await this.tvService.getHotelTVs(validatedData.hotelcode);
-      console.log(`📢 Processing broadcast for ${tvs.length} TVs in hotel ${validatedData.hotelcode}`);
+      // Determine which TVs to target based on 'type'
+      let tvs = [];
+      if (validatedData.type === "macaddress" && validatedData.macaddress) {
+        const sanitizedMac = validatedData.macaddress
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toUpperCase();
+        const tv = await this.tvService.findTVByMacAddress(sanitizedMac);
+        if (!tv) {
+          throw new Error("TV with specified MAC address not found");
+        }
+        if (tv.hotel_id !== hotel.id) {
+          throw new Error("Specified TV does not belong to this hotel");
+        }
+        tvs = [tv];
+        console.log(`📢 Processing targeted broadcast for TV: ${sanitizedMac}`);
+      } else {
+        // Fetch all TVs for this hotel (default behavior)
+        tvs = await this.tvService.getHotelTVs(validatedData.hotelcode);
+        console.log(
+          `📢 Processing broadcast for ${tvs.length} TVs in hotel ${validatedData.hotelcode}`
+        );
+      }
 
       // Performance: Process each TV (online check + emit or queue)
       for (const tv of tvs) {

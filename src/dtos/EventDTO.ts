@@ -69,11 +69,33 @@ export const CheckoutDTO = z.object({
 });
 
 // Broadcast All Event DTO
-export const BroadcastAllDTO = z.object({
-  hotelcode: z.string().min(1, "Hotel code is required"),
-  message: z.string().min(1, "Message is required"),
-  title: z.string().optional(),
-  hotelname: z.string().optional(),
-  address: z.string().optional(),
-  phone: z.string().optional(),
-});
+export const BroadcastAllDTO = z
+  .object({
+    hotelcode: z.string().min(1, "Hotel code is required"),
+    message: z.string().min(1, "Message is required"),
+    title: z.string().optional(),
+      .enum(["all", "macaddress"], {
+        errorMap: () => ({
+          message:
+            "Type must be 'all' for hotel-wide or 'macaddress' for specific TV",
+        }),
+      })
+      .default("all"),
+    macaddress: z.string().optional(), // Required when type is "macaddress"
+    hotelname: z.string().optional(),
+    address: z.string().optional(),
+    phone: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If type is "macaddress", then macaddress must be provided
+      if (data.type === "macaddress" && !data.macaddress) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "MAC address is required when type is 'macaddress'",
+      path: ["macaddress"],
+    }
+  );
