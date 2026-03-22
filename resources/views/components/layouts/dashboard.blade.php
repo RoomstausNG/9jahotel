@@ -294,7 +294,7 @@
 
     @stack('scripts')
     <script>
-        window.addEventListener('swal:success', function(e) {
+        window.on('swal:success', function(e) {
             Swal.fire(e.detail);
         });
 

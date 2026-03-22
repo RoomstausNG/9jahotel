@@ -40,7 +40,7 @@ class AccountTermination extends Component
         } else {
             $this->showConfirmation = false;
             $this->message = 'No account found with this email.';
-            $this->dispatchBrowserEvent('swal:success', [
+            $this->dispatch('swal:success', [
                 'text' => $this->message,
                 'title' => 'Notice',
             ]);
