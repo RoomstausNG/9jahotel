@@ -57,4 +57,4 @@ jobs:
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
           script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
-          timeout: 120s
+          timeout: 180s
