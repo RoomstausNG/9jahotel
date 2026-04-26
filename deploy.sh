@@ -5,6 +5,7 @@ echo "🚀 Starting deployment process for 9jahotel..."
 # Fix permissions on public/.user.ini to avoid git errors
 echo "🔧 Fixing file permissions..."
 if [ -f public/.user.ini ]; then
+    sudo chattr -i public/.user.ini 2>/dev/null || true
   sudo chown $(whoami):$(whoami) public/.user.ini 2>/dev/null || true
   chmod 644 public/.user.ini 2>/dev/null || true
 fi

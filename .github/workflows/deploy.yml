@@ -56,5 +56,10 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: "22"
           key: ${{ secrets.PRIVATE_KEY }}
-          script: "cd /www/wwwroot/9jahotel.com && ./deploy.sh"
+          script: |
+            cd /www/wwwroot/9jahotel.com
+            git fetch origin main
+            git checkout origin/main -- deploy.sh
+            chmod +x deploy.sh
+            ./deploy.sh
           timeout: 180s
