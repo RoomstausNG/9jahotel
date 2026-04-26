@@ -28,14 +28,14 @@ php artisan optimize:clear
 # Force fetch and reset
 echo "🔄 Fetching latest changes..."
 git fetch origin main || {
-    echo "❌ Failed to fetch from production. Please check your git remote configuration."
+    echo "❌ Failed to fetch from origin. Please check your git remote configuration."
     exit 1
 }
 
 echo "🔄 Resetting to latest main branch..."
-git reset --hard production/main || {
-    echo "❌ Failed to reset to production/main. Trying alternative approach..."
-    git pull production main --force || {
+git reset --hard origin/main || {
+    echo "❌ Failed to reset to origin/main. Trying alternative approach..."
+    git pull origin main --force || {
         echo "❌ Failed to pull changes. Please resolve manually."
         exit 1
     }
