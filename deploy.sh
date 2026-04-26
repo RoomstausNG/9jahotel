@@ -27,7 +27,7 @@ php artisan optimize:clear
 
 # Force fetch and reset
 echo "🔄 Fetching latest changes..."
-git fetch production main || {
+git fetch origin main || {
     echo "❌ Failed to fetch from production. Please check your git remote configuration."
     exit 1
 }
