@@ -121,7 +121,11 @@ return [
 
     'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => match (strtolower((string) env('REDIS_CLIENT', 'phpredis'))) {
+            'predis/client' => 'predis',
+            'predis' => 'predis',
+            default => 'phpredis',
+        },
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
